@@ -219,6 +219,7 @@ void Parser::recursive(string& child, bool keep_path)
 	
 	string path = current.value.substr(0, location),
 						extention = current.value.substr(location+1);
+	Util::replace_all(path, " ", "\\ "); //for when your path has spaces
 
 	if (path.find('*') != string::npos || extention.find('*') != string::npos) //if more than one found
 		Util::error("Multiple wildcards are not allowed");
