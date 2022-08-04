@@ -2,6 +2,11 @@
 #define PARSER_TOKENS
 #include "inc.hpp"
 
+/*
+	why hello there!
+	i know most of this is bad, i honestly don't care too much because it's my first project.
+*/
+
 static string token_names[] = {
 	"end of file",
 	"a '.'",

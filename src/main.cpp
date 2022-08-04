@@ -4,7 +4,7 @@ bool parser_exit;
 
 int main(int argc, const char *argv[])
 {
-	std::ios_base::sync_with_stdio(false);
+	std::ios_base::sync_with_stdio(false); // because SPEED
 
 	if (argc < 2)
 	{
