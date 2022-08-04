@@ -1,5 +1,10 @@
 #include "Parser.hpp"
 
+/*
+	why hello there!
+	i know most of this is bad, i honestly don't care too much because it's my first project.
+*/
+
 Parser::Parser(const char* file_name)
 {
 	//load yylex into tokens
