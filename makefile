@@ -1,7 +1,7 @@
 CC = g++
 SRC := src
 OBJ := build
-CFLAGS := -std=c++17 -fpermissive -lstdc++fs -Wall -pthread -static
+CFLAGS := -std=c++17 -fpermissive -lstdc++fs 
 SIZE_OPTIMIZATION_FLAGS := -O3 -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions \
 -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none
 
@@ -11,7 +11,7 @@ OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
 all: build_directory cate
 smol: build_directory cate
 
-build_directory: build
+build_directory:
 	@mkdir -p $(OBJ)
 
 cate: $(OBJECTS)
