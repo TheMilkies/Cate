@@ -34,7 +34,7 @@ install:
 
 uninstall:
 	@rm /usr/bin/cate
-	@echo "Unnstalled cate!"
+	@echo "Uninstalled cate!"
 
 clean:
-	@rm -rf CATE_DEBUG obj/*.o
+	@rm -rf obj/*.o
