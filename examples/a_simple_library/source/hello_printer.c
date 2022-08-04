@@ -1,0 +1,4 @@
+void print()
+{
+	puts("Hai");
+}

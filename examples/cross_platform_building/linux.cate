@@ -1,0 +1,5 @@
+Project proj;
+proj.files = {"src/test.cpp", recursive("src/linux/*.cpp")};
+proj.compiler = "g++";
+proj.out = "test";
+proj.build();

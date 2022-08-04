@@ -1,0 +1,6 @@
+#ifndef CROSS_PLATFORM_EXAMPLE
+#define CROSS_PLATFORM_EXAMPLE
+
+void print();
+
+#endif //CROSS_PLATFORM_EXAMPLE
