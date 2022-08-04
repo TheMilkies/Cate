@@ -1,5 +1,0 @@
-make --dry-run --keep-going --print-directory
-make: Entering directory '/home/krystal/Desktop/Cate/CateRewrite'
-mkdir -p build
-make: Leaving directory '/home/krystal/Desktop/Cate/CateRewrite'
- 
