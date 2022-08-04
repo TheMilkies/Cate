@@ -1,5 +1,3 @@
-build/*
+build/*.o
 ./cate
 vscode/*
-oiide
-oiide/*
