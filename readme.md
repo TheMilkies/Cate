@@ -42,5 +42,4 @@ PROJECT_NAME.files = {"src/main.cpp", recursive("src/subfolder/*.cpp")};
 /*BE AWARE THAT RECURSIVE GOES THROUGH ALL SUBDIRECTORIES IN SUBDIRECTORY*/
 PROJECT_NAME.libs = {"ExampleLibrary", "lib/libexample_local_library.so"}; /*optional*/
 PROJECT_NAME.out = "outs/example_executable"; /*optional. default is the project name in the current directory*/
-PROJECT_NAME.build(); /*will start building*/
-```
+PROJECT_NAME.build(); /*will start building*/```
