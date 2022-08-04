@@ -87,11 +87,6 @@ namespace Util
 		return oss.str();
 	}
 
-	string remove_extention(string& s)
-	{
-		return s = s.substr(0, s.find_last_of("."));
-	}
-
 	long get_modified_time(const char *path)
 	{
 		struct stat attr;

@@ -17,7 +17,7 @@ namespace Util
 	string remove_quotes(string &s);
 	void replace_all(string& s, string const& toReplace, string const& replaceWith);
 	string replace_all_safe(string s, string const& toReplace, string const& replaceWith);
-	string remove_extention(string& s);
+	inline string remove_extention(string& s) {return s = s.substr(0, s.find_last_of("."));}
 	long get_modified_time(const char *path);
 	void system(string &command);
 } // namespace Util
