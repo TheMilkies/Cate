@@ -1,0 +1,5 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/krystal/Desktop/Cate/CateRewrite'
+make: 'cate' is up to date.
+make: Leaving directory '/home/krystal/Desktop/Cate/CateRewrite'
+ 
