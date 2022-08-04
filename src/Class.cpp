@@ -34,7 +34,7 @@ void Class::build_objects()
 		
 		needs_rebuild = true;
 		command = compiler + " -c " + files[i] + " -o " + object_files[i] + " " + flags;
-		std::cout << command << "\n";
+		//std::cout << command << "\n"; //for debug
 		Util::system(command); //will exit if it can't compile
 	}
 
@@ -96,9 +96,7 @@ void Class::set_property(int line, string& property, string& value)
 	else if (property == "build_directory" || property == "object_folder")
 		out_dir = value;
 	else
-	{
 		Util::error(line, "\"" + property + "\" cannot be set to a string");
-	}
 }
 
 void Class::check()
