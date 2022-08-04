@@ -8,8 +8,12 @@ SIZE_OPTIMIZATION_FLAGS := -O3 -ffunction-sections -fdata-sections -Wl,--gc-sect
 SOURCES := $(wildcard $(SRC)/*.cpp)
 OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
 
-cate: $(OBJECTS)
+all: build_directory cate
+
+build_directory:
 	mkdir -p $(OBJ)
+
+cate: $(OBJECTS)
 	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)
 	@strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
 
