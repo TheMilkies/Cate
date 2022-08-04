@@ -2,6 +2,11 @@
 #define Class_HPP
 #include "Util.hpp"
 
+/*
+	why hello there!
+	i know most of this is bad, i honestly don't care too much because it's my first project.
+*/
+
 extern bool parser_exit;
 
 class Class
