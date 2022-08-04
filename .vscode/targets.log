@@ -1,34 +1,59 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
-
 # GNU Make 4.1
+ 
 # Built for x86_64-pc-linux-gnu
+ 
 # Copyright (C) 1988-2014 Free Software Foundation, Inc.
+ 
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+ 
 # This is free software: you are free to change and redistribute it.
+ 
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Thu Aug  4 16:16:03 2022
+ 
+# Make data base, printed on Thu Aug  4 17:55:52 2022
+ 
 
 # Variables
+ 
 
+ 
 # automatic
+ 
 <D = $(patsubst %/,%,$(dir $<))
+ 
 # automatic
+ 
 ?F = $(notdir $?)
+ 
 # environment
+ 
 DESKTOP_SESSION = Lubuntu
+ 
 # default
+ 
 .SHELLFLAGS := -c
+ 
 # makefile (from 'makefile', line 3)
+ 
 OBJ := build
+ 
 # makefile (from 'makefile', line 2)
+ 
 SRC := src
+ 
 # environment
+ 
 XDG_SESSION_TYPE = x11
+ 
 # automatic
+ 
 ?D = $(patsubst %/,%,$(dir $?))
+ 
 # automatic
+ 
 @D = $(patsubst %/,%,$(dir $@))
 # environment
 XAUTHORITY = /home/krystal/.Xauthority
@@ -145,7 +170,7 @@ XDG_SESSION_ID = c2
 # environment
 USER = krystal
 # makefile
-.DEFAULT_GOAL := cate
+.DEFAULT_GOAL := all
 # environment
 XDG_CURRENT_DESKTOP = LXDE
 # environment
@@ -209,7 +234,7 @@ LANG = C
 # environment
 VSCODE_PID = 29283
 # variable set hash-table stats:
-# Load=98/1024=10%, Rehash=0, Collisions=12/130=9%
+# Load=98/1024=10%, Rehash=0, Collisions=13/134=10%
 
 # Pattern-specific Variable Values
 
@@ -217,16 +242,16 @@ VSCODE_PID = 29283
 
 # Directories
 
-# . (device 2051, inode 6045763): 9 files, no impossibilities.
+# . (device 2051, inode 6045763): 13 files, no impossibilities.
 # src (device 2051, inode 6045765): 20 files, no impossibilities.
 
-# 29 files, no impossibilities in 2 directories.
+# 33 files, no impossibilities in 2 directories.
 
 # Implicit Rules
 
 build/%.o: src/%.cpp
-#  recipe to execute (from 'makefile', line 20):
-	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS) -l:$(OBJ)/libfl-dev
+#  recipe to execute (from 'makefile', line 25):
+	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS)
 
 # 1 implicit rules, 0 (0.0%) terminal.
 
@@ -238,12 +263,14 @@ build/main.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-# Not a target:
-all:
+all: build_directory cate
 #  Command line target.
 #  Implicit rule search has been done.
 #  File does not exist.
-#  File has not been updated.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/4=0%
 
 # Not a target:
 build/Lexer.o:
@@ -263,18 +290,24 @@ src/lexer.l:
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 uninstall:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 27):
+#  recipe to execute (from 'makefile', line 32):
 	@rm /usr/bin/cate
 	@echo "Unnstalled cate!"
 
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-04 16:15:17.504206331
+#  Last modified 2022-08-04 17:53:26.824729366
 #  File has been updated.
 #  Successfully updated.
 
@@ -288,9 +321,8 @@ cate: build/Parser.o build/Library.o build/Lexer.o build/Class.o build/main.o bu
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 12):
+#  recipe to execute (from 'makefile', line 17):
 	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)
- 
 	@strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
 
 # Not a target:
@@ -305,18 +337,46 @@ build/Class.o:
 #  Modification time never checked.
 #  File has not been updated.
 
+build_directory:
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+ 
+# @ := build_directory
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := 
+# automatic
+# | := 
+# automatic
+# < := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/12=8%
+#  recipe to execute (from 'makefile', line 14):
+	mkdir -p $(OBJ)
+
 clean:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 31):
+#  recipe to execute (from 'makefile', line 36):
 	@rm -rf CATE_DEBUG obj/*.o
 
 lex: src/lexer.l
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 16):
+#  recipe to execute (from 'makefile', line 21):
 	flex --noyywrap -osrc/Lexer.cpp --header-file=src/Lexer.hpp src/lexer.l
 	sed -i 's/yywrap() { return 1;}/yywrap();/g' src/Lexer.hpp
 
@@ -336,24 +396,24 @@ install: cate
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 23):
+#  recipe to execute (from 'makefile', line 28):
 	@cp cate /usr/bin
 	@echo "Installed cate!"
 
 # files hash-table stats:
-# Load=17/1024=2%, Rehash=0, Collisions=1/36=3%
+# Load=18/1024=2%, Rehash=0, Collisions=1/43=2%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 46 / storage = 474 B / avg = 10 B
-# current buf: size = 8162 B / used = 474 B / count = 46 / avg = 10 B
+# strcache buffers: 1 (0) / strings = 51 / storage = 540 B / avg = 10 B
+# current buf: size = 8162 B / used = 540 B / count = 51 / avg = 10 B
 
-# strcache performance: lookups = 60 / hit rate = 23%
+# strcache performance: lookups = 71 / hit rate = 28%
 # hash-table stats:
-# Load=46/8192=1%, Rehash=0, Collisions=2/60=3%
-# Finished Make data base on Thu Aug  4 16:16:03 2022
+# Load=51/8192=1%, Rehash=0, Collisions=2/71=3%
+# Finished Make data base on Thu Aug  4 17:55:52 2022
 
  
