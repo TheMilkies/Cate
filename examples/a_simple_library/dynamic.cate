@@ -1,0 +1,5 @@
+Library library(dynamic)
+library. out = "out/libhello_printer.so"
+library.files = {recursive("source/*.c")}
+library.compiler = "gcc"
+library.build()
