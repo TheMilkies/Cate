@@ -1,0 +1,16 @@
+/*Library*/
+Library example_library(static);
+example_library.compiler = "gcc";
+example_library.files = {"lib_example.c"};
+example_library.flags = "-O2";
+example_library.out = "out/libexample.a";
+example_library.build();
+
+/*Project*/
+Project example_project;
+example_project.compiler = "gcc";
+example_project.files = recursive("src/*.c");
+example_project.flags = "-O2";
+example_project.libraries = {"outs/libexample.a"};
+example_project.out = "outs/program";
+example_project.build();
