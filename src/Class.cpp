@@ -21,7 +21,25 @@ void Class::build_objects()
 	if (object_files.size() != files.size())
 		Util::build_error(name, "somehow the amount of object files  is not equal to hte amount of source files");
 	
-	string command = "";
+	string command = "mkdir -p " + out_dir;
+	Util::system(command);
+
+	if (Util::get_modified_time(out_name.c_str()) == 0) //if file doesn't exist
+		needs_rebuild = true;
+
+	for (int i = 0; i < files.size(); i++)
+	{
+		if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str()))
+			continue;
+		
+		needs_rebuild = true;
+		command = compiler + " -c " + files[i] + " -o " + object_files[i] + " " + flags;
+		std::cout << command << "\n";
+		Util::system(command); //will exit if it can't compile
+	}
+
+	if (!needs_rebuild) //don't check libraries if you don't need to
+		return;
 
 	for(auto lib : libraries)
 	{
@@ -44,19 +62,6 @@ void Class::build_objects()
 		all_library_paths += "-L" + path + ' ';
 	}
 
-	command = "mkdir -p " + out_dir;
-	Util::system(command);
-
-	for (int i = 0; i < files.size(); i++)
-	{
-		if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str()))
-			continue;
-		
-		needs_rebuild = true;
-		command = compiler + " -c " + files[i] + " -o " + object_files[i] + " " + flags;
-		std::cout << command << "\n";
-		Util::system(command); //will exit if it can't compile
-	}
 	already_built = true;
 }
 
