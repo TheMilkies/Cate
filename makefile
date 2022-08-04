@@ -9,6 +9,7 @@ SOURCES := $(wildcard $(SRC)/*.cpp)
 OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
 
 cate: $(OBJECTS)
+	mkdir -p $(OBJ)
 	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)
 	@strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
 
@@ -17,7 +18,7 @@ lex: src/lexer.l
 	sed -i 's/yywrap() { return 1;}/yywrap();/g' src/Lexer.hpp
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS) -l:$(OBJ)/libfl-dev
+	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS)
 
 install: cate
 	@cp cate /usr/bin
