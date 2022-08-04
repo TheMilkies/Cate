@@ -1,7 +1,7 @@
 #if !defined(Util_HPP)
 #define Util_HPP
 #include "inc.hpp"
-#define CATE_VERSION "1.9.1"
+#define CATE_VERSION "v1.0.0"
 
 extern bool lexer_exit;
 extern int lexer_line;

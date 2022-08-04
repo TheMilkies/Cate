@@ -5,4 +5,3 @@ cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3"
 cate.libs = {"build/libfl.a"};
 cate.out = "cate"
 cate.build()
-system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate");
