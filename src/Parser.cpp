@@ -220,32 +220,25 @@ void Parser::recursive(string& child, bool keep_path)
 	string path = current.value.substr(0, location),
 						extention = current.value.substr(location+1);
 
-	if (path.find('*') != string::npos || extention.find('*') != string::npos) //if if more than one found
+	if (path.find('*') != string::npos || extention.find('*') != string::npos) //if more than one found
 		Util::error("Multiple wildcards are not allowed");
 
 	//check if directory exists
 	if (!fs::is_directory(path))
-		Util::error("Directory \"" + path + "\" doesn't exit");
+		Util::error(current.in_line, "Directory \"" + path + "\" doesn't exit");
 
+	//in codegen, it's going to add these as `-L$THIS_PATH`
 	if (child == "libs" || child == "libraries")
-	{
 		if(current_class->library_paths.find(path) == current_class->library_paths.end())
 			current_class->library_paths.insert(path);
-	}
-	
-		
+
 	for (auto &p : fs::recursive_directory_iterator(path))
     {
         if (p.path().extension() == extention)
 			if (keep_path)
-			{
 				current_class->add_to_property(current.in_line, child, p.path().string());
-			}
 			else
-			{
 				current_class->add_to_property(current.in_line, child, p.path().stem().string());
-			}
-			
     }
 
 	expect(ParserToken::RPAREN);
