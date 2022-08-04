@@ -9,10 +9,11 @@
 #include <queue>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <map>
 #include "robin_hood.hpp"
 namespace fs = std::experimental::filesystem;
 
 using std::string;
 using std::vector;
-using robin_hood::unordered_map;
+using std::map;
 #endif

@@ -9,8 +9,10 @@ extern int lexer_line;
 namespace Util
 {
 	void error(string problem);
+
 	void lexer_error(std::string problem);
 	void error(int line, string problem);
+	void fatal_error(int line, string problem);
 	void build_error(string name, string problem);
 	string remove_quotes(string &s);
 	void replace_all(string& s, string const& toReplace, string const& replaceWith);

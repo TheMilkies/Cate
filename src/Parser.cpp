@@ -78,10 +78,13 @@ void Parser::parse()
 
 		case ParserToken::IDENTIFIER:
 			if (!is_defined(current.value))
-				Util::error(current.in_line, "\"" + current.value + "\" is not defined.");
+				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined.");
 
 			parent = current.value;
 			current_class = classes[parent];
+
+			if (!is_defined(parent))
+				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined.");
 
 			expect(ParserToken::DOT);
 			expect(ParserToken::IDENTIFIER);
@@ -90,7 +93,9 @@ void Parser::parse()
 			{
 				expect(ParserToken::LPAREN);
 				expect(ParserToken::RPAREN);
-				current_class->build();
+				if (current_class == nullptr)
+					Util::build_error("Null", "It's null");
+				current_class->build();				
 			}
 			else
 			{
