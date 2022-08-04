@@ -83,9 +83,6 @@ void Parser::parse()
 			parent = current.value;
 			current_class = classes[parent];
 
-			if (!is_defined(parent))
-				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined.");
-
 			expect(ParserToken::DOT);
 			expect(ParserToken::IDENTIFIER);
 			child = current.value;
@@ -238,7 +235,7 @@ void Parser::recursive(string& child, bool keep_path)
 		if(current_class->library_paths.find(path) == current_class->library_paths.end())
 			current_class->library_paths.insert(path);
 
-	for (auto &p : fs::recursive_directory_iterator(path))
+	for (auto &p : fs::directory_iterator(path))
     {
         if (p.path().extension() == extention)
 			if (keep_path)
