@@ -19,7 +19,7 @@ private:
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;
-	unordered_map<string, Class*> classes;
+	map<string, Class*> classes;
 	int index = -1;
 	inline ParserToken next() {return tokens[++index];}
 	void expect(ParserToken::ParserTokens type);
