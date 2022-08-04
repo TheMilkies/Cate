@@ -1,0 +1,5 @@
+Project proj
+proj.files = {recursive("src/*.cpp"), recursive("src/windows/*.cpp")}
+proj.compiler = "x86_64-w64-mingw32-g++"
+proj.out = "test.exe"
+proj.build()

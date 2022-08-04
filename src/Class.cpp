@@ -15,8 +15,7 @@ void Class::setup()
 
 void Class::build_objects()
 {
-	if (already_built)
-		return;
+	if (already_built) return;
 
 	if (object_files.size() != files.size())
 		Util::build_error(name, "somehow the amount of object files  is not equal to hte amount of source files");
@@ -29,7 +28,7 @@ void Class::build_objects()
 
 	for (int i = 0; i < files.size(); i++)
 	{
-		if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str()))
+		if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
 			continue;
 		
 		needs_rebuild = true;
@@ -38,7 +37,7 @@ void Class::build_objects()
 		Util::system(command); //will exit if it can't compile
 	}
 
-	if (!needs_rebuild) //don't check libraries if you don't need to
+	if (!needs_rebuild) //don't add libraries if you don't need to
 		return;
 
 	for(auto lib : libraries)
