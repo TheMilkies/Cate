@@ -15,10 +15,10 @@ build_directory:
 	@mkdir -p $(OBJ)
 
 cate: $(OBJECTS)
-	@$(CC) $^ -o cate $(CFLAGS)
+	@$(CC) $^ -o cate $(CFLAGS) -Lextra_libraries -lfl
 
 smol_cate: $(OBJECTS)
-	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)
+	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)  -Lextra_libraries -lfl
 	@strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
 
 lex: src/lexer.l
