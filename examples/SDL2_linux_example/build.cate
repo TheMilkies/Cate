@@ -1,0 +1,14 @@
+Library sdl_wrapper(static);
+sdl_wrapper.out = "outs/libsdl_wrapper.a";
+sdl_wrapper.compiler = "g++"
+sdl_wrapper.flags = "-O2";
+sdl_wrapper.files = {recursive("src/libsdl_wrapper/*.cpp")};
+sdl_wrapper.includes = {"include/"};
+sdl_wrapper.build();
+
+Project test;
+test.compiler = "g++"
+test.files = {"src/main.cpp"};
+test.libs =  {"outs/libsdl_wrapper.a" "SDL2"};
+test.includes = {"include/"};
+test.build();
