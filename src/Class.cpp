@@ -26,14 +26,19 @@ void Class::build_objects()
 	if (Util::get_modified_time(out_name.c_str()) == 0) //if file doesn't exist
 		needs_rebuild = true;
 
+	for(auto &path : include_paths)
+	{
+		all_include_paths += "-I" + path + ' ';
+	}
+
 	for (int i = 0; i < files.size(); i++)
 	{
 		if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
 			continue;
 		
 		needs_rebuild = true;
-		command = compiler + " -c " + files[i] + " -o " + object_files[i] + " " + flags;
-		//std::cout << command << "\n"; //for debug
+		command = compiler + ' ' + all_include_paths + " -c " + files[i] + " -o " + object_files[i] + " " + flags;
+		std::cout << command << "\n"; //for debug
 		Util::system(command); //will exit if it can't compile
 	}
 
@@ -70,6 +75,8 @@ bool Class::clear_property(int line, string& property)
 		files.clear();
 	else if (property == "libraries" || property == "libs")
 		libraries.clear();
+	else if (property == "includes" || property == "include_paths")
+		include_paths.clear();
 	else
 		Util::error(line, "\"" + property + "\" cannot be set to an array");
 	
@@ -80,8 +87,10 @@ void Class::add_to_property(int line, string& property, string value)
 {
 	if (property == "files")
 		files.emplace_back(value);
-	if (property == "libraries" || property == "libs")
+	else if (property == "libraries" || property == "libs")
 		libraries.emplace_back(value);
+	else if (property == "includes" || property == "include_paths")
+		include_paths.emplace_back(value);
 }
 
 void Class::set_property(int line, string& property, string& value)
