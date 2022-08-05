@@ -35,8 +35,7 @@ To build with Make, run `cate build.cate`,  or if you want a smaller executable,
 To install, use `sudo ./cate install.cate`, or `sudo make install` if you prefer installing with make.
 
 ## How to use Cate
-To build another project, run `cate [filename.ending with .cate]` 
-example: `cate build.cate`
+To build another project, run `cate [filename.ending with .cate]` (example: `cate build.cate)
 
 For starting a project, look at the [examples folder](examples/).
 
