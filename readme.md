@@ -43,4 +43,12 @@ PROJECT_NAME.flags = "-O2"; /*optional*/
 PROJECT_NAME.files = {"src/main.cpp", recursive("src/subfolder.cpp")};
 PROJECT_NAME.libs = {"ExampleLibrary", "lib/libexample_local_library.so"}; /*optional*/
 PROJECT_NAME.out = "outs/example_executable"; /*optional. default is the project name in the current directory*/
-PROJECT_NAME.build(); /*will start building*/```
+PROJECT_NAME.build(); /*will start building*/
+```
+
+## Credits
+All Milkies have contributed in some way to Cate. Notable contributors are:
+- Yogurt (Main maintainer)
+- Lime (Tester and bug fixer)
+- Lemon (Secondary bug fixer)
+- Latte (Feature implementer) 
