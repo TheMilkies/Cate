@@ -1,16 +1,18 @@
 /*Library*/
-Library example_library(static);
-example_library.compiler = "gcc";
-example_library.files = {"lib_example.c"};
-example_library.flags = "-O2";
-example_library.out = "out/libexample.a";
-example_library.build();
+Library library(static);
+library.compiler = "gcc";
+library.include_paths = {"include/libexample/"};
+library.files = {"libs/lib_example.c"};
+library.flags = "-O2";
+library.out = "outs/libexample.a";
+library.build();
 
 /*Project*/
-Project example_project;
-example_project.compiler = "gcc";
-example_project.files = recursive("src/*.c");
-example_project.flags = "-O2";
-example_project.libraries = {"outs/libexample.a"};
-example_project.out = "outs/program";
-example_project.build();
+Project project;
+project.compiler = "gcc";
+library.include_paths = {"include/libexample/"};
+project.files = recursive("src/*.c");
+project.flags = "-O2";
+project.libraries = {"outs/libexample.a"};
+project.out = "outs/program";
+project.build();
