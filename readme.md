@@ -45,3 +45,6 @@ All Milkies have contributed in some way to Cate. Notable contributors are:
 - Lime (Tester and bug fixer)
 - Lemon (Secondary bug fixer)
 - Latte (Feature implementer) 
+
+## How to contribute
+Just make a pull request.
