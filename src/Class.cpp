@@ -26,10 +26,12 @@ void Class::build_objects()
 	if (Util::get_modified_time(out_name.c_str()) == 0) //if file doesn't exist
 		needs_rebuild = true;
 
-	for(auto &path : include_paths)
+	if (include_paths.size() > 0) // 2% speed? yes please
 	{
-		all_include_paths += "-I" + path + ' ';
+		for(auto &path : include_paths)
+			all_include_paths += "-I" + path + ' ';
 	}
+	
 
 	for (int i = 0; i < files.size(); i++)
 	{
@@ -47,15 +49,15 @@ void Class::build_objects()
 
 	for(auto lib : libraries)
 	{
-		Util::remove_extention(lib);
-		Util::replace_all(lib, "lib", "");
-
 		//path check
 		int position_of_last_slash = lib.find_last_of('/'); 
 		string path = lib.substr(0, position_of_last_slash+1);
 
-		if (library_paths.find(path) == library_paths.end()) //if not there
-			all_library_paths += "-L" + path + ' ';
+		Util::remove_extention(lib);
+		Util::replace_all(lib, "lib", "");
+
+		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not there
+			library_paths.insert(path);
 		
 		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
 		all_libraries += "-l" + lib + ' ';
