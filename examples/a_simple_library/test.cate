@@ -2,5 +2,6 @@ Project test
 test.libs = {"out/libhello_printer.a"}
 test.compiler = "gcc"
 test.files = {"test/test.c"}
+test.include_paths = {"include/"}
 test.out = "testing"
 test.build()

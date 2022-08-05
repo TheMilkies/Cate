@@ -212,6 +212,11 @@ void Parser::array(string& child)
 
 void Parser::recursive(string& child, bool keep_path)
 {
+	if (child != "files")
+	{
+		Util::fatal_error(current.in_line, child + " only files can be set to result of recursive search.");
+	}
+	
 	expect(ParserToken::LPAREN);
 	expect(ParserToken::STRING_LITERAL);
 	
