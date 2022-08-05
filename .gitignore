@@ -2,3 +2,4 @@ build/*.o
 cate
 .vscode/
 src/inc.hpp.gch
+*.o
