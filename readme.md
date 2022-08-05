@@ -7,7 +7,7 @@
 </p>
 
 ## Introduction
-Cate is a simple build system for the C family of languages (minus C#). While not as feature rich as CMake or as fast as Ninja-build, Cate acheives a simple syntax that doesn't feel much different to an actual programming language.
+Cate is a simple build system for the C family of languages (minus C#). While not as feature rich as CMake or as fast as Ninja-build, Cate achieves a simple syntax that doesn't feel much different to an actual programming language.
 
 Unlike CMake, Cate is not Turing complete. It doesn't feature if-statements, loops, functions, or anything that is not related to building. 
 
@@ -17,14 +17,14 @@ Unlike CMake, Cate is not Turing complete. It doesn't feature if-statements, loo
 - Cate was written by a beginner programmer and its codebase is terrible.
 - It currently doesn't support threading.
 - No Windows support.
-- Cate uses robin_hood hashing because it makes Cate 20% faster 
+- Cate uses robin_hood hashing, since it's 20% more efficient (on average)
 
 ## Building Cate
 A Build system needs to be built too. this step will be easy though! 
 Dependencies are:
 - A *NIX operating system (Linux, BSD, MacOS, etc)
 - A C++17 compiler (I used g++)
-- GNU Flex 2.6.4 (or greater)
+- GNU Flex 2.6.4 or greater ([read setup here](extra_libraries/flex_setip.md))
 - GNU Make (if you don't have Cate already installed)
 
 ### Building with GNU Make
@@ -35,8 +35,7 @@ To build with Make, run `cate build.cate`,  or if you want a smaller executable,
 To install, use `sudo ./cate install.cate`, or `sudo make install` if you prefer installing with make.
 
 ## How to use Cate
-To build another project, run `cate [filename.ending with .cate]` 
-example: `cate build.cate`
+To build another project, run `cate [filename.ending with .cate]` (example: `cate build.cate)
 
 For starting a project, look at the [examples folder](examples/).
 
