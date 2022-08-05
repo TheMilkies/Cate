@@ -1,5 +1,6 @@
 Project proj
 proj.files = {recursive("src/*.cpp"), recursive("src/linux/*.cpp")}
+proj.includes = {"include/"};
 proj.compiler = "g++"
 proj.out = "test"
 proj.build()

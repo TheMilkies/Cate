@@ -12,9 +12,9 @@ extern bool parser_exit;
 class Class
 {
 public:
-	string all_object_files, all_libraries, all_library_paths;
+	string all_object_files, all_libraries, all_library_paths, all_include_paths;
 	string name, flags, out_name, out_dir, compiler;
-	vector<string> files, libraries, object_files;
+	vector<string> files, libraries, object_files, include_paths;
 	robin_hood::unordered_set<string> library_paths;
 
 	bool is_static, is_library;
