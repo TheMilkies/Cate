@@ -39,7 +39,6 @@ Project PROJECT_NAME; /*project declarartion*/
 PROJECT_NAME.compiler = "g++"; /*required*/
 PROJECT_NAME.flags = "-O2"; /*optional*/
 PROJECT_NAME.files = {"src/main.cpp", recursive("src/subfolder/*.cpp")};
-/*BE AWARE THAT RECURSIVE GOES THROUGH ALL SUBDIRECTORIES IN SUBDIRECTORY*/
 PROJECT_NAME.libs = {"ExampleLibrary", "lib/libexample_local_library.so"}; /*optional*/
 PROJECT_NAME.out = "outs/example_executable"; /*optional. default is the project name in the current directory*/
 PROJECT_NAME.build(); /*will start building*/```
