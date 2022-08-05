@@ -1,4 +1,4 @@
-# Cate: A simple build system
+# Cate: A Build System for the sane.
 <h3 align="center">
   Cate is a simple build for C/C++ with C-like syntax.
 </h3>
@@ -35,16 +35,10 @@ To build with Make, run `cate build.cate`,  or if you want a smaller executable,
 To install, use `sudo ./cate install.cate`, or `sudo make install` if you prefer installing with make.
 
 ## How to use Cate
-That's a good question we're not sure of yet. Follow this example for a project
-```css
-Project PROJECT_NAME; /*project declaration*/
-PROJECT_NAME.compiler = "g++"; /*required*/
-PROJECT_NAME.flags = "-O2"; /*optional*/
-PROJECT_NAME.files = {"src/main.cpp", recursive("src/subfolder.cpp")};
-PROJECT_NAME.libs = {"ExampleLibrary", "lib/libexample_local_library.so"}; /*optional*/
-PROJECT_NAME.out = "outs/example_executable"; /*optional. default is the project name in the current directory*/
-PROJECT_NAME.build(); /*will start building*/
-```
+To build another project, run `cate [filename.ending with .cate]` 
+example: `cate build.cate`
+
+For starting a project, look at the [examples folder](examples/).
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
