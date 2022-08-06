@@ -24,7 +24,7 @@ A Build system needs to be built too. this step will be easy though!
 Dependencies are:
 - A *NIX operating system (Linux, BSD, MacOS, etc)
 - A C++17 compiler (I used g++)
-- GNU Flex 2.6.4 or greater ([read setup here](extra_libraries/flex_setup.md))
+- GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md))
 - GNU Make (if you don't have Cate already installed)
 
 ### Building with GNU Make
