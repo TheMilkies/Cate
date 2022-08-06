@@ -1,7 +1,7 @@
 CC = g++
 SRC := src
 OBJ := build
-CFLAGS := -std=c++17 -fpermissive -lstdc++fs -g
+CFLAGS := -std=c++17 -fpermissive -lstdc++fs -pthread
 SIZE_OPTIMIZATION_FLAGS := -O3 -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions \
 -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none
 
