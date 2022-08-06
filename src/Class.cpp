@@ -1,5 +1,7 @@
 #include "Class.hpp"
 
+extern int thread_count;
+
 void Class::setup()
 {
 	check();
@@ -11,6 +13,17 @@ void Class::setup()
 		all_object_files += n + " ";
 		object_files.emplace_back(n);
 	}
+}
+
+//this is for threads.
+void Class::build_object(int i)
+{
+	if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
+		return;
+	string command = compiler + ' ' + all_include_paths + "-c " + files[i] + " -o " + object_files[i] + " " + flags;
+	std::cout << command << "\n"; //for debug
+	Util::system(command); //will exit if it can't compile
+	needs_rebuild = true;
 }
 
 void Class::build_objects()
@@ -31,17 +44,27 @@ void Class::build_objects()
 		for(auto &path : include_paths)
 			all_include_paths += "-I" + path + ' ';
 	}
-	
 
-	for (int i = 0; i < files.size(); i++)
+	if (thread_count >= files.size())
 	{
-		if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
-			continue;
+		thread_count = files.size();
+	}
+	
+	for (int i = 0; i < files.size(); i+=thread_count)
+	{
+		for (int j = 0; j < thread_count; j++)
+		{
+			if (i+j > files.size())
+				break;
+			
+			threads.emplace_back(&Class::build_object, this, i+j);
+		}
+		for(auto &thread : threads)
+		{
+			thread.join();
+		}
 		
-		needs_rebuild = true;
-		command = compiler + ' ' + all_include_paths + " -c " + files[i] + " -o " + object_files[i] + " " + flags;
-		std::cout << command << "\n"; //for debug
-		Util::system(command); //will exit if it can't compile
+		threads.clear();
 	}
 
 	if (!needs_rebuild) //don't add libraries if you don't need to
@@ -54,7 +77,7 @@ void Class::build_objects()
 		string path = lib.substr(0, position_of_last_slash+1);
 
 		Util::remove_extention(lib);
-		Util::replace_all(lib, "lib", "");
+		Util::replace_all(lib, "lib", ""); //THIS IS AN ISSUE
 
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not there
 			library_paths.insert(path);
