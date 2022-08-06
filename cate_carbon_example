@@ -10,7 +10,7 @@ library.build();
 /*Project*/
 Project project;
 project.compiler = "gcc";
-library.include_paths = {"include/libexample/"};
+project.include_paths = {"include/libexample/"};
 project.files = recursive("src/*.c");
 project.flags = "-O2";
 project.libraries = {"outs/libexample.a"};

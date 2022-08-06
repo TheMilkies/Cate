@@ -397,7 +397,7 @@ static const flex_int16_t yy_accept[72] = { 0,
          0
 };
 
-/* Character equivalence-class mapping */
+/* Character equivalence-class unordered_mapping */
 static const YY_CHAR yy_ec[256] = { 0,
          1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
          1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -429,7 +429,7 @@ static const YY_CHAR yy_ec[256] = { 0,
          1,    1,    1,    1,    1
 };
 
-/* Character meta-equivalence-class mappings */
+/* Character meta-equivalence-class unordered_mappings */
 static const YY_CHAR yy_meta[35] = { 0,
          1,    1,    1,    1,    1,    1,    2,    1,    2,    1,
          3,    1,    1,    3,    3,    3,    3,    3,    3,    3,
