@@ -1,5 +1,6 @@
 build/*.o
 cate
+install.sh
 .vscode/
 src/inc.hpp.gch
 *.o

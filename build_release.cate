@@ -1,0 +1,3 @@
+system("cate build.cate");
+system("echo cp -f cate /usr/bin/cate > install.sh");
+system("tar -czvf release.tar.gz cate install.sh");
