@@ -2,6 +2,8 @@
 
 bool parser_exit;
 
+int thread_count = 4;
+
 int main(int argc, const char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); // because SPEED
