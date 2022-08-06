@@ -17,7 +17,7 @@ public:
 	vector<string> files, libraries, object_files, include_paths;
 	robin_hood::unordered_set<string> library_paths;
 
-	bool is_static, is_library;
+	bool is_static;
 	bool already_built = false, needs_rebuild = false;
 	
 	Class() {}

@@ -73,7 +73,6 @@ void Parser::parse()
 			expect(ParserToken::IDENTIFIER);
 			define(temp_type, current.value);
 			current_class = classes[current.value];
-			current_class->is_library = true;
 			expect(ParserToken::LPAREN);
 			expect(ParserToken::STATIC, ParserToken::DYNAMIC);
 			temp_type = current.type;
