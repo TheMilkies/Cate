@@ -10,10 +10,13 @@ Library::~Library()
 
 void Library::build() 
 {
-	setup();
-	build_objects();
-	if (!needs_rebuild)
-		return;
+	if (!already_built)
+	{
+		setup();
+		build_objects();
+		if (!needs_rebuild)
+			return;
+	}
 	
 	string command;
 	if (is_static)
