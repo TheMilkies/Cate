@@ -27,7 +27,10 @@ int main(int argc, char *argv[])
 		string arg = argv[i];
 		if (arg.rfind("-t", 0) == 0)//if starts with
 		{
-			thread_count= std::stoi(arg.substr(2, arg.length()));
+			if (arg.length() < 3)
+				Util::fatal_error(0, "Invalid argument " + arg);
+			else
+				thread_count= std::stoi(arg.substr(2, arg.length()));
 		}
 		else
 		{
@@ -36,8 +39,9 @@ int main(int argc, char *argv[])
 			else //add .cate ending
 				file_name = strcat(argv[i], ".cate");
 		}
-	
 	}
+
+	std::cout << "\x1b[34mCate stated!\x1b[0m Thread count: " << thread_count << "\n";
 
 	Parser parser(file_name);
 	parser.parse();
