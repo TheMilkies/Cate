@@ -42,8 +42,7 @@ For starting a project, look at the [examples folder](examples/).
 ## Known issues
 These issues are known and will be fixed soon!
 1. Very slow build times. this is due to it creating many threads instead of just checking what it needs to build and then starting threads.
-2. It replaces all mentions of "lib" with an empty string. this is a mistake I made and will fix.
-3. It will always rebuild if there are more files than threads.
+2. It will always rebuild if there are more files than threads.
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
