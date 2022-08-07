@@ -48,8 +48,10 @@ Cate follows an object syntax. it'd be very easy to read for C/C++ programmers. 
 ### Classes
 There are only two classes you can create.
 1. `Project1: A thing that builds an executable. 
+
 **Example**: `Project proj;`
-2. `Library(type)`: A thing that builds a library of specified type (can be `static` xor `dynamic`)
+
+2. `Library(type)`: A thing that builds a library of specified type (can be `static` xor `dynamic`) 
 **Example**: `Library slib(static);`
 **Example**: `Library dlib(dynamic);`
 
@@ -60,20 +62,20 @@ Just like in C/C++, properties follow the `object.property = Thing;`.
 Here are the classes' properties:
 - `String out` is the output file. can only be a string literal. Not required (defaults to identifier).
 **Example**: `proj.out = "outs/yay";`
-- `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or `recursive(/*stuff*/)`. Required
+- `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or `recursive(/*stuff*/)`. Required. 
 **Example**: `proj.files = {"main.cpp", recursive("more/*.cpp")} `
-- `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required.
-**Example**: `proj.libraries = {"SDL2", "lib_out/local_lib.a"}`
+- `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required. 
+**Example**: `proj.libraries = {"SDL2", "lib_out/local_lib.a"}` 
 - `Array includes|include_paths` holds the folder names of the class's includes. can only be set to an array. 
 **Example**: `proj.includes = {"lib_out/"}`
-- `String flags` is the class's compiler flags. can only be a string. Not required.
+- `String flags` is the class's compiler flags. can only be a string. Not required. 
 **Example**: `proj.flags = "-O2";`
-- `String compiler` is the class's compiler, it can only be a string. Required.
+- `String compiler` is the class's compiler, it can only be a string. Required. 
 **Example**: `proj.compiler = "g++";`
 
 ### Class methods
 There is **only one** method currently.
-- `build()`starts the building process, should NOT be called twice.
+- `build()` starts the building process, should NOT be called twice.
 
 ## Known issues
 These issues are known and will be fixed soon!
