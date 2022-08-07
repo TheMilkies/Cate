@@ -10,10 +10,13 @@ Project::~Project()
 
 void Project::build() 
 {
-	setup();
-	build_objects();
-	if (!needs_rebuild)
-		return;
+	if (!already_built)
+	{
+		setup();
+		build_objects();
+		if (!needs_rebuild)
+			return;
+	}
 	string command = compiler + " -o " + out_name + " " + all_object_files + flags + " " + all_library_paths + all_libraries + " " + all_include_paths;
 	std::cout << command << '\n';
 	Util::system(command);
