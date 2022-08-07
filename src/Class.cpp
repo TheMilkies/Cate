@@ -76,13 +76,13 @@ void Class::build_objects()
 		int position_of_last_slash = lib.find_last_of('/'); 
 		string path = lib.substr(0, position_of_last_slash+1);
 
-		Util::remove_extention(lib);
-		Util::replace_all(lib, "lib", ""); //THIS IS AN ISSUE
-
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not there
 			library_paths.insert(path);
-		
+
+		Util::remove_extention(lib);
 		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
+		Util::replace_all(lib, "lib", ""); //THIS IS AN ISSUE
+		
 		all_libraries += "-l" + lib + ' ';
 	}
 
