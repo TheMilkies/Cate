@@ -79,14 +79,14 @@ There is **only one** method currently.
 These issues are known and will be fixed soon!
 1. Very slow build times. this is due to it creating many threads instead of just checking what it needs to build and then start threads.
 2. It will always rebuild if there are more files than threads.
-3. It build an empty file for an unknown reason
+3. It builds an empty file for an unknown reason
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
 - Yogurt (Main maintainer)
 - Lime (Tester and bug fixer)
 - Lemon (Secondary bug fixer)
-- Latte (Feature implementer) 
+- Latte (Feature implementer and bug fixer) 
 
 ## How to contribute
 Just make a pull request.
