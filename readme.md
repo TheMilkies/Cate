@@ -18,6 +18,7 @@ Unlike CMake, Cate is not Turing complete. It doesn't feature if-statements, loo
 - It currently doesn't support changing the amount of threads (defaults to 4 with no way to change)
 - No Windows support.
 - Cate uses robin_hood hashing, since it's 20% more efficient (on average)
+- Cate **does not** support `\"` characters in string literals.
 
 ## Building Cate
 A Build system needs to be built too. this step will be easy though! 
@@ -32,17 +33,53 @@ To build with Make, run `make`. or if you want a smaller executable, run `make s
 ### Building with Cate
 To build with Make, run `cate build.cate`,  or if you want a smaller executable, run `cate smol.cate`
 ### Installing
-To install, use `sudo ./cate install.cate`, or `sudo make install` if you prefer installing with make.
+To install, use `sudo cate install.cate`, or `sudo make install` if you prefer installing with make.
 
 ## How to use Cate
 To build another project, run `cate [filename.ending with .cate]` (example: `cate build.cate`)
 
-For starting a project, look at the [examples folder](examples/).
+For starting a project, look at the [examples folder](examples/) or continue reading.
+
+## Syntax things
+Cate follows an object syntax. it'd be very easy to read for C/C++ programmers. Semicolons and commas are optional.
+
+**IMPORTANT NOTE:** Cate **does not** support `\"` characters in string literals.
+
+### Classes
+There are only two classes you can create.
+1. `Project1: A thing that builds an executable. 
+**Example**: `Project proj;`
+2. `Library(type)`: A thing that builds a library of specified type (can be `static` xor `dynamic`)
+**Example**: `Library slib(static);`
+**Example**: `Library dlib(dynamic);`
+
+### Class properties
+Just like in C/C++, properties follow the `object.property = Thing;`.
+ **Note:** a class property cannot be set to another's.
+
+Here are the classes' properties:
+- `String out` is the output file. can only be a string literal. Not required (defaults to identifier).
+**Example**: `proj.out = "outs/yay";`
+- `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or `recursive(/*stuff*/)`. Required
+**Example**: `proj.files = {"main.cpp", recursive("more/*.cpp")} `
+- `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required.
+**Example**: `proj.libraries = {"SDL2", "lib_out/local_lib.a"}`
+- `Array includes|include_paths` holds the folder names of the class's includes. can only be set to an array. 
+**Example**: `proj.includes = {"lib_out/"}`
+- `String flags` is the class's compiler flags. can only be a string. Not required.
+**Example**: `proj.flags = "-O2";`
+- `String compiler` is the class's compiler, it can only be a string. Required.
+**Example**: `proj.compiler = "g++";`
+
+### Class methods
+There is **only one** method currently.
+- `build()`starts the building process, should NOT be called twice.
 
 ## Known issues
 These issues are known and will be fixed soon!
-1. Very slow build times. this is due to it creating many threads instead of just checking what it needs to build and then starting threads.
+1. Very slow build times. this is due to it creating many threads instead of just checking what it needs to build and then start threads.
 2. It will always rebuild if there are more files than threads.
+3. It build an empty file for an unknown reason
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
