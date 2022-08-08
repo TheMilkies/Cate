@@ -18,12 +18,12 @@ void Class::setup()
 //this is for threads.
 void Class::build_object(int i)
 {
-	if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
-		return;
 	if (files[i].empty()) //for some reason it wants to build an empty file, how about No?
 		return;
+	if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
+		return;
 	
-	string command = compiler + ' ' + all_include_paths + "-c " + files[i] + " -o " + object_files[i] + " " + flags;
+	string command = command_template + files[i] + " -o " + object_files[i] + " " + flags;
 	//std::cout << command << "\n"; //for debug
 	Util::system(command); //will exit if it can't compile
 	needs_rebuild = true;
@@ -52,6 +52,8 @@ void Class::build_objects()
 	{
 		thread_count = files.size();
 	}
+
+	command_template = compiler + ' ' + all_include_paths + "-c "; //this is a nice optimization
 	
 	for (int i = 0; i < files.size(); i+=thread_count)
 	{

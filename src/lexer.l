@@ -53,7 +53,6 @@
 "}" {return ParserToken::RCURLY;}
 "Project" {return ParserToken::PROJECT;}
 "Library" {return ParserToken::LIBRARY;}
-"string" {return ParserToken::STRING;}
 "static" {return ParserToken::STATIC;}
 "dynamic" {return ParserToken::DYNAMIC;}
 "recursive" {return ParserToken::RECURSIVE;}

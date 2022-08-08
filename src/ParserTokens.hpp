@@ -24,7 +24,6 @@ static string token_names[] = {
 	"\"recursive\"",
 	"a string literal",
 	"an identifier",
-	"\"string\"",
 };
 	
 struct ParserToken
@@ -47,7 +46,6 @@ struct ParserToken
 		RECURSIVE,
 		STRING_LITERAL,
 		IDENTIFIER,
-		STRING,
 		SYSTEM,
 	} type;
 	std::string value;
