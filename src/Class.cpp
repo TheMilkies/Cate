@@ -20,8 +20,11 @@ void Class::build_object(int i)
 {
 	if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
 		return;
+	if (files[i].empty()) //for some reason it wants to build an empty file, how about No?
+		return;
+	
 	string command = compiler + ' ' + all_include_paths + "-c " + files[i] + " -o " + object_files[i] + " " + flags;
-	std::cout << command << "\n"; //for debug
+	//std::cout << command << "\n"; //for debug
 	Util::system(command); //will exit if it can't compile
 	needs_rebuild = true;
 }
