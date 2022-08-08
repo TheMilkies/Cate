@@ -14,8 +14,7 @@ Unlike CMake, Cate is not Turing complete. It doesn't feature if-statements, loo
 ## Notes
 **Cate will change a lot in the following days, look out for updates that *might* break your project**
 
-- Cate was written by a beginner programmer and its codebase is terrible.
-- It currently doesn't support changing the amount of threads (defaults to 4 with no way to change)
+- Cate was written by a beginner programmer and its codebase is terrible. Fell free to rewrite it if you want!
 - No Windows support.
 - Cate uses robin_hood hashing, since it's 20% more efficient (on average)
 - Cate **does not** support `\"` characters in string literals.
@@ -37,6 +36,11 @@ To install, use `sudo cate install.cate`, or `sudo make install` if you prefer i
 
 ## How to use Cate
 To build another project, run `cate [filename.ending with .cate]` (example: `cate build.cate`)
+The `.cate` extension is not required in the command.  
+
+To change the thread count, add the `-t[number]`flag **before** the filename. there's a bug that doesn't work with it after the filename.
+
+Cate will only build **one** file per command.
 
 For starting a project, look at the [examples folder](examples/) or continue reading.
 
@@ -80,8 +84,7 @@ There is **only one** method currently.
 ## Known issues
 These issues are known and will be fixed soon!
 1. Very slow build times. this is due to it creating many threads instead of just checking what it needs to build and then start threads.
-2. It will always rebuild if there are more files than threads.
-3. It builds an empty file for an unknown reason
+2. **Sometimes** crashes when you include a library
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
