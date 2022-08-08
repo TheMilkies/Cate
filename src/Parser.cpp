@@ -7,7 +7,6 @@
 
 Parser::Parser(const char* file_name)
 {
-	classes.reserve(8);
 	//load yylex into tokens
 	std::ifstream file(file_name);
 	if (file.fail())
@@ -15,19 +14,26 @@ Parser::Parser(const char* file_name)
 	
 	FlexLexer* lexer = new yyFlexLexer(file, std::cout);
 	tokens.reserve(128); //optimization
+	classes.reserve(8);
 
 	ParserToken::ParserTokens type;
 	string value;
+	value.reserve(16);
 	ParserToken temp;
 	while (type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.type = type;
 		temp.value = "";
 		
-		if (type == ParserToken::STRING_LITERAL || type == ParserToken::IDENTIFIER)
+		if (type == ParserToken::STRING_LITERAL)
 		{
 			value = lexer->YYText();
 			Util::remove_quotes(value);
+			temp.value = value;
+		}
+		else if (type == ParserToken::IDENTIFIER)
+		{
+			value = lexer->YYText();
 			temp.value = value;
 		}
 
@@ -175,7 +181,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 
 	if (current.type != type && current.type != type2 && current.type != type3)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + "or " + token_names[type2] + " or " + token_names[type3] +
+		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -186,7 +192,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + "or " + token_names[type2] + " or " + token_names[type3] +
+		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" or " + token_names[type4] + " but got " + token_names[current.type]);
 	}
 }

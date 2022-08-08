@@ -84,8 +84,8 @@ There is **only one** method currently.
 
 ## Known issues
 These issues are known and will be fixed soon!
-1. Very slow build times. this is due to it creating many threads instead of just checking what it needs to build and then start threads.
-2. **Sometimes** crashes when you include a library
+1. Slow build times (depending on thread count). this is due to it creating many threads instead of just checking what it needs to build and then start threads. It's still usually 5% slower than make on average.
+2. **Sometimes** crashes when you include a library.
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
