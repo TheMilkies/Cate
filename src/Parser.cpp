@@ -14,7 +14,7 @@ Parser::Parser(const char* file_name)
 		Util::error("Cannot open file \"" + string(file_name) + "\"");
 	
 	FlexLexer* lexer = new yyFlexLexer(file, std::cout);
-	tokens.reserve(100); //optimization
+	tokens.reserve(128); //optimization
 
 	ParserToken::ParserTokens type;
 	string value;
@@ -32,7 +32,7 @@ Parser::Parser(const char* file_name)
 		}
 
 		temp.in_line = lexer_line;
-		tokens.emplace_back(temp);
+		tokens.push_back(temp);
 	}
 	
 	delete lexer;
@@ -59,7 +59,7 @@ void Parser::define(ParserToken::ParserTokens type, string &identifier)
 void Parser::parse()
 {
 	current = next();
-	string parent, child;
+	string parent, child; parent.reserve(16); child.reserve(16);
 	ParserToken::ParserTokens temp_type;
 	while (current.type != ParserToken::END)
 	{

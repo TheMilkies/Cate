@@ -16,31 +16,38 @@ int main(int argc, char *argv[])
 
 	if (argc < 2)
 	{
-		std::cout << "Cate v1.0.0\nusage: `cate [FILENAME]`";
+		std::cout << "\x1b[34mCate " CATE_VERSION "\x1b[0m\nusage: cate [FILENAME]\nflags: -tNUMBER: sets thread count to NUMBER`";
 		return 1;
 	}
 
 	char*file_name;
 
-	for (int i = 1; i < argc; i++)
+	for (int i = ARGC_START; i < argc; i++)
 	{
 		string arg = argv[i];
-		if (arg.rfind("-t", 0) == 0)//if starts with
+		
+		if (arg[0]== '-')
 		{
-			if (arg.length() < 3)
-				Util::fatal_error(0, "Invalid argument " + arg);
-			else
-				thread_count= std::stoi(arg.substr(2, arg.length()));
+			if (arg[1] == 't')//if starts with
+			{
+				if (arg.length() < 3)
+					Util::fatal_error(0, "Invalid argument " + arg);
+				else
+					thread_count= std::stoi(arg.substr(2, arg.length()));
+			}
 		}
 		else
 		{
+			if (arg == "cate")
+				continue;
+			
 			if (ends_with(arg, ".cate"))
 				file_name = (char*)argv[i];
 			else //add .cate ending
 				file_name = strcat(argv[i], ".cate");
 		}
 	}
-
+	
 	std::cout << "\x1b[34mCate stated!\x1b[0m Thread count: " << thread_count << "\n";
 
 	Parser parser(file_name);
