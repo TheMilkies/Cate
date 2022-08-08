@@ -7,6 +7,7 @@
 
 Parser::Parser(const char* file_name)
 {
+	classes.reserve(8);
 	//load yylex into tokens
 	std::ifstream file(file_name);
 	if (file.fail())

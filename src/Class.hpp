@@ -8,6 +8,7 @@
 */
 
 extern bool parser_exit;
+extern int thread_count;
 
 class Class
 {
@@ -20,7 +21,20 @@ public:
 	bool is_static;
 	bool already_built = false, needs_rebuild = false;
 	
-	Class() {}
+	Class()
+	{
+		//these should be enough for most small/medium-sized projects
+		files.reserve(32);
+		object_files.reserve(32);
+		all_object_files.reserve(256);
+		libraries.reserve(8);
+		library_paths.reserve(8);
+		all_libraries.reserve(128);
+		all_library_paths.reserve(256);
+		include_paths.reserve(32);
+		all_include_paths.reserve(256);
+		threads.reserve(thread_count * 2);
+	}
 	virtual ~Class() {};
 	void build_objects();
 	virtual void build() = 0;
