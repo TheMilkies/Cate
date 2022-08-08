@@ -2,7 +2,7 @@
 
 bool parser_exit;
 
-int thread_count = 2;
+int thread_count = std::thread::hardware_concurrency() * 2;
 
 inline bool ends_with(std::string const & value, std::string const & ending) //written by tshepang from stackoverflow
 {
