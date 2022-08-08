@@ -60,7 +60,7 @@
 [ \t] {;}
 \n {++lexer_line;}
 
-\/\/[^.*]\n {;}
+\/\/[^.*]\n {++lexer_line;}
 \"[^"]+\" {return ParserToken::STRING_LITERAL;}
 \"\" {Util::lexer_error("Empty string literals are not allowed.");}
 \" {Util::lexer_error("Missing ending quote.");}
