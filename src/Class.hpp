@@ -48,6 +48,7 @@ public:
 
 	//threading
 	vector<std::thread>threads;
+	string command_template;
 };
 
 #endif
