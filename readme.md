@@ -7,21 +7,21 @@
 </p>
 
 ## Introduction
-Cate is a simple build system for the C family of languages (minus C#). While not as feature rich as CMake or as fast as Ninja-build, Cate achieves a simple syntax that doesn't feel much different to an actual programming language.
+Cate is a simple build system for the C family of languages (minus C#). While not as feature rich as CMake or as fast as Ninja-build, Cate achieves a simple syntax that doesn't feel much different to C/C++.
 
-Unlike CMake, Cate is not Turing complete. It doesn't feature if-statements, loops, functions, or anything that is not related to building. 
+Unlike CMake/make, Cate is not Turing complete. It doesn't feature if-statements, loops, functions, or anything that is not related to building. 
 
 ## Notes
 **Cate will change a lot in the following days, look out for updates that *might* break your project**
 
-- Cate was written by a beginner programmer and its codebase is terrible. Fell free to rewrite it if you want!
-- No Windows support.
+- Cate was written by a beginner programmer and its codebase is quite bad. Fell free to rewrite it if you want!
+- No Windows support (yet).
 - Cate uses robin_hood hashing, since it's 20% more efficient (on average)
 - Cate **does not** support `\"` characters in string literals.
 
 ## Building Cate
-A Build system needs to be built too. this step will be easy though! 
-Dependencies are:
+A Build system needs to be built too. this step is easy though! 
+### Dependencies
 - A *NIX operating system (Linux, BSD, MacOS, etc)
 - A C++17 compiler (I used g++)
 - GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md))
@@ -41,51 +41,51 @@ The `.cate` extension is not required in the command.
 
 To change the thread count, add the `-t[number]` flag **before** the filename. there's a bug that doesn't work with it after the filename.
 
-Cate will only build **one** file per command.
+Cate will only build **one** cate file per command.
 
 For starting a project, look at the [examples folder](examples/) or continue reading.
 
-## Syntax things
-Cate follows an object syntax. it'd be very easy to read for C/C++ programmers. Semicolons and commas are optional.
+## Syntax
+Cate follows an object syntax. It's very simple to understand for C/C++ programmers. Semicolons and commas are optional.
 
 **IMPORTANT NOTE:** Cate **does not** support `\"` characters in string literals.
 
 ### Classes
 There are only two classes you can create.
-1. `Project1: A thing that builds an executable. 
+1. `Project1: A class that builds an executable. 
 
 **Example**: `Project proj;`
 
-2. `Library(type)`: A thing that builds a library of specified type (can be `static` xor `dynamic`) 
+2. `Library(type)`: A class that builds a library of specified type (can be `static` xor `dynamic`) 
+
 **Example**: `Library slib(static);`
 **Example**: `Library dlib(dynamic);`
 
 ### Class properties
 Just like in C/C++, properties follow the `object.property = Thing;`.
- **Note:** a class property cannot be set to another's.
+**Note:** a class property cannot be set to another's.
 
 Here are the classes' properties:
-- `String out` is the output file. can only be a string literal. Not required (defaults to identifier).
-**Example**: `proj.out = "outs/yay";`
-- `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or `recursive(/*stuff*/)`. Required. 
-**Example**: `proj.files = {"main.cpp", recursive("more/*.cpp")} `
+- `String out` is the output file. Not required (defaults to identifier).
+- `String build_directory||object_folder` is the build directory where object files are saved. Not required (defaults to "builld/").
+- `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or just `recursive()`. Required. 
 - `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required. 
-**Example**: `proj.libraries = {"SDL2", "lib_out/local_lib.a"}` 
-- `Array includes|include_paths` holds the folder names of the class's includes. can only be set to an array. 
-**Example**: `proj.includes = {"lib_out/"}`
-- `String flags` is the class's compiler flags. can only be a string. Not required. 
-**Example**: `proj.flags = "-O2";`
-- `String compiler` is the class's compiler, it can only be a string. Required. 
-**Example**: `proj.compiler = "g++";`
+- `Array includes|include_paths` holds the folder names of the class's includes. Not required.
+- `String flags` is the class's compiler flags. Not required. 
+- `String compiler` is the class's compiler. Required. 
 
 ### Class methods
 There is **only one** method currently.
 - `build()` starts the building process, should NOT be called twice.
 
+### General functions
+- `Array recursive(String)` **only in the class's files**: takes a string with a single wildcard (`*`)
+
+Example: `recursove("src/*.cpp")`
+
 ## Known issues
 These issues are known and will be fixed soon!
-1. Slow build times (depending on thread count). this is due to it creating many threads instead of just checking what it needs to build and then start threads. It's still usually 5% slower than make on average.
-2. **Sometimes** crashes when you include a library.
+1. **Sometimes** crashes when you include a library.
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
