@@ -12,9 +12,13 @@
 extern bool lexer_exit;
 extern int lexer_line;
 
+#define BOLD "\x1B[1m" 
+#define RESET "\x1B[0m"
+
 namespace Util
 {
 	void error(string problem);
+	void command_error(string problem);
 	void lexer_error(std::string problem);
 	void error(int line, string problem);
 	void fatal_error(int line, string problem);
@@ -29,6 +33,5 @@ namespace Util
 	long get_modified_time(const char *path);
 	void system(string &command);
 } // namespace Util
-
 
 #endif

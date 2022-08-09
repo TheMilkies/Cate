@@ -28,6 +28,12 @@ namespace Util
 		exit(1);
 	}
 
+	void command_error(string problem)
+	{
+		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in command: " << problem << "\n";
+		exit(1);
+	}
+
 	void build_error(string name, string problem)
 	{
 		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Cannot build \""
