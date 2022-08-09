@@ -47,6 +47,7 @@ namespace Util
 		string const& replaceWith
 	) {
 		std::ostringstream oss;
+		oss.str().reserve(s.length());
 		std::size_t pos = 0;
 		std::size_t prevPos = pos;
 
@@ -65,11 +66,12 @@ namespace Util
 	}
 
 	string replace_all_safe( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
-		string s,
+		string &s,
 		string const& toReplace,
 		string const& replaceWith
 	) {
 		std::ostringstream oss;
+		oss.str().reserve(s.length());
 		std::size_t pos = 0;
 		std::size_t prevPos = pos;
 
@@ -99,7 +101,8 @@ namespace Util
 	{
 		int ret = std::system(command.c_str());
 
-		if (WEXITSTATUS(ret) != 0) //if there was an error
+		//if (WEXITSTATUS(ret) != 0) //if there was an error
+		if ((((ret) & 0xff00) >> 8) != 0) //save a bit of time in the preprocessing phase
 		{
 			std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Not all files have been built.\n";
 			exit(1);
