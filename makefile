@@ -15,7 +15,7 @@ build_directory:
 	@mkdir -p $(OBJ)
 
 cate: $(OBJECTS)
-	@$(CC) $^ -o cate $(CFLAGS) -Lextra_libraries -lfl
+	@$(CC) $^ -o cate $(CFLAGS) -Lextra_libraries -lfl src/linux_libfl.a
 
 smol_cate: $(OBJECTS)
 	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)  -Lextra_libraries -lfl
