@@ -219,12 +219,13 @@ void Parser::array(string& child)
 void Parser::recursive(string& child, bool keep_path)
 {
 	if (child != "files")
-	{
-		Util::fatal_error(current.in_line, child + " only files can be set to result of recursive search.");
-	}
+		Util::fatal_error(current.in_line, "only files can be set to result of recursive search.");
 	
 	expect(ParserToken::LPAREN);
 	expect(ParserToken::STRING_LITERAL);
+
+	if (current.value.empty())
+		Util::fatal_error(current.in_line, child + " has an empty string literal");
 	
 	//wildcard stuff
 	int location = current.value.find('*');

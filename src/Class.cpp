@@ -24,7 +24,6 @@ void Class::build_object(int i)
 		return;
 	
 	string command = command_template + files[i] + " -o " + object_files[i];
-	//std::cout << command << "\n"; //for debug
 	Util::system(command); //will exit if it can't compile
 	needs_rebuild = true;
 }
@@ -99,7 +98,7 @@ void Class::build_objects()
 	already_built = true;
 }
 
-bool Class::clear_property(int line, string& property)
+void Class::clear_property(int line, string& property)
 {
 	if (property == "files")
 		files.clear();
@@ -109,8 +108,6 @@ bool Class::clear_property(int line, string& property)
 		include_paths.clear();
 	else
 		Util::error(line, "\"" + property + "\" cannot be set to an array");
-	
-	return true;
 }
 
 void Class::add_to_property(int line, string& property, string value)
@@ -140,17 +137,17 @@ void Class::set_property(int line, string& property, string& value)
 void Class::check()
 {
 	if (parser_exit)
-		Util::build_error(name , "of previous errors");
-
-	if (out_name == "")
-		out_name = name;
-
-	if (compiler == "")
-		Util::build_error(name, "it has no compiler");
-
-	if (out_dir == "")
-		out_dir = "build";
+		Util::build_error(name, "of previous errors");
 
 	if (files.empty())
 		Util::build_error(name, "it has no files");
+
+	if (compiler.empty())
+		Util::build_error(name, "it has no compiler");
+
+	if (out_name.empty())
+		out_name = name;
+
+	if (out_dir.empty())
+		out_dir = "build";
 }
