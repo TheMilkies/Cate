@@ -39,9 +39,12 @@ To build another project, run `cate [filename.ending with .cate]` (example: `cat
 
 The `.cate` extension is not required in the command.  
 
-To change the thread count, add the `-t[number]` flag **before** the filename. there's a bug that doesn't work with it after the filename.
+### flags
+- `-tN`: Changes the thread count to N
+- `-v`: Shows the current Cate installation version
+- `-D`: Disables all `system()` lines in script.  
 
-Cate will only build **one** cate file per command.
+Cate will only run **one** cate file per command.
 
 For starting a project, look at the [examples folder](examples/) or continue reading.
 
