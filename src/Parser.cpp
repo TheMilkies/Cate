@@ -43,6 +43,8 @@ Parser::Parser(const char* file_name)
 	
 	delete lexer;
 	parser_exit = lexer_exit; //parser will exit after all errors are printed
+
+	parse();
 }
 
 Parser::~Parser()
@@ -132,8 +134,11 @@ void Parser::parse()
 			expect(ParserToken::STRING_LITERAL);
 			string command = current.value;
 			expect(ParserToken::RPAREN);
+			if (system_allowed)
+			{
 			std::cout << command << "\n";
 			system(command.c_str());
+			}
 		}
 			break;
 

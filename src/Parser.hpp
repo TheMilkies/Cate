@@ -7,6 +7,7 @@
 #include "Library.hpp"
 
 extern bool parser_exit;
+extern bool system_allowed;
 
 class Parser
 {
