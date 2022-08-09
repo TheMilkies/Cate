@@ -1,7 +1,7 @@
 Project cate;
 cate.compiler = "g++"
 cate.files = {recursive("src/*.cpp")}
-cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread"
-cate.libs = {"fl"}
+cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread src/linux_libfl.a"
+/*cate.libs = {"fl"}*/
 cate.out = "cate"
 cate.build()
