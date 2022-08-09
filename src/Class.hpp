@@ -40,7 +40,7 @@ public:
 	virtual void build() = 0;
 
 	void setup();
-	bool clear_property(int line, string& property);
+	void clear_property(int line, string& property);
 	void add_to_property(int line, string& property, string value);
 	void set_property(int line, string& property, string& value);
 	void check();
