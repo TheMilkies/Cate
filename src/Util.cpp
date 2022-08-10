@@ -105,7 +105,13 @@ namespace Util
 		struct stat attr;
 		if (stat(path, &attr) != 0) //check if file exists
 			return 0; //will always recompile since file doesn't exist
+
+		#ifdef __WIN32
+		return attr.st_mtime;
+		#else
 		return attr.st_mtim.tv_sec;
+		#endif // __WIN32
+
 	}
 
 	void system(string &command)

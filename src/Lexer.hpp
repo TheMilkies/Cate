@@ -212,7 +212,11 @@ void yyfree ( void *  );
 #define yytext_ptr yytext
 #define YY_INTERACTIVE
 
+#ifdef __WIN32
+#include "windows/FlexLexer.h"
+#else
 #include <FlexLexer.h>
+#endif // __WIN32
 
 int yyFlexLexer::yywrap();
 
@@ -441,7 +445,7 @@ static int yy_flex_strlen ( const char * );
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */
 
-#line 71 "src/lexer.l"
+#line 72 "src/lexer.l"
 
 
 
