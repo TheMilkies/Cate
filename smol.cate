@@ -1,8 +1,8 @@
 Project cate;
 cate.compiler = "g++"
 cate.files = {recursive("src/*.cpp")}
-cate.flags = "src/linux_libfl.a -fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
+cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 cate.out = "cate"
-/*cate.libs = {"fl"}*/
+cate.final_flags = "src/linux_libfl.a";
 cate.build()
 system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate")

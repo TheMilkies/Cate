@@ -1,7 +1,7 @@
 #if !defined(Util_HPP)
 #define Util_HPP
 #include "inc.hpp"
-#define CATE_VERSION "v1.1.2"
+#define CATE_VERSION "v1.2.0"
 
 #ifdef __WIN32
 #define ARGC_START 0
@@ -18,6 +18,7 @@ extern int lexer_line;
 namespace Util
 {
 	void error(string problem);
+	void warning(string problem);
 	void command_error(string problem);
 	void lexer_error(std::string problem);
 	void error(int line, string problem);

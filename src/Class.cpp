@@ -13,6 +13,20 @@ void Class::setup()
 		all_object_files += n + " ";
 		object_files.emplace_back(n);
 	}
+
+	if (object_files.size() != files.size())
+		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);
+	
+	string command = "mkdir -p " + out_dir;
+	Util::system(command);
+
+	//create folder
+	string path = out_name.substr(0, out_name.find_last_of('/')+1);
+	if (!path.empty()) 
+	{
+		command = "mkdir -p " + path;
+		Util::system(command);
+	}
 }
 
 //this is for threads.
@@ -32,24 +46,13 @@ void Class::build_objects()
 {
 	if (already_built) return;
 
-	if (object_files.size() != files.size())
-		Util::build_error(name, "somehow the amount of object files  is not equal to hte amount of source files");
-	
-	string command = "mkdir -p " + out_dir;
-	Util::system(command);
-
-	if (Util::get_modified_time(out_name.c_str()) == 0) //if file doesn't exist
-		needs_rebuild = true;
+	if (thread_count >= files.size())
+		thread_count = files.size();
 
 	if (include_paths.size() > 0) // 2% speed? yes please
 	{
 		for(auto &path : include_paths)
 			all_include_paths += "-I" + path + ' ';
-	}
-
-	if (thread_count >= files.size())
-	{
-		thread_count = files.size();
 	}
 
 	command_template.reserve(128);
@@ -74,7 +77,7 @@ void Class::build_objects()
 	if (!needs_rebuild) //don't add libraries if you don't need to
 		return;
 
-	for(auto lib : libraries)
+	for(auto &lib : libraries)
 	{
 		//path check
 		int position_of_last_slash = lib.find_last_of('/'); 
@@ -128,6 +131,8 @@ void Class::set_property(int line, string& property, string& value)
 		flags = value;
 	else if (property == "compiler")
 		compiler = value;
+	else if (property == "final_flags" || property == "end_flags")
+		final_flags = value;
 	else if (property == "build_directory" || property == "object_folder")
 		out_dir = value;
 	else
@@ -136,6 +141,8 @@ void Class::set_property(int line, string& property, string& value)
 
 void Class::check()
 {
+	if (already_built) return;
+
 	if (parser_exit)
 		Util::build_error(name, "of previous errors");
 
