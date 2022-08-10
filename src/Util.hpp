@@ -5,8 +5,10 @@
 
 #ifdef __WIN32
 #define ARGC_START 0
+#define OBJ_EXTENSION ".obj"
 #else
 #define ARGC_START 1
+#define OBJ_EXTENSION ".o"
 #endif // OS check
 
 extern bool lexer_exit;
@@ -25,7 +27,7 @@ namespace Util
 	void fatal_error(int line, string problem);
 	void build_error(string name, string problem);
 
-	inline string remove_extention(string& s) {return s = s.substr(0, s.find_last_of("."));}
+	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
 	string remove_quotes(string &s);
 
 	void replace_all(string& s, string const& toReplace, string const& replaceWith);

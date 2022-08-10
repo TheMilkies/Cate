@@ -15,8 +15,11 @@ private:
 	void define(ParserToken::ParserTokens type, string &identifier);
 	inline bool is_defined(string& identifier) {return (classes.find(identifier) != classes.end());}
 	void array(string& child);
+	void declare();
+	void declare_library();
 	void recursive(string &child, bool keep_path = true);
 	Class *current_class;
+	ParserToken::ParserTokens temp_type;
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;
