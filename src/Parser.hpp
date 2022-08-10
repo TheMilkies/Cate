@@ -12,14 +12,17 @@ extern bool system_allowed;
 class Parser
 {
 private:
-	void define(ParserToken::ParserTokens type, string &identifier);
-	inline bool is_defined(string& identifier) {return (classes.find(identifier) != classes.end());}
-	void array(string& child);
+	void define(ParserToken::ParserTokens type, const string &identifier);
+	inline bool is_defined(const string& identifier) {return (classes.find(identifier) != classes.end());}
+	void array();
 	void declare();
 	void declare_library();
-	void recursive(string &child, bool keep_path = true);
+	void recursive(const bool keep_path = true);
 	Class *current_class;
 	ParserToken::ParserTokens temp_type;
+	ParserToken function();
+	bool object_method();
+	string child;
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;

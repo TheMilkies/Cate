@@ -50,10 +50,10 @@ Parser::Parser(const char* file_name)
 Parser::~Parser()
 {
 	for(auto &c : classes)
-		delete c.second; //free the pointer
+		delete c.second; //free the pointers
 }
 
-void Parser::define(ParserToken::ParserTokens type, string &identifier)
+void Parser::define(ParserToken::ParserTokens type, const string &identifier)
 {
 	if (is_defined(identifier))
 		Util::fatal_error(current.in_line, "\"" + identifier + "\" was already defined");
@@ -64,6 +64,15 @@ void Parser::define(ParserToken::ParserTokens type, string &identifier)
 		classes[identifier] = new Library;
 
 	classes[identifier]->name = identifier;
+}
+
+ParserToken Parser::function()
+{
+	expect(ParserToken::LPAREN);
+	expect(ParserToken::STRING_LITERAL);
+	ParserToken to_return = current;
+	expect(ParserToken::RPAREN);
+	return to_return;
 }
 
 void Parser::declare()
@@ -90,7 +99,7 @@ void Parser::declare_library()
 void Parser::parse()
 {
 	current = next();
-	string parent, child; parent.reserve(16); child.reserve(16);
+	string parent; parent.reserve(16); child.reserve(16);
 	while (current.type != ParserToken::END)
 	{
 		switch (current.type)
@@ -115,21 +124,14 @@ void Parser::parse()
 			expect(ParserToken::IDENTIFIER);
 			child = current.value;
 			
-			if (child == "build")
-			{
-				expect(ParserToken::LPAREN);
-				expect(ParserToken::RPAREN);
-				if (current_class == nullptr)
-					Util::build_error("Null", "It's null");
-				current_class->build();				
-			}
-			else if (child == "type")
+			if (child == "type")
 			{
 				expect(ParserToken::ASSIGN);
 				expect(ParserToken::STATIC, ParserToken::DYNAMIC);
 				current_class->is_static = (current.type == ParserToken::STATIC);
 				current_class->needs_rebuild = true;
 			}
+			else if (object_method());
 			else
 			{
 				expect(ParserToken::ASSIGN);
@@ -137,12 +139,12 @@ void Parser::parse()
 				if (current.type == ParserToken::LCURLY)
 				{
 					current_class->clear_property(current.in_line, child);
-					array(child);
+					array();
 				}
 				else if (current.type == ParserToken::RECURSIVE)
 				{
 					current_class->clear_property(current.in_line, child);
-					recursive(child);
+					recursive();
 				}
 				else
 				{	
@@ -152,18 +154,15 @@ void Parser::parse()
 			
 			break;
 		
-		case ParserToken::SYSTEM: {
-			expect(ParserToken::LPAREN);
-			expect(ParserToken::STRING_LITERAL);
-			string command = current.value;
-			expect(ParserToken::RPAREN);
+		case ParserToken::SYSTEM:
+		{
+			string command = function().value;
 			if (system_allowed)
 			{
 				std::cout << command << "\n";
 				system(command.c_str());
 			}
-		}
-			break;
+		} break;
 
 		case ParserToken::SEMICOLON:
 			break;
@@ -173,12 +172,26 @@ void Parser::parse()
 			break;
 		}
 
-		//expect(ParserToken::SEMICOLON);
-
 		current = next();
 	}
-	if (parser_exit)
-		exit(1);
+
+	if (parser_exit) exit(1);
+}
+
+bool Parser::object_method()
+{
+	if (child == "build")
+	{
+		expect(ParserToken::LPAREN);
+		expect(ParserToken::RPAREN);
+		if (current_class == nullptr)
+			Util::build_error("Null", "It's null");
+		current_class->build();				
+	}
+	else
+		return false;
+
+	return true;
 }
 
 void Parser::expect(ParserToken::ParserTokens type)
@@ -225,7 +238,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
-void Parser::array(string& child)
+void Parser::array()
 {
 	while (current.type != ParserToken::RCURLY)
 	{
@@ -237,20 +250,19 @@ void Parser::array(string& child)
 		else if (current.type == ParserToken::RECURSIVE)
 		{
 			if (child == "libraries" || child == "libs")
-				recursive(child, false); //don't keep path for libraries
+				recursive(false); //don't keep path for libraries
 			else
-				recursive(child);
+				recursive();
 		}
 	}
 }
 
-void Parser::recursive(string& child, bool keep_path)
+void Parser::recursive(const bool keep_path)
 {
 	if (child != "files")
 		Util::fatal_error(current.in_line, "only files can be set to result of recursive search.");
 	
-	expect(ParserToken::LPAREN);
-	expect(ParserToken::STRING_LITERAL);
+	current = function(); //might look weird but actually makes this much easier.
 
 	if (current.value.empty())
 		Util::fatal_error(current.in_line, child + " has an empty string literal");
@@ -267,10 +279,10 @@ void Parser::recursive(string& child, bool keep_path)
 	string path = current.value.substr(0, location), //extract path
 				extension = current.value.substr(location+1); //extract extension
 
-	Util::replace_all(path, " ", "\\ "); //for when your path has spaces
-
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
 		Util::error("Multiple wildcards are not allowed");
+
+	Util::replace_all(path, " ", "\\ "); //for when your path has spaces
 
 	//check if directory exists
 	if (!fs::is_directory(path))
@@ -289,6 +301,4 @@ void Parser::recursive(string& child, bool keep_path)
 			else
 				current_class->add_to_property(current.in_line, child, p.path().stem().string());
     }
-
-	expect(ParserToken::RPAREN);
 }
