@@ -113,10 +113,11 @@ void Parser::parse()
 			break;
 
 		case ParserToken::IDENTIFIER:
-			if (!is_defined(current.value))
-				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined.");
-
 			parent = current.value;
+
+			if (!is_defined(parent))
+				Util::fatal_error(current.in_line, "\"" + parent + "\" is not defined.");
+
 			if (current_class->name != parent)
 				current_class = classes[parent];
 
@@ -189,7 +190,9 @@ bool Parser::object_method()
 		current_class->build();				
 	}
 	else
-		return false;
+	{
+		return false; //if not any of those, it's a property
+	}
 
 	return true;
 }
@@ -249,10 +252,7 @@ void Parser::array()
 		}
 		else if (current.type == ParserToken::RECURSIVE)
 		{
-			if (child == "libraries" || child == "libs")
-				recursive(false); //don't keep path for libraries
-			else
-				recursive();
+			recursive();
 		}
 	}
 }
