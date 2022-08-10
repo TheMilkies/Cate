@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
 	char*file_name;
 
-	for (int i = ARGC_START; i < argc; i++)
+	for (int i = 0; i < argc; i++)
 	{
 		string arg = argv[i];
 		
