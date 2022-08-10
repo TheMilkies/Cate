@@ -107,6 +107,13 @@ void Parser::parse()
 					Util::build_error("Null", "It's null");
 				current_class->build();				
 			}
+			else if (child == "type")
+			{
+				expect(ParserToken::ASSIGN);
+				expect(ParserToken::STATIC, ParserToken::DYNAMIC);
+				current_class->is_static = (current.type == ParserToken::STATIC);
+				current_class->needs_rebuild = true;
+			}
 			else
 			{
 				expect(ParserToken::ASSIGN);

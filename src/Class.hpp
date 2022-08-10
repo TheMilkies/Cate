@@ -14,7 +14,7 @@ class Class
 {
 public:
 	string all_object_files, all_libraries, all_library_paths, all_include_paths;
-	string name, flags, out_name, out_dir, compiler;
+	string name, flags, out_name, out_dir, compiler, final_flags;
 	vector<string> files, libraries, object_files, include_paths;
 	robin_hood::unordered_set<string> library_paths;
 
@@ -26,14 +26,22 @@ public:
 		//these should be enough for most small/medium-sized projects
 		files.reserve(32);
 		object_files.reserve(32);
-		all_object_files.reserve(256);
 		libraries.reserve(8);
 		library_paths.reserve(8);
 		all_libraries.reserve(128);
-		all_library_paths.reserve(256);
 		include_paths.reserve(32);
-		all_include_paths.reserve(256);
 		threads.reserve(thread_count * 2);
+
+		all_include_paths.reserve(256);
+		all_libraries.reserve(8*16);
+		all_object_files.reserve(32*16);
+		all_library_paths.reserve(8*16);
+
+		compiler.reserve(16);
+		final_flags.reserve(32);
+		out_name.reserve(32);
+		flags.reserve(32);
+
 	}
 	virtual ~Class() {};
 	void build_objects();

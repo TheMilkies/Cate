@@ -10,6 +10,11 @@ namespace Util
 		parser_exit = true;
 	}
 
+	void warning(string problem)
+	{
+		std::cout << "\u001b[31m\033[1mWarning\u001b[0m\033[0m: " << problem << "\n";
+	}
+
 	void lexer_error(string problem)
 	{
 		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in line " << lexer_line << ": " << problem << "\n";
