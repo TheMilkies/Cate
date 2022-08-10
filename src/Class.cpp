@@ -5,13 +5,13 @@ extern int thread_count;
 void Class::setup()
 {
 	check();
-	for(auto &file : files)
+	for(auto file : files)
 	{
-		string n = Util::replace_all_safe(file, "/", "_");
-		n = (Util::remove_extention(n)) + ".o";
-		n = out_dir + "/" + n;
-		all_object_files += n + " ";
-		object_files.emplace_back(n);
+		Util::replace_all(file, "/", "_");
+		file = (Util::remove_extension(file)) + ".o";
+		file = out_dir + "/" + file;
+		all_object_files += file + " ";
+		object_files.emplace_back(file);
 	}
 
 	if (object_files.size() != files.size())
@@ -22,7 +22,7 @@ void Class::setup()
 
 	//create folder
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
-	if (!path.empty()) 
+	if (!path.empty() && fs::is_directory(path))
 	{
 		command = "mkdir -p " + path;
 		Util::system(command);
@@ -61,8 +61,7 @@ void Class::build_objects()
 	{
 		for (int j = 0; j < thread_count; j++)
 		{
-			if (i+j > files.size())
-				break;
+			if (i+j > files.size()) break;
 			
 			threads.emplace_back(&Class::build_object, this, i+j);
 		}
@@ -86,7 +85,7 @@ void Class::build_objects()
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not there
 			library_paths.insert(path);
 
-		Util::remove_extention(lib);
+		Util::remove_extension(lib);
 		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
 		Util::replace_all(lib, "lib", ""); //THIS IS AN ISSUE
 		
