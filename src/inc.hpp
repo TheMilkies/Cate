@@ -15,8 +15,13 @@
     #error "no filesystem support"
 #endif
 
-#include <chrono>
+#ifdef __WIN32
+#include "windows/minigw_threads.hpp"
+#else
 #include <thread>
+#endif // __WIN32
+
+#include <chrono>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unordered_map>

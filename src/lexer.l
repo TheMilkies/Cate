@@ -58,6 +58,7 @@
 "recursive" {return ParserToken::RECURSIVE;}
 "system" {return ParserToken::SYSTEM;}
 [ \t] {;}
+\r\n {++lexer_line;}
 \n {++lexer_line;}
 
 \/\/[^.*]\n {++lexer_line;}

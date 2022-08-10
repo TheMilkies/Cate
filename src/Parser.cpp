@@ -10,7 +10,7 @@ Parser::Parser(const char* file_name)
 	//load yylex into tokens
 	std::ifstream file(file_name);
 	if (file.fail())
-		Util::error("Cannot open file \"" + string(file_name) + "\"");
+		Util::command_error("Cannot open file \"" + string(file_name) + "\"");
 	
 	FlexLexer* lexer = new yyFlexLexer(file, std::cout);
 	tokens.reserve(128); //optimization
