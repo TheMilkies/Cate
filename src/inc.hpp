@@ -4,14 +4,23 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
-#include <experimental/filesystem>
+
+#if __has_include(<filesystem>)
+	#include <filesystem>
+	namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+    #include <experimental/filesystem>
+  namespace fs = std::experimental::filesystem;
+#else
+    #error "no filesystem support"
+#endif
+
 #include <chrono>
 #include <thread>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unordered_map>
 #include "robin_hood.hpp"
-namespace fs = std::experimental::filesystem;
 
 using std::string;
 using std::vector;
