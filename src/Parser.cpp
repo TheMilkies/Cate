@@ -137,19 +137,20 @@ void Parser::parse()
 			{
 				expect(ParserToken::ASSIGN);
 				expect(ParserToken::STRING_LITERAL, ParserToken::LCURLY, ParserToken::RECURSIVE);
-				if (current.type == ParserToken::LCURLY)
+
+				if (current.type == ParserToken::STRING_LITERAL)
+				{
+					current_class->set_property(current.in_line, child, current.value);
+				}
+				else if (current.type == ParserToken::LCURLY)
 				{
 					current_class->clear_property(current.in_line, child);
 					array();
 				}
-				else if (current.type == ParserToken::RECURSIVE)
+				else
 				{
 					current_class->clear_property(current.in_line, child);
 					recursive();
-				}
-				else
-				{	
-					current_class->set_property(current.in_line, child, current.value);
 				}
 			}
 			
@@ -246,13 +247,13 @@ void Parser::array()
 	while (current.type != ParserToken::RCURLY)
 	{
 		expect(ParserToken::STRING_LITERAL, ParserToken::RECURSIVE, ParserToken::COMMA, ParserToken::RCURLY);
-		if (current.type == ParserToken::STRING_LITERAL)
-		{
-			current_class->add_to_property(current.in_line, child, current.value);
-		}
-		else if (current.type == ParserToken::RECURSIVE)
+		if (current.type == ParserToken::RECURSIVE)
 		{
 			recursive();
+		}
+		else if (current.type == ParserToken::STRING_LITERAL)
+		{
+			current_class->add_to_property(current.in_line, child, current.value);
 		}
 	}
 }
