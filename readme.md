@@ -75,16 +75,18 @@ Here are the classes' properties:
 - `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required. 
 - `Array includes|include_paths` holds the folder names of the class's includes. Not required.
 - `String flags` is the class's compiler flags. Not required. 
+- `String final_flags` is the final executable compiler flags. Not required. 
+- `LibraryType type` is the library's type, can only be `static` pr `dynamic`. Not required since it's already defined in `Library NAME(LibraryType);` 
 - `String compiler` is the class's compiler. Required. 
 
 ### Class methods
 There is **only one** method currently.
-- `build()` starts the building process, should NOT be called twice.
+- `build()` starts the building process. Can be called twice only in libraries.
 
 ### General functions
 - `Array recursive(String)` **only in the class's files**: takes a string with a single wildcard (`*`)
 
-Example: `recursove("src/*.cpp")`
+Example: `recursive("src/*.cpp")`
 
 ## Known issues
 These issues are known and will be fixed soon!
