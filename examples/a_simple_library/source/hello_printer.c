@@ -1,4 +1,6 @@
+#include "hello_printer.h"
+
 void print()
 {
-	puts("Hai");
+	puts("Hello");
 }

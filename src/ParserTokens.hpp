@@ -28,7 +28,7 @@ static string token_names[] = {
 	
 struct ParserToken
 {
-	enum ParserTokens
+	enum ParserTokens: char
 	{
 		END,
 		DOT,

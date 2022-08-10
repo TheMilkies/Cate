@@ -49,12 +49,14 @@ Parser::Parser(const char* file_name)
 
 Parser::~Parser()
 {
+	for(auto &c : classes)
+		delete c.second; //free the pointer
 }
 
 void Parser::define(ParserToken::ParserTokens type, string &identifier)
 {
 	if (is_defined(identifier))
-		Util::error(current.in_line, "\"" + identifier + "\" was already defined");
+		Util::fatal_error(current.in_line, "\"" + identifier + "\" was already defined");
 	
 	if (type == ParserToken::PROJECT)
 		classes[identifier] = new Project;
@@ -64,29 +66,41 @@ void Parser::define(ParserToken::ParserTokens type, string &identifier)
 	classes[identifier]->name = identifier;
 }
 
+void Parser::declare()
+{
+	temp_type = current.type;
+	expect(ParserToken::IDENTIFIER);
+	define(temp_type, current.value);
+	current_class = classes[current.value];
+}
+
+void Parser::declare_library()
+{
+	declare();
+
+	expect(ParserToken::LPAREN);
+	expect(ParserToken::STATIC, ParserToken::DYNAMIC);
+
+	temp_type = current.type;
+	current_class->is_static = (current.type == ParserToken::STATIC);
+
+	expect(ParserToken::RPAREN);
+}
+
 void Parser::parse()
 {
 	current = next();
 	string parent, child; parent.reserve(16); child.reserve(16);
-	ParserToken::ParserTokens temp_type;
 	while (current.type != ParserToken::END)
 	{
 		switch (current.type)
 		{
 		case ParserToken::PROJECT:
-			temp_type = current.type;
-			expect(ParserToken::IDENTIFIER);
-			define(temp_type, current.value);
+			declare();
 			break;
+
 		case ParserToken::LIBRARY:
-			expect(ParserToken::IDENTIFIER);
-			define(temp_type, current.value);
-			current_class = classes[current.value];
-			expect(ParserToken::LPAREN);
-			expect(ParserToken::STATIC, ParserToken::DYNAMIC);
-			temp_type = current.type;
-			current_class->is_static = (current.type == ParserToken::STATIC);
-			expect(ParserToken::RPAREN);
+			declare_library();
 			break;
 
 		case ParserToken::IDENTIFIER:
@@ -94,11 +108,13 @@ void Parser::parse()
 				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined.");
 
 			parent = current.value;
-			current_class = classes[parent];
+			if (current_class->name != parent)
+				current_class = classes[parent];
 
 			expect(ParserToken::DOT);
 			expect(ParserToken::IDENTIFIER);
 			child = current.value;
+			
 			if (child == "build")
 			{
 				expect(ParserToken::LPAREN);
@@ -143,8 +159,8 @@ void Parser::parse()
 			expect(ParserToken::RPAREN);
 			if (system_allowed)
 			{
-			std::cout << command << "\n";
-			system(command.c_str());
+				std::cout << command << "\n";
+				system(command.c_str());
 			}
 		}
 			break;
@@ -248,11 +264,12 @@ void Parser::recursive(string& child, bool keep_path)
 	if (current.value[location+1] == '/')
 		Util::error("Wildcard is not allowed in folders for now, might be in Cate_v2");
 	
-	string path = current.value.substr(0, location),
-						extention = current.value.substr(location+1);
+	string path = current.value.substr(0, location), //extract path
+				extension = current.value.substr(location+1); //extract extension
+
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces
 
-	if (path.find('*') != string::npos || extention.find('*') != string::npos) //if more than one found
+	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
 		Util::error("Multiple wildcards are not allowed");
 
 	//check if directory exists
@@ -266,7 +283,7 @@ void Parser::recursive(string& child, bool keep_path)
 
 	for (auto &p : fs::directory_iterator(path))
     {
-        if (p.path().extension() == extention)
+        if (p.path().extension() == extension)
 			if (keep_path)
 				current_class->add_to_property(current.in_line, child, p.path().string());
 			else
