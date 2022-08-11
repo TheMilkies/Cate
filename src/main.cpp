@@ -26,13 +26,11 @@ int main(int argc, char *argv[])
 	std::ios_base::sync_with_stdio(false); // because SPEED
 
 	if (argc < 2)
-	{
 		help();
-	}
 
 	char*file_name;
 
-	for (int i = 0; i < argc; i++)
+	for (int i = ARGC_START; i < argc; i++)
 	{
 		string arg = argv[i];
 		
@@ -64,8 +62,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			if (arg == "cate")
-				continue;
+			if (arg == "cate") continue; //why is this bug a thing?
 			
 			if (ends_with(arg, ".cate"))
 				file_name = (char*)argv[i];
