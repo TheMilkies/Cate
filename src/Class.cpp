@@ -4,7 +4,9 @@ extern int thread_count;
 
 void Class::setup()
 {
+	if (already_built) return;
 	check();
+
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_");
@@ -15,8 +17,9 @@ void Class::setup()
 		object_files.emplace_back(file);
 	}
 
-	if (object_files.size() != files.size())
-		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);
+	//useless debug line
+	/*if (object_files.size() != files.size())
+		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);*/ 
 	
 	string command = "mkdir -p " + out_dir;
 	Util::system(command);
@@ -141,8 +144,6 @@ void Class::set_property(int line, string& property, string& value)
 
 void Class::check()
 {
-	if (already_built) return;
-
 	if (parser_exit)
 		Util::build_error(name, "of previous errors");
 
