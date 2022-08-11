@@ -23,6 +23,7 @@ void Library::build()
 		return;
 	
 	string command;
+	command.reserve(512);
 	if (is_static)
 		command = "ar rcs -o " + out_name + " " + all_object_files + " ";
 	else
