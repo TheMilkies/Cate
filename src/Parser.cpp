@@ -275,7 +275,7 @@ void Parser::recursive(const bool keep_path)
 		Util::error("Wildcard was not found in recursive");
 
 	if (current.value[location+1] == '/')
-		Util::error("Wildcard is not allowed in folders for now, might be in Cate_v2");
+		Util::error("Wildcard is not allowed in folders.");
 	
 	string path = current.value.substr(0, location), //extract path
 				extension = current.value.substr(location+1); //extract extension
@@ -283,23 +283,18 @@ void Parser::recursive(const bool keep_path)
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
 		Util::error("Multiple wildcards are not allowed");
 
-	Util::replace_all(path, " ", "\\ "); //for when your path has spaces
+	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	//check if directory exists
 	if (!fs::is_directory(path))
 		Util::error(current.in_line, "Directory \"" + path + "\" doesn't exit");
 
-	//in codegen, it's going to add these as `-L$THIS_PATH`
-	if (child == "libs" || child == "libraries")
-		if(current_class->library_paths.find(path) == current_class->library_paths.end())
-			current_class->library_paths.insert(path);
-
 	for (auto &p : fs::directory_iterator(path))
     {
         if (p.path().extension() == extension)
 			if (keep_path)
-				current_class->add_to_property(current.in_line, child, p.path().string());
+				current_class->files.emplace_back(p.path().string());
 			else
-				current_class->add_to_property(current.in_line, child, p.path().stem().string());
+				current_class->files.emplace_back(p.path().stem().string());
     }
 }
