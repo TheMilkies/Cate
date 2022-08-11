@@ -19,7 +19,8 @@ private:
 	void recursive();
 	Class *current_class;
 	ParserToken::ParserTokens temp_type;
-	ParserToken function();
+	void void_function();
+	ParserToken string_function();
 	bool object_method();
 	string child;
 private:

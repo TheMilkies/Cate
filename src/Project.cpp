@@ -15,9 +15,6 @@ void Project::build()
 		setup();
 		build_objects();
 	}
-	
-	if (Util::get_modified_time(out_name.c_str()) == 0) //if file doesn't exist
-		needs_rebuild = true;
 
 	if (!needs_rebuild) return;
 	
