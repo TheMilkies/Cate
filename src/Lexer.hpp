@@ -49,7 +49,6 @@
      * We will address this in a future release of flex, or omit the C++ scanner
      * altogether.
      */
-    #define yyFlexLexer yyFlexLexer
 
 /* First, we deal with  platform-specific or compiler-specific issues. */
 
@@ -217,6 +216,12 @@ void yyfree ( void *  );
 #else
 #include <FlexLexer.h>
 #endif // __WIN32
+
+#if __has_include(<FlexLexer.h>)
+	#include <FlexLexer.h>
+#else
+	#include "windows/FlexLexer.h"
+#endif
 
 int yyFlexLexer::yywrap();
 
