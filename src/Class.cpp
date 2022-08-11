@@ -7,6 +7,7 @@ void Class::setup()
 	check();
 	for(auto file : files)
 	{
+		Util::replace_all(file, "../", "back_");
 		Util::replace_all(file, "/", "_");
 		file = (Util::remove_extension(file)) + ".o";
 		file = out_dir + "/" + file;
