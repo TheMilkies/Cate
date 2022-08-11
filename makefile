@@ -9,7 +9,7 @@ SOURCES := $(wildcard $(SRC)/*.cpp)
 OBJECTS := $(patsubst $(SRC)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
 
 all: build_directory cate
-smol: build_directory cate
+smol: build_directory smol_cate
 
 build_directory:
 	@mkdir -p $(BUILD_DIR)
@@ -19,7 +19,7 @@ cate: $(OBJECTS)
 
 smol_cate: $(OBJECTS)
 	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)  -Lextra_libraries -lfl
-	@strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
+	strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
 
 lex: src/lexer.l
 	flex --noyywrap -osrc/Lexer.cpp --header-file=src/Lexer.hpp src/lexer.l
