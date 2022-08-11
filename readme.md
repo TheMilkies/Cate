@@ -6,40 +6,60 @@
   <img align="center" src="cate_example.png">
 </p>
 
+##Table of contents
+- [Cate: A Build System for the sane.](#cate--a-build-system-for-the-sane)
+  * [Introduction](#introduction)
+  * [Notes](#notes)
+  * [Building Cate](#building-cate)
+    + [Dependencies](#dependencies)
+    + [Building with GNU Make](#building-with-gnu-make)
+    + [Building with Cate](#building-with-cate)
+    + [Installing](#installing)
+  * [How to use Cate](#how-to-use-cate)
+    + [Command-line](#command-line)
+      - [Flags (options)](#flags--options-)
+  * [Syntax](#syntax)
+    + [Classes](#classes)
+    + [Class properties](#class-properties)
+    + [Class methods](#class-methods)
+    + [General functions](#general-functions)
+  * [Known issues](#known-issues)
+  * [Credits](#credits)
+  * [How to contribute](#how-to-contribute)
+
 ## Introduction
 Cate is a simple build system for the C family of languages (minus C#). While not as feature rich as CMake or as fast as Ninja-build, Cate achieves a simple syntax that doesn't feel much different to C/C++.
 
-Unlike CMake/make, Cate is not Turing complete. It doesn't feature if-statements, loops, functions, or anything that is not related to building. 
+Unlike CMake/Make, Cate is not Turing complete. It doesn't feature if-statements, loops, functions, or anything that is not related to building. 
 
 ## Notes
-**Cate will change a lot in the following days, look out for updates that *might* break your project**
-
+- Cate can be just as fast as Make, given the right file count.
 - Cate was written by a beginner programmer and its codebase is quite bad. Fell free to rewrite it if you want!
 - No Windows support (yet).
 - Cate uses robin_hood hashing, since it's 20% more efficient (on average)
 - Cate **does not** support `\"` characters in string literals.
 
 ## Building Cate
-A Build system needs to be built too. this step is easy though! 
 ### Dependencies
 - A *NIX operating system (Linux, BSD, MacOS, etc)
 - A C++17 compiler (I used g++)
-- GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md))
+- GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md)) (not required in x86_64 builds because we included the headers as a file)
 - GNU Make (if you don't have Cate already installed)
 
 ### Building with GNU Make
 To build with Make, run `make`. or if you want a smaller executable, run `make smol`
 ### Building with Cate
-To build with Make, run `cate build.cate`,  or if you want a smaller executable, run `cate smol.cate`
+To build with Make, run `cate build`,  or if you want a smaller executable, run `cate smol`
 ### Installing
-To install, use `sudo cate install.cate`, or `sudo make install` if you prefer installing with make.
+To install, use `sudo cate install`, or `sudo make install` if you prefer installing with make.
 
 ## How to use Cate
+### Command-line
 To build another project, run `cate [filename.ending with .cate]` (example: `cate build.cate`).
 
-The `.cate` extension is not required in the command.  
+The `.cate` extension is not required in the command.   (example: `cate build`).
 
-### flags
+#### Flags (options)
 - `-tN`: Changes the thread count to N
 - `-v`: Shows the current Cate installation version
 - `-D`: Disables all `system()` lines in script.  
@@ -55,14 +75,9 @@ Cate follows an object syntax. It's very simple to understand for C/C++ programm
 
 ### Classes
 There are only two classes you can create.
-1. `Project1: A class that builds an executable. 
+1. `Project1`: A class that builds an executable.  (**Example**: `Project proj;`)
 
-**Example**: `Project proj;`
-
-2. `Library(type)`: A class that builds a library of specified type (can be `static` xor `dynamic`) 
-
-**Example**: `Library slib(static);`
-**Example**: `Library dlib(dynamic);`
+2. `Library(type)`: A class that builds a library of specified type (can be `static` xor `dynamic`)  (**Example**: `Library slib(static);`, **Example**: `Library dlib(dynamic);`)
 
 ### Class properties
 Just like in C/C++, properties follow the `object.property = Thing;`.
@@ -90,7 +105,7 @@ Example: `recursive("src/*.cpp")`
 
 ## Known issues
 These issues are known and will be fixed soon!
-1. **Sometimes** crashes when you include a library.
+- None for now!
 
 ## Credits
 All Milkies have contributed in some way to Cate. Notable contributors are:
@@ -100,4 +115,5 @@ All Milkies have contributed in some way to Cate. Notable contributors are:
 - Latte (Feature implementer and bug fixer) 
 
 ## How to contribute
-Just make a pull request.
+- Make sure it compiles.
+- Make a pull request.
