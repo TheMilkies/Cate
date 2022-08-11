@@ -330,11 +330,11 @@ typedef flex_uint8_t YY_CHAR;
 #define yytext_ptr yytext
 #define YY_INTERACTIVE
 
-#ifdef __WIN32
-#include "windows/FlexLexer.h"
+#if __has_include(<FlexLexer.h>)
+	#include <FlexLexer.h>
 #else
-#include <FlexLexer.h>
-#endif // __WIN32
+	#include "windows/FlexLexer.h"
+#endif
 
 int yyFlexLexer::yywrap() { return 1;}
 
