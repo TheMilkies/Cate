@@ -1,7 +1,7 @@
 #if !defined(Util_HPP)
 #define Util_HPP
 #include "inc.hpp"
-#define CATE_VERSION "v1.2.2"
+#define CATE_VERSION "v1.2.3"
 
 #ifdef __WIN32
 #define ARGC_START 0
