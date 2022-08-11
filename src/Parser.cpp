@@ -1,4 +1,6 @@
 #include "Parser.hpp"
+#include "Lexer.hpp"
+
 
 /*
 	why hello there!
@@ -12,14 +14,14 @@ Parser::Parser(const char* file_name)
 	if (file.fail())
 		Util::command_error("Cannot open file \"" + string(file_name) + "\"");
 	
-	FlexLexer* lexer = new yyFlexLexer(file, std::cout);
+	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout);
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
 	ParserToken::ParserTokens type;
-	string value;
-	value.reserve(16);
+	string value; value.reserve(16);
 	ParserToken temp;
+	
 	while (type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.type = type;
@@ -60,7 +62,7 @@ void Parser::define(ParserToken::ParserTokens type, const string &identifier)
 	
 	if (type == ParserToken::PROJECT)
 		classes[identifier] = new Project;
-	else
+	else //library
 		classes[identifier] = new Library;
 
 	classes[identifier]->name = identifier;
@@ -125,32 +127,34 @@ void Parser::parse()
 			expect(ParserToken::IDENTIFIER);
 			child = current.value;
 			
-			if (child == "type")
-			{
-				expect(ParserToken::ASSIGN);
-				expect(ParserToken::STATIC, ParserToken::DYNAMIC);
-				current_class->is_static = (current.type == ParserToken::STATIC);
-				current_class->needs_rebuild = true;
-			}
-			else if (object_method());
+			if (object_method());
 			else
 			{
 				expect(ParserToken::ASSIGN);
-				expect(ParserToken::STRING_LITERAL, ParserToken::LCURLY, ParserToken::RECURSIVE);
-
-				if (current.type == ParserToken::STRING_LITERAL)
+				if (child == "type")
 				{
-					current_class->set_property(current.in_line, child, current.value);
-				}
-				else if (current.type == ParserToken::LCURLY)
-				{
-					current_class->clear_property(current.in_line, child);
-					array();
+					expect(ParserToken::STATIC, ParserToken::DYNAMIC);
+					current_class->is_static = (current.type == ParserToken::STATIC);
+					current_class->needs_rebuild = true;
 				}
 				else
 				{
-					current_class->clear_property(current.in_line, child);
-					recursive();
+					expect(ParserToken::STRING_LITERAL, ParserToken::LCURLY, ParserToken::RECURSIVE);
+
+					if (current.type == ParserToken::STRING_LITERAL)
+					{
+						current_class->set_property(current.in_line, child, current.value);
+					}
+					else if (current.type == ParserToken::LCURLY)
+					{
+						current_class->clear_property(current.in_line, child);
+						array();
+					}
+					else
+					{
+						current_class->clear_property(current.in_line, child);
+						recursive();
+					}
 				}
 			}
 			
@@ -162,7 +166,7 @@ void Parser::parse()
 			if (system_allowed)
 			{
 				std::cout << command << "\n";
-				system(command.c_str());
+				Util::system(command);
 			}
 		} break;
 
@@ -186,8 +190,6 @@ bool Parser::object_method()
 	{
 		expect(ParserToken::LPAREN);
 		expect(ParserToken::RPAREN);
-		if (current_class == nullptr)
-			Util::build_error("Null", "It's null");
 		current_class->build();				
 	}
 	else
@@ -258,7 +260,7 @@ void Parser::array()
 	}
 }
 
-void Parser::recursive(const bool keep_path)
+void Parser::recursive()
 {
 	if (child != "files")
 		Util::fatal_error(current.in_line, "only files can be set to result of recursive search.");
@@ -266,7 +268,7 @@ void Parser::recursive(const bool keep_path)
 	current = function(); //might look weird but actually makes this much easier.
 
 	if (current.value.empty())
-		Util::fatal_error(current.in_line, child + " has an empty string literal");
+		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
 	
 	//wildcard stuff
 	int location = current.value.find('*');
@@ -292,9 +294,6 @@ void Parser::recursive(const bool keep_path)
 	for (auto &p : fs::directory_iterator(path))
     {
         if (p.path().extension() == extension)
-			if (keep_path)
-				current_class->files.emplace_back(p.path().string());
-			else
-				current_class->files.emplace_back(p.path().stem().string());
+			current_class->files.emplace_back(p.path().string());
     }
 }

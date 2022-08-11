@@ -1,7 +1,6 @@
 #if !defined(Parser_HPP)
 #define Parser_HPP
 #include "Util.hpp"
-#include "Lexer.hpp"
 #include "ParserTokens.hpp"
 #include "Project.hpp"
 #include "Library.hpp"
@@ -17,7 +16,7 @@ private:
 	void array();
 	void declare();
 	void declare_library();
-	void recursive(const bool keep_path = true);
+	void recursive();
 	Class *current_class;
 	ParserToken::ParserTokens temp_type;
 	ParserToken function();
