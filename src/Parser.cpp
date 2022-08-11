@@ -1,7 +1,6 @@
 #include "Parser.hpp"
 #include "Lexer.hpp"
 
-
 /*
 	why hello there!
 	i know most of this is bad, i honestly don't care too much because it's my first project.
@@ -126,7 +125,7 @@ void Parser::parse()
 			expect(ParserToken::DOT);
 			expect(ParserToken::IDENTIFIER);
 			child = current.value;
-			
+
 			if (object_method());
 			else
 			{
