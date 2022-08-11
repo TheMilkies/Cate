@@ -211,12 +211,6 @@ void yyfree ( void *  );
 #define yytext_ptr yytext
 #define YY_INTERACTIVE
 
-#ifdef __WIN32
-#include "windows/FlexLexer.h"
-#else
-#include <FlexLexer.h>
-#endif // __WIN32
-
 #if __has_include(<FlexLexer.h>)
 	#include <FlexLexer.h>
 #else
