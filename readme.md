@@ -6,7 +6,7 @@
   <img align="center" src="cate_example.png">
 </p>
 
-##Table of contents
+### Table of contents
 - [Cate: A Build System for the sane.](#cate--a-build-system-for-the-sane)
   * [Introduction](#introduction)
   * [Notes](#notes)
