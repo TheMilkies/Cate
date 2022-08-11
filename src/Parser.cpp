@@ -3,7 +3,7 @@
 
 /*
 	why hello there!
-	i know most of this is bad, i honestly don't care too much because it's my first project.
+	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
 */
 
 Parser::Parser(const char* file_name)
@@ -67,7 +67,13 @@ void Parser::define(ParserToken::ParserTokens type, const string &identifier)
 	classes[identifier]->name = identifier;
 }
 
-ParserToken Parser::function()
+void Parser::void_function()
+{
+	expect(ParserToken::LPAREN);
+	expect(ParserToken::RPAREN);
+}
+
+ParserToken Parser::string_function()
 {
 	expect(ParserToken::LPAREN);
 	expect(ParserToken::STRING_LITERAL);
@@ -134,7 +140,8 @@ void Parser::parse()
 				{
 					expect(ParserToken::STATIC, ParserToken::DYNAMIC);
 					current_class->is_static = (current.type == ParserToken::STATIC);
-					current_class->needs_rebuild = true;
+					current_class->needs_rebuild =
+					current_class->needs_rebuild + (Util::get_modified_time(current_class->out_name.c_str()) == 0); 
 				}
 				else
 				{
@@ -161,7 +168,7 @@ void Parser::parse()
 		
 		case ParserToken::SYSTEM:
 		{
-			string command = function().value;
+			string command = string_function().value;
 			if (system_allowed)
 			{
 				std::cout << command << "\n";
@@ -187,8 +194,7 @@ bool Parser::object_method()
 {
 	if (child == "build")
 	{
-		expect(ParserToken::LPAREN);
-		expect(ParserToken::RPAREN);
+		void_function();
 		current_class->build();				
 	}
 	else
@@ -264,7 +270,7 @@ void Parser::recursive()
 	if (child != "files")
 		Util::fatal_error(current.in_line, "only files can be set to result of recursive search.");
 	
-	current = function(); //might look weird but actually makes this much easier.
+	current = string_function(); //might look weird but actually makes this much easier.
 
 	if (current.value.empty())
 		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
