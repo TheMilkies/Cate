@@ -512,10 +512,6 @@ static const flex_int16_t yy_chk[119] = { 0,
 	#include "Util.hpp"
 	using namespace std;
 	int lexer_line = 1;
-	bool lexer_exit = false;
-
-
-
 #define INITIAL 0
 
 #ifndef YY_NO_UNISTD_H

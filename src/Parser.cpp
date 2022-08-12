@@ -43,7 +43,6 @@ Parser::Parser(const char* file_name)
 	}
 	
 	delete lexer;
-	parser_exit = lexer_exit; //parser will exit after all errors are printed
 
 	parse();
 }
@@ -73,6 +72,7 @@ void Parser::void_function()
 	expect(ParserToken::RPAREN);
 }
 
+// Runs expect '(' String ')' and returns the String 
 ParserToken Parser::string_function()
 {
 	expect(ParserToken::LPAREN);
@@ -288,7 +288,7 @@ void Parser::recursive()
 				extension = current.value.substr(location+1); //extract extension
 
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
-		Util::error("Multiple wildcards are not allowed");
+		Util::fatal_error(current.in_line, "Multiple wildcards are not allowed");
 
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
