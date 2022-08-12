@@ -6,7 +6,6 @@
 	#include "Util.hpp"
 	using namespace std;
 	int lexer_line = 1;
-	bool lexer_exit = false;
 %}
 
 %%
