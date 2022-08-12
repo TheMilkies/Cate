@@ -17,7 +17,7 @@ void help()
 	BOLD "flags:\n" RESET
 	"\t-tN: sets thread count to N\n"
 	"\t-v:  shows version\n"
-	"\t-D:  disable all script defined `system()` calls";
+	"\t-D:  disable all `system()` calls in script\n";
 	exit(1);
 }
 
@@ -25,8 +25,7 @@ int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); // because SPEED
 
-	if (argc < 2)
-		help();
+	if (argc < 2) help();
 
 	char*file_name;
 
