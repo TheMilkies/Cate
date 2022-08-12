@@ -48,7 +48,8 @@ namespace Util
 
 	string remove_quotes(string &s) 
 	{
-		s.erase(std::remove(s.begin(), s.end(), '"'), s.end());
+		s.erase(0, 1);
+		s.pop_back();
 		return s;
 	}
 
@@ -100,7 +101,7 @@ namespace Util
 		return oss.str();
 	}
 
-	long get_modified_time(const char *path)
+	long long get_modified_time(const char *path)
 	{
 		struct stat attr;
 		if (stat(path, &attr) != 0) //check if file exists

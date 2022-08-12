@@ -38,7 +38,7 @@
 #include <iosfwd>       //  Stream output for thread ids.
 #include <utility>      //  For std::swap, std::forward
 
-#include "minigw_invoke.hpp"
+#include "mingw_invoke.hpp"
 
 #if (defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR))
 #pragma message "The Windows API that MinGW-w32 provides is not fully compatible\

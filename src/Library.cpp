@@ -16,7 +16,7 @@ void Library::build()
 		build_objects();
 	}
 
-	if (Util::get_modified_time(out_name.c_str()) == 0) //if file doesn't exist
+	if (!Util::file_exists(out_name.c_str())) //if file doesn't exist
 		needs_rebuild = true;
 
 	if (!needs_rebuild)
@@ -31,4 +31,4 @@ void Library::build()
 	
 	Util::system(command);
 	std::cout << "\x1B[32mDone building \"" << name << "\"\u001b[0m\033[0m\n";
-};
+}
