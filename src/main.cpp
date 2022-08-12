@@ -29,9 +29,12 @@ int main(int argc, char *argv[])
 
 	char*file_name;
 
+	string arg;
+	arg.reserve(64);
+
 	for (int i = ARGC_START; i < argc; i++)
 	{
-		string arg = argv[i];
+		arg = argv[i];
 		
 		if (arg[0]== '-')
 		{
