@@ -16,12 +16,13 @@
 #endif
 
 #ifdef __WIN32
-#include "windows/minigw_threads.hpp"
+#include "windows/mingw_threads.hpp"
 #else
 #include <thread>
 #endif // __WIN32
 
 #include <chrono>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unordered_map>
