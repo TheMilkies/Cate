@@ -140,8 +140,7 @@ void Parser::parse()
 				{
 					expect(ParserToken::STATIC, ParserToken::DYNAMIC);
 					current_class->is_static = (current.type == ParserToken::STATIC);
-					current_class->needs_rebuild =
-					current_class->needs_rebuild + (Util::get_modified_time(current_class->out_name.c_str()) == 0); 
+					current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
 				}
 				else
 				{
