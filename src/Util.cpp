@@ -10,15 +10,15 @@ namespace Util
 		parser_exit = true;
 	}
 
-	void warning(string problem)
+	/*void warning(string problem)
 	{
 		std::cout << "\u001b[31m\033[1mWarning\u001b[0m\033[0m: " << problem << "\n";
-	}
+	}*/
 
 	void lexer_error(string problem)
 	{
 		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in line " << lexer_line << ": " << problem << "\n";
-		lexer_exit = true;
+		parser_exit = true;
 	}
 
 	void error(int line, string problem)
@@ -39,7 +39,7 @@ namespace Util
 		exit(1);
 	}
 
-	void build_error(string name, string problem)
+	void build_error(string &name, string problem)
 	{
 		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Cannot build \""
 						  << name << "\" because " << problem << "\nTerminating.\n";
