@@ -1,13 +1,15 @@
 #include "Parser.hpp"
 
-bool parser_exit, system_allowed = true;
+bool parser_exit = false, system_allowed = true;
 
 int thread_count = std::thread::hardware_concurrency() * 2;
 
-inline bool ends_with(std::string const & value, std::string const & ending) //written by tshepang from stackoverflow
+int total_alloc = 0;
+
+void* operator new(size_t size)
 {
-    if (ending.size() > value.size()) return false;
-    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+	total_alloc++;
+	return malloc(size);
 }
 
 void help()
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			file_name = argv[i];
-			if (!ends_with(arg, ".cate"))
+			if (!Util::ends_with(arg, ".cate"))
 				file_name += ".cate";
 		}
 	}
@@ -75,5 +77,6 @@ int main(int argc, char *argv[])
 
 	Parser parser(file_name);
 
+	std::cout << "Total allocations: " << total_alloc << "\n";
 	return 0;
 }

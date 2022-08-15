@@ -333,7 +333,7 @@ typedef flex_uint8_t YY_CHAR;
 #if __has_include(<FlexLexer.h>)
 	#include <FlexLexer.h>
 #else
-	#include "windows/FlexLexer.h"
+	#include "nonstd/FlexLexer.h"
 #endif
 
 int yyFlexLexer::yywrap() { return 1;}
