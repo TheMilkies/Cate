@@ -25,5 +25,4 @@ void Project::build()
 
 	Util::system(command);
 	std::cout << GREEN "Done building \"" << name << "\"" RESET "\n";
-
 }

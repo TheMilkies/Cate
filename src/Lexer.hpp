@@ -214,7 +214,7 @@ void yyfree ( void *  );
 #if __has_include(<FlexLexer.h>)
 	#include <FlexLexer.h>
 #else
-	#include "windows/FlexLexer.h"
+	#include "nonstd/FlexLexer.h"
 #endif
 
 int yyFlexLexer::yywrap();
