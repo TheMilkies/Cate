@@ -281,7 +281,7 @@ void Parser::recursive()
 		Util::error("Wildcard was not found in recursive");
 
 	if (current.value[location+1] == '/')
-		Util::error("Wildcard is not allowed in folders.");
+		Util::error("`recursive()` does not support folder recursion yet. look out for cate updates incase it does.");
 	
 	string path = current.value.substr(0, location), //extract path
 				extension = current.value.substr(location+1); //extract extension

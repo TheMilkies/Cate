@@ -2,6 +2,6 @@ Project cate;
 cate.compiler = "g++"
 cate.files = {recursive("src/*.cpp")}
 cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread"
-cate.final_flags = "src/linux_libfl.a";
+cate. libs = {"src/linux_libfl.a"}
 cate.out = "cate"
 cate.build()
