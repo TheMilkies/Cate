@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
 	if (argc < 2) help();
 
-	char*file_name;
+	string file_name; file_name.reserve(64);
 
 	string arg;
 	arg.reserve(64);
@@ -64,16 +64,13 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			if (arg == "cate") continue; //why is this bug a thing?
-			
-			if (ends_with(arg, ".cate"))
-				file_name = (char*)argv[i];
-			else //add .cate ending
-				file_name = strcat(argv[i], ".cate");
+			file_name = argv[i];
+			if (!ends_with(arg, ".cate"))
+				file_name += ".cate";
 		}
 	}
 
-	if (file_name == NULL)
+	if (file_name.empty())
 		Util::command_error("No input file");
 
 	Parser parser(file_name);

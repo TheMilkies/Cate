@@ -6,7 +6,7 @@
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
 */
 
-Parser::Parser(const char* file_name)
+Parser::Parser(const string& file_name)
 {
 	//load yylex into tokens
 	std::ifstream file(file_name);
