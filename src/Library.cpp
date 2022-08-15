@@ -10,6 +10,7 @@ Library::~Library()
 
 void Library::build() 
 {
+	flags += " -fPIC ";
 	if (!already_built)
 	{
 		setup();
@@ -31,7 +32,7 @@ void Library::build()
 	}
 	else
 	{
-		command = compiler + " -shared -fpic -o " + out_name + " " + all_object_files + final_flags + " " + flags;
+		command = compiler + " -shared -o " + out_name + " " + all_object_files + final_flags + " " + flags;
 		build_type = " (dynamic)";
 	}
 	

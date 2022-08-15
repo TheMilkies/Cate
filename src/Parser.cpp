@@ -18,27 +18,23 @@ Parser::Parser(const string& file_name)
 	classes.reserve(8);
 
 	ParserToken::ParserTokens type;
-	string value; value.reserve(16);
 	ParserToken temp;
 	
 	while (type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.type = type;
-		temp.value = "";
+		temp.in_line = lexer_line;
 		
 		if (type == ParserToken::STRING_LITERAL)
 		{
-			value = lexer->YYText();
-			Util::remove_quotes(value);
-			temp.value = value;
+			temp.value = lexer->YYText();
+			Util::remove_quotes(temp.value);
 		}
 		else if (type == ParserToken::IDENTIFIER)
 		{
-			value = lexer->YYText();
-			temp.value = value;
+			temp.value = lexer->YYText();
 		}
 
-		temp.in_line = lexer_line;
 		tokens.push_back(temp);
 	}
 	
