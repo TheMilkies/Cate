@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <sstream>
 
 #if __has_include(<filesystem>)
 	#include <filesystem>
@@ -15,11 +16,16 @@
     #error "no filesystem support"
 #endif
 
-#ifdef __WIN32
-#include "windows/mingw_threads.hpp"
+#if __has_include(<thread>)
+  #include <thread>
 #else
-#include <thread>
-#endif // __WIN32
+  #ifdef __WIN32
+    #include "windows/mingw_threads.hpp"
+  #else
+    #error "no threading support"
+  #endif // __WIN32
+#endif
+
 
 #include <chrono>
 #include <unistd.h>

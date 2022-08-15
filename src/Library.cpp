@@ -36,5 +36,5 @@ void Library::build()
 	}
 	
 	Util::system(command);
-	std::cout << "\x1B[32mDone building \"" << name + build_type << "\"\u001b[0m\033[0m\n";
+	std::cout << GREEN "Done building \"" << name + build_type << RESET "\n";
 }

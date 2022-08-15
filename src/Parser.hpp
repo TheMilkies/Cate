@@ -35,7 +35,7 @@ private:
 	void expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3, ParserToken::ParserTokens type4);
 public:
 	void parse();
-	Parser(const char* file_name);
+	Parser(const string& file_name);
 	~Parser();
 };
 
