@@ -126,7 +126,7 @@ void Class::clear_property(int line, string& property)
 		Util::error(line, "\"" + property + "\" cannot be set to an array");
 }
 
-void Class::add_to_property(int line, string& property, string value)
+void Class::add_to_property(int line, string_view property, string value)
 {
 	if (property == "files")
 		files.emplace_back(value);
