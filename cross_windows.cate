@@ -7,10 +7,10 @@ cate.files = {recursive("src/*.cpp")}
 // the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
 
 cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none -static"
-cate.final_flags = "src/windows_libfl.a"
+cate. libs = {"src/linux_libfl.a"}
+
 cate.out = "cate.exe"
 cate.build()
 
 //this command saves a few hundred kilobytes, i don't know where i got it from but it's worth it 
-
 system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate.exe")
