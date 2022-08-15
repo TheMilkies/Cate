@@ -4,14 +4,6 @@ bool parser_exit = false, system_allowed = true;
 
 int thread_count = std::thread::hardware_concurrency() * 2;
 
-int total_alloc = 0;
-
-void* operator new(size_t size)
-{
-	total_alloc++;
-	return malloc(size);
-}
-
 void help()
 {
 	std::cout << "\x1b[34mCate " CATE_VERSION "\x1b[0m\n"
@@ -76,7 +68,5 @@ int main(int argc, char *argv[])
 		Util::command_error("No input file");
 
 	Parser parser(file_name);
-
-	std::cout << "Total allocations: " << total_alloc << "\n";
 	return 0;
 }

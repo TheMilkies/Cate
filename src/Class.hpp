@@ -49,7 +49,7 @@ public:
 
 	void setup();
 	void clear_property(int line, string& property);
-	void add_to_property(int line, string& property, string value);
+	void add_to_property(int line, string_view property, string value);
 	void set_property(int line, string& property, string& value);
 	void check();
 	void build_object(int i);
