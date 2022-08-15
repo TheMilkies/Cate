@@ -21,7 +21,12 @@ void Class::setup()
 	/*if (object_files.size() != files.size())
 		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);*/ 
 	
+#ifdef __WIN32
+	string command = "if not exist \"" + out_dir + "\" mkdir -p " + out_dir;
+#else
 	string command = "mkdir -p " + out_dir;
+#endif // OS check
+
 	Util::system(command);
 
 	//create folder

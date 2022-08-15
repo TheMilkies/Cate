@@ -6,7 +6,7 @@ namespace Util
 {
 	void error(string problem)
 	{
-		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: " << problem << "\n";
+		std::cout << RED BOLD "Error" RESET ": " << problem << "\n";
 		parser_exit = true;
 	}
 
@@ -17,25 +17,25 @@ namespace Util
 
 	void lexer_error(string problem)
 	{
-		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in line " << lexer_line << ": " << problem << "\n";
+		std::cout << RED BOLD "Error" RESET " in line " << lexer_line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void error(int line, string problem)
 	{
-		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in line " << line << ": " << problem << "\n";
+		std::cout << RED BOLD "Error" RESET " in line " << line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void fatal_error(int line, string problem)
 	{
-		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in line " << line << ": " << problem << "\n";
+		std::cout << RED BOLD "Error" RESET " in line " << line << ": " << problem << "\n";
 		exit(1);
 	}
 
 	void command_error(string problem)
 	{
-		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m in command: " << problem << "\n";
+		std::cout << RED BOLD "Error" RESET " in command: " << problem << "\n";
 		exit(1);
 	}
 
@@ -107,20 +107,18 @@ namespace Util
 		if (stat(path, &attr) != 0) //check if file exists
 			return 0; //will always recompile since file doesn't exist
 
-		#ifdef __WIN32
+	#ifdef __WIN32
 		return attr.st_mtime;
-		#else
-		return attr.st_mtim.tv_sec;
-		#endif // __WIN32
-
+	#else
+		return attr.st_mtim.tv_sec; //posix why must you have the worse syntax for this?
+	#endif // OS check tm
 	}
 
 	void system(string &command)
 	{
 		int ret = std::system(command.c_str());
 
-		//if (WEXITSTATUS(ret) != 0) //if there was an error
-		if ((((ret) & 0xff00) >> 8) != 0) //save a bit of time in the preprocessing phase
+		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
 			std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Not all files have been built.\n";
 			exit(1);
