@@ -6,7 +6,7 @@ int thread_count = std::thread::hardware_concurrency() * 2;
 
 void help()
 {
-	std::cout << "\x1b[34mCate " CATE_VERSION "\x1b[0m\n"
+	std::cout << CYAN "Cate " CATE_VERSION RESET "\n"
 	BOLD "usage:" RESET "\tcate [FLAGS] [FILENAME]\n\n"
 	BOLD "flags:\n" RESET
 	"\t-tN: sets thread count to N\n"
