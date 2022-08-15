@@ -94,11 +94,16 @@ void Class::build_objects()
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not there
 			library_paths.insert(path);
 
-		Util::remove_extension(lib);
-		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
-		Util::replace_all(lib, "lib", ""); //THIS IS AN ISSUE
-		
-		all_libraries += "-l" + lib + ' ';
+		//check if static or dynamic
+		if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
+		{
+			Util::remove_extension(lib);
+			lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
+			Util::replace_all(lib, "lib", ""); //remove the lib part.
+			all_libraries += "-l";
+		}
+
+		all_libraries += lib + ' ';
 	}
 
 	for(auto &path : library_paths)

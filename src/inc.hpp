@@ -16,11 +16,17 @@
     #error "no filesystem support"
 #endif
 
+#if __has_include(<string_view>) && __cplusplus >= 201703L
+  #include <string_view>
+#else
+  #include "nonstd/string_view.hpp"
+#endif
+
 #if __has_include(<thread>)
   #include <thread>
 #else
   #ifdef __WIN32
-    #include "windows/mingw_threads.hpp"
+    #include "nonstd/mingw_threads.hpp"
   #else
     #error "no threading support"
   #endif // __WIN32
@@ -35,6 +41,7 @@
 #include "robin_hood.hpp"
 
 using std::string;
+using std::string_view;
 using std::vector;
 using std::unordered_map;
 #endif

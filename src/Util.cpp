@@ -10,11 +10,6 @@ namespace Util
 		parser_exit = true;
 	}
 
-	/*void warning(string problem)
-	{
-		std::cout << "\u001b[31m\033[1mWarning\u001b[0m\033[0m: " << problem << "\n";
-	}*/
-
 	void lexer_error(string problem)
 	{
 		std::cout << RED BOLD "Error" RESET " in line " << lexer_line << ": " << problem << "\n";
@@ -33,13 +28,13 @@ namespace Util
 		exit(1);
 	}
 
-	void command_error(string problem)
+	void command_error(string_view problem)
 	{
 		std::cout << RED BOLD "Error" RESET " in command: " << problem << "\n";
 		exit(1);
 	}
 
-	void build_error(string &name, string problem)
+	void build_error(string_view name, string_view problem)
 	{
 		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Cannot build \""
 						  << name << "\" because " << problem << "\nTerminating.\n";
@@ -55,8 +50,8 @@ namespace Util
 
 	void replace_all( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
 		string& s,
-		string const& toReplace,
-		string const& replaceWith
+		string_view toReplace,
+		string_view replaceWith
 	) {
 		std::ostringstream oss;
 		oss.str().reserve(s.length());
@@ -78,9 +73,9 @@ namespace Util
 	}
 
 	string replace_all_safe( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
-		string &s,
-		string const& toReplace,
-		string const& replaceWith
+		string_view s,
+		string_view toReplace,
+		string_view replaceWith
 	) {
 		std::ostringstream oss;
 		oss.str().reserve(s.length());
@@ -114,14 +109,20 @@ namespace Util
 	#endif // OS check tm
 	}
 
-	void system(string &command)
+	void system(string_view command)
 	{
-		int ret = std::system(command.c_str());
+		int ret = std::system(command.data());
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
 			std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Not all files have been built.\n";
 			exit(1);
 		}
+	}
+
+	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow
+	{
+		if (ending.size() > value.size()) return false;
+		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 	}
 } // namespace Util
