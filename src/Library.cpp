@@ -10,9 +10,9 @@ Library::~Library()
 
 void Library::build() 
 {
-	flags += " -fPIC ";
 	if (!already_built)
 	{
+		flags += " -fPIC ";
 		setup();
 		build_objects();
 	}
