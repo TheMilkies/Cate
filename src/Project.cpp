@@ -24,5 +24,5 @@ void Project::build()
 	string command = compiler + " -o " + out_name + " " + all_object_files + flags + " " + all_library_paths + all_libraries + " " + all_include_paths + final_flags;
 
 	Util::system(command);
-	std::cout << GREEN "Done building \"" << name << "\"" RESET "\n";
+	std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 }
