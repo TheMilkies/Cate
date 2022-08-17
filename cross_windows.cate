@@ -4,10 +4,10 @@ Project cate
 cate.compiler = "x86_64-w64-mingw32-g++" //fight me
 cate.files = {recursive("src/*.cpp")}
 
-// the flags are only to make it easier to manage.you really don't want a 3mb cate do you?
+//the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
 
-cate.flags = "-fpermissive -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none -static"
-cate.libs = {"src/windows_libfl.a"}
+cate.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none -static"
+cate.libs = {"src/windows_libfl.a"} //use the static library because i hate windows dlls
 
 cate.out = "cate.exe"
 cate.build()
