@@ -171,7 +171,7 @@ void Parser::parse()
 						current_class->clear_property(current.in_line, child); //clear array
 						if (current.type == ParserToken::LCURLY)
 							array(); //start the array
-						else if (current.type == ParserToken::RECURSIVE)
+						else 
 							recursive(); //only when the child is"files"
 					}
 				}
