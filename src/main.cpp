@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 		else //must be a filename now
 		{
 			file_name = argv[i];
+			
 			//add cate file ending if doesn't already end with '"".cate"
 			if (!Util::ends_with(arg, ".cate"))
 				file_name += ".cate";

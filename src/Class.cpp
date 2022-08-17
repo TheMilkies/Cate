@@ -9,18 +9,19 @@ void Class::setup()
 
 	for(auto file : files)
 	{
-		Util::replace_all(file, "../", "back_");
-		Util::replace_all(file, "/", "_");
-		file = (Util::remove_extension(file)) + ".o";
-		file = out_dir + "/" + file;
-		all_object_files += file + " ";
-		object_files.emplace_back(file);
+		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
+		Util::replace_all(file, "/", "_"); // "/" -> "_"
+		file = (Util::remove_extension(file)) + ".o"; //replace the extension with .o
+		file = out_dir + "/" + file; // folder/object.o
+		all_object_files += file + " "; //used in final build process, all are linked
+		object_files.emplace_back(file); //for build
 	}
 
 	//useless debug line
 	/*if (object_files.size() != files.size())
 		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);*/ 
 	
+	//create build folder if it doesn't exist
 #ifdef __WIN32
 	string command = "if not exist \"" + out_dir + "\" mkdir -p " + out_dir;
 #else
@@ -29,11 +30,15 @@ void Class::setup()
 
 	Util::system(command);
 
-	//create folder
+	//create output file's folder if doesn't already exist.
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	if (!path.empty() && fs::is_directory(path))
 	{
-		command = "mkdir -p " + path;
+#ifdef __WIN32
+		command = "if not exist \"" + out_dir + "\" mkdir -p " + out_dir;
+#else
+		command = "mkdir -p " + out_dir;
+#endif // OS check
 		Util::system(command);
 	}
 }
@@ -53,12 +58,12 @@ void Class::build_object(int i)
 
 void Class::build_objects()
 {
-	if (already_built) return;
+	if (already_built) return; 
 
-	if (thread_count >= files.size())
+	if (thread_count >= files.size()) //this is very important.
 		thread_count = files.size();
 
-	if (include_paths.size() > 0) // 2% speed? yes please
+	if (include_paths.size() > 0)
 	{
 		for(auto &path : include_paths)
 			all_include_paths += "-I" + path + ' ';
@@ -70,20 +75,20 @@ void Class::build_objects()
 	{
 		for (int j = 0; j < thread_count; j++)
 		{
-			if (i+j > files.size()) break;
+			if (i+j > files.size()) break; //current file index check
 			
-			threads.emplace_back(&Class::build_object, this, i+j);
+			threads.emplace_back(&Class::build_object, this, i+j); //make thread build the object file
 		}
 		for(auto &thread : threads)
 		{
-			thread.join();
+			thread.join(); //make sure the main thread waits until they finish.
 		}
 		
-		threads.clear();
+		threads.clear(); //clear them so we won't run them again.
 	}
 
-	if (!needs_rebuild) //don't add libraries if you don't need to
-		return;
+	 //set by the threads, don't add libraries if you don't need to
+	if (!needs_rebuild) return;
 
 	for(auto &lib : libraries)
 	{
@@ -91,10 +96,10 @@ void Class::build_objects()
 		int position_of_last_slash = lib.find_last_of('/'); 
 		string path = lib.substr(0, position_of_last_slash+1);
 
-		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not there
+		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
 			library_paths.insert(path);
 
-		//check if static or dynamic
+		//check if static
 		if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
 		{
 			Util::remove_extension(lib);
@@ -106,6 +111,7 @@ void Class::build_objects()
 		all_libraries += lib + ' ';
 	}
 
+	//can be rewritten but it's faster like this...?
 	for(auto &path : library_paths)
 	{
 		all_library_paths += "-L" + path + ' ';
@@ -114,6 +120,7 @@ void Class::build_objects()
 	already_built = true;
 }
 
+//self explanitories
 void Class::clear_property(int line, string& property)
 {
 	if (property == "files")

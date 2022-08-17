@@ -43,8 +43,8 @@ namespace Util
 
 	string remove_quotes(string &s) 
 	{
-		s.erase(0, 1);
-		s.pop_back();
+		s.erase(0, 1); //remove first char
+		s.pop_back(); //remove last char
 		return s;
 	}
 
@@ -102,6 +102,7 @@ namespace Util
 		if (stat(path, &attr) != 0) //check if file exists
 			return 0; //will always recompile since file doesn't exist
 
+		//return last modified time
 	#ifdef __WIN32
 		return attr.st_mtime;
 	#else
@@ -109,6 +110,7 @@ namespace Util
 	#endif // OS check tm
 	}
 
+	//no system_allowed check here because it's ran by build threads
 	void system(string_view command)
 	{
 		int ret = std::system(command.data());
@@ -120,7 +122,7 @@ namespace Util
 		}
 	}
 
-	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow
+	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow, should be rewritten
 	{
 		if (ending.size() > value.size()) return false;
 		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());

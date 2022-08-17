@@ -10,6 +10,8 @@ Project::~Project()
 
 void Project::build() 
 {
+	//same as library
+
 	if (!already_built)
 	{
 		setup();
