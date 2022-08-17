@@ -12,7 +12,7 @@ void Library::build()
 {
 	if (!already_built)
 	{
-		flags += " -fPIC ";
+		flags += " -fPIC "; //make library basically
 		setup();
 		build_objects();
 	}

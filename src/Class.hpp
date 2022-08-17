@@ -13,12 +13,17 @@ extern int thread_count;
 class Class
 {
 public:
+	//filled by setup() and build()
 	string all_object_files, all_libraries, all_library_paths, all_include_paths;
+
+	//user defined in .cate file
 	string name, flags, out_name, out_dir, compiler, final_flags;
 	vector<string> files, libraries, object_files, include_paths;
+
+	//filled from build();
 	robin_hood::unordered_set<string> library_paths;
 
-	bool is_static;
+	bool is_static; //only in library
 	bool already_built = false, needs_rebuild = false;
 	
 	Class()
@@ -44,17 +49,19 @@ public:
 	}
 	
 	virtual ~Class() {};
-	void build_objects();
-	virtual void build() = 0;
+	virtual void build() = 0; //class defined
 
-	void setup();
+	void check(); //check if everything is okay
+	void setup(); //set up files and object files.
+	void build_objects(); //build the objects
+
+	//general and self-explanitory
 	void clear_property(int line, string& property);
 	void add_to_property(int line, string_view property, string value);
 	void set_property(int line, string& property, string& value);
-	void check();
-	void build_object(int i);
 
 	//threading
+	void build_object(int i); 
 	vector<std::thread>threads;
 	string command_template;
 };
