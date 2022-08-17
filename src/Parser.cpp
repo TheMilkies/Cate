@@ -6,41 +6,48 @@
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
 */
 
+/*
+	string_function: '(' string_literal ')' {return string_literal;}
+	void_function: '(' ')'
+*/
+
 Parser::Parser(const string& file_name)
 {
-	//load yylex into tokens
 	std::ifstream file(file_name);
 	if (file.fail())
-		Util::command_error("Cannot open file \"" + string(file_name) + "\"");
+		Util::command_error("Cannot open file \"" + file_name + "\"");
 	
-	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout);
+	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout); //create a the lexer
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
-	ParserToken::ParserTokens type;
+	ParserToken::ParserTokens type; //
 	ParserToken temp;
 	
 	while (type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
+		temp.value = ""; //reset to save some memory
 		temp.type = type;
-		temp.in_line = lexer_line;
+		temp.in_line = lexer_line; //defined in lexer.l
 		
 		if (type == ParserToken::STRING_LITERAL)
 		{
+			//string literals have the quotes (example: "string") so we need to remove them
 			temp.value = lexer->YYText();
 			Util::remove_quotes(temp.value);
 		}
 		else if (type == ParserToken::IDENTIFIER)
 		{
+			//identifiers are just kept as themselves
 			temp.value = lexer->YYText();
 		}
 
-		tokens.push_back(temp);
+		tokens.push_back(temp); //add the token
 	}
 	
-	delete lexer;
+	delete lexer; //delete the monstrosity and free its memory
 
-	parse();
+	parse(); //start parsing
 }
 
 Parser::~Parser()
@@ -49,17 +56,18 @@ Parser::~Parser()
 		delete c.second; //free the pointers
 }
 
-void Parser::define(ParserToken::ParserTokens type, const string &identifier)
+void Parser::define(const string &identifier)
 {
 	if (is_defined(identifier))
 		Util::fatal_error(current.in_line, "\"" + identifier + "\" was already defined");
 	
-	if (type == ParserToken::PROJECT)
+	//this is technically a factory... oh well
+	if (temp_type == ParserToken::PROJECT)
 		classes[identifier] = new Project;
 	else //library
 		classes[identifier] = new Library;
 
-	classes[identifier]->name = identifier;
+	classes[identifier]->name = identifier; //set its name to the identifier
 }
 
 void Parser::void_function()
@@ -68,7 +76,7 @@ void Parser::void_function()
 	expect(ParserToken::RPAREN);
 }
 
-// Runs expect '(' String ')' and returns the String 
+//expects '(' string_literal ')' and then returns the string_literal token
 ParserToken Parser::string_function()
 {
 	expect(ParserToken::LPAREN);
@@ -80,30 +88,37 @@ ParserToken Parser::string_function()
 
 void Parser::declare()
 {
-	temp_type = current.type;
+	//declaration: type identifier {define(type, identifier);}
+	temp_type = current.type; //library or project
 	expect(ParserToken::IDENTIFIER);
-	define(temp_type, current.value);
-	current_class = classes[current.value];
+	define(current.value);
+	current_class = classes[current.value]; //set the pointer to the current class
 }
 
 void Parser::declare_library()
 {
-	declare();
+	/* library_declaration: library identifier '(' lib_type ')' {
+			define(type, identifier);
+			current.type = lib_type;
+		}*/
+
+	declare(); //already wrote that code, reusing it.
 
 	expect(ParserToken::LPAREN);
 	expect(ParserToken::STATIC, ParserToken::DYNAMIC);
 
 	temp_type = current.type;
-	current_class->is_static = (current.type == ParserToken::STATIC);
+	current_class->is_static = (current.type == ParserToken::STATIC); //if current token is static, set the type to static.
 
 	expect(ParserToken::RPAREN);
 }
 
 void Parser::parse()
 {
-	current = next();
-	string parent; parent.reserve(16); child.reserve(16);
-	while (current.type != ParserToken::END)
+	current = next(); //gets the first token (0)
+	
+	string parent; parent.reserve(16); child.reserve(16); //parent.child
+	while (current.type != ParserToken::END) //END = end of file
 	{
 		switch (current.type)
 		{
@@ -116,6 +131,7 @@ void Parser::parse()
 			break;
 
 		case ParserToken::IDENTIFIER:
+			/*property: string_literal '.' string_literal*/
 			parent = current.value;
 
 			if (!is_defined(parent))
@@ -128,10 +144,13 @@ void Parser::parse()
 			expect(ParserToken::IDENTIFIER);
 			child = current.value;
 
+			//object_method: property function_parens
 			if (object_method());
 			else
 			{
+				//assignment: property '=' expr
 				expect(ParserToken::ASSIGN);
+				//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
 				if (child == "type")
 				{
 					expect(ParserToken::STATIC, ParserToken::DYNAMIC);
@@ -144,15 +163,16 @@ void Parser::parse()
 
 					if (current.type == ParserToken::STRING_LITERAL)
 					{
-						current_class->set_property(current.in_line, child, current.value);
+						current_class->set_property(current.in_line, child, current.value); //set current property to the string literal
 					}
 					else if (current.type == ParserToken::LCURLY)
 					{
-						current_class->clear_property(current.in_line, child);
-						array();
+						current_class->clear_property(current.in_line, child); //clear array
+						array(); //start the array
 					}
 					else
 					{
+						//only when property is "files"
 						current_class->clear_property(current.in_line, child);
 						recursive();
 					}
@@ -163,6 +183,13 @@ void Parser::parse()
 		
 		case ParserToken::SYSTEM:
 		{
+			/*system_call: system '(' string_literal ')'
+			{
+				if(system_allowed) {
+					puts(string_literal);
+					system(string_literal);
+				}
+			}*/
 			string command = string_function().value;
 			if (system_allowed)
 			{
@@ -171,7 +198,7 @@ void Parser::parse()
 			}
 		} break;
 
-		case ParserToken::SEMICOLON:
+		case ParserToken::SEMICOLON: //ignored
 			break;
 
 		default:
@@ -179,17 +206,17 @@ void Parser::parse()
 			break;
 		}
 
-		current = next();
+		current = next(); // get next token
 	}
 
-	if (parser_exit) exit(1);
+	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
 }
 
 bool Parser::object_method()
 {
-	if (child == "build")
+	if (child == "build") //void Class.build(void);
 	{
-		void_function();
+		void_function(); 
 		current_class->build();				
 	}
 	else
@@ -197,12 +224,12 @@ bool Parser::object_method()
 		return false; //if not any of those, it's a property
 	}
 
-	return true;
+	return true; //will go to the next token
 }
 
 void Parser::expect(ParserToken::ParserTokens type)
 {
-	current = next();
+	current = next(); //get next token to compare
 
 	if (current.type != type)
 	{
@@ -246,6 +273,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 
 void Parser::array()
 {
+	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != ParserToken::RCURLY)
 	{
 		expect(ParserToken::STRING_LITERAL, ParserToken::RECURSIVE, ParserToken::COMMA, ParserToken::RCURLY);
@@ -265,9 +293,9 @@ void Parser::recursive()
 	if (child != "files")
 		Util::fatal_error(current.in_line, "only files can be set to result of recursive search.");
 	
-	current = string_function(); //might look weird but actually makes this much easier.
+	current = string_function(); 
 
-	if (current.value.empty())
+	if (current.value.empty()) //should NEVER happen
 		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
 	
 	//wildcard stuff
@@ -277,7 +305,8 @@ void Parser::recursive()
 		Util::error("Wildcard was not found in recursive");
 
 	if (current.value[location+1] == '/')
-		Util::error("`recursive()` does not support folder recursion yet. look out for cate updates incase it does.");
+		Util::error(YELLOW "recursive()" COLOR_RESET
+				" does not support folder recursion yet. look out for cate updates incase it does.");
 	
 	string path = current.value.substr(0, location), //extract path
 				extension = current.value.substr(location+1); //extract extension
@@ -287,12 +316,12 @@ void Parser::recursive()
 
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
-	//check if directory exists
-	if (!fs::is_directory(path))
+	if (!fs::is_directory(path)) //check if directory exists
 		Util::error(current.in_line, "Directory \"" + path + "\" doesn't exit");
 
-	for (auto &p : fs::directory_iterator(path))
+	for (auto &p : fs::directory_iterator(path)) //iterate over the files
     {
+		//add to files only if the files have the extension
         if (p.path().extension() == extension)
 			current_class->files.emplace_back(p.path().string());
     }

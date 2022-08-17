@@ -1,7 +1,7 @@
 #if !defined(Util_HPP)
 #define Util_HPP
 #include "inc.hpp"
-#define CATE_VERSION "v1.2.5 (Release)"
+#define CATE_VERSION "v1.2.5 (Development)"
 
 #ifdef __WIN32
 #define ARGC_START 0
@@ -17,7 +17,9 @@ extern int lexer_line;
 #define COLOR_RESET "\033[0m"
 #define RED "\033[31m"
 #define GREEN "\033[32m"
-#define CYAN "\033[32m"
+#define YELLOW "\033[33m"
+#define CYAN "\033[34m"
+#define ORANGE "\033[35m"
 
 namespace Util
 {
