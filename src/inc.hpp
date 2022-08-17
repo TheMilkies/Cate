@@ -1,5 +1,7 @@
 #ifndef INC_HPP
 #define INC_HPP
+//global includes for easier life
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -31,7 +33,6 @@
     #error "no threading support"
   #endif // __WIN32
 #endif
-
 
 #include <chrono>
 #include <unistd.h>
