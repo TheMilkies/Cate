@@ -100,7 +100,7 @@ void Parser::declare_library()
 	/* library_declaration: library identifier '(' lib_type ')' {
 			define(type, identifier);
 			current.type = lib_type;
-		}*/
+		} */
 
 	declare(); //already wrote that code, reusing it.
 
@@ -150,6 +150,7 @@ void Parser::parse()
 			{
 				//assignment: property '=' expr
 				expect(ParserToken::ASSIGN);
+
 				//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
 				if (child == "type")
 				{
@@ -165,16 +166,13 @@ void Parser::parse()
 					{
 						current_class->set_property(current.in_line, child, current.value); //set current property to the string literal
 					}
-					else if (current.type == ParserToken::LCURLY)
+					else 
 					{
 						current_class->clear_property(current.in_line, child); //clear array
-						array(); //start the array
-					}
-					else
-					{
-						//only when property is "files"
-						current_class->clear_property(current.in_line, child);
-						recursive();
+						if (current.type == ParserToken::LCURLY)
+							array(); //start the array
+						else if (current.type == ParserToken::RECURSIVE)
+							recursive(); //only when the child is"files"
 					}
 				}
 			}
