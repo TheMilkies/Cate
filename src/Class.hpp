@@ -41,8 +41,8 @@ public:
 		final_flags.reserve(32);
 		out_name.reserve(32);
 		flags.reserve(32);
-
 	}
+	
 	virtual ~Class() {};
 	void build_objects();
 	virtual void build() = 0;

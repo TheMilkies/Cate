@@ -6,37 +6,37 @@ namespace Util
 {
 	void error(string problem)
 	{
-		std::cout << RED BOLD "Error" RESET ": " << problem << "\n";
+		std::cout << RED BOLD "Error" COLOR_RESET ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void lexer_error(string problem)
 	{
-		std::cout << RED BOLD "Error" RESET " in line " << lexer_line << ": " << problem << "\n";
+		std::cout << RED BOLD "Error" COLOR_RESET " in line " << lexer_line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
-	void error(int line, string problem)
+	void error(int line, string_view problem)
 	{
-		std::cout << RED BOLD "Error" RESET " in line " << line << ": " << problem << "\n";
+		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void fatal_error(int line, string problem)
 	{
-		std::cout << RED BOLD "Error" RESET " in line " << line << ": " << problem << "\n";
+		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);
 	}
 
 	void command_error(string_view problem)
 	{
-		std::cout << RED BOLD "Error" RESET " in command: " << problem << "\n";
+		std::cout << RED BOLD "Error" COLOR_RESET " in command: " << problem << "\n";
 		exit(1);
 	}
 
 	void build_error(string_view name, string_view problem)
 	{
-		std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Cannot build \""
+		std::cout <<  RED BOLD "Error" COLOR_RESET ": Cannot build \""
 						  << name << "\" because " << problem << "\nTerminating.\n";
 		exit(1);
 	}
@@ -115,7 +115,7 @@ namespace Util
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
-			std::cout << "\u001b[31m\033[1mError\u001b[0m\033[0m: Not all files have been built.\n";
+			std::cout << RED BOLD "Error" COLOR_RESET ": Error in command/build command.\n";
 			exit(1);
 		}
 	}
