@@ -309,13 +309,13 @@ void Parser::recursive()
 	string path = current.value.substr(0, location), //extract path
 				extension = current.value.substr(location+1); //extract extension
 
-	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
-		Util::fatal_error(current.in_line, "Multiple wildcards are not allowed");
-
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	if (!fs::is_directory(path)) //check if directory exists
-		Util::error(current.in_line, "Directory \"" + path + "\" doesn't exit");
+		Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exit");
+
+	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
+		Util::fatal_error(current.in_line, "Multiple wildcards are not allowed");
 
 	for (auto &p : fs::directory_iterator(path)) //iterate over the files
     {
