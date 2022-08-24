@@ -69,4 +69,3 @@
 . {Util::lexer_error("Unknown character");}
 
 %%
-
