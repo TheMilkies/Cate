@@ -75,7 +75,7 @@ Cate follows an object syntax. It's very simple to understand for C/C++ programm
 
 ### Classes
 There are only two classes you can create.
-1. `Project1`: A class that builds an executable.  (**Example**: `Project proj;`)
+1. `Project`: A class that builds an executable.  (**Example**: `Project proj;`)
 
 2. `Library(type)`: A class that builds a library of specified type (can be `static` xor `dynamic`)  (**Example**: `Library slib(static);`, **Example**: `Library dlib(dynamic);`)
 
@@ -85,7 +85,7 @@ Just like in C/C++, properties follow the `object.property = Thing;`.
 
 Here are the classes' properties:
 - `String out` is the output file. Not required (defaults to identifier).
-- `String build_directory|object_folder` is the build directory where object files are saved. Not required (defaults to "builld/").
+- `String build_directory|object_folder` is the build directory where object files are saved. Not required (defaults to "build/").
 - `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or just `recursive()`. Required. 
 - `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required. 
 - `Array includes|include_paths` holds the folder names of the class's includes. Not required.
@@ -108,7 +108,7 @@ These issues are known and will be fixed soon!
 - None for now!
 
 ## Credits
-All Milkies have contributed in some way to Cate. Notable contributors are:
+<!-- All Milkies have contributed in some way to Cate. Notable contributors are: -->
 - Yogurt (Main maintainer)
 - Lime (Tester and bug fixer)
 - Lemon (Secondary bug fixer)
