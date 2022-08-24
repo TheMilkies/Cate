@@ -40,16 +40,16 @@ Unlike CMake/Make, Cate is not Turing complete. It doesn't feature if-statements
 - Cate **does not** support `\"` characters in string literals.
 
 ## Building Cate
-### Dependencies
+### Build dependencies
 - A *NIX operating system (Linux, BSD, MacOS, etc)
 - A C++17 compiler (I used g++)
-- GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md)) (not required in x86_64 builds because we included the headers as a file)
-- GNU Make (if you don't have Cate already installed)
+- GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md)) (not required in x86_64 builds because we included the headers and a static library)
+- GNU Make (if you don't have Cate installed)
 
 ### Building with GNU Make
 To build with Make, run `make`. or if you want a smaller executable, run `make smol`
 ### Building with Cate
-To build with Make, run `cate build`,  or if you want a smaller executable, run `cate smol`
+To build with Cate, run `cate build`,  or if you want a smaller executable, run `cate smol`
 ### Installing
 To install, use `sudo cate install`, or `sudo make install` if you prefer installing with make.
 
