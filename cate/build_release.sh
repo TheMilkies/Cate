@@ -6,6 +6,7 @@ if [ $# -eq 0 ]; then
 fi
 
 sed -i 's/(Development)/(Release)/g' ../src/Util.hpp #change Development to Release
+touch ../src/main.cpp # to make sure it changes
 if cate smol &> /dev/null; then
 	sed -i 's/(Release)/(Development)/g' ../src/Util.hpp #change it back
 	echo "cp -f out/cate /usr/bin/cate" > install.sh #generate the install file
