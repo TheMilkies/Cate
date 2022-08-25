@@ -21,22 +21,21 @@ Parser::Parser(const string& file_name)
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
-	ParserToken::ParserTokens type; //
 	ParserToken temp;
 	
-	while (type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
+	while (temp.type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.value = ""; //reset to save some memory
-		temp.type = type;
+		temp.type = temp.type;
 		temp.in_line = lexer_line; //defined in lexer.l
 		
-		if (type == ParserToken::STRING_LITERAL)
+		if (temp.type == ParserToken::STRING_LITERAL)
 		{
 			//string literals have the quotes (example: "string") so we need to remove them
 			temp.value = lexer->YYText();
 			Util::remove_quotes(temp.value);
 		}
-		else if (type == ParserToken::IDENTIFIER)
+		else if (temp.type == ParserToken::IDENTIFIER)
 		{
 			//identifiers are just kept as themselves
 			temp.value = lexer->YYText();
