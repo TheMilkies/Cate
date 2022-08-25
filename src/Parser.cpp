@@ -269,7 +269,6 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
-__attribute__((optimize("unroll-loops")))
 void Parser::array()
 {
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.

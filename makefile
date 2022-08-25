@@ -15,12 +15,12 @@ smol: SIZE_OPTIMIZATION_FLAGS += -ffunction-sections -fdata-sections -Wl,--gc-se
 build_directory:
 	@mkdir -p $(BUILD_DIR)
 
-cate: $(OBJECTS)
-	@$(CC) $^ -o cate $(CFLAGS) src/linux_libfl.a
+out/cate: $(OBJECTS)
+	@$(CC) $^ -o out/cate $(CFLAGS) externals/linux_libfl.a
 
 smol_cate: $(OBJECTS)
-	@$(CC) $^ -o cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)  src/linux_libfl.a
-	strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag cate
+	@$(CC) $^ -o out/cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS)  externals/linux_libfl.a
+	strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
 
 lex: src/lexer.l
 	flex --noyywrap -osrc/Lexer.cpp --header-file=src/Lexer.hpp src/lexer.l
