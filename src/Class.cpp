@@ -176,4 +176,4 @@ void Class::check()
 
 	if (out_dir.empty())
 		out_dir = "build";
-}
+} 
