@@ -1,0 +1,6 @@
+system("cate smol.cate");
+system("echo cp -f cate /usr/bin/cate > install.sh");
+system("chmod +x install.sh");
+system("tar -czvf linux_cate_v1.x.x.tar.gz ../out/cate install.sh");
+system("zip -9 linux_cate_v1.x.x.zip ../out/cate install.sh");
+system("rm install.sh");

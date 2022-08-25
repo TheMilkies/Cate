@@ -1,0 +1,8 @@
+Project cate;
+cate.compiler = "g++"
+cate.files = {recursive("../src/*.cpp")}
+cate.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
+cate.out = "../out/cate"
+cate.libs = {"../externals/linux_libfl.a"}
+cate.build()
+system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag ../out/cate")
