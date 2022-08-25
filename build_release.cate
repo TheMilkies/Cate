@@ -1,4 +1,0 @@
-system("cate smol.cate");
-system("echo cp -f cate /usr/bin/cate > install.sh");
-system("tar -czvf linux_cate_v1.x.x.tar.gz cate install.sh");
-system("zip -9 linux_cate_v1.x.x.zip cate install.sh");
