@@ -8,7 +8,7 @@ int thread_count = std::thread::hardware_concurrency() * 2;
 
 void help()
 {
-	std::cout << CYAN BOLD "Cate " CATE_VERSION "\n"
+	std::cout << BLUE BOLD "Cate " CATE_VERSION "\n"
 	"usage: \tcate " GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n" 
 	"\t-t" YELLOW "N" COLOR_RESET ": sets thread count to " YELLOW BOLD "N\n"
