@@ -115,7 +115,11 @@ namespace Util
 	{
 		int ret = std::system(command.data());
 
+#ifdef __WIN32
+		if (((ret) & 0x7f) && (((ret) & 0xff00) >> 8) != 0)
+#else
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
+#endif // __WIN32
 		{
 			std::cout << RED BOLD "Error" COLOR_RESET ": Error in command/build command.\n";
 			exit(1);

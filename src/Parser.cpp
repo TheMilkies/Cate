@@ -49,6 +49,7 @@ Parser::Parser(const string& file_name)
 	parse(); //start parsing
 }
 
+__attribute__((optimize("unroll-loops")))
 Parser::~Parser()
 {
 	for(auto &c : classes)
@@ -268,6 +269,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
+__attribute__((optimize("unroll-loops")))
 void Parser::array()
 {
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
