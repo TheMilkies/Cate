@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	{
 		arg = argv[i];
 		
-		if (arg[0]== '-')
+		if (arg[0] == '-')
 		{
 			switch (arg[1]) //check the second character of the argument
 			{

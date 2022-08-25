@@ -2,6 +2,7 @@
 
 extern int thread_count;
 
+//__attribute__((optimize("unroll-loops")))
 void Class::setup()
 {
 	if (already_built) return;
@@ -79,6 +80,7 @@ void Class::build_objects()
 			
 			threads.emplace_back(&Class::build_object, this, i+j); //make thread build the object file
 		}
+
 		for(auto &thread : threads)
 		{
 			thread.join(); //make sure the main thread waits until they finish.

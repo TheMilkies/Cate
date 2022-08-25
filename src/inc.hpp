@@ -25,18 +25,20 @@
 #endif
 
 #if __has_include(<thread>)
-  #include <thread>
+	#ifdef __WIN32
+		#include "nonstd/mingw_threads.hpp"
+	#else
+		#include <thread>
+	#endif // __WIN32
 #else
-  #ifdef __WIN32
-    #include "nonstd/mingw_threads.hpp"
-  #else
     #error "no threading support"
-  #endif // __WIN32
 #endif
 
 #include <chrono>
 #include <unistd.h>
 #include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <unordered_map>
 #include "robin_hood.hpp"

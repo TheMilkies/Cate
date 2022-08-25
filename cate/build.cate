@@ -1,0 +1,7 @@
+Project cate;
+cate.compiler = "g++"
+cate.files = {recursive("../src/*.cpp")}
+cate.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread"
+cate.libs = {"../externals/linux_libfl.a"}
+cate.out = "../out/cate"
+cate.build()
