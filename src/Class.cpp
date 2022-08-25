@@ -2,7 +2,6 @@
 
 extern int thread_count;
 
-//__attribute__((optimize("unroll-loops")))
 void Class::setup()
 {
 	if (already_built) return;
