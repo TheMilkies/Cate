@@ -1,1 +1,0 @@
-system("cp cate /usr/bin -f");
