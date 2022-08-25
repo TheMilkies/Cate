@@ -1,7 +1,4 @@
 build/*.o
-cate
-cate.exe
-install.sh
 .vscode/
-src/inc.hpp.gch
 *.o
+out/*
