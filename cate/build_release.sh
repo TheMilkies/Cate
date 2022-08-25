@@ -8,7 +8,7 @@ fi
 sed -i 's/(Development)/(Release)/g' ../src/Util.hpp #change Development to Release
 if cate smol &> /dev/null; then
 	sed -i 's/(Release)/(Development)/g' ../src/Util.hpp #change it back
-	echo cp -f cate /usr/bin/cate > install.sh #generate the install file
+	echo "cp -f out/cate /usr/bin/cate" > install.sh #generate the install file
 	chmod +x install.sh #add permissons
 	tar -czvf ../out/linux_cate_v$1.tar.gz ../out/cate install.sh #create tar
 	zip -9 ../out/linux_cate_v$1.zip ../out/cate install.sh #create zip
