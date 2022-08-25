@@ -1,6 +1,6 @@
 CC = g++
 SRC := src
-BUILD_DIR := build
+BUILD_DIR := cate/build
 CFLAGS := -std=c++17 -fpermissive -lstdc++fs -pthread
 SIZE_OPTIMIZATION_FLAGS := -O3 
 
@@ -30,7 +30,7 @@ $(BUILD_DIR)/%.o: $(SRC)/%.cpp
 	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS)
 
 install:
-	@cp cate /usr/bin
+	@cp out/cate /usr/bin/cate
 	@echo "Installed cate!"
 
 uninstall:
