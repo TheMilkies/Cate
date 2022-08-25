@@ -1,6 +1,8 @@
+system("sed -i 's/(Development)/(Release)/g' ../src/Util.hpp");
 system("cate smol.cate");
+system("sed -i 's/(Release)/(Development)/g' ../src/Util.hpp");
 system("echo cp -f cate /usr/bin/cate > install.sh");
 system("chmod +x install.sh");
-system("tar -czvf linux_cate_v1.x.x.tar.gz ../out/cate install.sh");
-system("zip -9 linux_cate_v1.x.x.zip ../out/cate install.sh");
+system("tar -czvf ../out/linux_cate_v1.x.x.tar.gz ../out/cate install.sh");
+system("zip -9 ../out/linux_cate_v1.x.x.zip ../out/cate install.sh");
 system("rm install.sh");
