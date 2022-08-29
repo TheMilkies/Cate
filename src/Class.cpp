@@ -22,24 +22,13 @@ void Class::setup()
 		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);*/ 
 	
 	//create build folder if it doesn't exist
-#ifdef __WIN32
-	string command = "if not exist \"" + out_dir + "\" mkdir -p " + out_dir;
-#else
-	string command = "mkdir -p " + out_dir;
-#endif // OS check
-
-	Util::system(command);
+	Util::create_folder(out_dir.c_str());
 
 	//create output file's folder if doesn't already exist.
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	if (!path.empty() && fs::is_directory(path))
 	{
-#ifdef __WIN32
-		command = "if not exist \"" + out_dir + "\" mkdir -p " + out_dir;
-#else
-		command = "mkdir -p " + out_dir;
-#endif // OS check
-		Util::system(command);
+		Util::create_folder(path.c_str());
 	}
 }
 
