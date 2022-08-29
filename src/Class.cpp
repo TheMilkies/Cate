@@ -26,7 +26,7 @@ void Class::setup()
 
 	//create output file's folder if doesn't already exist.
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
-	if (!path.empty() && fs::is_directory(path))
+	if (!path.empty())
 	{
 		Util::create_folder(path.c_str());
 	}
