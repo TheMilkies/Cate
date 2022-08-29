@@ -8,12 +8,12 @@
 #include <algorithm>
 #include <sstream>
 
-#if __has_include(<filesystem>)
+#if __has_include(<experimental/filesystem>)
+    #include <experimental/filesystem>
+  	namespace fs = std::experimental::filesystem;
+#elif __has_include(<filesystem>)
 	#include <filesystem>
 	namespace fs = std::filesystem;
-#elif __has_include(<experimental/filesystem>)
-    #include <experimental/filesystem>
-  namespace fs = std::experimental::filesystem;
 #else
     #error "no filesystem support"
 #endif
@@ -29,7 +29,7 @@
 		#include "nonstd/mingw_threads.hpp"
 	#else
 		#include <thread>
-	#endif // __WIN32
+	#endif // OS Check
 #else
     #error "no threading support"
 #endif

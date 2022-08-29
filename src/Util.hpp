@@ -4,11 +4,11 @@
 #define CATE_VERSION "v1.2.8 (Development)"
 
 #ifdef __WIN32
-#define ARGC_START 0
-#define OBJ_EXTENSION ".obj"
+	#define ARGC_START 0
+	#define OBJ_EXTENSION ".obj"
 #else
-#define ARGC_START 1
-#define OBJ_EXTENSION ".o"
+	#define ARGC_START 1
+	#define OBJ_EXTENSION ".o"
 #endif // OS check
 
 extern int lexer_line;
@@ -40,6 +40,16 @@ namespace Util
 
 	long long get_modified_time(const char *path);
 	inline bool file_exists(const char* file_name) { return access(file_name, F_OK) != -1; } 
+
+	inline void create_folder(const char* path) {
+		struct stat st = {0};
+
+		if (stat(path, &st) == -1) {
+			if (mkdir(path, 0700) && errno != EEXIST)
+				fatal_error(0, string("Could not create folder \"") + path + "\"");
+		}
+	} 
+
 	void system(string_view command);
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
