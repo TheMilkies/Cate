@@ -9,7 +9,7 @@ int thread_count = std::thread::hardware_concurrency() * 2;
 void help()
 {
 	std::cout << BLUE BOLD "Cate " CATE_VERSION "\n"
-	"usage: \tcate " GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
+	"usage: " COLOR_RESET BOLD "\tcate " GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n" 
 	"\t-t" YELLOW "N" COLOR_RESET ": sets thread count to " YELLOW BOLD "N\n"
 	GREEN "\t-D" COLOR_RESET ":  disables all " YELLOW "system()" COLOR_RESET " calls in script\n"
