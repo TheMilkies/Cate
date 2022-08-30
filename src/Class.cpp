@@ -162,7 +162,11 @@ void Class::check()
 		Util::build_error(name, "it has no compiler");
 
 	if (out_name.empty())
+	#ifdef __WIN32
+		out_name = name + ".exe";
+	#else
 		out_name = name;
+	#endif // __WIN32
 
 	if (out_dir.empty())
 		out_dir = "build";
