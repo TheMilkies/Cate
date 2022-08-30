@@ -28,7 +28,7 @@ static string token_names[] = {
 	
 struct ParserToken
 {
-	enum ParserTokens: char
+	enum ParserTokens: uint8_t
 	{
 		END,
 		DOT,
@@ -49,7 +49,7 @@ struct ParserToken
 		SYSTEM,
 	} type;
 	std::string value;
-	int in_line;
+	int32_t in_line;
 };
 
 #endif //PARSER_TOKENS

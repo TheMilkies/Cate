@@ -11,7 +11,7 @@
 	#define OBJ_EXTENSION ".o"
 #endif // OS check
 
-extern int lexer_line;
+extern int32_t lexer_line;
 
 #define BOLD "\033[1m" 
 #define COLOR_RESET "\033[0m"
@@ -28,8 +28,8 @@ namespace Util
 
 	void command_error(string_view problem);
 	void lexer_error(std::string problem); //has the std here because flex /neg
-	void error(int line, string_view problem);
-	void fatal_error(int line, string problem);
+	void error(int32_t line, string_view problem);
+	void fatal_error(int32_t line, string problem);
 	void build_error(string_view name, string_view problem);
 
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
