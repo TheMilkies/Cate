@@ -797,7 +797,6 @@ YY_RULE_SETUP
 #line 32 "src/lexer.l"
 {
 	int c;
-
 	while((c = yyinput()) != 0 && c != '\n');
 
 	++lexer_line;
