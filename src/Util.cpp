@@ -16,13 +16,13 @@ namespace Util
 		parser_exit = true;
 	}
 
-	void error(int line, string_view problem)
+	void error(int32_t line, string_view problem)
 	{
 		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
-	void fatal_error(int line, string problem)
+	void fatal_error(int32_t line, string problem)
 	{
 		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);
@@ -113,7 +113,7 @@ namespace Util
 	//no system_allowed check here because it's ran by build threads
 	void system(string_view command)
 	{
-		int ret = std::system(command.data());
+		int32_t ret = std::system(command.data());
 
 #ifdef __WIN32
 		if (((ret) & 0x7f) && (((ret) & 0xff00) >> 8) != 0)

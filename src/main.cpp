@@ -4,7 +4,7 @@
 //system_allowed is the -D option, only affects `system(String)` in parser
 bool parser_exit = false, system_allowed = true;
 
-int thread_count = std::thread::hardware_concurrency() * 2;
+int32_t thread_count = std::thread::hardware_concurrency() * 2;
 
 void help()
 {
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	string arg; arg.reserve(64); //current command-line argument in std::string form, it's easier to work with it like this
 
 	//ARGC_START is where argc should start, 0 in windows, 1 in linux and other sane operating systems.
-	for (int i = ARGC_START; i < argc; i++)
+	for (int32_t i = ARGC_START; i < argc; i++)
 	{
 		arg = argv[i];
 		
