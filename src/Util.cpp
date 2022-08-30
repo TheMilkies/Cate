@@ -4,7 +4,7 @@ extern bool parser_exit;
 
 namespace Util
 {
-	void error(string problem)
+	void error(string_view problem)
 	{
 		std::cout << RED BOLD "Error" COLOR_RESET ": " << problem << "\n";
 		parser_exit = true;
@@ -22,7 +22,7 @@ namespace Util
 		parser_exit = true;
 	}
 
-	void fatal_error(int32_t line, string problem)
+	void fatal_error(int32_t line, string_view problem)
 	{
 		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);

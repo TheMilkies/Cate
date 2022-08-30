@@ -24,12 +24,12 @@ extern int32_t lexer_line;
 
 namespace Util
 {
-	void error(string problem);
+	void error(string_view problem);
 
 	void command_error(string_view problem);
 	void lexer_error(std::string problem); //has the std here because flex /neg
 	void error(int32_t line, string_view problem);
-	void fatal_error(int32_t line, string problem);
+	void fatal_error(int32_t line, string_view problem);
 	void build_error(string_view name, string_view problem);
 
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
