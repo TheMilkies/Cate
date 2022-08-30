@@ -24,7 +24,7 @@ smol_cate: $(OBJECTS)
 
 lex: src/lexer.l
 	flex --noyywrap -osrc/Lexer.cpp --header-file=src/Lexer.hpp src/lexer.l
-	sed -i 's/yywrap() { return 1;}//g' src/Lexer.hpp
+	sed -i 's/yywrap() { return 1;}/ /g' src/Lexer.hpp
 
 $(BUILD_DIR)/%.o: $(SRC)/%.cpp
 	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS)

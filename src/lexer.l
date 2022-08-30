@@ -30,7 +30,6 @@
 
 "//" {
 	int c;
-
 	while((c = yyinput()) != 0 && c != '\n');
 
 	++lexer_line;
@@ -58,7 +57,7 @@
 \"[^"]+\" {return ParserToken::STRING_LITERAL;}
 \"\" {Util::lexer_error("Empty string literals are not allowed.");}
 \" {Util::lexer_error("Missing ending quote.");}
-[a-zA-Z_0-9w]+ {return ParserToken::IDENTIFIER;}
+[a-zA-Z_0-9]+ {return ParserToken::IDENTIFIER;}
 
 . {Util::lexer_error("Unknown character");}
 
