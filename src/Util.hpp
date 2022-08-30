@@ -45,7 +45,11 @@ namespace Util
 		struct stat st = {0};
 
 		if (stat(path, &st) == -1) {
+		#ifdef __WIN32
+			if (!CreateDirectory(path, NULL))
+		#else
 			if (mkdir(path, 0700) && errno != EEXIST)
+		#endif // __OSCheck
 				fatal_error(0, string("Could not create folder \"") + path + "\"");
 		}
 	} 
