@@ -37,5 +37,5 @@ void Library::build()
 	}
 	
 	Util::system(command);
-	std::cout << GREEN "Done building \"" << name + build_type << COLOR_RESET "\n";
+	std::cout << GREEN "Done building \"" << name + build_type << "\"" COLOR_RESET "\n";
 }
