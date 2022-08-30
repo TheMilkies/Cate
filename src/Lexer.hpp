@@ -217,8 +217,6 @@ void yyfree ( void *  );
 	#include "nonstd/FlexLexer.h"
 #endif
 
-int yyFlexLexer::yywrap();
-
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
 
