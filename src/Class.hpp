@@ -8,7 +8,7 @@
 */
 
 extern bool parser_exit;
-extern int thread_count;
+extern int32_t thread_count;
 
 class Class
 {
@@ -56,12 +56,12 @@ public:
 	void build_objects(); //build the objects
 
 	//general and self-explanitory
-	void clear_property(int line, string& property);
-	void add_to_property(int line, string_view property, string value);
-	void set_property(int line, string& property, string& value);
+	void clear_property(int32_t line, string& property);
+	void add_to_property(int32_t line, string_view property, string_view value);
+	void set_property(int32_t line, string& property, string& value);
 
 	//threading
-	void build_object(int i); 
+	void build_object(int32_t i); 
 	vector<std::thread>threads;
 	string command_template;
 };

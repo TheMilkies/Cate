@@ -297,7 +297,7 @@ void Parser::recursive()
 		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
 	
 	//wildcard stuff
-	int location = current.value.find('*');
+	int32_t location = current.value.find('*');
 
 	if (location == string::npos) //if not found
 		Util::error("Wildcard was not found in recursive");

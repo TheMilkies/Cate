@@ -34,7 +34,7 @@ private:
 	vector<ParserToken> tokens;
 	unordered_map<string, Class*> classes;
 
-	int index = -1; //will be incremented to 0
+	int32_t index = -1; //will be incremented to 0
 	inline ParserToken next() {return tokens[++index];}
 
 	//there are MANY better ways of doing this... but i'm lazy

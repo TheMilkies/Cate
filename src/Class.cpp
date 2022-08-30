@@ -1,6 +1,6 @@
 #include "Class.hpp"
 
-extern int thread_count;
+extern int32_t thread_count;
 
 void Class::setup()
 {
@@ -33,11 +33,9 @@ void Class::setup()
 }
 
 //this is for threads.
-void Class::build_object(int i)
+void Class::build_object(int32_t i)
 {
 	if (files[i].empty()) //for some reason it wants to build an empty file, how about No?
-		return;
-	if (Util::get_modified_time(files[i].c_str()) < Util::get_modified_time(object_files[i].c_str())) //if doesn't need recompilation
 		return;
 	
 	string command = command_template + files[i] + " -o " + object_files[i];
@@ -52,7 +50,7 @@ void Class::build_objects()
 	if (thread_count >= files.size()) //this is very important.
 		thread_count = files.size();
 
-	if (include_paths.size() > 0)
+	if (!include_paths.empty())
 	{
 		for(auto &path : include_paths)
 			all_include_paths += "-I" + path + ' ';
@@ -60,13 +58,16 @@ void Class::build_objects()
 
 	command_template.reserve(128);
 	command_template = compiler + ' ' + flags + ' '+ all_include_paths + "-c "; //this is a nice optimization
-	for (int i = 0; i < files.size(); i+=thread_count)
+	for (int32_t i = 0; i < files.size(); i+=thread_count)
 	{
-		for (int j = 0; j < thread_count; j++)
+		for (int32_t j = 0; j < thread_count; j++)
 		{
-			if (i+j > files.size()) break; //current file index check
-			
-			threads.emplace_back(&Class::build_object, this, i+j); //make thread build the object file
+			int32_t current = i+j;
+			if (current > files.size()) break; //current file index check
+			if (Util::get_modified_time(files[current].c_str()) < Util::get_modified_time(object_files[current].c_str())) //if doesn't need recompilation
+				continue;
+
+			threads.emplace_back(&Class::build_object, this, current); //make thread build the object file
 		}
 
 		for(auto &thread : threads)
@@ -83,7 +84,7 @@ void Class::build_objects()
 	for(auto &lib : libraries)
 	{
 		//path check
-		int position_of_last_slash = lib.find_last_of('/'); 
+		int32_t position_of_last_slash = lib.find_last_of('/'); 
 		string path = lib.substr(0, position_of_last_slash+1);
 
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
@@ -111,7 +112,7 @@ void Class::build_objects()
 }
 
 //self explanitories
-void Class::clear_property(int line, string& property)
+void Class::clear_property(int32_t line, string& property)
 {
 	if (property == "files")
 		files.clear();
@@ -123,7 +124,7 @@ void Class::clear_property(int line, string& property)
 		Util::error(line, "\"" + property + "\" cannot be set to an array");
 }
 
-void Class::add_to_property(int line, string_view property, string value)
+void Class::add_to_property(int32_t line, string_view property, string_view value)
 {
 	if (property == "files")
 		files.emplace_back(value);
@@ -133,7 +134,7 @@ void Class::add_to_property(int line, string_view property, string value)
 		include_paths.emplace_back(value);
 }
 
-void Class::set_property(int line, string& property, string& value)
+void Class::set_property(int32_t line, string& property, string& value)
 {
 	if (property == "name" || property == "out")
 		out_name = value;
@@ -165,4 +166,4 @@ void Class::check()
 
 	if (out_dir.empty())
 		out_dir = "build";
-} 
+}
