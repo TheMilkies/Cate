@@ -798,14 +798,9 @@ YY_RULE_SETUP
 {
 	int c;
 
-	while((c = yyinput()) != 0)
-	{
-		if(c == '\n')
-		{
-			++lexer_line;
-			break;
-		}
-	}
+	while((c = yyinput()) != 0 && c != '\n');
+
+	++lexer_line;
 }
 	/*LINTED*/break;
 	case 3:

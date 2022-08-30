@@ -31,14 +31,9 @@
 "//" {
 	int c;
 
-	while((c = yyinput()) != 0)
-	{
-		if(c == '\n')
-		{
-			++lexer_line;
-			break;
-		}
-	}
+	while((c = yyinput()) != 0 && c != '\n');
+
+	++lexer_line;
 }
 
 \. {return ParserToken::DOT;}
@@ -60,7 +55,6 @@
 \r\n {++lexer_line;}
 \n {++lexer_line;}
 
-\/\/[^.*]\n {++lexer_line;}
 \"[^"]+\" {return ParserToken::STRING_LITERAL;}
 \"\" {Util::lexer_error("Empty string literals are not allowed.");}
 \" {Util::lexer_error("Missing ending quote.");}
