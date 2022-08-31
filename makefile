@@ -29,7 +29,7 @@ lex: src/lexer.l
 $(BUILD_DIR)/%.o: $(SRC)/%.cpp
 	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS)
 
-install:
+install: 
 	@cp out/cate /usr/bin/cate
 	@echo "Installed cate!"
 

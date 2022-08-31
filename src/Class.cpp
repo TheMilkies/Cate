@@ -4,7 +4,7 @@ extern int32_t thread_count;
 
 void Class::setup()
 {
-	if (already_built) return;
+	//if (already_built) return; //i don't think this is needed
 	check();
 
 	for(auto file : files)
@@ -26,7 +26,7 @@ void Class::setup()
 
 	//create output file's folder if doesn't already exist.
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
-	if (!path.empty())
+	if (path.size() > 0)
 	{
 		Util::create_folder(path.c_str());
 	}
@@ -45,12 +45,12 @@ void Class::build_object(int32_t i)
 
 void Class::build_objects()
 {
-	if (already_built) return; 
+	//if (already_built) return; //i don't think this is needed
 
 	if (thread_count >= files.size()) //this is very important.
 		thread_count = files.size();
 
-	if (!include_paths.empty())
+	if (include_paths.size() > 0)
 	{
 		for(auto &path : include_paths)
 			all_include_paths += "-I" + path + ' ';
@@ -87,7 +87,7 @@ void Class::build_objects()
 		int32_t position_of_last_slash = lib.find_last_of('/'); 
 		string path = lib.substr(0, position_of_last_slash+1);
 
-		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
+		if (path.size() > 0 && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
 			library_paths.insert(path);
 
 		//check if static
@@ -155,19 +155,19 @@ void Class::check()
 	if (parser_exit)
 		Util::build_error(name, "of previous errors");
 
-	if (files.empty())
+	if (files.size() == 0)
 		Util::build_error(name, "it has no files");
 
-	if (compiler.empty())
+	if (compiler.size() == 0)
 		Util::build_error(name, "it has no compiler");
 
-	if (out_name.empty())
+	if (out_name.size() == 0)
 	#ifdef __WIN32
 		out_name = name + ".exe";
 	#else
 		out_name = name;
 	#endif // __WIN32
 
-	if (out_dir.empty())
+	if (out_dir.size() == 0)
 		out_dir = "build";
 }
