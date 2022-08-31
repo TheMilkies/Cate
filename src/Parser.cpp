@@ -17,7 +17,7 @@ Parser::Parser(const string& file_name)
 	if (file.fail())
 		Util::command_error("Cannot open file \"" + file_name + "\"");
 	
-	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout); //create a the lexer
+	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout); //create the lexer
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
@@ -26,7 +26,6 @@ Parser::Parser(const string& file_name)
 	while (temp.type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.value = ""; //reset to save some memory
-		temp.type = temp.type;
 		temp.in_line = lexer_line; //defined in lexer.l
 		
 		if (temp.type == ParserToken::STRING_LITERAL)
@@ -145,7 +144,7 @@ void Parser::parse()
 			child = current.value;
 
 			//object_method: property function_parens
-			if (object_method());
+			if (tokens[index+1].type == ParserToken::LPAREN) object_method();
 			else
 			{
 				//assignment: property '=' expr
@@ -293,7 +292,7 @@ void Parser::recursive()
 	
 	current = string_function(); 
 
-	if (current.value.empty()) //should NEVER happen
+	if (current.value.size() == 0) //should NEVER happen
 		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
 	
 	//wildcard stuff
@@ -312,7 +311,7 @@ void Parser::recursive()
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	if (!fs::is_directory(path)) //check if directory exists
-		if(path.empty())
+		if(path.size() == 0)
 			path = "./";
 		else
 			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exit");

@@ -15,10 +15,9 @@
 
 	while((c = yyinput()) != 0)
 	{
-		if(c == '\n')
-			++lexer_line;
+		lexer_line += (c == '\n');
 
-		else if(c == '*')
+		if(c == '*')
 		{
 			if((c = yyinput()) == '/')
 				break;
