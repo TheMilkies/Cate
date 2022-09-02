@@ -5,7 +5,7 @@
 
 #ifdef __WIN32
 	#define ARGC_START 0
-	#define OBJ_EXTENSION ".obj"
+	#define OBJ_EXTENSION ".obj" //windows, why?
 #else
 	#define ARGC_START 1
 	#define OBJ_EXTENSION ".o"
@@ -35,16 +35,22 @@ namespace Util
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
 	string remove_quotes(string &s);
 
+	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
 	string replace_all_safe(string_view s, string_view toReplace, string_view replaceWith);
 
+	/// @brief Returns the modified time of the given path 
+	/// @param path Path to check
+	/// @return 0 if file doesn't exist, the modified time if it does.
 	long long get_modified_time(const char *path);
 	inline bool file_exists(const char* file_name) { return access(file_name, F_OK) != -1; } 
 
+	/// @brief Creates a folder if it doesn't already exist.
+	/// @param path Path of the folder to create
 	inline void create_folder(const char* path) {
-		struct stat st = {0};
+		struct stat st {0};
 
-		if (stat(path, &st) == -1) {
+		if (stat(path, &st) == -1) { //if folder does not exist.
 		#ifdef __WIN32
 			if (!CreateDirectory(path, NULL))
 		#else
@@ -54,6 +60,8 @@ namespace Util
 		}
 	} 
 
+	/// @brief Like std::system, but exits if the command returns anything other than 0.
+	/// @param command The command to execute.
 	void system(string_view command);
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
