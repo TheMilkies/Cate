@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (file_name.size() == 0) //incase of no file
+	if (file_name.empty()) //incase of no file
 		Util::command_error("No input file");
 
 	Parser parser(file_name); //start parsing
