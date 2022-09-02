@@ -72,7 +72,7 @@ namespace Util
 		s = oss.str();
 	}
 
-	string replace_all_safe( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
+	/*string replace_all_safe( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
 		string_view s,
 		string_view toReplace,
 		string_view replaceWith
@@ -94,7 +94,7 @@ namespace Util
 
 		oss << s.substr(prevPos);
 		return oss.str();
-	}
+	}*/
 
 	long long get_modified_time(const char *path)
 	{

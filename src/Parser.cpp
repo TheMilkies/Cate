@@ -292,7 +292,7 @@ void Parser::recursive()
 	
 	current = string_function(); 
 
-	if (current.value.size() == 0) //should NEVER happen
+	if (current.value.empty()) //should NEVER happen
 		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
 	
 	//wildcard stuff
@@ -311,7 +311,7 @@ void Parser::recursive()
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	if (!fs::is_directory(path)) //check if directory exists
-		if(path.size() == 0)
+		if(path.empty())
 			path = "./";
 		else
 			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exit");
