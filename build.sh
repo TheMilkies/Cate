@@ -5,7 +5,7 @@ CC=g++
 
 if ! command -v $CC &> /dev/null ; then
     echo "no C++ compiler installed."
-    exit
+    exit 1
 fi
 
 build_folder="cate/build"; mkdir -p $build_folder
@@ -16,7 +16,7 @@ build_() {
 }
 
 _build() {
-    if ! build_ $1 ; then exit; fi
+    if ! build_ $1 ; then exit 1; fi
 }
 
 _build Lexer &
