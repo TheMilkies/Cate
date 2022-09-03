@@ -1,4 +1,4 @@
-#include "Parser.hpp" //Parser.hpp includes everything we need, including Util.hoo
+#include "Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
 
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
 				if (argv[i][2] == NULL) //if just "-t"
 					Util::command_error("Missing argument \"-t\"");
 
-				int sub = atoi((char*)argv[i] + 2);
-				if (sub != 0)
+				int sub = atoi((char*)argv[i] + 2); //get everything after "-t"
+				if (sub != 0) //if 0 or invalid
 					thread_count = sub;
 				
 			}	break;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 				break;
 			
 			default: //unknown
-			//i'm lazy here
+				//i'm lazy here
 				std::cout << RED BOLD "Error" COLOR_RESET " in command: Unknown argument: \""
 						  << argv[i] << "\"\n";
 				return 1;
