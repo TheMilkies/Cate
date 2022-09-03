@@ -57,7 +57,7 @@ void Class::build_objects()
 	}
 
 	command_template.reserve(128);
-	command_template = compiler + ' ' + flags + ' '+ all_include_paths + "-c "; //this is a nice optimization
+	command_template = compiler + ' ' + flags + ' ' + all_include_paths + "-c "; //this is a nice optimization
 	for (int32_t i = 0; i < files.size(); i+=thread_count)
 	{
 		for (int32_t j = 0; j < thread_count; j++)
