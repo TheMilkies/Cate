@@ -144,6 +144,7 @@ void Parser::parse()
 			child = current.value;
 
 			//object_method: property function_parens
+			//this is a dumb and smart optimisation
 			if (tokens[index+1].type == ParserToken::LPAREN) object_method();
 			else
 			{
@@ -303,10 +304,10 @@ void Parser::recursive()
 
 	if (current.value[location+1] == '/')
 		Util::error(YELLOW "recursive()" COLOR_RESET
-				" does not support folder recursion yet. look out for cate updates incase it does.");
+			" does not support folder recursion yet. look out for cate updates incase it does.");
 	
 	string path = current.value.substr(0, location), //extract path
-				extension = current.value.substr(location+1); //extract extension
+				  extension = current.value.substr(location+1); //extract extension
 
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 

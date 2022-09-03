@@ -25,23 +25,22 @@ int main(int argc, char *argv[])
 
 	string file_name; file_name.reserve(64); //the filename, we will get it with the following for loop
 
-	string arg; arg.reserve(64); //current command-line argument in std::string form, it's easier to work with it like this
-
 	//ARGC_START is where argc should start, 0 in windows, 1 in linux and other sane operating systems.
 	for (int32_t i = ARGC_START; i < argc; i++)
-	{
-		arg = argv[i];
-		
-		if (arg[0] == '-')
+	{		
+		if (argv[i][0] == '-')
 		{
-			switch (arg[1]) //check the second character of the argument
+			switch (argv[i][1]) //check the second character of the argument
 			{
-			case 't':
-				if (arg.length() < 3) //if just "-t"
-					Util::command_error("Invalid argument " + arg);
+			case 't': {
+				if (argv[i][2] == NULL) //if just "-t"
+					Util::command_error("Missing argument \"-t\"");
 
-				thread_count = std::stoi(arg.substr(2, arg.length()));
-				break;
+				int sub = atoi((char*)argv[i] + 2);
+				if (sub != 0)
+					thread_count = sub;
+				
+			}	break;
 
 			case 'v': //cate version
 				std::cout << CATE_VERSION "\n";
@@ -53,22 +52,26 @@ int main(int argc, char *argv[])
 				break;
 			
 			default: //unknown
-				Util::command_error("Unknown argument " + arg);
+			//i'm lazy here
+				std::cout << RED BOLD "Error" COLOR_RESET " in command: Unknown argument: \""
+						  << argv[i] << "\"\n";
+				return 1;
 				break;
 			}
 		}
 		else //must be a filename now
 		{
-			file_name = argv[i];
-			
-			//add cate file ending if doesn't already end with '"".cate"
-			if (!Util::ends_with(file_name, ".cate"))
-				file_name += ".cate";
+			if (file_name.empty())
+				file_name = argv[i];
 		}
 	}
 
 	if (file_name.empty()) //incase of no file
 		Util::command_error("No input file");
+
+	//add cate file ending if doesn't end with ".cate"
+	if (!Util::ends_with(file_name, ".cate"))
+		file_name += ".cate";
 
 	Parser parser(file_name); //start parsing
 	return 0;
