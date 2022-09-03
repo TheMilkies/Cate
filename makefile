@@ -8,7 +8,7 @@ SIZE_OPTIMIZATION_FLAGS := -ffunction-sections -fdata-sections -Wl,--gc-sections
 SOURCES := $(wildcard $(SRC)/*.cpp)
 OBJECTS := $(patsubst $(SRC)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
 
-all: build_directory smol_cate
+all: build_directory out/cate
 smol: build_directory smol_cate
 
 build_directory:
