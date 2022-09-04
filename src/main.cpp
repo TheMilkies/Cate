@@ -124,6 +124,9 @@ bool parse_catel()
 	if (!Util::ends_with(file_name, ".cate"))
 		file_name += ".cate";
 
+	if (dir.empty())
+		return false;
+
 	string file_name_with_dir = dir + "/" + file_name;
 	
 	if (Util::file_exists(file_name_with_dir.c_str()))
