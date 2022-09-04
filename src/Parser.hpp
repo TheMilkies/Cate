@@ -42,6 +42,7 @@ private:
 	void expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2);
 	void expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3);
 	void expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3, ParserToken::ParserTokens type4);
+	void expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3, ParserToken::ParserTokens type4, ParserToken::ParserTokens type5);
 
 	void parse(); //called from constructor, should be rewritten to not do that
 public:
