@@ -159,7 +159,7 @@ void Class::check()
 		Util::build_error(name, "it has no files");
 
 	if (compiler.empty())
-		Util::build_error(name, "it has no compiler");
+		compiler = "cc";
 
 	if (out_name.empty())
 	#ifdef __WIN32

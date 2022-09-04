@@ -93,12 +93,12 @@ Here are the classes' properties:
 - `String out` is the output file. Not required (defaults to identifier).
 - `String build_directory|object_folder` is the build directory where object files are saved. Not required (defaults to "build/").
 - `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or just `recursive()`. Required. 
-- `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. Not required. 
+- `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. inside the array you can include a library declared before (`{libexample}`) Not required. 
 - `Array includes|include_paths` holds the folder names of the class's includes. Not required.
 - `String flags` is the class's compiler flags. Not required. 
-- `String final_flags|end_flags` is the final executable compiler flags. Not required. 
+- `String final_flags|end_flags` is the final executable (linking) compiler flags. Not required. 
 - `LibraryType type` is the library's type, can only be `static` pr `dynamic`. Not required since it's already defined in `Library NAME(LibraryType);` 
-- `String compiler` is the class's compiler. Required. 
+- `String compiler` is the class's compiler. Defaults to `cc`. 
 
 ### Class methods
 There is **only one** method currently.
