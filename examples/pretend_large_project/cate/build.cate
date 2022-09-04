@@ -1,5 +1,5 @@
 Project example;
 example.compiler = "gcc";
-example.out = "../example";
-example.files = {recursive("../src/*.c")};
+example.out = "example";
+example.files = recursive("src/*.c");
 example.build();

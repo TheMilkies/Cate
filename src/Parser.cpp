@@ -269,12 +269,23 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
+void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3, ParserToken::ParserTokens type4, ParserToken::ParserTokens type5)
+{
+	current = next();
+
+	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4 && current.type != type5)
+	{
+		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+					" or " + token_names[type4] + " or " + token_names[type5] + " but got " + token_names[current.type]);
+	}
+}
+
 void Parser::array()
 {
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != ParserToken::RCURLY)
 	{
-		expect(ParserToken::STRING_LITERAL, ParserToken::RECURSIVE, ParserToken::COMMA, ParserToken::RCURLY);
+		expect(ParserToken::STRING_LITERAL, ParserToken::RECURSIVE, ParserToken::IDENTIFIER, ParserToken::COMMA, ParserToken::RCURLY);
 		if (current.type == ParserToken::RECURSIVE)
 		{
 			recursive();
@@ -282,6 +293,11 @@ void Parser::array()
 		else if (current.type == ParserToken::STRING_LITERAL)
 		{
 			current_class->add_to_property(current.in_line, child, current.value);
+		}
+		else if (current.type == ParserToken::IDENTIFIER)
+		{
+			current_class->add_to_property(current.in_line, child,
+					classes[current.value]->out_name);
 		}
 	}
 }
