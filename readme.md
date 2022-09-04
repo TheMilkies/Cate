@@ -34,6 +34,7 @@ Unlike CMake/Make, Cate is not Turing complete. It doesn't feature if-statements
 
 ## Notes
 - Cate can be just as fast as Make, given the right file count.
+- Cate uses Catel, a messy file type that allows default files.
 - Cate was written by a beginner programmer and its codebase is quite bad. Fell free to rewrite it if you want!
 - No Windows support (yet).
 - Cate uses robin_hood hashing, since it's 20% more efficient (on average)
@@ -48,7 +49,7 @@ Unlike CMake/Make, Cate is not Turing complete. It doesn't feature if-statements
 ### Building with build.sh
 To build with build.sh, run `./build.sh`, it builds the smol cate
 ### Building with Cate
-To build with Cate, run `cate build`, it builds the smol cate by default
+To build with Cate, run `cate`, it builds the smol cate by default
 ### Building with GNU Make
 To build with Make, run `make`. or if you want a smaller executable, run `make smol`
 ### Installing
@@ -61,8 +62,9 @@ To build another project, run `cate [filename.ending with .cate]` (example: `cat
 The `.cate` extension is not required in the command.   (example: `cate build`).
 
 #### Flags (options)
-- `-tN`: Changes the thread count to N
-- `-v`: Shows the current Cate installation version
+- `-h`: Shows help.
+- `-tN`: Changes the thread count to N.
+- `-v`: Shows the current installed Cate version.
 - `-D`: Disables all `system()` lines in script.  
 
 Cate will only run **one** cate file per command.
@@ -103,6 +105,22 @@ There is **only one** method currently.
 - `Array recursive(String)` **only in the class's files**: takes a string with a single wildcard (`*`)
 
 Example: `recursive("src/*.cpp")`
+
+## Catel
+Catel is complete JANK, but it does its job (somewhat) well! A Catel file is always called `.catel` with no exceptions. it allows you to set have a directory with catefiles in it, and set a default build
+
+### Syntax
+Unlike Cate, Catel looks terrible since it doesn't even try to mimic a language. Catel tokenizes with whitespace, meaning you can not have space in the "look-in" directory name or in the default build file name. Catel does not like words in odd numbers so keep your `.catel` nice and even
+
+Take a look at this example:
+```
+dir cate
+default all
+```
+
+`dir` is the catefiles directory, Cate will check if the file is there first, if it's not there; Cate will check if the file is in the root directory.
+
+`default` is the default file to build, it can be a path or just the filename (will search `dir` first).
 
 ## Known issues
 These issues are known and will be fixed soon!
