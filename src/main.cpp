@@ -24,8 +24,10 @@ bool parse_catel();
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
+	bool catel = Util::file_exists(".catel"),
+		 file_name_checked = false;
 
-	if (argc < 2 && !Util::file_exists(".catel"))
+	if (argc < 2 && !catel)
 	{
 		help();
 		return 1;
@@ -79,14 +81,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if(!parse_catel())
-	{
-		if (file_name.empty() || file_name == ".cate") //incase of no file
-			Util::command_error("No input file");
-
-		if (!Util::ends_with(file_name, ".cate"))
-			file_name += ".cate";
-	}
+	if (catel)
+		parse_catel();
+	
+	if (file_name.empty() || file_name == ".cate") //incase of no file
+		Util::command_error("No input file");
 
 	//add cate file ending if doesn't end with ".cate"
 	if (!Util::ends_with(file_name, ".cate"))
@@ -121,16 +120,18 @@ bool parse_catel()
 	if (!def.empty() && file_name.empty())
 		file_name = def;
 
-	if (!Util::ends_with(file_name, ".cate"))
-		file_name += ".cate";
-
 	if (dir.empty())
 		return false;
+
+	if (!Util::ends_with(file_name, ".cate"))
+		file_name += ".cate";
 
 	string file_name_with_dir = dir + "/" + file_name;
 	
 	if (Util::file_exists(file_name_with_dir.c_str()))
+	{
 		file_name = file_name_with_dir;
+	}
 	else
 		return false; //will continue as normal cate file
 

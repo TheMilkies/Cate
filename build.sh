@@ -34,7 +34,7 @@ _build Project &
 
 wait < <(jobs -p)
 
-$CC $build_folder/*.o $cflags -o out/cate externals/linux_amd64_libfl.a
+$CC $build_folder/*.o $cflags -o$out_exec externals/linux_amd64_libfl.a
 if command -v strip &> /dev/null ; then
     strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
 fi
