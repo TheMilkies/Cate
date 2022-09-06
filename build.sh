@@ -9,10 +9,11 @@ if ! command -v $CC &> /dev/null ; then
 fi
 
 build_folder="cate/build"; mkdir -p $build_folder
-cflags=" -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none -static"
+out_exec="out/cate"; mkdir -p out
+cflags="-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 
 build_() {
-    $CC src/$1.cpp $cflags -c -o $build_folder/back_src_$1.o
+    $CC src/$1.cpp $cflags -c -o $build_folder/src_$1.o
 }
 
 _build() {
@@ -33,7 +34,7 @@ _build Project &
 
 wait < <(jobs -p)
 
-$CC $build_folder/*.o externals/linux_amd64_libfl.a $cflags -oout/cate
+$CC $build_folder/*.o $cflags -o out/cate externals/linux_amd64_libfl.a
 if command -v strip &> /dev/null ; then
     strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
 fi
