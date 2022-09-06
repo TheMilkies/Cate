@@ -35,12 +35,11 @@ void Class::setup()
 //this is for threads.
 void Class::build_object(int32_t i)
 {
-	if (files[i].empty()) //for some reason it wants to build an empty file, how about No?
-		return;
+	/*if (files[i].empty()) //for some reason it wants to build an empty file, how about No?
+		return;*/
 	
 	string command = command_template + files[i] + " -o " + object_files[i];
 	Util::system(command); //will exit if it can't compile
-	needs_rebuild = true;
 }
 
 void Class::build_objects()
@@ -68,6 +67,7 @@ void Class::build_objects()
 				continue;
 
 			threads.emplace_back(&Class::build_object, this, current); //make thread build the object file
+			needs_rebuild = true;
 		}
 
 		for(auto &thread : threads)
@@ -90,7 +90,7 @@ void Class::build_objects()
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
 			library_paths.insert(path);
 
-		//check if static
+		//check if not static
 		if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
 		{
 			Util::remove_extension(lib);
@@ -111,7 +111,7 @@ void Class::build_objects()
 	already_built = true;
 }
 
-//self explanitories
+//self explanitories, i cry everytime C++ doesn't have switch for strings
 void Class::clear_property(int32_t line, string& property)
 {
 	if (property == "files")
@@ -166,7 +166,7 @@ void Class::check()
 		out_name = name + ".exe";
 	#else
 		out_name = name;
-	#endif // __WIN32
+	#endif // YAOC: Yet Another OS Check
 
 	if (out_dir.empty())
 		out_dir = "build";
