@@ -328,10 +328,12 @@ void Parser::recursive()
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	if (!fs::is_directory(path)) //check if directory exists
+	{
 		if(path.empty())
 			path = "./";
 		else
 			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exit");
+	}
 
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
 		Util::fatal_error(current.in_line, "Multiple wildcards are not allowed");
