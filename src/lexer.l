@@ -10,6 +10,10 @@
 
 %%
 
+[ \t] {;}
+\r\n {++lexer_line;}
+\n {++lexer_line;}
+
 "/*" {
 	int c;
 
@@ -38,25 +42,23 @@
 \, {return ParserToken::COMMA;}
 ";" {return ParserToken::SEMICOLON;}
 
-"=" {return ParserToken::ASSIGN;}
-"(" {return ParserToken::LPAREN;}
-")" {return ParserToken::RPAREN;}
-"{" {return ParserToken::LCURLY;}
-"}" {return ParserToken::RCURLY;}
-"Project" {return ParserToken::PROJECT;}
-"Library" {return ParserToken::LIBRARY;}
-"static" {return ParserToken::STATIC;}
-"dynamic" {return ParserToken::DYNAMIC;}
-"recursive" {return ParserToken::RECURSIVE;}
-"system" {return ParserToken::SYSTEM;}
-[ \t] {;}
-\r\n {++lexer_line;}
-\n {++lexer_line;}
-
 \"[^"]+\" {return ParserToken::STRING_LITERAL;}
 \"\" {Util::lexer_error("Empty string literals are not allowed.");}
 \" {Util::lexer_error("Missing ending quote.");}
+
+"Project" {return ParserToken::PROJECT;}
+"Library" {return ParserToken::LIBRARY;}
+"dynamic" {return ParserToken::DYNAMIC;}
+"static" {return ParserToken::STATIC;}
+"system" {return ParserToken::SYSTEM;}
+"recursive" {return ParserToken::RECURSIVE;}
 [a-zA-Z_0-9]+ {return ParserToken::IDENTIFIER;}
+
+"(" {return ParserToken::LPAREN;}
+")" {return ParserToken::RPAREN;}
+"=" {return ParserToken::ASSIGN;}
+"{" {return ParserToken::LCURLY;}
+"}" {return ParserToken::RCURLY;}
 
 . {Util::lexer_error("Unknown character");}
 

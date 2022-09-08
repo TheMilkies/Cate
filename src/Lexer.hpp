@@ -19,6 +19,7 @@
      * We will address this in a future release of flex, or omit the C++ scanner
      * altogether.
      */
+    #define yyFlexLexer yyFlexLexer
 
 /* First, we deal with  platform-specific or compiler-specific issues. */
 
@@ -408,9 +409,7 @@ static int yy_flex_strlen ( const char * );
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */
 
-#line 72 "src/lexer.l"
-
-
+#line 65 "src/lexer.l"
 
 
 
