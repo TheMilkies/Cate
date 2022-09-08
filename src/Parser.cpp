@@ -313,17 +313,17 @@ void Parser::recursive()
 		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
 	
 	//wildcard stuff
-	int32_t location = current.value.find('*');
+	int32_t location_of_wildcard = current.value.find('*');
 
-	if (location == string::npos) //if not found
+	if (location_of_wildcard == string::npos) //if not found
 		Util::error("Wildcard was not found in recursive");
 
-	if (current.value[location+1] == '/')
+	if (current.value[location_of_wildcard+1] == '/')
 		Util::error(YELLOW "recursive()" COLOR_RESET
 			" does not support folder recursion yet. look out for cate updates incase it does.");
 	
-	string path = current.value.substr(0, location), //extract path
-				  extension = current.value.substr(location+1); //extract extension
+	string path = current.value.substr(0, location_of_wildcard), //extract path
+				  extension = current.value.substr(location_of_wildcard+1); //extract extension
 
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
