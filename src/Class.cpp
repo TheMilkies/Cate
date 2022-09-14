@@ -104,9 +104,7 @@ void Class::build_objects()
 
 	//can be rewritten but it's faster like this...?
 	for(auto &path : library_paths)
-	{
 		all_library_paths += "-L" + path + ' ';
-	}
 
 	already_built = true;
 }
@@ -115,11 +113,40 @@ void Class::build_objects()
 void Class::clear_property(int32_t line, string& property)
 {
 	if (property == "files")
+	{
+		static bool first_set = true;
+		if (first_set)
+		{
+			first_set = false;
+			return;
+		}
 		files.clear();
+		all_object_files.clear();
+		object_files.clear();
+	}
 	else if (property == "libraries" || property == "libs")
+	{
+		static bool first_set = true;
+		if (first_set)
+		{
+			first_set = false;
+			return;
+		}
 		libraries.clear();
+		all_library_paths.clear();
+		all_libraries.clear();
+	}
 	else if (property == "includes" || property == "include_paths")
+	{
+		static bool first_set = true;
+		if (first_set)
+		{
+			first_set = false;
+			return;
+		}
 		include_paths.clear();
+		all_include_paths.clear();
+	}
 	else
 		Util::error(line, "\"" + property + "\" cannot be set to an array");
 }
