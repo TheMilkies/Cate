@@ -296,8 +296,11 @@ void Parser::array()
 		}
 		else if (current.type == ParserToken::IDENTIFIER)
 		{
-			current_class->add_to_property(current.in_line, child,
-					classes[current.value]->out_name);
+			if (is_defined(current.value))
+				current_class->add_to_property(current.in_line, child,
+						classes[current.value]->out_name);
+			else
+				Util::fatal_error(current.in_line, "library is not defined");
 		}
 	}
 }
