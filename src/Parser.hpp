@@ -35,7 +35,9 @@ private:
 	unordered_map<string, Class*> classes;
 
 	int32_t index = -1; //will be incremented to 0
-	inline ParserToken next() {return tokens[++index];}
+	inline ParserToken next() {
+		return tokens[++index];
+	}
 
 	//there are MANY better ways of doing this... but i'm lazy
 	void expect(ParserToken::ParserTokens type);

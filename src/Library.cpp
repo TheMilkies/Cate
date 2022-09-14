@@ -9,7 +9,7 @@ Library::~Library()
 }
 
 void Library::build() 
-{
+{	
 	if (!already_built)
 	{
 		flags += " -fPIC "; //make library basically
@@ -19,7 +19,7 @@ void Library::build()
 
 	if (!Util::file_exists(out_name.c_str())) //if file doesn't exist
 		needs_rebuild = true;
-
+		
 	if (!needs_rebuild)
 		return;
 	
