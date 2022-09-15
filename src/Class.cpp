@@ -34,10 +34,7 @@ void Class::setup()
 
 //this is for threads.
 void Class::build_object(int32_t i)
-{
-	/*if (files[i].empty()) //for some reason it wants to build an empty file, how about No?
-		return;*/
-	
+{	
 	string command = command_template + files[i] + " -o " + object_files[i];
 	Util::system(command); //will exit if it can't compile
 }
@@ -63,7 +60,7 @@ void Class::build_objects()
 		{
 			int32_t current = i+j;
 			if (current > files.size()) break; //current file index check
-			if (Util::get_modified_time(files[current].c_str()) < Util::get_modified_time(object_files[current].c_str())) //if doesn't need recompilation
+			if (files[current].empty() || Util::get_modified_time(files[current].c_str()) < Util::get_modified_time(object_files[current].c_str())) //if doesn't need recompilation
 				continue;
 
 			threads.emplace_back(&Class::build_object, this, current); //make thread build the object file
