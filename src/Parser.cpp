@@ -31,8 +31,8 @@ Parser::Parser(const string& file_name)
 		if (temp.type == ParserToken::STRING_LITERAL)
 		{
 			//string literals have the quotes (example: "string") so we need to remove them
-			temp.value = lexer->YYText();
-			Util::remove_quotes(temp.value);
+			temp.value = lexer->YYText()+1;
+			temp.value.pop_back();
 		}
 		else if (temp.type == ParserToken::IDENTIFIER)
 		{
@@ -216,6 +216,11 @@ bool Parser::object_method()
 	{
 		void_function(); 
 		current_class->build();				
+	}
+	else if (child == "clean") //void Class.build(void);
+	{
+		void_function(); 
+		current_class->clean();				
 	}
 	else
 	{
