@@ -110,9 +110,9 @@ bool parse_catel()
 		if (s1.empty() || s2.empty())
 			Util::fatal_error(0, "Catel file error. one feild is empty");
 		
-		if (s1 == "dir")
+		if (s1 == "dir" || s1 == "directory")
 			dir = s2;
-		else if (s1 == "default")
+		else if (s1 == "def" || s1 == "default")
 			def = s2;
 	}
 

@@ -51,9 +51,11 @@ public:
 	
 	virtual ~Class() {};
 	virtual void build() = 0; //class defined
+	void clean();
 
 	void check(); //check if everything is okay
-	void setup(); //set up files and object files.
+	void setup(); // set up directories and object files
+	void object_setup(); //set up files and object files.
 	void build_objects(); //build the objects
 
 	//general and self-explanitory
