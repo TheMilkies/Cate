@@ -7,15 +7,8 @@ void Class::setup()
 	//if (already_built) return; //i don't think this is needed
 	check();
 
-	for(auto file : files)
-	{
-		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
-		Util::replace_all(file, "/", "_"); // "/" -> "_"
-		file = (Util::remove_extension(file)) + ".o"; //replace the extension with .o
-		file = out_dir + "/" + file; // folder/object.o
-		all_object_files += file + " "; //used in final build process, all are linked
-		object_files.emplace_back(file); //for build
-	}
+	//calling object_setup() on another thread is a bit faster
+	std::thread object_thread(&Class::object_setup, this);
 
 	//useless debug line
 	/*if (object_files.size() != files.size())
@@ -30,8 +23,22 @@ void Class::setup()
 	{
 		Util::create_folder(path.c_str());
 	}
+
+	object_thread.join(); //wait until it finishes
 }
 
+void Class::object_setup()
+{
+	for(auto file : files)
+	{
+		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
+		Util::replace_all(file, "/", "_"); // "/" -> "_"
+		file = (Util::remove_extension(file)) + ".o"; //replace the extension with .o
+		file = out_dir + "/" + file; // folder/object.o
+		all_object_files += file + " "; //used in final build process, all are linked
+		object_files.emplace_back(file); //for build
+	}
+}
 //this is for threads.
 void Class::build_object(int32_t i)
 {	
@@ -168,7 +175,10 @@ void Class::set_property(int32_t line, string& property, string& value)
 		compiler = value;
 	else if (property == "final_flags" || property == "end_flags")
 		final_flags = value;
-	else if (property == "build_directory" || property == "object_folder")
+	else if (property == "build_directory" ||
+			 property == "object_folder"   ||
+			 property == "obj_dir"		   ||
+			 property == "build_dir")
 		out_dir = value;
 	else
 		Util::error(line, "\"" + property + "\" cannot be set to a string");
@@ -194,4 +204,11 @@ void Class::check()
 
 	if (out_dir.empty())
 		out_dir = "build";
+}
+
+void Class::clean() 
+{
+	object_setup();
+	string command = "rm -f " + all_object_files;
+	Util::system(command);
 }
