@@ -24,8 +24,7 @@ bool parse_catel();
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
-	bool catel = Util::file_exists(".catel"),
-		 file_name_checked = false;
+	bool catel = Util::file_exists(".catel");
 
 	if (argc < 2 && !catel)
 	{
