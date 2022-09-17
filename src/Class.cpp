@@ -208,7 +208,13 @@ void Class::check()
 
 void Class::clean() 
 {
-	object_setup();
-	string command = "rm -f " + all_object_files;
+	if (out_dir.empty())
+		out_dir = "build";
+
+#ifdef __WIN32
+	string command = "del -f -q " + out_dir + "/*" OBJ_EXTENSION;	
+#else
+	string command = "rm -f " + out_dir + "/*" OBJ_EXTENSION;
+#endif // OS Check
 	Util::system(command);
 }
