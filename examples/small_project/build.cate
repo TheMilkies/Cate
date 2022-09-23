@@ -2,5 +2,5 @@
 
 Project example //declare a project with the name "example"
 example.compiler = "g++" //set the compiler
-example.files = {"main.cpp"} //add files
+example.files = {"src/main.cpp"} //add files
 example.build() //build
