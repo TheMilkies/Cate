@@ -2,7 +2,7 @@
 
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
-bool parser_exit = false, system_allowed = true;
+bool parser_exit = false, system_allowed = true, force_rebuild = false;
 
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
 
@@ -14,7 +14,8 @@ void help()
 	"\t-h" COLOR_RESET ":  shows help (this)" BOLD GREEN "\n"
 	"\t-t" YELLOW "N" COLOR_RESET ": sets thread count to " YELLOW BOLD "N\n"
 	GREEN "\t-D" COLOR_RESET ":  disables all " YELLOW "system()" COLOR_RESET " calls in script\n"
-	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n";
+	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n"
+	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " YELLOW "build_directory" COLOR_RESET "; force rebuild\n";
 }
 
 string file_name;
@@ -66,6 +67,10 @@ int main(int argc, char *argv[])
 			case 'D': //disable system
 				system_allowed = false;
 				break;
+
+			case 'f': //force rebuild
+				force_rebuild = true;
+				break;
 			
 			default: //unknown
 				//i'm lazy here
@@ -95,7 +100,7 @@ int main(int argc, char *argv[])
 		else if(default_file_in_dir)
 		{
 			file_name = "cate/build.cate";
-			goto skip_check;
+			goto skip_check; //fastest and cleanest way
 		}
 		else
 		{
