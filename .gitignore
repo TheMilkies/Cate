@@ -1,5 +1,4 @@
 build/*.o
-.vscode/
 *.o
 out/*
 release/
