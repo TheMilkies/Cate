@@ -303,11 +303,18 @@ void Parser::array()
 		}
 		else if (current.type == ParserToken::IDENTIFIER)
 		{
-			if (is_defined(current.value))
-				current_class->add_to_property(current.in_line, child,
-						classes[current.value]->out_name);
+			if (child == "libs")
+			{
+				if (is_defined(current.value))
+					current_class->add_to_property(current.in_line, child,
+							classes[current.value]->out_name);
+				else
+					Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined");
+			}
 			else
-				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined");
+			{
+				Util::fatal_error(current.in_line, "child must be \"libs\" (or \"libraries\") to insert a class in this manner.");
+			}
 		}
 	}
 }
@@ -339,9 +346,7 @@ void Parser::recursive()
 
 	if (!fs::is_directory(path)) //check if directory exists
 	{
-		if(path.empty())
-			path = "./";
-		else
+		if(!path.empty())
 			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exit");
 	}
 
