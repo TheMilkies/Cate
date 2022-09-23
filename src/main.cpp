@@ -24,9 +24,9 @@ bool parse_catel();
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
-	bool catel = Util::file_exists(".catel");
+	bool catel = Util::file_exists(".catel"), default_file = Util::file_exists("build.cate");
 
-	if (argc < 2 && !catel)
+	if (argc < 2 && !catel && !default_file)
 	{
 		help();
 		return 1;
@@ -84,13 +84,23 @@ int main(int argc, char *argv[])
 		parse_catel();
 	
 	if (file_name.empty() || file_name == ".cate") //incase of no file
-		Util::command_error("No input file");
+	{
+		if (default_file)
+		{
+			file_name = "build.cate";
+			goto skip_check;
+		}
+		else
+			Util::command_error("No input file");
+	}
 
 	//add cate file ending if doesn't end with ".cate"
 	if (!Util::ends_with(file_name, ".cate"))
 		file_name += ".cate";
 
+skip_check:
 	Parser parser(file_name); //start parsing
+
 	return 0;
 }
 

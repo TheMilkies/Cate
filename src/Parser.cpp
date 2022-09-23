@@ -337,7 +337,7 @@ void Parser::recursive()
 
 	if (current.value[location_of_wildcard+1] == '/')
 		Util::error(YELLOW "recursive()" COLOR_RESET
-			" does not support folder recursion yet. look out for cate updates incase it does.");
+			" does not support folder recursion.");
 	
 	string path = current.value.substr(0, location_of_wildcard), //extract path
 				  extension = current.value.substr(location_of_wildcard+1); //extract extension
