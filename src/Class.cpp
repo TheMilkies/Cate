@@ -9,6 +9,7 @@ void Class::setup()
 
 	//calling object_setup() on another thread is a bit faster
 	std::thread object_thread(&Class::object_setup, this);
+	std::thread library_thread(&Class::library_setup, this);
 
 	//useless debug line
 	/*if (object_files.size() != files.size())
@@ -25,6 +26,7 @@ void Class::setup()
 	}
 
 	object_thread.join(); //wait until it finishes
+	library_thread.join(); //wait until it finishes
 }
 
 void Class::object_setup()
@@ -85,6 +87,11 @@ void Class::build_objects()
 	 //set by the threads, don't add libraries if you don't need to
 	if (!needs_rebuild) return;
 
+	already_built = true;
+}
+
+void Class::library_setup()
+{
 	for(auto &lib : libraries)
 	{
 		//path check
@@ -109,8 +116,6 @@ void Class::build_objects()
 	//can be rewritten but it's faster like this...?
 	for(auto &path : library_paths)
 		all_library_paths += "-L" + path + ' ';
-
-	already_built = true;
 }
 
 //self explanitories, i cry everytime C++ doesn't have switch for strings
