@@ -98,7 +98,12 @@ int main(int argc, char *argv[])
 			goto skip_check;
 		}
 		else
+		{
+			if (fs::is_directory("cate") && catel)
+				Util::command_error("No input file, maybe create a .catel file?");
+
 			Util::command_error("No input file");
+		}
 	}
 
 	//add cate file ending if doesn't end with ".cate"
