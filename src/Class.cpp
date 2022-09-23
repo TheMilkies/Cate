@@ -35,7 +35,7 @@ void Class::object_setup()
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
 		Util::replace_all(file, "/", "_"); // "/" -> "_"
-		file = (Util::remove_extension(file)) + ".o"; //replace the extension with .o
+		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
 		file = out_dir + "/" + file; // folder/object.o
 		all_object_files += file + " "; //used in final build process, all are linked
 		object_files.emplace_back(file); //for build
