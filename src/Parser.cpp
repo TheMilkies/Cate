@@ -307,7 +307,7 @@ void Parser::array()
 				current_class->add_to_property(current.in_line, child,
 						classes[current.value]->out_name);
 			else
-				Util::fatal_error(current.in_line, "library is not defined");
+				Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined");
 		}
 	}
 }
