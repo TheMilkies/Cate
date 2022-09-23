@@ -43,7 +43,7 @@ void Class::object_setup()
 }
 //this is for threads.
 void Class::build_object(int32_t i)
-{	
+{
 	string command = command_template + files[i] + " -o " + object_files[i];
 	Util::system(command); //will exit if it can't compile
 }
@@ -145,7 +145,7 @@ void Class::clear_property(int32_t line, string& property)
 		all_library_paths.clear();
 		all_libraries.clear();
 	}
-	else if (property == "includes" || property == "include_paths")
+	else if (property == "incs" || property == "includes" || property == "include_paths")
 	{
 		static bool first_set = true;
 		if (first_set)
@@ -166,13 +166,13 @@ void Class::add_to_property(int32_t line, string_view property, string_view valu
 		files.emplace_back(value);
 	else if (property == "libraries" || property == "libs")
 		libraries.emplace_back(value);
-	else if (property == "includes" || property == "include_paths")
+	else if (property == "incs" || property == "includes" || property == "include_paths")
 		include_paths.emplace_back(value);
 }
 
 void Class::set_property(int32_t line, string& property, string& value)
 {
-	if (property == "name" || property == "out")
+	if (property == "out")
 		out_name = value;
 	else if (property == "flags")
 		flags = value;

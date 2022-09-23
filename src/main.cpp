@@ -102,7 +102,7 @@ bool parse_catel()
 	if (file.fail())
 		return false;
 
-	string s1, s2, dir, def;
+	string s1, s2, dir, def = "build.cate";
 
 	while (file >> s1 >> s2)
 	{
