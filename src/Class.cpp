@@ -2,10 +2,14 @@
 
 extern int32_t thread_count;
 
+extern bool force_rebuild;
+
 void Class::setup()
 {
 	//if (already_built) return; //i don't think this is needed
 	check();
+
+	if(force_rebuild) clean();
 
 	//calling object_setup() on another thread is a bit faster
 	std::thread object_thread(&Class::object_setup, this);
