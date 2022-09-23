@@ -113,6 +113,9 @@ namespace Util
 	//no system_allowed check here because it's ran by build threads
 	void system(string_view command)
 	{
+		if (command.empty())
+			return;
+		
 		int32_t ret = std::system(command.data());
 
 #ifdef __WIN32

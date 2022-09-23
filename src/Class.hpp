@@ -56,6 +56,7 @@ public:
 	void check(); //check if everything is okay
 	void setup(); // set up directories and object files
 	void object_setup(); //set up files and object files.
+	void library_setup();
 	void build_objects(); //build the objects
 
 	//general and self-explanitory
