@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			if (fs::is_directory("cate") && catel)
+			if (fs::is_directory("cate") && !catel)
 				Util::command_error("No input file, maybe create a .catel file?");
 
 			Util::command_error("No input file");
