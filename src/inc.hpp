@@ -38,17 +38,7 @@
     #error "no threading support"
 #endif
 
-#include <chrono>
-#include <unistd.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <unordered_map>
-#include "robin_hood.hpp"
-
 using std::string;
 using std::string_view;
 using std::vector;
-using std::unordered_map;
 #endif

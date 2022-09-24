@@ -22,6 +22,8 @@ extern int32_t lexer_line;
 #define PURPLE "\033[35m"
 #define CYAN "\033[36m"
 
+#include <unistd.h>
+
 namespace Util
 {
 	void error(string_view problem);
@@ -46,18 +48,7 @@ namespace Util
 
 	/// @brief Creates a folder if it doesn't already exist.
 	/// @param path Path of the folder to create
-	inline void create_folder(const char* path) {
-		struct stat st {0};
-
-		if (stat(path, &st) == -1) { //if folder does not exist.
-		#ifdef __WIN32
-			if (!CreateDirectory(path, NULL))
-		#else
-			if (mkdir(path, 0700) && errno != EEXIST)
-		#endif // __OSCheck
-				fatal_error(0, string("Could not create folder \"") + path + "\"");
-		}
-	} 
+	void create_folder(const char* path);
 
 	/// @brief Like std::system, but exits if the command returns anything other than 0.
 	/// @param command The command to execute.
