@@ -19,6 +19,7 @@
   * [How to use Cate](#how-to-use-cate)
     + [Command-line](#command-line)
       - [Flags (options)](#flags--options-)
+  * [General](#general)
   * [Syntax](#syntax)
     + [Classes](#classes)
     + [Class properties](#class-properties)
@@ -56,23 +57,29 @@ To build with Cate, run `cate`, it builds the smol cate by default
 ### Building with GNU Make
 To build with Make, run `make`. or if you want a smaller executable, run `make smol`
 ### Installing
-To install use `sudo cp out/cate /usr/bin/cate`, or `sudo make install` if you prefer installing with make.
+To install use `sudo cate install`, or `sudo make install` if you prefer installing with make.
 
 ## How to use Cate
 ### Command-line
-To build another project, run `cate [filename.ending with .cate]` (example: `cate build.cate`).
+To build a project with its default target, run `cate`
 
-The `.cate` extension is not required in the command.   (example: `cate build`).
+To build a different target, run `cate TARGET_NAME`. (example: `cate dynamic`).
+
+The `.cate` extension is not required in the command but can be added. (example: `cate static.cate`).
 
 #### Flags (options)
 - `-h`: Shows help.
 - `-tN`: Changes the thread count to N.
 - `-v`: Shows the current installed Cate version.
 - `-D`: Disables all `system()` lines in script.  
+- `-f`: Delete everything in class's build_directory; force rebuild
 
 Cate will only run **one** cate file per command.
 
 For starting a project, look at the [examples folder](examples/) or continue reading.
+
+## General
+Cate defaults to `build.cate` or `cate/build.cate` if present unless `.catel` specifies otherwise.
 
 ## Syntax
 Cate follows an object syntax. It's very simple to understand for C/C++ programmers. Semicolons and commas are optional.
@@ -91,10 +98,10 @@ Just like in C/C++, properties follow the `object.property = Thing;`.
 
 Here are the classes' properties:
 - `String out` is the output file. Not required (defaults to identifier).
-- `String build_directory|object_folder` is the build directory where object files are saved. Not required (defaults to "build/").
-- `Array files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or just `recursive()`. Required. 
-- `Array libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. inside the array you can include a library declared before (`{libexample}`) Not required. 
-- `Array includes|include_paths` holds the folder names of the class's includes. Not required.
+- `String build_directory|object_folder|obj_dir|build_dir` is the build directory where object files are saved. Not required (defaults to "build/").
+- `Array<String> files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or just `recursive()`. Required. 
+- `Array<String> libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. inside the array you can include a library declared before (`{libexample}`) Not required. 
+- `Array<String> include_paths|includes|incs` holds the folder names of the class's includes. Not required.
 - `String flags` is the class's compiler flags. Not required. 
 - `String final_flags|end_flags` is the final executable (linking) compiler flags. Not required. 
 - `LibraryType type` is the library's type, can only be `static` pr `dynamic`. Not required since it's already defined in `Library NAME(LibraryType);` 
@@ -103,9 +110,10 @@ Here are the classes' properties:
 ### Class methods
 There is **only one** method currently.
 - `build()` starts the building process. Can be called twice only in libraries.
+- `clean()` deletes the `build_directory` directory.
 
 ### General functions
-- `Array recursive(String)` **only in the class's files**: takes a string with a single wildcard (`*`)
+- `Array<String> recursive(String)` **only in the class's files**: takes a string with a single wildcard (`*`)
 
 Example: `recursive("src/*.cpp")`
 
@@ -121,16 +129,16 @@ dir cate
 default all
 ```
 
-`dir` is the catefiles directory, Cate will check if the file is there first, if it's not there; Cate will check if the file is in the root directory.
+`dir`/`directory` is the catefiles directory (defaults to `cate/`), Cate will check if the file is there first, if it's not there; Cate will check if the file is in the root directory.
 
-`default` is the default file to build, it can be a path or just the filename (will search `dir` first).
+`def`/`default` is the default file to build (defaults to `build.cate`), it can be a path or just the filename (will search `dir` first).
 
 ## Known issues
 These issues are known and will be fixed soon!
 - None for now!
 
 ## Credits
-<!-- All Milkies have contributed in some way to Cate. Notable contributors are: -->
+All Milkies have contributed in some way to Cate. Notable contributors are:
 - Yogurt (Main maintainer)
 - Lime (Tester and bug fixer)
 - Lemon (Secondary bug fixer)
