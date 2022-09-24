@@ -15,7 +15,7 @@ void help()
 	"\t-t" highlight_var("N") ": sets thread count to " PURPLE BOLD "N\n"
 	GREEN "\t-D" COLOR_RESET ":  disables all " highlight_func("system()") " calls in script\n"
 	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n"
-	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " YELLOW "build_directory" COLOR_RESET "; force rebuild\n";
+	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " highlight_var("build_directory") "; force rebuild\n";
 }
 
 string file_name;
