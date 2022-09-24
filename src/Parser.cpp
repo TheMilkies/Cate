@@ -224,26 +224,6 @@ void Parser::parse()
 	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
 }
 
-bool Parser::object_method()
-{
-	if (child == "build") //void Class.build(void);
-	{
-		void_function(); 
-		current_class->build();				
-	}
-	else if (child == "clean") //void Class.build(void);
-	{
-		void_function(); 
-		current_class->clean();				
-	}
-	else
-	{
-		return false; //if not any of those, it's a property
-	}
-
-	return true; //will go to the next token
-}
-
 void Parser::array()
 {
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.

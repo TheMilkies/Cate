@@ -36,6 +36,8 @@ _build Library &
 
 _build Project &
 
+_build ClassMethods &
+
 wait < <(jobs -p)
 
 $CC $build_folder/*.o $cflags -o$out_exec externals/linux_amd64_libfl.a

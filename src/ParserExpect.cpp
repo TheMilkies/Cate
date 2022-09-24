@@ -28,7 +28,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 
 	if (current.type != type && current.type != type2 && current.type != type3)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		Util::fatal_error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" but got " + token_names[current.type]);
 	}
 }

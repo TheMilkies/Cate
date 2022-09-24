@@ -43,10 +43,6 @@ void Parser::recursive()
 	{
 		if(!path.empty())
 			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exist");
-		
-		if(current.value[location_of_wildcard+1] == '*')
-			Util::fatal_error(current.in_line, highlight_func("recursive()")
-			" does not allow filename/path recursion (src/lib*.c)");
 	}
 
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
