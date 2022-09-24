@@ -214,16 +214,3 @@ void Class::check()
 	if (out_dir.empty())
 		out_dir = "build";
 }
-
-void Class::clean() 
-{
-	if (out_dir.empty())
-		out_dir = "build";
-
-#ifdef __WIN32
-	string command = "del -f -q " + out_dir + "/*" OBJ_EXTENSION;	
-#else
-	string command = "rm -f " + out_dir + "/*" OBJ_EXTENSION;
-#endif // OS Check
-	Util::system(command);
-}
