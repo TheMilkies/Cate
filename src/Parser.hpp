@@ -2,8 +2,8 @@
 #define Parser_HPP
 #include "Util.hpp"
 #include "ParserTokens.hpp"
-#include "Project.hpp"
-#include "Library.hpp"
+#include "Class.hpp"
+
 #include <unordered_map>
 
 //from main.cpp
@@ -36,7 +36,7 @@ private:
 	std::unordered_map<string, Class*> classes;
 
 	int32_t index = -1; //will be incremented to 0
-	inline ParserToken next() {
+	inline const ParserToken next() {
 		return tokens[++index];
 	}
 
@@ -52,6 +52,5 @@ public:
 	Parser(const string& file_name);
 	~Parser();
 };
-
 
 #endif
