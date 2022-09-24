@@ -1,12 +1,8 @@
 #include "Library.hpp"
 
-Library::Library()
-{
-}
+Library::Library() {}
 
-Library::~Library()
-{
-}
+Library::~Library() {}
 
 void Library::build() 
 {	

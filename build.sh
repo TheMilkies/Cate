@@ -26,6 +26,10 @@ _build Class &
 
 _build Parser &
 
+_build ParserExpect &
+
+_build Recusive &
+
 _build Util &
 
 _build Library &

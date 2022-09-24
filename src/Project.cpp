@@ -1,12 +1,8 @@
 #include "Project.hpp"
 
-Project::Project()
-{
-}
+Project::Project() {}
 
-Project::~Project()
-{
-}
+Project::~Project() {}
 
 void Project::build() 
 {
