@@ -1,6 +1,7 @@
 #include "Parser.hpp"
 #include "Lexer.hpp"
 
+
 /*
 	why hello there!
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
@@ -118,7 +119,7 @@ void Parser::declare_library()
 	expect(ParserToken::LPAREN);
 	expect(ParserToken::STATIC, ParserToken::DYNAMIC);
 
-	temp_type = current.type;
+	//temp_type = current.type;
 	current_class->is_static = (current.type == ParserToken::STATIC); //if current token is static, set the type to static.
 
 	expect(ParserToken::RPAREN);
@@ -325,7 +326,8 @@ void Parser::array()
 			}
 			else
 			{
-				Util::fatal_error(current.in_line, "child must be \"libs\" (or \"libraries\") to insert a class in this manner.");
+				Util::fatal_error(current.in_line, "classes can only be included in the " YELLOW "libraries" COLOR_RESET
+													" (or " YELLOW "libs" COLOR_RESET ") property.");
 			}
 		}
 	}
@@ -334,26 +336,41 @@ void Parser::array()
 void Parser::recursive()
 {
 	if (child != "files")
-		Util::fatal_error(current.in_line, "only files can be set to result of recursive search.");
+		Util::fatal_error(current.in_line, "only the " highlight_var("files")
+						" property can be set to result of recursive search.");
 	
 	current = string_function(); 
 
 	if (current.value.empty()) //should NEVER happen
-		Util::fatal_error(current.in_line,  "the recursive was given an empty string literal");
+		Util::fatal_error(current.in_line, highlight_func("recursive")
+		" was given an empty string literal");
 	
 	//wildcard stuff
 	int32_t location_of_wildcard = current.value.find('*');
 
 	if (location_of_wildcard == string::npos) //if not found
-		Util::error("Wildcard was not found in recursive");
+		Util::error("Wildcard (*) was not found in " highlight_func("recursive"));
 
 	if (current.value[location_of_wildcard+1] == '/')
-		Util::error(YELLOW "recursive()" COLOR_RESET
-			" does not support folder recursion.");
+		Util::error(highlight_func("recursive")
+			" does not support folder recursion. like \`recursive(\"f/*/*.c\")\`");
 	
 	string path = current.value.substr(0, location_of_wildcard), //extract path
 				  extension = current.value.substr(location_of_wildcard+1); //extract extension
+	
+	if (extension.empty())
+	{
+		Util::fatal_error(current.in_line, highlight_func("recursive")
+							" was not given an extension to find.");
+	}
 
+	if (extension == ".*")
+	{
+		Util::fatal_error(current.in_line, highlight_func("recursive")
+							" does not allow \"all file extensions\" (.*) recursion.");
+	}
+	
+	
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	if (!fs::is_directory(path)) //check if directory exists
