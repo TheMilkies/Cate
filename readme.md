@@ -125,7 +125,7 @@ Unlike Cate, Catel looks terrible since it doesn't even try to mimic a language.
 
 Take a look at this example:
 ```
-dir cate
+directory cate
 default all
 ```
 

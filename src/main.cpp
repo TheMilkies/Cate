@@ -11,14 +11,15 @@ void help()
 	std::cout << BLUE BOLD "Cate " CATE_VERSION "\n"
 	"usage: " COLOR_RESET "\tcate " BOLD GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n"
-	"\t-h" COLOR_RESET ":  shows help (this)" BOLD GREEN "\n"
+	"\t-l" COLOR_RESET ":  list all cate files in default directory\n"
+	BOLD GREEN "\t-h" COLOR_RESET ":  shows help (this)" BOLD GREEN "\n"
 	"\t-t" highlight_var("N") ": sets thread count to " PURPLE BOLD "N\n"
 	GREEN "\t-D" COLOR_RESET ":  disables all " highlight_func("system()") " calls in script\n"
 	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n"
 	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " highlight_var("build_directory") "; force rebuild\n";
 }
 
-string file_name;
+string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";
 
 bool parse_catel();
 
@@ -58,6 +59,29 @@ int main(int argc, char *argv[])
 				std::cout << CATE_VERSION "\n";
 				return 0; //exit after
 				break;
+
+			case 'l':{ //list directory
+				bool catefiles = false;
+				if(catel)
+				{
+					parse_catel();
+				}
+				std::cout << CYAN;
+				for (auto &p : fs::directory_iterator(dir)) //iterate over the files
+				{
+					if (p.path().extension() == ".cate")
+					{
+						std::cout << p.path().stem().string() << ", ";
+						catefiles = true;
+					}
+				}
+				if (catefiles)
+					std::cout << COLOR_RESET "\n";
+				else
+					std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
+
+				return 0;
+			} break;
 
 			case 'h': //cate help
 				help();
@@ -129,7 +153,7 @@ bool parse_catel()
 	if (file.fail())
 		return false;
 
-	string s1, s2, dir = "cate", def = "build.cate";
+	string s1, s2, def = "build.cate";
 
 	while (file >> s1 >> s2)
 	{
