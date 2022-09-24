@@ -4,6 +4,7 @@
 #include "ParserTokens.hpp"
 #include "Project.hpp"
 #include "Library.hpp"
+#include <unordered_map>
 
 //from main.cpp
 extern bool parser_exit;
@@ -32,7 +33,7 @@ private:
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;
-	unordered_map<string, Class*> classes;
+	std::unordered_map<string, Class*> classes;
 
 	int32_t index = -1; //will be incremented to 0
 	inline ParserToken next() {

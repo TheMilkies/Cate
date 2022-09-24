@@ -2,6 +2,9 @@
 
 extern bool parser_exit;
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 namespace Util
 {
 	void error(string_view problem)
@@ -134,4 +137,17 @@ namespace Util
 		if (ending.size() > value.size()) return false;
 		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 	}
+
+	void create_folder(const char* path) {
+		struct stat st {0};
+
+		if (stat(path, &st) == -1) { //if folder does not exist.
+		#ifdef __WIN32
+			if (!CreateDirectory(path, NULL))
+		#else
+			if (mkdir(path, 0700) && errno != EEXIST)
+		#endif // __OSCheck
+				fatal_error(0, string("Could not create folder \"") + path + "\"");
+		}
+	} 
 } // namespace Util
