@@ -326,8 +326,8 @@ void Parser::array()
 			}
 			else
 			{
-				Util::fatal_error(current.in_line, "classes can only be included in the " YELLOW "libraries" COLOR_RESET
-													" (or " YELLOW "libs" COLOR_RESET ") property.");
+				Util::fatal_error(current.in_line, "classes can only be included in the " highlight_var("libraries")
+													" (or " highlight_var("libs") ") property.");
 			}
 		}
 	}
@@ -342,41 +342,44 @@ void Parser::recursive()
 	current = string_function(); 
 
 	if (current.value.empty()) //should NEVER happen
-		Util::fatal_error(current.in_line, highlight_func("recursive")
+		Util::fatal_error(current.in_line, highlight_func("recursive()")
 		" was given an empty string literal");
 	
 	//wildcard stuff
 	int32_t location_of_wildcard = current.value.find('*');
 
 	if (location_of_wildcard == string::npos) //if not found
-		Util::error("Wildcard (*) was not found in " highlight_func("recursive"));
+		Util::error("Wildcard (*) was not found in " highlight_func("recursive()"));
 
 	if (current.value[location_of_wildcard+1] == '/')
-		Util::error(highlight_func("recursive")
-			" does not support folder recursion. like \`recursive(\"f/*/*.c\")\`");
+		Util::error(highlight_func("recursive()")
+			" does not support folder recursion (f/*/*.c).");
 	
 	string path = current.value.substr(0, location_of_wildcard), //extract path
 				  extension = current.value.substr(location_of_wildcard+1); //extract extension
 	
 	if (extension.empty())
 	{
-		Util::fatal_error(current.in_line, highlight_func("recursive")
+		Util::fatal_error(current.in_line, highlight_func("recursive()")
 							" was not given an extension to find.");
 	}
 
 	if (extension == ".*")
 	{
-		Util::fatal_error(current.in_line, highlight_func("recursive")
+		Util::fatal_error(current.in_line, highlight_func("recursive()")
 							" does not allow \"all file extensions\" (.*) recursion.");
 	}
-	
 	
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
 	if (!fs::is_directory(path)) //check if directory exists
 	{
 		if(!path.empty())
-			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exit");
+			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exist");
+		
+		if(current.value[location_of_wildcard+1] == '*')
+			Util::fatal_error(current.in_line, highlight_func("recursive()")
+			" does not allow filename/path recursion (src/lib*.c)");
 	}
 
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
