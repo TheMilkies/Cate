@@ -1,0 +1,18 @@
+Project c_example;
+c_example.compiler = "gcc";
+c_example.flags = "-O3";
+c_example.out = "c_example";
+c_example.files = {"src/c/a/a.c",
+				   "src/c/a/a1.c",
+				   "src/c/b/b.c",
+				   "src/c/c/c.c",
+				   "src/c/main.c",
+				  };
+c_example.build();
+
+Project fortran_fsr;
+fortran_fsr.compiler = "gfortran";
+fortran_fsr.flags = "-O3";
+fortran_fsr.out = "fortran_fsr";
+fortran_fsr.files = {"src/fortran_fsr/*.f90"};
+fortran_fsr.build();
