@@ -71,8 +71,15 @@ void Parser::define(const string &identifier)
 
 void Parser::void_function()
 {
-	expect(ParserToken::LPAREN);
-	expect(ParserToken::RPAREN);
+	//it already checks if the next is '(', so we can just skip 2
+	current = tokens[index += 2];
+
+	if (current.type != ParserToken::RPAREN)
+	{
+		Util::error(current.in_line,
+					"Missing ')'");
+	}
+	
 }
 
 //expects '(' string_literal ')' and then returns the string_literal token
@@ -81,7 +88,12 @@ ParserToken Parser::string_function()
 	expect(ParserToken::LPAREN);
 	expect(ParserToken::STRING_LITERAL);
 	ParserToken to_return = current;
-	expect(ParserToken::RPAREN);
+	if (tokens[index+1].type != ParserToken::RPAREN)
+	{
+		Util::error(current.in_line,
+					"Missing ')'");
+	}
+	current = next();
 	return to_return;
 }
 
