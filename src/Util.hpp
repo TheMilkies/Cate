@@ -66,4 +66,7 @@ namespace Util
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 } // namespace Util
 
+#define highlight_func(x) YELLOW x COLOR_RESET
+#define highlight_var(x) PURPLE x COLOR_RESET
+
 #endif

@@ -12,8 +12,8 @@ void help()
 	"usage: " COLOR_RESET "\tcate " BOLD GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n"
 	"\t-h" COLOR_RESET ":  shows help (this)" BOLD GREEN "\n"
-	"\t-t" YELLOW "N" COLOR_RESET ": sets thread count to " YELLOW BOLD "N\n"
-	GREEN "\t-D" COLOR_RESET ":  disables all " YELLOW "system()" COLOR_RESET " calls in script\n"
+	"\t-t" highlight_var("N") ": sets thread count to " PURPLE BOLD "N\n"
+	GREEN "\t-D" COLOR_RESET ":  disables all " highlight_func("system()") " calls in script\n"
 	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n"
 	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " YELLOW "build_directory" COLOR_RESET "; force rebuild\n";
 }

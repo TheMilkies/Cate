@@ -1,4 +1,4 @@
-%option c++  noinput nounput 
+%option c++ noinput nounput 
 
 %{
 	#include <iostream>

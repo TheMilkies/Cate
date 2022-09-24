@@ -161,7 +161,7 @@ void Class::clear_property(int32_t line, string& property)
 		all_include_paths.clear();
 	}
 	else
-		Util::error(line, "\"" + property + "\" cannot be set to an array");
+		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array");
 }
 
 void Class::add_to_property(int32_t line, string_view property, string_view value)
@@ -190,7 +190,7 @@ void Class::set_property(int32_t line, string& property, string& value)
 			 property == "build_dir")
 		out_dir = value;
 	else
-		Util::error(line, "\"" + property + "\" cannot be set to a string");
+		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to a string");
 }
 
 void Class::check()
