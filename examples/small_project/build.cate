@@ -1,6 +1,6 @@
 //semicolons are not required!
 
 Project example //declare a project with the name "example"
-example.compiler = "g++" //set the compiler
+example.out = "an_example"
 example.files = {"src/main.cpp"} //add files
 example.build() //build

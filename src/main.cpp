@@ -21,137 +21,127 @@ void help()
 
 string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";
 
-bool parse_catel();
+void parse_catel();
 
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
-	bool catel = Util::file_exists(".catel"),
-		 default_file = Util::file_exists("build.cate"),
-		 default_file_in_dir = Util::file_exists("cate/build.cate");
+	using namespace Util;
 
-	if (argc < 2 && !catel && !default_file && !default_file_in_dir)
+	file_name.reserve(64);
+
+	bool catel_exists = file_exists(".catel");
+
+	//get default file
+	if (argc < 2 && !catel_exists)
 	{
-		help();
-		return 1;
-	}
-
-	file_name.reserve(64); //the filename, we will get it with the following for loop
-
-	//ARGC_START is where argc should start, 0 in windows, 1 in linux and other sane operating systems.
-	for (int32_t i = ARGC_START; i < argc; i++)
-	{		
-		if (argv[i][0] == '-')
-		{
-			switch (argv[i][1]) //check the second character of the argument
-			{
-			case 't': {
-				if (argv[i][2] == NULL) //if just "-t"
-					Util::command_error("Missing argument \"-t\"");
-
-				int sub = atoi((char*)argv[i] + 2); //get everything after "-t"
-				if (sub != 0) //if 0 or invalid
-					thread_count = sub;
-				
-			}	break;
-
-			case 'v': //cate version
-				std::cout << CATE_VERSION "\n";
-				return 0; //exit after
-				break;
-
-			case 'l':{ //list directory
-				bool catefiles = false;
-				if(catel)
-				{
-					parse_catel();
-				}
-				std::cout << CYAN;
-				for (auto &p : fs::directory_iterator(dir)) //iterate over the files
-				{
-					if (p.path().extension() == ".cate")
-					{
-						std::cout << p.path().stem().string() << ", ";
-						catefiles = true;
-					}
-				}
-				if (catefiles)
-					std::cout << COLOR_RESET "\n";
-				else
-					std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
-
-				return 0;
-			} break;
-
-			case 'h': //cate help
-				help();
-				return 0; //exit after
-				break;
-			
-			case 'D': //disable system
-				system_allowed = false;
-				break;
-
-			case 'f': //force rebuild
-				force_rebuild = true;
-				break;
-			
-			default: //unknown
-				//i'm lazy here
-				std::cout << RED BOLD "Error" COLOR_RESET " in command: Unknown argument: \""
-						  << argv[i] << "\"\n";
-				return 1;
-				break;
-			}
-		}
-		else //must be a filename now
-		{
-			if (file_name.empty())
-				file_name = argv[i];
-		}
-	}
-
-	if (catel)
-		parse_catel();
-	
-	if (file_name.empty() || file_name == ".cate") //incase of no file
-	{
-		if (default_file)
+		if (file_exists("build.cate"))
 		{
 			file_name = "build.cate";
-			goto skip_check;
 		}
-		else if(default_file_in_dir)
+		else if(file_exists("cate/build.cate"))
 		{
 			file_name = "cate/build.cate";
-			goto skip_check; //fastest and cleanest way
 		}
 		else
 		{
-			if (fs::is_directory("cate") && !catel)
-				Util::command_error("No input file, maybe create a .catel file?");
+			help();
+			return 1;
+		}
+	}
+	//get specified
+	else
+	{
+		for (int32_t i = ARGC_START; i < argc; i++)
+		{		
+			if (argv[i][0] == '-')
+			{
+				switch (argv[i][1]) //check the second character of the argument
+				{
+				case 't': {
+					if (argv[i][2] == NULL) //if just "-t"
+						Util::command_error("Missing argument \"-t\"");
 
-			Util::command_error("No input file");
+					int sub = atoi((char*)argv[i] + 2); //get everything after "-t"
+					if (sub != 0) //if 0 or invalid
+						thread_count = sub;
+					
+				}	break;
+
+				case 'v': //cate version
+					std::cout << CATE_VERSION "\n";
+					return 0; //exit after
+					break;
+
+				case 'l':{ //list directory
+					bool catefiles = false;
+
+					if(catel_exists) parse_catel();
+					
+					std::cout << CYAN;
+					for (auto &p : fs::directory_iterator(dir)) //iterate over the files
+					{
+						if (p.path().extension() == ".cate")
+						{
+							std::cout << p.path().stem().string() << ", ";
+							catefiles = true;
+						}
+					}
+					if (catefiles)
+						std::cout << COLOR_RESET "\n";
+					else
+						std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
+
+					return 0;
+				} break;
+				
+				case 'h': //cate help
+					help();
+					return 0; //exit after
+					break;
+				
+				case 'D': //disable system
+					system_allowed = false;
+					break;
+
+				case 'f': //force rebuild
+					force_rebuild = true;
+					break;
+			
+				default: //unknown
+					command_error(
+						string("Unknown argument \"") + argv[i] + "\""
+					);
+					break;
+				}
+			}
+			else //must be a filename now
+			{
+				if (file_name.empty())
+					file_name = argv[i];
+				else
+					command_error("Cannot build more than one catefile per command.");
+			}
 		}
 	}
 
-	//add cate file ending if doesn't end with ".cate"
-	if (!Util::ends_with(file_name, ".cate"))
-		file_name += ".cate";
+	if(catel_exists) parse_catel();
 
-skip_check:
-	Parser parser(file_name); //start parsing
+	if(file_name.empty())
+		Util::command_error("No input file");
 
+	Parser* parser = new Parser(file_name);
+
+	delete parser; //yay
 	return 0;
 }
 
 //this is so bad but it works so well
-bool parse_catel()
+void parse_catel()
 {
 	std::ifstream file(".catel");
 
-	if (file.fail())
-		return false;
+	if (file.fail()) return;
 
 	string s1, s2, def = "build.cate";
 
@@ -170,8 +160,7 @@ bool parse_catel()
 	if (!def.empty() && file_name.empty())
 		file_name = def;
 
-	if (dir.empty())
-		return false;
+	if (dir.empty()) return;
 
 	if (!Util::ends_with(file_name, ".cate"))
 		file_name += ".cate";
@@ -179,12 +168,8 @@ bool parse_catel()
 	string file_name_with_dir = dir + "/" + file_name;
 	
 	if (Util::file_exists(file_name_with_dir.c_str()))
-	{
 		file_name = file_name_with_dir;
-	}
-	else
-		return false; //will continue as normal cate file
 
 	//done
-	return true;
+	return;
 }
