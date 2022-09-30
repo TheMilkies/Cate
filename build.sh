@@ -61,11 +61,11 @@ read -r -p "Done. Would you like to install Cate? [Y/n]: " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
         if command -v doas &> /dev/null; then
-            sudo install_command
+            sudo $install_command
         elif command -v sudo &> /dev/null; then
-            doas install_command
+            doas $install_command
         elif [ "$EUID" -e 0]; then
-            install_command
+            $install_command
         else
             echo "No way to run as root found, sorry"
         fi
