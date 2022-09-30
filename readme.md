@@ -118,6 +118,7 @@ Here are the classes' properties:
 - `String final_flags|end_flags` is the final executable (linking) compiler flags. Not required. 
 - `LibraryType type` is the library's type, can only be `static` pr `dynamic`. Not required since it's already defined in `Library NAME(LibraryType);` 
 - `String compiler` is the class's compiler. Defaults to `cc`. 
+- `Bool link` is whether to link all objects in `build()` or not.
 
 ### Class methods
 There is **only one** method currently.

@@ -105,7 +105,7 @@ void Class::library_setup()
 		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
 			library_paths.insert(path);
 
-		//check if not static
+		//check if not static/local
 		if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
 		{
 			Util::remove_extension(lib);
@@ -122,15 +122,15 @@ void Class::library_setup()
 		all_library_paths += "-L" + path + ' ';
 }
 
-//self explanitories, i cry everytime C++ doesn't have switch for strings
+//self explanitories, i cry every time C++ doesn't have switch for strings
 void Class::clear_property(int32_t line, string& property)
 {
 	if (property == "files")
 	{
-		static bool first_set = true;
-		if (first_set)
+		static bool first_clear = true;
+		if (first_clear)
 		{
-			first_set = false;
+			first_clear = false;
 			return;
 		}
 		files.clear();
@@ -139,10 +139,10 @@ void Class::clear_property(int32_t line, string& property)
 	}
 	else if (property == "libraries" || property == "libs")
 	{
-		static bool first_set = true;
-		if (first_set)
+		static bool first_clear = true;
+		if (first_clear)
 		{
-			first_set = false;
+			first_clear = false;
 			return;
 		}
 		libraries.clear();
@@ -151,10 +151,10 @@ void Class::clear_property(int32_t line, string& property)
 	}
 	else if (property == "incs" || property == "includes" || property == "include_paths")
 	{
-		static bool first_set = true;
-		if (first_set)
+		static bool first_clear = true;
+		if (first_clear)
 		{
-			first_set = false;
+			first_clear = false;
 			return;
 		}
 		include_paths.clear();
