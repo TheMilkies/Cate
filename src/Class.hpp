@@ -26,6 +26,7 @@ public:
 
 	bool is_static; //only in library
 	bool already_built = false, needs_rebuild = false;
+	bool link = true;
 	
 	Class()
 	{

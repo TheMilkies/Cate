@@ -173,6 +173,11 @@ void Parser::parse()
 					current_class->is_static = (current.type == ParserToken::STATIC);
 					current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
 				}
+				else if (child == "link")
+				{
+					expect(ParserToken::TRUE, ParserToken::FALSE);
+					current_class->link = (current.type == ParserToken::TRUE);
+				}
 				else
 				{
 					expect(ParserToken::STRING_LITERAL, ParserToken::LCURLY, ParserToken::RECURSIVE);
@@ -187,9 +192,7 @@ void Parser::parse()
 						if (current.type == ParserToken::LCURLY)
 							array(); //start the array
 						else if (current.type == ParserToken::RECURSIVE)
-						{
 							recursive();
-						}
 					}
 				}
 			}

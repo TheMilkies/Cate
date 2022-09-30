@@ -52,6 +52,8 @@
 "static" {return ParserToken::STATIC;}
 "system" {return ParserToken::SYSTEM;}
 "recursive" {return ParserToken::RECURSIVE;}
+"true" {return ParserToken::TRUE;}
+"false" {return ParserToken::FALSE;}
 [a-zA-Z_0-9]+ {return ParserToken::IDENTIFIER;}
 
 "(" {return ParserToken::LPAREN;}
