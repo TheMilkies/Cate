@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-    echo "Please insert a version number. like 1.2.8"
+    echo "Please insert a version number. like 2.1.0"
 	exit
 fi
 
