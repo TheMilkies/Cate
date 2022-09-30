@@ -13,7 +13,11 @@ out_exec="out/cate"; mkdir -p out
 cflags="-lstdc++ -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 
 build_() {
-    $CC src/$1.cpp $cflags -c -o $build_folder/src_$1.o
+    #time1=(stat src/$1.cpp -c%X)
+    #time2=(stat $build_folder/src_$1.o -c%X)
+    if [ src/$1.cpp -nt $build_folder/src_$1.o ]; then
+        $CC src/$1.cpp $cflags -c -o $build_folder/src_$1.o
+    fi
 }
 
 _build() {
@@ -46,3 +50,4 @@ $CC $build_folder/*.o $cflags -o$out_exec externals/linux_amd64_libfl.a
 if command -v strip &> /dev/null; then
     strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
 fi
+echo Done.
