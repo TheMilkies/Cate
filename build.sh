@@ -38,6 +38,8 @@ _build Project &
 
 _build ClassMethods &
 
+_build Catel &
+
 wait < <(jobs -p)
 
 $CC $build_folder/*.o $cflags -o$out_exec externals/linux_amd64_libfl.a
