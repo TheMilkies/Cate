@@ -19,7 +19,10 @@ build_() {
 }
 
 _build() {
-    if ! build_ $1 ; then exit 1; fi
+    if ! build_ $1 ; then
+        echo "Error in $1" 
+        exit 1
+    fi
 }
 
 _build Lexer &
@@ -44,7 +47,7 @@ _build Catel &
 
 wait < <(jobs -p)
 
-$CC $build_folder/*.o $cflags -o$out_exec externals/linux_amd64_libfl.a
+$CC $build_folder/*.o externals/linux_amd64_libfl.a  $cflags -o$out_exec 
 
 if ! test -f "./out/cate"; then
     echo "Cate didn't build corectly."

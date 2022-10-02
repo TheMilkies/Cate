@@ -2,6 +2,8 @@
 	"files.associations": {
 		"string_view": "cpp",
 		"thread": "cpp",
-		"*.tcc": "cpp"
+		"*.tcc": "cpp",
+		"iostream": "cpp",
+		"unordered_map": "cpp"
 	}
 }
