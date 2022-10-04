@@ -38,29 +38,29 @@
 	++lexer_line;
 }
 
-\. {return ParserToken::DOT;}
-\, {return ParserToken::COMMA;}
-";" {return ParserToken::SEMICOLON;}
+\. {return DOT;}
+\, {return COMMA;}
+";" {return SEMICOLON;}
 
-\"[^"]+\" {return ParserToken::STRING_LITERAL;}
+\"[^"]+\" {return STRING_LITERAL;}
 \"\" {Util::lexer_error("Empty string literals are not allowed.");}
 \" {Util::lexer_error("Missing ending quote.");}
 
-"Project" {return ParserToken::PROJECT;}
-"Library" {return ParserToken::LIBRARY;}
-"dynamic" {return ParserToken::DYNAMIC;}
-"static" {return ParserToken::STATIC;}
-"system" {return ParserToken::SYSTEM;}
-"recursive" {return ParserToken::RECURSIVE;}
-"true" {return ParserToken::TRUE;}
-"false" {return ParserToken::FALSE;}
-[a-zA-Z_0-9]+ {return ParserToken::IDENTIFIER;}
+"Project" {return PROJECT;}
+"Library" {return LIBRARY;}
+"dynamic" {return DYNAMIC;}
+"static" {return STATIC;}
+"system" {return SYSTEM;}
+"recursive" {return RECURSIVE;}
+"true" {return TRUE;}
+"false" {return FALSE;}
+[a-zA-Z_0-9]+ {return IDENTIFIER;}
 
-"(" {return ParserToken::LPAREN;}
-")" {return ParserToken::RPAREN;}
-"=" {return ParserToken::ASSIGN;}
-"{" {return ParserToken::LCURLY;}
-"}" {return ParserToken::RCURLY;}
+"(" {return LPAREN;}
+")" {return RPAREN;}
+"=" {return ASSIGN;}
+"{" {return LCURLY;}
+"}" {return RCURLY;}
 
 . {Util::lexer_error("Unknown character");}
 

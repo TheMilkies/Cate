@@ -1,6 +1,6 @@
 #include "Parser.hpp"
 
-void Parser::expect(ParserToken::ParserTokens type)
+void Parser::expect(ParserTokenKind type)
 {
 	current = next(); //get next token to compare
 
@@ -11,7 +11,7 @@ void Parser::expect(ParserToken::ParserTokens type)
 	}
 }
 
-void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2)
+void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 {
 	current = next();
 
@@ -22,7 +22,19 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
-void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3)
+void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
+{
+	current = next();
+
+	if (current.type != type && tokens[index+1].type != type2)
+	{
+		Util::error(current.in_line, "Expected " + token_names[type] + " and then " + token_names[type2]);
+	}
+	
+	current = next();
+}
+
+void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3)
 {
 	current = next();
 
@@ -33,7 +45,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
-void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3, ParserToken::ParserTokens type4)
+void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
 {
 	current = next();
 
@@ -44,7 +56,7 @@ void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens ty
 	}
 }
 
-void Parser::expect(ParserToken::ParserTokens type, ParserToken::ParserTokens type2, ParserToken::ParserTokens type3, ParserToken::ParserTokens type4, ParserToken::ParserTokens type5)
+void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5)
 {
 	current = next();
 
