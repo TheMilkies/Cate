@@ -191,18 +191,16 @@ void Parser::parse()
 			break;
 		
 		case SYSTEM:
-		{
 			if (system_allowed)
 			{
-				string command = string_function().value;
-				std::cout << command << "\n";
-				Util::system(command);
+				current = string_function();
+				Util::user_system(current.in_line, current.value);
 			}
 			else
 			{
 				current = tokens[index += 3];
 			}
-		} break;
+			break;
 
 		case SEMICOLON: //ignored
 			break;

@@ -53,6 +53,7 @@ namespace Util
 	/// @brief Like std::system, but exits if the command returns anything other than 0.
 	/// @param command The command to execute.
 	void system(string_view command);
+	void user_system(int32_t line, string_view command);
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 } // namespace Util

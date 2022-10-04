@@ -5,6 +5,11 @@ extern bool parser_exit;
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifdef __WIN32
+	#define WIFEXITED(status) ((status) & 0x7f)
+	#define WEXITSTATUS(status) (((status) & 0xff00) >> 8)
+#endif // __WIN32
+
 namespace Util
 {
 	void error(string_view problem)
@@ -121,15 +126,26 @@ namespace Util
 		
 		int32_t ret = std::system(command.data());
 
-#ifdef __WIN32
-		if (((ret) & 0x7f) && (((ret) & 0xff00) >> 8) != 0)
-#else
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
-#endif // __WIN32
 		{
-			std::cout << RED BOLD "Error" COLOR_RESET ": Error in command/build command.\n";
+			std::cout << RED BOLD "Error" COLOR_RESET ": Error in build command.\n";
 			exit(1);
 		}
+	}
+
+	void user_system(int32_t line, string_view command)
+	{
+		if (command.empty()) return;
+		
+		int32_t ret = std::system(command.data());
+
+		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
+		{
+			std::cout << RED BOLD "Error" COLOR_RESET " in " highlight_func("system") " call ran by line " << line << ".\n"
+								  "Ran \"" << command << "\"\nExited with code " << WEXITSTATUS(ret) << '\n';
+		}
+		else
+			std::cout << command << "\n";
 	}
 
 	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow, should be rewritten
