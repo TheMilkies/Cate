@@ -13,9 +13,12 @@ void Library::build()
 		build_objects();
 	}
 
+	string build_type = (is_static) ? " (static)" : " (dynamic)";
+
 	if(link)
 	{
-		if (!Util::file_exists(out_name.c_str())) //if file doesn't exist
+		//if file doesn't exist
+		if (!Util::file_exists(out_name.c_str()))
 			needs_rebuild = true;
 			
 		if (!needs_rebuild) return;
@@ -25,12 +28,10 @@ void Library::build()
 		if (is_static)
 		{
 			command = "ar rcs -o " + out_name + " " + all_object_files + " ";
-			build_type = " (static)";
 		}
 		else
 		{
 			command = compiler + " -shared -o " + out_name + " " + all_object_files + final_flags + " " + flags;
-			build_type = " (dynamic)";
 		}
 		
 		Util::system(command);

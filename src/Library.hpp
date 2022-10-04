@@ -4,8 +4,6 @@
 
 class Library : public Class
 {
-private:
-	string build_type;
 public:
 	void build() override;
 	Library();

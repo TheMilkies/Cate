@@ -1,4 +1,4 @@
-Project cate;
+Project cate
 cate.compiler = "g++"
 cate.files = recursive("src/*.cpp")
 cate.flags = "-march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
