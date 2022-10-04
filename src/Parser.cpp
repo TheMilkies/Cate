@@ -26,18 +26,18 @@ Parser::Parser(const string& file_name)
 
 	ParserToken temp;
 	
-	while (temp.type = (ParserToken::ParserTokens)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
+	while (temp.type = (ParserTokenKind)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.value = ""; //reset to save some memory
 		temp.in_line = lexer_line; //defined in lexer.l
 		
-		if (temp.type == ParserToken::STRING_LITERAL)
+		if (temp.type == STRING_LITERAL)
 		{
 			//string literals have the quotes (example: "string") so we need to remove them
 			temp.value = lexer->YYText()+1;
 			temp.value.pop_back();
 		}
-		else if (temp.type == ParserToken::IDENTIFIER)
+		else if (temp.type == IDENTIFIER)
 		{
 			//identifiers are just kept as themselves
 			temp.value = lexer->YYText();
@@ -64,12 +64,14 @@ void Parser::define(const string &identifier)
 		Util::fatal_error(current.in_line, "\"" + identifier + "\" was already defined");
 	
 	//this is technically a factory... oh well
-	if (temp_type == ParserToken::PROJECT)
+	if (temp_type == PROJECT)
 		classes[identifier] = new Project;
 	else //library
 		classes[identifier] = new Library;
 
-	classes[identifier]->name = identifier; //set its name to the identifier
+	current_class = classes[current.value]; //set the pointer to the current class
+
+	current_class->name = identifier; //set its name to the identifier
 }
 
 void Parser::void_function()
@@ -77,7 +79,7 @@ void Parser::void_function()
 	//it already checks if the next is '(', so we can just skip 2
 	current = tokens[index += 2];
 
-	if (current.type != ParserToken::RPAREN)
+	if (current.type != RPAREN)
 	{
 		Util::error(current.in_line,
 					"Missing ')'");
@@ -88,14 +90,15 @@ void Parser::void_function()
 //expects '(' string_literal ')' and then returns the string_literal token
 ParserToken Parser::string_function()
 {
-	expect(ParserToken::LPAREN);
-	expect(ParserToken::STRING_LITERAL);
+	expect_and_then(LPAREN, STRING_LITERAL);
+
 	ParserToken to_return = current;
-	if (tokens[index+1].type != ParserToken::RPAREN)
+	if (tokens[index+1].type != RPAREN)
 	{
 		Util::error(current.in_line,
 					"Missing ')'");
 	}
+
 	current = next();
 	return to_return;
 }
@@ -104,9 +107,8 @@ void Parser::declare()
 {
 	//declaration: type identifier {define(type, identifier);}
 	temp_type = current.type; //library or project
-	expect(ParserToken::IDENTIFIER);
+	expect(IDENTIFIER);
 	define(current.value);
-	current_class = classes[current.value]; //set the pointer to the current class
 }
 
 void Parser::declare_library()
@@ -118,13 +120,13 @@ void Parser::declare_library()
 
 	declare(); //already wrote that code, reusing it.
 
-	expect(ParserToken::LPAREN);
-	expect(ParserToken::STATIC, ParserToken::DYNAMIC);
+	expect(LPAREN);
+	expect(STATIC, DYNAMIC);
 
 	//temp_type = current.type;
-	current_class->is_static = (current.type == ParserToken::STATIC); //if current token is static, set the type to static.
+	current_class->is_static = (current.type == STATIC); //if current token is static, set the type to static.
 
-	expect(ParserToken::RPAREN);
+	expect(RPAREN);
 }
 
 void Parser::parse()
@@ -132,19 +134,19 @@ void Parser::parse()
 	current = next(); //gets the first token (0)
 	
 	string parent; parent.reserve(16); child.reserve(16); //parent.child
-	while (current.type != ParserToken::END) //END = end of file
+	while (current.type != END) //END = end of file
 	{
 		switch (current.type)
 		{
-		case ParserToken::PROJECT:
+		case PROJECT:
 			declare();
 			break;
 
-		case ParserToken::LIBRARY:
+		case LIBRARY:
 			declare_library();
 			break;
 
-		case ParserToken::IDENTIFIER:
+		case IDENTIFIER:
 			/*property: string_literal '.' string_literal*/
 			parent = current.value;
 
@@ -154,44 +156,33 @@ void Parser::parse()
 			if (current_class->name != parent)
 				current_class = classes[parent];
 
-			expect(ParserToken::DOT);
-			expect(ParserToken::IDENTIFIER);
+			expect_and_then(DOT, IDENTIFIER);
 			child = current.value;
 
 			//object_method: property function_parens
 			//this is a dumb and smart optimisation
-			if (tokens[index+1].type == ParserToken::LPAREN) object_method();
+			if (tokens[index+1].type == LPAREN) object_method();
 			else
 			{
 				//assignment: property '=' expr
-				expect(ParserToken::ASSIGN);
+				expect(ASSIGN);
 
 				//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
-				if (child == "type")
-				{
-					expect(ParserToken::STATIC, ParserToken::DYNAMIC);
-					current_class->is_static = (current.type == ParserToken::STATIC);
-					current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
-				}
-				else if (child == "link")
-				{
-					expect(ParserToken::TRUE, ParserToken::FALSE);
-					current_class->link = (current.type == ParserToken::TRUE);
-				}
+				if(special_case());
 				else
 				{
-					expect(ParserToken::STRING_LITERAL, ParserToken::LCURLY, ParserToken::RECURSIVE);
+					expect(STRING_LITERAL, LCURLY, RECURSIVE);
 
-					if (current.type == ParserToken::STRING_LITERAL)
+					if (current.type == STRING_LITERAL)
 					{
 						current_class->set_property(current.in_line, child, current.value); //set current property to the string literal
 					}
 					else 
 					{
 						current_class->clear_property(current.in_line, child); //clear array
-						if (current.type == ParserToken::LCURLY)
+						if (current.type == LCURLY)
 							array(); //start the array
-						else if (current.type == ParserToken::RECURSIVE)
+						else if (current.type == RECURSIVE)
 							recursive();
 					}
 				}
@@ -199,24 +190,21 @@ void Parser::parse()
 			
 			break;
 		
-		case ParserToken::SYSTEM:
+		case SYSTEM:
 		{
-			/*system_call: system '(' string_literal ')'
-			{
-				if(system_allowed) {
-					puts(string_literal);
-					system(string_literal);
-				}
-			}*/
-			string command = string_function().value;
 			if (system_allowed)
 			{
+				string command = string_function().value;
 				std::cout << command << "\n";
 				Util::system(command);
 			}
+			else
+			{
+				current = tokens[index += 3];
+			}
 		} break;
 
-		case ParserToken::SEMICOLON: //ignored
+		case SEMICOLON: //ignored
 			break;
 
 		default:
@@ -233,18 +221,18 @@ void Parser::parse()
 void Parser::array()
 {
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
-	while (current.type != ParserToken::RCURLY)
+	while (current.type != RCURLY)
 	{
-		expect(ParserToken::STRING_LITERAL, ParserToken::RECURSIVE, ParserToken::IDENTIFIER, ParserToken::COMMA, ParserToken::RCURLY);
-		if (current.type == ParserToken::RECURSIVE)
+		expect(STRING_LITERAL, RECURSIVE, IDENTIFIER, COMMA, RCURLY);
+		if (current.type == RECURSIVE)
 		{
 			recursive();
 		}
-		else if (current.type == ParserToken::STRING_LITERAL)
+		else if (current.type == STRING_LITERAL)
 		{
 			current_class->add_to_property(current.in_line, child, current.value);
 		}
-		else if (current.type == ParserToken::IDENTIFIER)
+		else if (current.type == IDENTIFIER)
 		{
 			if (child == "libs")
 			{
@@ -261,4 +249,23 @@ void Parser::array()
 			}
 		}
 	}
+}
+
+bool Parser::special_case()
+{
+	if (child == "type")
+	{
+		expect(STATIC, DYNAMIC);
+		current_class->is_static = (current.type == STATIC);
+		current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
+		return true;
+	}
+	else if (child == "link")
+	{
+		expect(TRUE, FALSE);
+		current_class->link = (current.type == TRUE);
+		return true;
+	}
+
+	return false;
 }

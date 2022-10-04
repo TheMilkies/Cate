@@ -1929,26 +1929,26 @@ YY_RULE_SETUP
 YY_RULE_SETUP
 
 #line 41 "src/lexer.l"
-{return ParserToken::DOT;}
+{return DOT;}
 	/*LINTED*/break;
 	case 7:
 YY_RULE_SETUP
 
 #line 42 "src/lexer.l"
-{return ParserToken::COMMA;}
+{return COMMA;}
 	/*LINTED*/break;
 	case 8:
 YY_RULE_SETUP
 
 #line 43 "src/lexer.l"
-{return ParserToken::SEMICOLON;}
+{return SEMICOLON;}
 	/*LINTED*/break;
 	case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
 
 #line 45 "src/lexer.l"
-{return ParserToken::STRING_LITERAL;}
+{return STRING_LITERAL;}
 	/*LINTED*/break;
 	case 10:
 YY_RULE_SETUP
@@ -1966,85 +1966,85 @@ YY_RULE_SETUP
 YY_RULE_SETUP
 
 #line 49 "src/lexer.l"
-{return ParserToken::PROJECT;}
+{return PROJECT;}
 	/*LINTED*/break;
 	case 13:
 YY_RULE_SETUP
 
 #line 50 "src/lexer.l"
-{return ParserToken::LIBRARY;}
+{return LIBRARY;}
 	/*LINTED*/break;
 	case 14:
 YY_RULE_SETUP
 
 #line 51 "src/lexer.l"
-{return ParserToken::DYNAMIC;}
+{return DYNAMIC;}
 	/*LINTED*/break;
 	case 15:
 YY_RULE_SETUP
 
 #line 52 "src/lexer.l"
-{return ParserToken::STATIC;}
+{return STATIC;}
 	/*LINTED*/break;
 	case 16:
 YY_RULE_SETUP
 
 #line 53 "src/lexer.l"
-{return ParserToken::SYSTEM;}
+{return SYSTEM;}
 	/*LINTED*/break;
 	case 17:
 YY_RULE_SETUP
 
 #line 54 "src/lexer.l"
-{return ParserToken::RECURSIVE;}
+{return RECURSIVE;}
 	/*LINTED*/break;
 	case 18:
 YY_RULE_SETUP
 
 #line 55 "src/lexer.l"
-{return ParserToken::TRUE;}
+{return TRUE;}
 	/*LINTED*/break;
 	case 19:
 YY_RULE_SETUP
 
 #line 56 "src/lexer.l"
-{return ParserToken::FALSE;}
+{return FALSE;}
 	/*LINTED*/break;
 	case 20:
 YY_RULE_SETUP
 
 #line 57 "src/lexer.l"
-{return ParserToken::IDENTIFIER;}
+{return IDENTIFIER;}
 	/*LINTED*/break;
 	case 21:
 YY_RULE_SETUP
 
 #line 59 "src/lexer.l"
-{return ParserToken::LPAREN;}
+{return LPAREN;}
 	/*LINTED*/break;
 	case 22:
 YY_RULE_SETUP
 
 #line 60 "src/lexer.l"
-{return ParserToken::RPAREN;}
+{return RPAREN;}
 	/*LINTED*/break;
 	case 23:
 YY_RULE_SETUP
 
 #line 61 "src/lexer.l"
-{return ParserToken::ASSIGN;}
+{return ASSIGN;}
 	/*LINTED*/break;
 	case 24:
 YY_RULE_SETUP
 
 #line 62 "src/lexer.l"
-{return ParserToken::LCURLY;}
+{return LCURLY;}
 	/*LINTED*/break;
 	case 25:
 YY_RULE_SETUP
 
 #line 63 "src/lexer.l"
-{return ParserToken::RCURLY;}
+{return RCURLY;}
 	/*LINTED*/break;
 	case 26:
 YY_RULE_SETUP

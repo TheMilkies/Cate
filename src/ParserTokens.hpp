@@ -27,31 +27,33 @@ static string token_names[] = {
 	"\"true\""
 	"\"false\""
 };
+
+enum ParserTokenKind: uint8_t
+{
+	END,
+	DOT,
+	COMMA,
+	SEMICOLON,
+	ASSIGN,
+	LCURLY,
+	RCURLY,
+	LPAREN,
+	RPAREN,
+	PROJECT,
+	LIBRARY,
+	STATIC,
+	DYNAMIC,
+	RECURSIVE,
+	STRING_LITERAL,
+	IDENTIFIER,
+	SYSTEM,
+	TRUE,
+	FALSE,
+};
 	
 struct ParserToken
 {
-	enum ParserTokens: uint8_t
-	{
-		END,
-		DOT,
-		COMMA,
-		SEMICOLON,
-		ASSIGN,
-		LCURLY,
-		RCURLY,
-		LPAREN,
-		RPAREN,
-		PROJECT,
-		LIBRARY,
-		STATIC,
-		DYNAMIC,
-		RECURSIVE,
-		STRING_LITERAL,
-		IDENTIFIER,
-		SYSTEM,
-		TRUE,
-		FALSE,
-	} type;
+	ParserTokenKind type;
 	std::string value;
 	int32_t in_line;
 };
