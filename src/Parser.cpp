@@ -121,7 +121,7 @@ void Parser::declare_library()
 	declare(); //already wrote that code, reusing it.
 
 	expect(LPAREN);
-	expect(STATIC, DYNAMIC);
+	expect_type();
 
 	//temp_type = current.type;
 	current_class->is_static = (current.type == STATIC); //if current token is static, set the type to static.
@@ -253,14 +253,14 @@ bool Parser::special_case()
 {
 	if (child == "type")
 	{
-		expect(STATIC, DYNAMIC);
+		expect_type();
 		current_class->is_static = (current.type == STATIC);
 		current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
 		return true;
 	}
 	else if (child == "link")
 	{
-		expect(TRUE, FALSE);
+		expect_bool();
 		current_class->link = (current.type == TRUE);
 		return true;
 	}

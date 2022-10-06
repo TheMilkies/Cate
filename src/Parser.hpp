@@ -42,6 +42,9 @@ private:
 	}
 
 	//there are MANY better ways of doing this... but i'm lazy
+	void expect_bool();
+	void expect_type();
+
 	void expect(ParserTokenKind type);
 	void expect(ParserTokenKind type, ParserTokenKind type2);
 	void expect_and_then(ParserTokenKind type, ParserTokenKind type2);

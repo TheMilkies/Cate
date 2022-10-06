@@ -22,6 +22,26 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 	}
 }
 
+void Parser::expect_bool()
+{
+	current = next();
+
+	if (current.type != TRUE && current.type != FALSE)
+	{
+		Util::error(current.in_line, "Expected a boolean (true | false) value");
+	}
+}
+
+void Parser::expect_type()
+{
+	current = next();
+
+	if (current.type != STATIC && current.type != DYNAMIC)
+	{
+		Util::error(current.in_line, "Expected a LibraryType (static | dynamic) value");
+	}
+}
+
 void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 {
 	current = next();
