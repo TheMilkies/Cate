@@ -193,8 +193,7 @@ void Parser::parse()
 		case SYSTEM:
 			if (system_allowed)
 			{
-				current = string_function();
-				Util::user_system(current.in_line, current.value);
+				Util::user_system(current.in_line, string_function().value);
 			}
 			else
 			{
@@ -218,6 +217,7 @@ void Parser::parse()
 
 void Parser::array()
 {
+	vector<string>& current_property = current_class->get_array_property(current.in_line, child);
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != RCURLY)
 	{
@@ -228,14 +228,14 @@ void Parser::array()
 		}
 		else if (current.type == STRING_LITERAL)
 		{
-			current_class->add_to_property(current.in_line, child, current.value);
+			current_property.emplace_back(current.value);
 		}
 		else if (current.type == IDENTIFIER)
 		{
 			if (child == "libs")
 			{
 				if (is_defined(current.value))
-					current_class->add_to_property(current.in_line, child,
+					current_property.emplace_back(
 							classes[current.value]->out_name);
 				else
 					Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined");

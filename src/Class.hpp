@@ -62,6 +62,7 @@ public:
 	void build_objects(); //build the objects
 
 	//general and self-explanitory
+	vector<string>& get_array_property(int32_t line, string& property);
 	void clear_property(int32_t line, string& property);
 	void add_to_property(int32_t line, string_view property, string_view value);
 	void set_property(int32_t line, string& property, string& value);
