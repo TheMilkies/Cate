@@ -260,20 +260,17 @@ bool Parser::special_case()
 	}
 	else if (child == "threading")
 	{
-		expect_bool();
-		current_class->threading = (current.type == TRUE);
+		current_class->threading = expect_bool();
 		return true;
 	}
-	else if (child == "smolize")
+	else if (child == "smolize" || child == "smol")
 	{
-		expect_bool();
-		current_class->size_optimize = (current.type == TRUE);
+		current_class->smol = expect_bool();
 		return true;
 	}
 	else if (child == "link")
 	{
-		expect_bool();
-		current_class->link = (current.type == TRUE);
+		current_class->link = expect_bool();
 		return true;
 	}
 

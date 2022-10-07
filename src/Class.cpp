@@ -236,14 +236,14 @@ void Class::check()
 	if (threading)
 		flags += " -pthread ";
 
-	if (size_optimize)
+	if (smol)
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 }
 
 void Class::smolize()
 {
-	if(!size_optimize) return;
+	if(!smol) return;
 	Util::system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version "
 			"--remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
 			+ out_name);

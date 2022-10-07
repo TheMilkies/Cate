@@ -1,16 +1,16 @@
 #!/bin/bash
 #this script is for when you don't have cate or make installed
 
-CC=cc
+CC=g++
 
 if ! command -v $CC &> /dev/null ; then
-    echo "no C++ compiler installed."
+    echo "g++ isn't installed."
     exit 1
 fi
 
 build_folder="cate/build"; mkdir -p $build_folder
 out_exec="out/cate"; mkdir -p out
-cflags="-lstdc++ -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
+cflags="-Iinclude -lstdc++ -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 
 build_() {
     if [ src/$1.cpp -nt $build_folder/src_$1.o ]; then
@@ -33,7 +33,7 @@ _build Parser &
 
 _build ParserExpect &
 
-_build Recusive &
+_build Recursive &
 
 _build Util &
 
@@ -45,9 +45,11 @@ _build ClassMethods &
 
 _build Catel &
 
+_build main &
+
 wait < <(jobs -p)
 
-$CC $build_folder/*.o externals/linux_amd64_libfl.a  $cflags -o$out_exec 
+$CC $build_folder/*.o externals/linux_amd64_libfl.a $cflags -o$out_exec 
 
 if ! test -f "./out/cate"; then
     echo "Cate didn't build corectly."

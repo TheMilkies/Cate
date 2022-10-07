@@ -42,7 +42,7 @@ private:
 	}
 
 	//there are MANY better ways of doing this... but i'm lazy
-	void expect_bool();
+	bool expect_bool();
 	void expect_type();
 
 	void expect(ParserTokenKind type);
