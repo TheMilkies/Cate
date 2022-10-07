@@ -168,7 +168,7 @@ void Parser::parse()
 				expect(ASSIGN);
 
 				//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
-				if(special_case());
+				if(special_case()); // handled there
 				else
 				{
 					expect(STRING_LITERAL, LCURLY, RECURSIVE);
@@ -256,6 +256,12 @@ bool Parser::special_case()
 		expect_type();
 		current_class->is_static = (current.type == STATIC);
 		current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
+		return true;
+	}
+	else if (child == "threading")
+	{
+		expect_bool();
+		current_class->threading = (current.type == TRUE);
 		return true;
 	}
 	else if (child == "link")
