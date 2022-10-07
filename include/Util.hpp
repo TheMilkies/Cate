@@ -61,4 +61,6 @@ namespace Util
 #define highlight_func(x) YELLOW x COLOR_RESET
 #define highlight_var(x) PURPLE x COLOR_RESET
 
+#define newer_than(a, b) (Util::get_modified_time(a.c_str()) < Util::get_modified_time(b.c_str()))
+
 #endif

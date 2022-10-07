@@ -28,7 +28,7 @@ void Project::build()
 			all_include_paths + final_flags
 		);
 	}
-	
+
 	smolize();
 	print_done(name);
 }
