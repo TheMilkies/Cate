@@ -19,9 +19,9 @@ void help()
 	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " highlight_var("build_directory") "; force rebuild\n"
 	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n"
 	BOLD GREEN "\t-h" COLOR_RESET ":  shows help (this)" BOLD GREEN "\n\n"
-	
+
 	BOLD YELLOW "other:\n" COLOR_RESET
-	YELLOW "\t-p" highlight_var("F") ": generates a basic project (with the given name) catefile, you'll need to modify it";
+	YELLOW "\t-p" highlight_var("N") ": generates a basic project (with the given name) catefile, you'll need to modify it";
 }
 
 string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";
@@ -42,8 +42,14 @@ int main(int argc, char *argv[])
 	if (argc < 2 && !catel_exists)
 	{
 		if (get_default_file_name());
+		else if (fs::is_directory("cate"))
+		{
+			if(catel_exists) command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe update your .catel file?");
+			else command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe create a .catel file?");
+		}
 		else
 		{
+			std::cout << "No catefiles detected, Have some help\n";
 			help();
 			return 1;
 		}
@@ -58,10 +64,10 @@ int main(int argc, char *argv[])
 				switch (argv[i][1]) //check the second character of the argument
 				{
 				case 't': {
-					if (argv[i][2] == NULL) //if just "-t"
-						Util::command_error("Missing argument \"-t\"");
-
-					int sub = atoi((char*)argv[i] + 2); //get everything after "-t"
+					if (argv[i+1] == NULL && argv[i][2] == NULL) //if just "-t"
+						command_error("Missing argument \"-t\"");
+					
+					int sub = atoi((char*) (argv[i] + 2)); //get everything after "-t"
 					if (sub != 0) //if 0 or invalid
 						thread_count = sub;
 					
@@ -72,7 +78,7 @@ int main(int argc, char *argv[])
 					return 0; //exit after
 					break;
 
-				case 'g': { //generate basic catefile for project
+				case 'p': { //generate basic catefile for project
 					char* name = NULL;
 					if(argv[i+1] == NULL && argv[i][2] == NULL)
 						command_error("Expected project name");
@@ -148,7 +154,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			really_bad:
-			Util::command_error("No input file");
+			command_error("No input file");
 		}
 	}
 
@@ -188,6 +194,8 @@ void generate_project(const char* name)
 
 	if(fs::is_directory("include"))
 		out << name << ".incs = {\"include\"};\n";
+	else
+		out << name << ".incs = {};\n";
 
 	out
 		<< name << ".flags = \"-O2\";\n"

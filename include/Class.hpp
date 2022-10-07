@@ -26,7 +26,7 @@ public:
 
 	bool is_static; //only in library
 	bool already_built = false, needs_rebuild = false;
-	bool link = true, threading = false;
+	bool link = true, threading = false, size_optimize = true;
 	
 	Class()
 	{
@@ -71,6 +71,9 @@ public:
 	void build_object(int32_t i); 
 	vector<std::thread>threads;
 	string command_template;
+
+	//other
+	void smolize();
 };
 
 #endif
