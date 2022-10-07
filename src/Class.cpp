@@ -73,7 +73,7 @@ void Class::build_objects()
 		{
 			int32_t current = i+j;
 			if (current > files.size()) break; //current file index check
-			if (files[current].empty() || Util::get_modified_time(files[current].c_str()) < Util::get_modified_time(object_files[current].c_str())) //if doesn't need recompilation
+			if (files[current].empty() || newer_than(files[current], object_files[current])) //if doesn't need recompilation
 				continue;
 
 			threads.emplace_back(&Class::build_object, this, current); //make thread build the object file

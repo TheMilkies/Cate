@@ -1,7 +1,7 @@
 CC = g++
 SRC := src
 BUILD_DIR := cate/build
-CFLAGS := -std=c++17 -fpermissive -lstdc++fs -pthread -march=native -Ofast 
+CFLAGS := -std=c++17 -fpermissive -lstdc++fs -pthread -march=native -Ofast -Iinclude
 SIZE_OPTIMIZATION_FLAGS := -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions \
 -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none 
 
