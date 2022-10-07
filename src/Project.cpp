@@ -6,6 +6,25 @@ Project::~Project() {}
 
 void Project::build() 
 {
+	if(files.size() == 1)
+	{
+		setup();
+
+		if(newer_than(out_name, files[0]))
+		{
+			Util::system (
+				//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
+				compiler + " -o" + out_name + " " +
+				files[0] + " " + flags + " " +
+				all_library_paths + all_libraries + " " +
+				all_include_paths + final_flags
+			);
+			goto done;
+		}
+		already_built = true;
+	}
+
+	//multi file
 	if (!already_built)
 	{
 		setup();
@@ -28,7 +47,7 @@ void Project::build()
 			all_include_paths + final_flags
 		);
 	}
-
+done:
 	smolize();
 	print_done(name);
 }

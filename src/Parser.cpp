@@ -74,35 +74,6 @@ void Parser::define(const string &identifier)
 	current_class->name = identifier; //set its name to the identifier
 }
 
-void Parser::void_function()
-{
-	//it already checks if the next is '(', so we can just skip 2
-	current = tokens[index += 2];
-
-	if (current.type != RPAREN)
-	{
-		Util::error(current.line,
-					"Missing ')'");
-	}
-	
-}
-
-//expects '(' string_literal ')' and then returns the string_literal token
-ParserToken Parser::string_function()
-{
-	expect_and_then(LPAREN, STRING_LITERAL);
-
-	ParserToken to_return = current;
-	if (tokens[index+1].type != RPAREN)
-	{
-		Util::error(current.line,
-					"Missing ')'");
-	}
-
-	current = next();
-	return to_return;
-}
-
 void Parser::declare()
 {
 	//declaration: type identifier {define(type, identifier);}

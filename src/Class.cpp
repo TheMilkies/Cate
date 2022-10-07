@@ -13,6 +13,7 @@ void Class::setup()
 
 	//calling object_setup() on another thread is a bit faster
 	std::thread object_thread(&Class::object_setup, this);
+	std::thread include_thread(&Class::include_setup, this);
 	std::thread library_thread(&Class::library_setup, this);
 
 	//useless debug line
@@ -29,12 +30,15 @@ void Class::setup()
 		Util::create_folder(path.c_str());
 	}
 
-	object_thread.join(); //wait until it finishes
-	library_thread.join(); //wait until it finishes
+	//wait until these finish
+	object_thread.join();
+	include_thread.join(); 
+	library_thread.join();
 }
 
 void Class::object_setup()
 {
+	if(files.size() == 1) return;
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
@@ -58,12 +62,6 @@ void Class::build_objects()
 
 	if (thread_count >= files.size()) //this is very important.
 		thread_count = files.size();
-
-	if (!include_paths.empty())
-	{
-		for(auto &path : include_paths)
-			all_include_paths += "-I" + path + ' ';
-	}
 
 	command_template.reserve(128);
 	command_template = compiler + ' ' + flags + ' ' + all_include_paths + "-c "; //this is a nice optimization
@@ -92,6 +90,15 @@ void Class::build_objects()
 	if (!needs_rebuild) return;
 
 	already_built = true;
+}
+
+void Class::include_setup()
+{
+	if (!include_paths.empty())
+	{
+		for(auto &path : include_paths)
+			all_include_paths += "-I" + path + ' ';
+	}
 }
 
 void Class::library_setup()
