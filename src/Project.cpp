@@ -12,12 +12,10 @@ void Project::build()
 
 		if(newer_than(out_name, files[0]))
 		{
+			files[0] += ' ';
 			Util::system (
 				//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
-				compiler + " -o" + out_name + " " +
-				files[0] + " " + flags + " " +
-				all_library_paths + all_libraries + " " +
-				all_include_paths + final_flags
+				command_gen(files[0])
 			);
 			goto done;
 		}
@@ -41,13 +39,19 @@ void Project::build()
 
 		Util::system(
 			//command = $CC -o$OUT_NAME $OBJ $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
-			compiler + " -o" + out_name + " " +
-			all_object_files + flags + " " +
-			all_library_paths + all_libraries + " " +
-			all_include_paths + final_flags
+			command_gen(all_object_files)
 		);
 	}
 done:
 	smolize();
 	print_done(name);
+}
+
+
+inline string Project::command_gen(string& objects)
+{
+	return compiler + " -o" + out_name + " " +
+		   objects + flags + " " +
+		   all_library_paths + all_libraries + " " +
+		   all_include_paths + final_flags;
 }
