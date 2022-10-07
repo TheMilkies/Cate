@@ -87,3 +87,31 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 					" or " + token_names[type4] + " or " + token_names[type5] + " but got " + token_names[current.type]);
 	}
 }
+
+void Parser::void_function()
+{
+	//it already checks if the next is '(', so we can just skip 2
+	current = tokens[index += 2];
+
+	if (current.type != RPAREN)
+	{
+		Util::error(current.line,
+					"Missing ')'");
+	}
+}
+
+//expects '(' string_literal ')' and then returns the string_literal token
+ParserToken Parser::string_function()
+{
+	expect_and_then(LPAREN, STRING_LITERAL);
+
+	ParserToken to_return = current;
+	if (tokens[index+1].type != RPAREN)
+	{
+		Util::error(current.line,
+					"Missing ')'");
+	}
+
+	current = next();
+	return to_return;
+}
