@@ -11,8 +11,7 @@ cate.libs = {"externals/windows_libfl.a"} //use the static library because i hat
 
 cate.incs = {"include"}
 cate.threading = true
+cate.smolize = true //save a few hundred kilobytes
 cate.out = "out/cate.exe"
-cate.build()
 
-//this command saves a few hundred kilobytes, i don't know where i got it from but it's worth it 
-system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate.exe")
+cate.build()

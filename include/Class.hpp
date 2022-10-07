@@ -26,7 +26,7 @@ public:
 
 	bool is_static; //only in library
 	bool already_built = false, needs_rebuild = false;
-	bool link = true, threading = false, size_optimize = true;
+	bool link = true, threading = false, smol = true;
 	
 	Class()
 	{
@@ -74,6 +74,9 @@ public:
 
 	//other
 	void smolize();
+	inline void print_done(string_view name) {
+		std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
+	}
 };
 
 #endif

@@ -22,14 +22,15 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 	}
 }
 
-void Parser::expect_bool()
+bool Parser::expect_bool()
 {
 	current = next();
 
 	if (current.type != TRUE && current.type != FALSE)
 	{
-		Util::error(current.line, "Expected a boolean (true | false) value");
+		Util::fatal_error(current.line, "Expected a boolean (true | false) value");
 	}
+	return (current.type == TRUE);
 }
 
 void Parser::expect_type()

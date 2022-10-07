@@ -30,5 +30,5 @@ void Project::build()
 	}
 	
 	smolize();
-	std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
+	print_done(name);
 }
