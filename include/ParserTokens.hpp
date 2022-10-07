@@ -55,7 +55,7 @@ struct ParserToken
 {
 	ParserTokenKind type;
 	std::string value;
-	int32_t in_line;
+	int32_t line;
 };
 
 #endif //PARSER_TOKENS

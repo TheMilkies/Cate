@@ -29,7 +29,7 @@ Parser::Parser(const string& file_name)
 	while (temp.type = (ParserTokenKind)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
 	{
 		temp.value = ""; //reset to save some memory
-		temp.in_line = lexer_line; //defined in lexer.l
+		temp.line = lexer_line; //defined in lexer.l
 		
 		if (temp.type == STRING_LITERAL)
 		{
@@ -61,7 +61,7 @@ Parser::~Parser()
 void Parser::define(const string &identifier)
 {
 	if (is_defined(identifier))
-		Util::fatal_error(current.in_line, "\"" + identifier + "\" was already defined");
+		Util::fatal_error(current.line, "\"" + identifier + "\" was already defined");
 	
 	//this is technically a factory... oh well
 	if (temp_type == PROJECT)
@@ -81,7 +81,7 @@ void Parser::void_function()
 
 	if (current.type != RPAREN)
 	{
-		Util::error(current.in_line,
+		Util::error(current.line,
 					"Missing ')'");
 	}
 	
@@ -95,7 +95,7 @@ ParserToken Parser::string_function()
 	ParserToken to_return = current;
 	if (tokens[index+1].type != RPAREN)
 	{
-		Util::error(current.in_line,
+		Util::error(current.line,
 					"Missing ')'");
 	}
 
@@ -151,7 +151,7 @@ void Parser::parse()
 			parent = current.value;
 
 			if (!is_defined(parent))
-				Util::fatal_error(current.in_line, "\"" + parent + "\" is not defined.");
+				Util::fatal_error(current.line, "\"" + parent + "\" is not defined.");
 
 			if (current_class->name != parent)
 				current_class = classes[parent];
@@ -175,11 +175,11 @@ void Parser::parse()
 
 					if (current.type == STRING_LITERAL)
 					{
-						current_class->set_property(current.in_line, child, current.value); //set current property to the string literal
+						current_class->set_property(current.line, child, current.value); //set current property to the string literal
 					}
 					else 
 					{
-						current_class->clear_property(current.in_line, child); //clear array
+						current_class->clear_property(current.line, child); //clear array
 						if (current.type == LCURLY)
 							array(); //start the array
 						else if (current.type == RECURSIVE)
@@ -193,7 +193,7 @@ void Parser::parse()
 		case SYSTEM:
 			if (system_allowed)
 			{
-				Util::user_system(current.in_line, string_function().value);
+				Util::user_system(current.line, string_function().value);
 			}
 			else
 			{
@@ -205,7 +205,7 @@ void Parser::parse()
 			break;
 
 		default:
-			Util::error(current.in_line, "Did not expect " + token_names[current.type] + ".");
+			Util::error(current.line, "Did not expect " + token_names[current.type] + ".");
 			break;
 		}
 
@@ -217,7 +217,7 @@ void Parser::parse()
 
 void Parser::array()
 {
-	vector<string>& current_property = current_class->get_array_property(current.in_line, child);
+	vector<string>& current_property = current_class->get_array_property(current.line, child);
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != RCURLY)
 	{
@@ -238,11 +238,11 @@ void Parser::array()
 					current_property.emplace_back(
 							classes[current.value]->out_name);
 				else
-					Util::fatal_error(current.in_line, "\"" + current.value + "\" is not defined");
+					Util::fatal_error(current.line, "\"" + current.value + "\" is not defined");
 			}
 			else
 			{
-				Util::fatal_error(current.in_line, "classes can only be included in the " highlight_var("libraries")
+				Util::fatal_error(current.line, "classes can only be included in the " highlight_var("libraries")
 													" (or " highlight_var("libs") ") property.");
 			}
 		}
@@ -262,6 +262,12 @@ bool Parser::special_case()
 	{
 		expect_bool();
 		current_class->threading = (current.type == TRUE);
+		return true;
+	}
+	else if (child == "smolize")
+	{
+		expect_bool();
+		current_class->size_optimize = (current.type == TRUE);
 		return true;
 	}
 	else if (child == "link")

@@ -6,7 +6,7 @@ void Parser::expect(ParserTokenKind type)
 
 	if (current.type != type)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] +
+		Util::error(current.line, "Expected " + token_names[type] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -17,7 +17,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 
 	if (current.type != type && current.type != type2)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] +
+		Util::error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -28,7 +28,7 @@ void Parser::expect_bool()
 
 	if (current.type != TRUE && current.type != FALSE)
 	{
-		Util::error(current.in_line, "Expected a boolean (true | false) value");
+		Util::error(current.line, "Expected a boolean (true | false) value");
 	}
 }
 
@@ -38,7 +38,7 @@ void Parser::expect_type()
 
 	if (current.type != STATIC && current.type != DYNAMIC)
 	{
-		Util::error(current.in_line, "Expected a LibraryType (static | dynamic) value");
+		Util::error(current.line, "Expected a LibraryType (static | dynamic) value");
 	}
 }
 
@@ -48,7 +48,7 @@ void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 
 	if (current.type != type && tokens[index+1].type != type2)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + " and then " + token_names[type2]);
+		Util::error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
 	}
 	
 	current = next();
@@ -60,7 +60,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3)
 	{
-		Util::fatal_error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		Util::fatal_error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -71,7 +71,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		Util::error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" or " + token_names[type4] + " but got " + token_names[current.type]);
 	}
 }
@@ -82,7 +82,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4 && current.type != type5)
 	{
-		Util::error(current.in_line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		Util::error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" or " + token_names[type4] + " or " + token_names[type5] + " but got " + token_names[current.type]);
 	}
 }

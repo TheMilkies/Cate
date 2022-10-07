@@ -37,5 +37,6 @@ void Library::build()
 		Util::system(command);
 	}
 	
+	smolize();
 	std::cout << GREEN "Done building \"" << name + build_type << "\"" COLOR_RESET "\n";
 }

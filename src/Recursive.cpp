@@ -3,13 +3,13 @@
 void Parser::recursive()
 {
 	if (child != "files")
-		Util::fatal_error(current.in_line, "only the " highlight_var("files")
+		Util::fatal_error(current.line, "only the " highlight_var("files")
 						" property can be set to result of recursive search.");
 	
 	current = string_function(); 
 
 	if (current.value.empty()) //should NEVER happen
-		Util::fatal_error(current.in_line, highlight_func("recursive()")
+		Util::fatal_error(current.line, highlight_func("recursive()")
 		" was given an empty string literal");
 	
 	//wildcard stuff
@@ -27,13 +27,13 @@ void Parser::recursive()
 	
 	if (extension.empty())
 	{
-		Util::fatal_error(current.in_line, highlight_func("recursive()")
+		Util::fatal_error(current.line, highlight_func("recursive()")
 							" was not given an extension to find.");
 	}
 
 	if (extension == ".*")
 	{
-		Util::fatal_error(current.in_line, highlight_func("recursive()")
+		Util::fatal_error(current.line, highlight_func("recursive()")
 							" does not allow \"all file extensions\" (.*) recursion.");
 	}
 	
@@ -42,11 +42,11 @@ void Parser::recursive()
 	if (!fs::is_directory(path)) //check if directory exists
 	{
 		if(!path.empty())
-			Util::fatal_error(current.in_line, "Directory \"" + path + "\" doesn't exist");
+			Util::fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
 	}
 
 	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
-		Util::fatal_error(current.in_line, "Multiple wildcards are not allowed");
+		Util::fatal_error(current.line, "Multiple wildcards are not allowed");
 
 	for (auto &p : fs::directory_iterator(path)) //iterate over the files
     {
