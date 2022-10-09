@@ -1,0 +1,7 @@
+Library sdlw(static);
+sdlw.flags = "-O3";
+sdlw.out = "out/libsdlw.a";
+sdlw.files = {recursive("src/*.c")};
+sdlw.includes = {"include"};
+sdlw.smol = true;
+sdlw.build();
