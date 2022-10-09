@@ -7,156 +7,164 @@
 </p>
 
 ## Introduction
-Cate is a simple build system for the C family of languages (minus C#). While not as feature rich as CMake or as fast as Ninja-build, Cate achieves a simple syntax that doesn't feel much different to C/C++.
+Cate is a simple and fast build system for C/C++, its syntax is much simpler than the other build systems. While Cate is slower than Make, it's is much easier to set up and create projects and libraries with.
 
-Unlike CMake/Make, Cate is not Turing complete. It doesn't feature if-statements, loops, functions, or anything that is not related to building. 
+**Cate does not have a Windows release as of yet because of our laziness**
 
-### Table of contents
-- [Cate: A Build System for the sane.](#cate--a-build-system-for-the-sane)
-  * [Introduction](#introduction)
-  * [Notes](#notes)
-  * [Building Cate](#building-cate)
-    + [Build dependencies](#build-dependencies)
-    + [Building with build.sh](#building-with-buildsh)
-    + [Building with Cate](#building-with-cate)
-    + [Building with GNU Make](#building-with-gnu-make)
-    + [Installing](#installing)
-  * [How to use Cate](#how-to-use-cate)
-    + [Command-line](#command-line)
-      - [Flags (options)](#flags--options-)
-      - [Listing with `-l`](#listing-with---l-)
-  * [General](#general)
-  * [Syntax](#syntax)
-    + [Classes](#classes)
-    + [Class properties](#class-properties)
-    + [Class methods](#class-methods)
-    + [General functions](#general-functions)
-  * [Catel](#catel)
-    + [Syntax](#syntax-1)
-  * [Known issues](#known-issues)
-  * [Credits](#credits)
-  * [How to contribute](#how-to-contribute)
+Unlike CMake and other build systems, Cate does not require Make and **is not** Turing complete. Cate is more like a wrapper state-machine for GCC/clang than an object oriented build system (unlike CMake), or a build system programming language (also unlike CMake).
 
-## Notes
-- Cate is no longer maintained since, in our opinions, it's finished!
-- Cate can be just as fast as Make, given the right file count.
+Cate is not written in Rust and never will be; Cate has 0 memory leaks thanks to a practice known as "knowing how memory works".
+
+Do note:
+- We know the source code isn't great, it was our first project.
 - Cate uses Catel, a messy file type that allows default files.
-- Cate was written by a beginner programmer and its codebase is quite bad. Fell free to rewrite it if you want!
-- No Windows support (yet).
 - Cate uses robin_hood hashing, since it's 20% more efficient (on average)
-- Cate **does not** support `\"` characters in string literals.
+- Cate **does not** support `\"` characters in string literals, nor string splitting.
 
-## Building Cate
-### Build dependencies
-- A *NIX operating system (Linux, BSD, MacOS, etc)
-- A C++17 compiler (We used g++)
-- GNU Flex 2.6.4 or greater ([read setup here](flex_setup.md)) (not required in x86_64 builds because we included the headers and a static library)
+## Installing Cate
+If you're still here; that means you suffered enough CMake to reconsider your life choices, Thank you for choosing Cate!
 
-### Building with build.sh
-To build with build.sh, run `./build.sh`, it builds the smol cate
-### Building with Cate
-To build with Cate, run `cate`, it builds the smol cate by default
-### Building with GNU Make
-To build with Make, run `make`. or if you want a smaller executable, run `make smol`
-### Installing
-To install use `sudo cate install`, or `sudo make install` if you prefer installing with make, or `sudo cp ./out/cate /usr/bin/cate -f` if you don't have any of them installed.
+### Debian/Ubuntu
+Run the following commands:
+```sh
+wget https://github.com/TheMilkies/Cate/releases/download/v2.2/cate_2.2-0_amd64.deb
+sudo dpkg -i cate_2.2-0_amd64.deb
+rm cate_2.2-0_amd64.deb
+```
 
-## How to use Cate
-### Command-line
-To build a project with its default target, run `cate`
+### Other distributions
+Run the following commands:
+```sh
+mkdir catering
+cd catering
+wget https://github.com/TheMilkies/Cate/releases/download/v2.2/linux_cate_v2.2.0.zip
+unzip linux_cate_v2.2.0.zip
+sudo ./install.sh
+cd ..
+rm -rf catering
+```
 
-To build a different target, run `cate TARGET_NAME`. (example: `cate dynamic`).
+## Building from source
+Make sure you have these installed:
+- A Unix-like operating system
+- A C++17 compiler (`g++` or `clang++`)
+- GNU Flex 2.6.4 or greater ([setup here](flex_setup.md))
 
-The `.cate` extension is not required in the command but can be added. (example: `cate static.cate`).
+### Using build.sh
+Run `./build.sh`, It'll ask you if you'd like to install at the end.
 
-#### Flags (options)
-- `-l`: List catefiles in catefile directory
-- `-tN`: Changes the thread count to N.
-- `-D`: Disables all `system()` lines in script.  
-- `-f`: Delete everything in class's build_directory; force rebuild
-- `-v`: Shows the current installed Cate version.
-- `-h`: Shows help.
+### Using Cate
+Run `cate`, Unlike Make; It'll automatically detect the thread count.
 
-Cate will only run **one** cate file per command.
+Use `sudo cate install` to install
 
-#### Listing with `-l`
-Listing with `-l` only lists files ending in `.cate`. 
+### Using Make
+Run `make -jN` where N is your thread count, you don't want it to build single-threaded.
 
-if a `cate/` directory is present; it'd list catefiles there.
+Use `sudo make install` to install
 
-Else if a directory is specified in .catel (read [Catel](#catel)); it'd list catefiles there.
+## Using Cate
+Cate's CLI is intuitive, but doesn't offer much. You can **not** set `cflags` with a command (unlike Autotools), but you get the minimum required to work with Cate.
 
-Else it'd list all catefiles in current directory.
+### Flags (Options)
+- `-tN`: Set thread count to N. Cate automatically detects thread count so this isn't required.
+- `-l`: Lists Catefiles in Catefiles directory (set by Catel).
+- `-D`: Disable all user-defined `system()` calls in script.
+- `-f`: Forcefully rebuild project, by deleting its object files
+- `-v`: Shows the installed Cate version. 
+- `-h`: Shows help and Cate version. 
 
-For starting a project, look at the [examples folder](examples/) or continue reading.
+## Creating a Cate project
+Create the following structure
+```
+cate/
+  |_ build.cate
 
-## General
-Cate defaults to `build.cate` or `cate/build.cate` if present unless `.catel` specifies otherwise.
+include/
 
-## Syntax
-Cate follows an object syntax. It's very simple to understand for C/C++ programmers. Semicolons and commas are optional.
+src/
+  |_ main.c
+```
 
-**IMPORTANT NOTE:** Cate **does not** support `\"` characters in string literals.
+Or use the following commands
+```sh
+mkdir cate include src
+touch cate/build.cate src/main.c
+```
 
-### Classes
-There are only two classes you can create.
-1. `Project`: A class that builds an executable.  (**Example**: `Project proj;`)
+(We are working on a tool called "cater" which will do this and more automatically)
 
-2. `Library(type)`: A class that builds a library of specified type (can be `static` xor `dynamic`)  (**Example**: `Library slib(static);`, **Example**: `Library dlib(dynamic);`)
+## Creating Catefiles (Catering)
+You've come this far! Good Job!
 
-### Class properties
-Just like in C/C++, properties follow the `object.property = Thing;`.
-**Note:** a class property cannot be set to another's.
-
-Here are the classes' properties:
-- `String out` is the output file. Not required (defaults to identifier).
-- `String build_directory|object_folder|obj_dir|build_dir` is the build directory where object files are saved. Not required (defaults to "build/").
-- `Array<String> files` holds the filenames of the class's sources. it can be set to an array, an array with `recursive()`, or just `recursive()`. Required. 
-- `Array<String> libraries|libs` holds the filenames of the class's libraries. it can only be set to an array. libraries can be either local libraries in a folder or libraries in `/usr/lib`. inside the array you can include a library declared before (`{libexample}`) Not required. 
-- `Array<String> include_paths|includes|incs` holds the folder names of the class's includes. Not required.
-- `String flags` is the class's compiler flags. Not required. 
-- `String final_flags|end_flags` is the final executable (linking) compiler flags. Not required. 
-- `LibraryType type` is the library's type, can only be `static` pr `dynamic`. Not required since it's already defined in `Library NAME(LibraryType);` 
-- `String compiler` is the class's compiler. Defaults to `cc`. 
-- `Bool link` is whether to link all objects in `build()` or not.
-
-### Class methods
-There is **only one** method currently.
-- `build()` starts the building process. Can be called twice only in libraries.
-- `clean()` deletes the `build_directory` directory.
-
-### General functions
-- `Array<String> recursive(String)` **only in the class's files**: takes a string with a single wildcard (`*`)
-
-Example: `recursive("src/*.cpp")`
-
-## Catel
-Catel is complete JANK, but it does its job (somewhat) well! A Catel file is always called `.catel` with no exceptions. it allows you to set have a directory with catefiles in it, and set a default build
+Cate breaks most known build system conventions by forcing you to use multiple files for different targets and having a file extension (unlike CMake, Make, Autotools, and many more). For a debug build; you'll have a `debug.cate`. For a cross-platform build; you'll have a `platformname.cate`. 
 
 ### Syntax
-Unlike Cate, Catel looks terrible since it doesn't even try to mimic a language. Catel tokenizes with whitespace, meaning you can not have space in the "look-in" directory name or in the default build file name. Catel does not like words in odd numbers so keep your `.catel` nice and even
+Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int literals (0123456789) as of yet (and hopefully forever).
 
-Take a look at this example:
+There are only two class types, `Project` and `Library`. Follow this example Catefile (build.cate)
+
+Example project
+```css
+Project project;
+project.files = {"src/main.c"};
+project.includes = {"include"};
+project.libs = {}; //add libraries here
+project.flags = "-O2";
+project.out = "project";
+
+project.build();
 ```
-directory cate
-default all
+
+Libraries require a parameter called `LibraryType` which can be either `static` or `dynamic`
+
+Example library (not in example project)
+```css
+Library library(static)
+library.files = {"src/main.c"};
+library.includes = {"include"};
+library.libs = {}; //add libraries here
+library.flags = "-O2";
+library.out = "out/liblibrary.a";
+
+library.build();
 ```
 
-`dir`/`directory` is the catefiles directory (defaults to `cate/`), Cate will check if the file is there first, if it's not there; Cate will check if the file is in the root directory.
+### Properties
+Both classes have these properties, even if they don't make sense for the class
 
-`def`/`default` is the default file to build (defaults to `build.cate`), it can be a path or just the filename (will search `dir` first).
+- `Array<String> files`: Files of the project/library. No default.
+- `Array<String> incs|includes|include_paths`: Include paths of the project/library. No default.
 
-## Known issues
-These issues are known and will be fixed soon!
-- None for now!
+- `String out`: The output file name. Defaults to identifier.
+- `String compiler`: The compiler to use. Default is `cc`.
+- `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in.
+- `String flags`: The cflags of the project/library, All object files are compiled with them. Default is empty.
+- `String final_flags`: The cflags ran at the end (linking step) of the project/library's compotation. Default is empty.
+
+- `Bool link`: If to run the linking step or not. Default is `true`.
+- `Bool threading`: If to add `-pthread` to build command. Default is `false`.
+- `Bool smol|smolize`: If to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
+
+- `LibraryType type`: Type of library, `static` or `dynamic`. Gets from library "constructor".
+
+### Class methods
+- `void build()`: Builds project/library.
+- `void clean()`: Deletes project/library's build directory.
+
+### General functions
+- `Array<String> recursive(String path)`: Get all files in path ending with an extension. Example: `project.files = recursive("src/*.c");`
+- `void system(String command)`: Run command. would be skipped if user runs Cate with the `-D` flag.
+
+### Catel
+A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.
+
+Here's an example Catel file:
+```
+def smol.cate
+dir cate
+```
 
 ## Credits
-All Milkies have contributed in some way to Cate. Notable contributors are:
-- Yogurt (Former main maintainer)
-- Lime (Former tester and bug fixer)
-- Lemon (Former secondary bug fixer)
-- Latte (Former feature implementer and bug fixer) 
-
-## How to contribute
-- Make sure it compiles.
-- Make a pull request.
+- Yogurt (Main Maintainer)
+- Latte (Bug fixer)
