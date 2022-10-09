@@ -47,8 +47,7 @@ void Class::object_setup()
 //this is for threads.
 void Class::build_object(int32_t i)
 {
-	string command = command_template + files[i] + " -o " + object_files[i];
-	Util::system(command); //will exit if it can't compile
+	Util::system(command_template + files[i] + " -o " + object_files[i]); //will exit if it can't compile
 }
 
 void Class::build_objects()
@@ -58,7 +57,7 @@ void Class::build_objects()
 	if (thread_count >= files.size()) //this is very important.
 		thread_count = files.size();
 
-	command_template.reserve(128);
+	command_template.reserve(512);
 	command_template = compiler + ' ' + flags + ' ' + all_include_paths + "-c "; //this is a nice optimization
 	for (int32_t i = 0; i < files.size(); i+=thread_count)
 	{

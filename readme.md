@@ -111,7 +111,7 @@ Example project
 Project project;
 project.files = {"src/main.c"};
 project.includes = {"include"};
-project.libs = {}; //add libraries here
+project.libs = {/*add libraries here*/};
 project.flags = "-O2";
 project.out = "project";
 
@@ -125,7 +125,7 @@ Example library (not in example project)
 Library library(static)
 library.files = {"src/main.c"};
 library.includes = {"include"};
-library.libs = {}; //add libraries here
+library.libs = {/*add libraries here*/};
 library.flags = "-O2";
 library.out = "out/liblibrary.a";
 

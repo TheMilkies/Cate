@@ -1,4 +1,5 @@
 #include "Parser.hpp"
+#define string_find(x, text) (x.find(text) != string::npos)
 
 void Parser::recursive()
 {
@@ -45,7 +46,7 @@ void Parser::recursive()
 			Util::fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
 	}
 
-	if (path.find('*') != string::npos || extension.find('*') != string::npos) //if more than one found
+	if (string_find(path, '*') || string_find(extension, '*')) //if more than one found
 		Util::fatal_error(current.line, "Multiple wildcards are not allowed");
 
 	for (auto &p : fs::directory_iterator(path)) //iterate over the files
