@@ -6,6 +6,7 @@ Project::~Project() {}
 
 void Project::build() 
 {
+	//one file
 	if(files.size() == 1)
 	{
 		setup();
