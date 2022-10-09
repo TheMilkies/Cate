@@ -24,11 +24,7 @@ void Class::setup()
 	Util::create_folder(out_dir.c_str());
 
 	//create output file's folder if doesn't already exist.
-	string path = out_name.substr(0, out_name.find_last_of('/')+1);
-	if (!path.empty() && path != "./")
-	{
-		Util::create_folder(path.c_str());
-	}
+	create_directories();
 
 	//wait until these finish
 	object_thread.join();
@@ -38,7 +34,6 @@ void Class::setup()
 
 void Class::object_setup()
 {
-	if(files.size() == 1) return;
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
@@ -254,4 +249,13 @@ void Class::smolize()
 	Util::system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version "
 			"--remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
 			+ out_name);
+}
+
+void Class::create_directories()
+{
+	string path = out_name.substr(0, out_name.find_last_of('/')+1);
+	if (!path.empty() && path != "./")
+	{
+		Util::create_folder(path.c_str());
+	}
 }

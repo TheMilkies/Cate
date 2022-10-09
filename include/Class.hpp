@@ -61,6 +61,7 @@ public:
 	void library_setup();
 	void include_setup();
 	void build_objects(); //build the objects
+	void create_directories();
 
 	//general and self-explanitory
 	vector<string>& get_array_property(int32_t line, string& property);

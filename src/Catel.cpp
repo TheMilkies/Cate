@@ -27,9 +27,7 @@ void parse_catel()
 	if (!def.empty() && file_name.empty())
 		file_name = def;
 
-	if (dir.empty()) return;
-
-	if (file_name.empty()) return;
+	if (dir.empty() || file_name.empty()) return;
 
 	if (!Util::ends_with(file_name, ".cate"))
 		file_name += ".cate";

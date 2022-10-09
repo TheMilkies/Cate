@@ -9,10 +9,16 @@ void Project::build()
 	//one file
 	if(files.size() == 1)
 	{
-		setup();
-
 		if(newer_than(out_name, files[0]))
 		{
+			std::thread include_thread(&Class::include_setup, this);
+			std::thread library_thread(&Class::library_setup, this);
+
+			include_thread.join();
+			library_thread.join();
+
+			create_directories();
+
 			files[0] += ' ';
 			Util::system (
 				//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS

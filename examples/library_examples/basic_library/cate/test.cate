@@ -1,0 +1,4 @@
+Project test;
+test.libs = {"out/libgreeter.a"};
+test.files = {"src/test/test.c"};
+test.build();
