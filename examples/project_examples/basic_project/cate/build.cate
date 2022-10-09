@@ -1,0 +1,6 @@
+Project example;
+example.files = {"src/main.c", "src/mmath.c"};
+example.includes = {"include"};
+example.flags = "-O3";
+example.out = "project_example";
+example.build();
