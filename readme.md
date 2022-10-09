@@ -18,7 +18,7 @@ Cate is not written in Rust and never will be; Cate has 0 memory leaks thanks to
 Do note:
 - We know the source code isn't great, it was our first project.
 - Cate uses Catel, a messy file type that allows default files.
-- Cate uses robin_hood hashing, since it's 20% more efficient (on average)
+- Cate uses [robin_hood hashing](https://github.com/martinus/robin-hood-hashing), since it's 20% more efficient (on average)
 - Cate **does not** support `\"` characters in string literals, nor string splitting.
 
 ## Installing Cate

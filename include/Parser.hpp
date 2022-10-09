@@ -34,7 +34,7 @@ private:
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;
-	std::unordered_map<string, Class*> classes;
+	robin_hood::unordered_map<string, Class*> classes;
 
 	int32_t index = -1; //will be incremented to 0
 	inline const ParserToken next() {
