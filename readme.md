@@ -102,7 +102,7 @@ Cate breaks most known build system conventions by forcing you to use multiple f
 ### Syntax
 Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int literals (0123456789) as of yet (and hopefully forever).
 
-There are only two class types, `Project` and `Library`. Follow this example Catefile (build.cate)
+There are only two class types, `Project` and `Library`. 
 
 Example project
 ```css
