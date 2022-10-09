@@ -1,6 +1,0 @@
-//semicolons are not required!
-
-Project example //declare a project with the name "example"
-example.out = "an_example"
-example.files = {"src/main.cpp"} //add files
-example.build() //build

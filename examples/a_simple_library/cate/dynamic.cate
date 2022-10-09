@@ -1,6 +1,0 @@
-Library library(dynamic)
-library.out = "out/libhello_printer.so"
-library.include_paths = {"include/"}
-library.files = {recursive("source/*.c")}
-library.compiler = "gcc"
-library.build()

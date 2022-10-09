@@ -142,9 +142,9 @@ Both classes have these properties, even if they don't make sense for the class
 - `String flags`: The cflags of the project/library, All object files are compiled with them. Default is empty.
 - `String final_flags`: The cflags ran at the end (linking step) of the project/library's compotation. Default is empty.
 
-- `Bool link`: If to run the linking step or not. Default is `true`.
-- `Bool threading`: If to add `-pthread` to build command. Default is `false`.
-- `Bool smol|smolize`: If to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
+- `Bool link`: Whether to run the linking step or not. Default is `true`.
+- `Bool threading`: Whether to add `-pthread` to build command. Default is `false`.
+- `Bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
 
 - `LibraryType type`: Type of library, `static` or `dynamic`. Gets from library "constructor".
 
@@ -154,7 +154,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 ### General functions
 - `Array<String> recursive(String path)`: Get all files in path ending with an extension. Example: `project.files = recursive("src/*.c");`
-- `void system(String command)`: Run command. would be skipped if user runs Cate with the `-D` flag.
+- `void system(String command)`: Run command. Would be skipped if user runs Cate with the `-D` flag.
 
 ### Catel
 A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.
