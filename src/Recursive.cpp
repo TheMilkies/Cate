@@ -35,7 +35,7 @@ void Parser::recursive()
 	if (extension == ".*")
 	{
 		Util::fatal_error(current.line, highlight_func("recursive()")
-							" does not allow \"all file extensions\" (.*) recursion.");
+		   " does not allow \"all file extensions\" (.*) recursion.");
 	}
 	
 	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)

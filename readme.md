@@ -142,11 +142,11 @@ Both classes have these properties, even if they don't make sense for the class
 - `String compiler`: The compiler to use. Default is `cc`.
 - `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in.
 - `String flags`: The cflags of the project/library, All object files are compiled with them. Default is empty.
-- `String final_flags`: The cflags ran at the end (linking step) of the project/library's compotation. Default is empty.
+- `String final_flags`: The cflags ran at the end (linking step) of the project/library's compilation. Default is empty.
 
-- `Bool link`: Whether to run the linking step or not. Default is `true`.
-- `Bool threading`: Whether to add `-pthread` to build command. Default is `false`.
-- `Bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
+- `bool link`: Whether to run the linking step or not. Default is `true`.
+- `bool threading`: Whether to add `-pthread` to build command. Default is `false`.
+- `bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
 
 - `LibraryType type`: Type of library, `static` or `dynamic`. Gets from library "constructor".
 
