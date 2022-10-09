@@ -1,0 +1,6 @@
+{
+	"files.associations": {
+		"sdlw.h": "c",
+		"sdl.h": "c"
+	}
+}

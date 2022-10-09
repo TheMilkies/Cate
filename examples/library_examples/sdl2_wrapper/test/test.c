@@ -6,7 +6,6 @@ int main(int argc, char const *argv[])
 	SDL_Renderer* ren = get_renderer(win);
 	if(!win || !ren) { quit(win, ren); return 1; }
 
-	// Select the color for drawing. It is set to red here.
 	render(ren);
 	SDL_Delay(3000);
 

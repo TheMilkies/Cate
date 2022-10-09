@@ -7,7 +7,7 @@ fi
 
 sed -i 's/(Development)/(Release)/g' include/Util.hpp #change Development to Release
 touch src/main.cpp # to make sure it changes
-if cate release_smol; then
+if cate release_smol -f -t16; then
 	sed -i 's/(Release)/(Development)/g' include/Util.hpp #change it back
 	cd release
 	echo "cp -f cate /usr/bin/cate" > install.sh #generate the install file

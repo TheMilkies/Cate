@@ -141,7 +141,7 @@ vector<string>& Class::get_array_property(int32_t line, string& property)
 		return include_paths;
 	}
 	else
-		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array");
+		Util::fatal_error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array");
 }
 
 void Class::clear_property(int32_t line, string& property)
