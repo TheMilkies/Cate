@@ -127,7 +127,7 @@ namespace Util
 	{
 		if (command.empty())
 			return;
-		
+
 		int32_t ret = std::system(command.data());
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
@@ -148,8 +148,8 @@ namespace Util
 			std::cout << RED BOLD "Error" COLOR_RESET " in " highlight_func("system") " call ran by line " << line << ".\n"
 								  "Ran \"" << command << "\"\nExited with code " << WEXITSTATUS(ret) << '\n';
 		}
-		else
-			std::cout << command << "\n";
+
+		std::cout << command << "\n";
 	}
 
 	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow, should be rewritten

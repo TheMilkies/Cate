@@ -11,15 +11,17 @@ void Project::build()
 	{
 		if(newer_than(out_name, files[0]))
 		{
+			check();
 			std::thread include_thread(&Class::include_setup, this);
 			std::thread library_thread(&Class::library_setup, this);
-
-			include_thread.join();
-			library_thread.join();
 
 			create_directories();
 
 			files[0] += ' ';
+
+			include_thread.join();
+			library_thread.join(); // now we wait
+
 			Util::system (
 				//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
 				command_gen(files[0])
