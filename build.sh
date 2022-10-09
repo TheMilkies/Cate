@@ -1,10 +1,10 @@
 #!/bin/bash
 #this script is for when you don't have cate or make installed
 
-CC=g++
+CC=cc
 
 if ! command -v $CC &> /dev/null ; then
-    echo "g++ isn't installed."
+    echo "No C compiler found"
     exit 1
 fi
 
