@@ -26,11 +26,11 @@ bool Parser::expect_bool()
 {
 	current = next();
 
-	if (current.type != TRUE && current.type != FALSE)
+	if (current.type != B_TRUE && current.type != B_FALSE)
 	{
 		Util::fatal_error(current.line, "Expected a boolean (true | false) value");
 	}
-	return (current.type == TRUE);
+	return (current.type == B_TRUE);
 }
 
 void Parser::expect_type()

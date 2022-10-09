@@ -8,10 +8,6 @@
 #include <algorithm>
 #include <sstream>
 
-#ifdef __WIN32
-	#include<windows.h>
-#endif // __WIN32
-
 #if __has_include(<experimental/filesystem>)
     #include <experimental/filesystem>
   	namespace fs = std::experimental::filesystem;

@@ -1,7 +1,7 @@
 Project cate
 cate.compiler = "g++"
 cate.files = recursive("src/*.cpp")
-cate.flags = "-march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast "
+cate.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast "
 cate.out = "out/cate"
 cate.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 cate.obj_dir = "cate/build"

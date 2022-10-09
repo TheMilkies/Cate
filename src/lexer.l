@@ -52,8 +52,8 @@
 "static" {return STATIC;}
 "system" {return SYSTEM;}
 "recursive" {return RECURSIVE;}
-"true" {return TRUE;}
-"false" {return FALSE;}
+"true" {return B_TRUE;}
+"false" {return B_FALSE;}
 [a-zA-Z_0-9]+ {return IDENTIFIER;}
 
 "(" {return LPAREN;}

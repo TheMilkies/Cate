@@ -1,7 +1,7 @@
 Project cate;
 cate.compiler = "g++"
 cate.files = recursive("src/*.cpp")
-cate.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast  -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
+cate.flags = "-fno-exceptions -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast  -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 cate.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 cate.build_directory = "cate/build"
 cate.out = "release/cate"

@@ -244,7 +244,7 @@ void Class::check()
 		flags += " -pthread ";
 
 	if (smol)
-		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer"
+		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 }
 

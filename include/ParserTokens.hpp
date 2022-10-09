@@ -47,8 +47,8 @@ enum ParserTokenKind: uint8_t
 	STRING_LITERAL,
 	IDENTIFIER,
 	SYSTEM,
-	TRUE,
-	FALSE,
+	B_TRUE,
+	B_FALSE,
 };
 	
 struct ParserToken

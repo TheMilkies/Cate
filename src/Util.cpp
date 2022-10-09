@@ -2,6 +2,10 @@
 
 extern bool parser_exit;
 
+#ifdef __WIN32
+	#include<windows.h>
+#endif // __WIN32
+
 #include <sys/stat.h>
 #include <sys/types.h>
 

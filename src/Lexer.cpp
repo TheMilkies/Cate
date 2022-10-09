@@ -2002,13 +2002,13 @@ YY_RULE_SETUP
 YY_RULE_SETUP
 
 #line 55 "src/lexer.l"
-{return TRUE;}
+{return B_TRUE;}
 	/*LINTED*/break;
 	case 19:
 YY_RULE_SETUP
 
 #line 56 "src/lexer.l"
-{return FALSE;}
+{return B_FALSE;}
 	/*LINTED*/break;
 	case 20:
 YY_RULE_SETUP
