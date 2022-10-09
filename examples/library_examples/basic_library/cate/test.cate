@@ -1,4 +1,6 @@
 Project test;
 test.libs = {"out/libgreeter.a"};
 test.files = {"src/test/test.c"};
+test.incs = {"include"}
+test.out = "a_test"
 test.build();
