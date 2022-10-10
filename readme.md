@@ -3,7 +3,7 @@
   Cate is a simple build system for C/C++ with C-like syntax.
 </h3>
 <p align="center">
-  <img align="center" src="cate_example.png">
+  <img align="center" src="_cate_example.png">
 </p>
 
 ## Introduction
