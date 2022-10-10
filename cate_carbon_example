@@ -1,18 +1,18 @@
 /*Library*/
 Library library(static);
-library.compiler = "gcc";
-library.include_paths = {"include/libexample/"};
+library.includes = {"include/libexample/"};
 library.files = {"libs/lib_example.c"};
-library.flags = "-O2";
+library.flags = "-O2 -g";
 library.out = "outs/libexample.a";
 library.build();
 
 /*Project*/
 Project project;
-project.compiler = "gcc";
-project.include_paths = {"include/libexample/"};
 project.files = recursive("src/*.c");
+project.includes = {"include/libexample/"};
+project.libraries = {library, "GL"};
 project.flags = "-O2";
-project.libraries = {library};
 project.out = "outs/program";
+project.threading = true; 
+project.smol = true; /*minimal to no performance loss!*/
 project.build();
