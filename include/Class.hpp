@@ -33,22 +33,23 @@ public:
 		//these should be enough for most small/medium-sized projects
 		name.reserve(16);
 		files.reserve(32);
-		object_files.reserve(32);
+		object_files.reserve(512);
 		libraries.reserve(8);
 		library_paths.reserve(8);
 		all_libraries.reserve(128);
-		include_paths.reserve(32);
-		threads.reserve(thread_count * 8);
+		include_paths.reserve(125);
+		threads.reserve(thread_count * 4);
 
 		all_include_paths.reserve(256);
+		all_library_paths.reserve(8*16);
 		all_libraries.reserve(8*16);
 		all_object_files.reserve(32*16);
-		all_library_paths.reserve(8*16);
 
 		compiler.reserve(16);
-		final_flags.reserve(32);
+		final_flags.reserve(64);
 		out_name.reserve(32);
-		flags.reserve(32);
+		flags.reserve(256);
+		out_dir.reserve(64);
 	}
 	
 	virtual ~Class() {};
