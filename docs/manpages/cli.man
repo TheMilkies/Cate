@@ -48,3 +48,13 @@ Shows help (with pretty colors).
 .TP
 .BR \-v
 Shows version
+
+.SH Credits
+
+.TP
+.BR Yogurt:
+Creator and maintainer of Cate.
+
+.TP
+.BR Lemon:
+Creator and maintainer of Cate.

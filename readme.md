@@ -70,6 +70,7 @@ Cate's CLI is intuitive, but doesn't offer much. You can **not** set `cflags` wi
 - `-tN`: Set thread count to N. Cate automatically detects thread count so this isn't required.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
 - `-D`: Disable all user-defined `system()` calls in script.
+- `-S`: Smolize even if not set in script.
 - `-f`: Forcefully rebuild project, by deleting its object files
 - `-v`: Shows the installed Cate version. 
 - `-h`: Shows help and Cate version. 
@@ -170,3 +171,11 @@ dir cate
 ## Credits
 - Yogurt (Main Maintainer)
 - Latte (Bug fixer)
+
+## Special thanks
+Special thanks to
+- **Make** for being hard to work with, and extremely ugly.
+- **CMake** for being an improvement over make, yet still suffer from the same issues.
+- **AutoTools** for being the worst build system to ever exist. 
+
+Without these crimes against humanity, Cate would not have existed. So thank you, Make, CMake, and Autotools.
