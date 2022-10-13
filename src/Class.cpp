@@ -2,7 +2,7 @@
 
 extern int32_t thread_count;
 
-extern bool force_rebuild;
+extern bool force_rebuild, force_smol;
 
 void Class::setup()
 {
@@ -244,7 +244,7 @@ void Class::check()
 
 void Class::smolize()
 {
-	if(!smol) return;
+	if(!smol && !force_smol) return;
 	Util::system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version "
 			"--remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
 			+ out_name);

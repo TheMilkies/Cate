@@ -2,7 +2,7 @@
 
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
-bool parser_exit = false, system_allowed = true, force_rebuild = false;
+bool parser_exit = false, system_allowed = true, force_rebuild = false, force_smol = false;
 
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
 
@@ -14,8 +14,9 @@ void help()
 	"usage: " COLOR_RESET "\tcate " BOLD GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n"
 	"\t-l" COLOR_RESET ":  list all cate files in default directory\n"
-	BOLD GREEN "\t-t" highlight_var("N") ": sets thread count to " PURPLE BOLD "N\n"
+	BOLD GREEN "\t-t" highlight_var("N") ": set thread count to " PURPLE BOLD "N\n"
 	GREEN "\t-D" COLOR_RESET ":  disables all " highlight_func("system()") " calls in script\n"
+	BOLD GREEN "\t-S" COLOR_RESET ":  Smolize even if not set in script\n"
 	BOLD GREEN "\t-f" COLOR_RESET ":  delete everything in class's " highlight_var("build_directory") "; force rebuild\n"
 	BOLD GREEN "\t-v" COLOR_RESET ":  shows version\n"
 	BOLD GREEN "\t-h" COLOR_RESET ":  shows help (this)" BOLD GREEN "\n\n"
@@ -121,6 +122,10 @@ int main(int argc, char *argv[])
 				
 				case 'D': //disable system
 					system_allowed = false;
+					break;
+				
+				case 'S': //disable system
+					force_smol = true;
 					break;
 
 				case 'f': //force rebuild

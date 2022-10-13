@@ -1,0 +1,50 @@
+.TH cate 1-cli 2022-10-13 
+
+.SH Description
+.B Cate
+is a simple build system for C/C++
+
+.SH Notes:
+Cate automatically gets thread-count, you do not need to set it with the
+.B
+-tN
+flag 
+
+.SH CLI usage
+.B cate
+<flags> <target>
+
+.SH Example
+.B
+cate
+build -f -t8
+
+.SH Flags (or options)
+.TP
+.BR \-f
+Forcefully rebuilds.
+
+.TP
+.BR \-tN
+Sets thread-count to 
+.B
+N
+
+.TP
+.BR \-D
+Disables all script-defined 
+.B
+system()
+calls in script
+
+.TP
+.BR \-S
+Smolize even if not defined in script.
+
+.TP
+.BR \-h
+Shows help (with pretty colors).
+
+.TP
+.BR \-v
+Shows version
