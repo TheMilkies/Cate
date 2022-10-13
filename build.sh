@@ -47,6 +47,8 @@ _build Catel &
 
 _build main &
 
+_build Help &
+
 wait < <(jobs -p)
 
 $CC $build_folder/*.o externals/linux_amd64_libfl.a $cflags -o$out_exec 

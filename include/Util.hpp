@@ -14,7 +14,8 @@
 extern int32_t lexer_line;
 
 #define BOLD "\033[1m" 
-#define COLOR_RESET "\033[0m"
+#define COLOR_RESET "\e[0m"
+
 #define RED "\033[31m"
 #define GREEN "\033[32m"
 #define YELLOW "\033[33m"
@@ -60,6 +61,7 @@ namespace Util
 
 #define highlight_func(x) YELLOW x COLOR_RESET
 #define highlight_var(x) PURPLE x COLOR_RESET
+#define highlight_flag(x) "\e[1;32m" "\t" x COLOR_RESET
 
 /// @brief Returns if a file is a newer than another 
 /// @param a Path to check
