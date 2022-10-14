@@ -21,8 +21,14 @@ Do note:
 - Cate uses [robin_hood hashing](https://github.com/martinus/robin-hood-hashing), since it's 20% more efficient (on average)
 - Cate **does not** support `\"` characters in string literals, nor string splitting.
 
+## Advantages of Cate over other build systems
+You may be wondering what issues Cate solves, let us clear it up for you!
+1. Cate is extremely easy to learn, it doesn't require learning an entirely new language just to build a project!
+2. Cate (unlike CMake) has a consistent syntax that doesn't require documentation.
+3. Cate is smol, It has everything it needs and a little more to keep the 1% happy.
+
 ## Installing Cate
-If you're still here; that means you suffered enough CMake to reconsider your life choices, Thank you for choosing Cate!
+If you're still here; that means you suffered enough CMake (or Autotools) to reconsider your life choices, Thank you for choosing Cate!
 
 ### Debian/Ubuntu
 Run the following commands:
@@ -175,7 +181,8 @@ dir cate
 ## Special thanks
 Special thanks to
 - **Make** for being hard to work with, and extremely ugly.
-- **CMake** for being an improvement over make, yet still suffer from the same issues.
-- **AutoTools** for being the worst build system to ever exist. 
+- **CMake** for failing to be an an improvement over make, and still suffer from the same issues.
+- **Autotools** for being the worst build system to ever exist. 
 
-Without these crimes against humanity, Cate would not have existed. So thank you, Make, CMake, and Autotools.
+Without these crimes against humanity, Cate would not have existed.
+Thank you; Make, CMake, and Autotools for being so terrible.
