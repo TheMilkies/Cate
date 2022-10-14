@@ -56,7 +56,6 @@ done:
 	print_done(name);
 }
 
-
 inline string Project::command_gen(string& objects)
 {
 	return compiler + " -o" + out_name + " " +

@@ -1,6 +1,7 @@
 #ifndef PARSER_TOKENS
 #define PARSER_TOKENS
 #include "inc.hpp"
+#include "colors.hpp"
 
 /*
 	why hello there!
@@ -21,11 +22,12 @@ static string token_names[] = {
 	"\"Library\"",
 	"\"static\"",
 	"\"dynamic\"",
-	"\"recursive\"",
+	highlight_func("recursive"),
 	"a string literal",
 	"an identifier",
-	"\"true\""
-	"\"false\""
+	highlight_func("system"),
+	"\"true\"",
+	"\"false\"",
 };
 
 enum ParserTokenKind: uint8_t
