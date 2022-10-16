@@ -19,18 +19,20 @@ out/cate: $(OBJECTS)
 
 smol_cate: $(OBJECTS)
 	@$(CC) $^ -o out/cate $(SIZE_OPTIMIZATION_FLAGS) $(CFLAGS) externals/linux_amd64_libfl.a
-	strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
+	@strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
 
 lex: src/lexer.l
-	flex --full --noyywrap -osrc/Lexer.cpp --header-file=src/Lexer.hpp src/lexer.l
-	sed -i 's/int yyFlexLexer::yywrap() { return 1;}/ /g' src/Lexer.hpp
+	flex --full --noyywrap -osrc/Lexer.cpp --header-file=include/Lexer.hpp src/lexer.l
+	sed -i 's/int yyFlexLexer::yywrap() { return 1;}/ /g' include/Lexer.hpp
 
 $(BUILD_DIR)/%.o: $(SRC)/%.cpp
 	@$(CC) -I$(SRC) -c $< -o $@ $(CFLAGS) $(SIZE_OPTIMIZATION_FLAGS)
 
 install: 
 	@cp out/cate /usr/bin/cate
+	@cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
 	@echo "Installed cate!"
+
 
 uninstall:
 	@rm /usr/bin/cate
