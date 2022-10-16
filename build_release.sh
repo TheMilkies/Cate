@@ -7,12 +7,13 @@ fi
 
 sed -i 's/(Development)/(Release)/g' include/Util.hpp #change Development to Release
 touch src/main.cpp # to make sure it changes
-if cate release_smol -f -t16; then
+if cate release_smol -t16 -f; then
 	sed -i 's/(Release)/(Development)/g' include/Util.hpp #change it back
 	cd release
-	echo "cp -f cate /usr/bin/cate" > install.sh #generate the install file
+	echo "cp -f cate /usr/bin/cate" >> install.sh #generate the install file
+	echo "cp docs/manpages/cate.1 /usr/local/share/man/man1/" >> install.sh #generate the install file
 	chmod +x install.sh #add permissons
-	tar -czvf linux_cate_v$1.tar.gz cate install.sh #create tar
+	tar -czvf linux_cate_v$1.tar.gz cate ../docs/manpages/cate.1 install.sh #create tar
 	zip -9 linux_cate_v$1.zip cate install.sh #create zip
 	rm install.sh #clean
 	cd ..
