@@ -147,6 +147,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `String out`: The output file name. Defaults to identifier.
 - `String compiler`: The compiler to use. Default is `cc`.
+- `String std|standard`: The C/C++ standard to use. Default is set by the compiler.
 - `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in.
 - `String flags`: The cflags of the project/library, All object files are compiled with them. Default is empty.
 - `String final_flags`: The cflags ran at the end (linking step) of the project/library's compilation. Default is empty.
