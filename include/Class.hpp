@@ -18,7 +18,7 @@ public:
 	string all_object_files, all_libraries, all_library_paths, all_include_paths;
 
 	//user defined in .cate file
-	string name, flags, out_name, out_dir, compiler, final_flags;
+	string name, flags, out_name, out_dir, compiler, final_flags, standard;
 	vector<string> files, libraries, object_files, include_paths;
 
 	//filled from build();

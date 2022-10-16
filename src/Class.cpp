@@ -181,7 +181,7 @@ void Class::clear_property(int32_t line, string& property)
 		all_include_paths.clear();
 	}
 	else
-		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array");
+		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array or is not a valid property name");
 }
 
 void Class::add_to_property(int32_t line, string_view property, string_view value)
@@ -209,8 +209,11 @@ void Class::set_property(int32_t line, string& property, string& value)
 			 property == "obj_dir"		   ||
 			 property == "build_dir")
 		out_dir = value;
+	else if (property == "standard" ||
+			 property == "std")
+		standard = value;
 	else
-		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to a string");
+		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to a string or is not a valid property name");
 }
 
 void Class::check()
@@ -240,6 +243,9 @@ void Class::check()
 	if (smol)
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
+
+	if(!standard.empty())
+		flags += " -std=" + standard + " ";
 }
 
 void Class::smolize()
