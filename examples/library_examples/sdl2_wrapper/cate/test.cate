@@ -3,4 +3,5 @@ test.files = {"test/test.c"};
 test.libs = {"SDL2", "out/libsdlw.a"};
 test.includes = {"include"};
 test.out = "a_test";
+test.smol = true;
 test.build();
