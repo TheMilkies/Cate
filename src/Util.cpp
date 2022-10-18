@@ -166,8 +166,15 @@ namespace Util
 			if (!CreateDirectory(path, NULL))
 		#else
 			if (mkdir(path, 0700) && errno != EEXIST)
-		#endif // __OSCheck
-				fatal_error(0, string("Could not create folder \"") + path + "\"");
+		#endif // OSCheck
+				fatal_error(0, string("Could not create folder \"") + path + "\"\n"
+				"Maybe try running mkdir "
+				#ifndef __WIN32
+				"-p "
+				#endif // unix
+				+ path
+				+ "\n"
+				);
 		}
 	} 
 } // namespace Util

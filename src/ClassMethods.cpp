@@ -1,5 +1,8 @@
 #include "Parser.hpp"
 
+//add new methods in include/Class.hpp, then implement them here
+
+//add them here first with `else if (child == "THING")`
 bool Parser::object_method()
 {
 	if (child == "build") //void Class.build(void);
