@@ -58,11 +58,12 @@ void Parser::recursive()
 
 	if (subrecursive)
 	{
+		if(path.empty()) path = ".";
 		for (auto &p : fs::recursive_directory_iterator(path)) //iterate over the files
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)
-				current_class->files.emplace_back(p.path().string());
+				current_class->files.emplace_back(p.path().string().c_str()+2);
 		}
 	}
 	else

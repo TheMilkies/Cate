@@ -37,6 +37,7 @@ void Class::object_setup()
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
+		//Util::replace_all(file, "./", ""); // "./" -> ""
 		Util::replace_all(file, "/", "_"); // "/" -> "_"
 		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
 		file = out_dir + "/" + file; // folder/object.o
