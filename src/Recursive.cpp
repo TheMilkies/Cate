@@ -15,6 +15,7 @@ void Parser::recursive()
 	
 	//wildcard stuff
 	int32_t location_of_wildcard = current.value.find('*');
+	bool subrecursive = false;
 
 	if (location_of_wildcard == string::npos) //if not found
 		Util::error("Wildcard (*) was not found in " highlight_func("recursive()"));
@@ -23,7 +24,13 @@ void Parser::recursive()
 		Util::error(highlight_func("recursive()")
 			" does not support folder recursion (f/*/*.c).");
 	
-	string path = current.value.substr(0, location_of_wildcard), //extract path
+	if (current.value[location_of_wildcard+1] == '*')
+	{
+		++location_of_wildcard;
+		subrecursive = true;
+	}
+	
+	string path = current.value.substr(0, location_of_wildcard - subrecursive), //extract path
 				  extension = current.value.substr(location_of_wildcard+1); //extract extension
 	
 	if (extension.empty())
@@ -49,10 +56,23 @@ void Parser::recursive()
 	if (string_find(path, '*') || string_find(extension, '*')) //if more than one found
 		Util::fatal_error(current.line, "Multiple wildcards are not allowed");
 
-	for (auto &p : fs::directory_iterator(path)) //iterate over the files
-    {
-		//add to files only if the files have the extension
-        if (p.path().extension() == extension)
-			current_class->files.emplace_back(p.path().string());
-    }
+	if (subrecursive)
+	{
+		for (auto &p : fs::recursive_directory_iterator(path)) //iterate over the files
+		{
+			//add to files only if the files have the extension
+			if (p.path().extension() == extension)
+				current_class->files.emplace_back(p.path().string());
+		}
+	}
+	else
+	{
+		for (auto &p : fs::directory_iterator(path)) //iterate over the files
+		{
+			//add to files only if the files have the extension
+			if (p.path().extension() == extension)
+				current_class->files.emplace_back(p.path().string());
+		}
+	}
+	
 }
