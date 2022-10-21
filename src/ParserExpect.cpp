@@ -33,7 +33,7 @@ bool Parser::expect_bool()
 	return (current.type == B_TRUE);
 }
 
-void Parser::expect_type()
+bool Parser::expect_type()
 {
 	current = next();
 
@@ -41,6 +41,8 @@ void Parser::expect_type()
 	{
 		Util::error(current.line, "Expected a LibraryType (static | dynamic) value");
 	}
+
+	return current.type == STATIC;
 }
 
 void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)

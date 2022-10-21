@@ -92,10 +92,9 @@ void Parser::declare_library()
 	declare(); //already wrote that code, reusing it.
 
 	expect(LPAREN);
-	expect_type();
 
 	//temp_type = current.type;
-	current_class->is_static = (current.type == STATIC); //if current token is static, set the type to static.
+	current_class->is_static = expect_type(); //if current token is static, set the type to static.
 
 	expect(RPAREN);
 }
@@ -280,8 +279,7 @@ bool Parser::special_case()
 #define set_bool(x) current_class->x = expect_bool(); return true;
 	if (child == "type")
 	{
-		expect_type();
-		current_class->is_static = (current.type == STATIC);
+		current_class->is_static = expect_type();
 		current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
 		return true;
 	}
