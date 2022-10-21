@@ -167,9 +167,6 @@ void Parser::parse()
 			}
 			break;
 
-		case SEMICOLON: //ignored
-			break;
-
 		default:
 			Util::error(current.line, "Did not expect " + token_names[current.type] + ".");
 			break;

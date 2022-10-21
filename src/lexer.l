@@ -40,7 +40,7 @@
 
 \. {return DOT;}
 \, {return COMMA;}
-";" {return SEMICOLON;}
+";" {}
 
 \"[^"]+\" {return STRING_LITERAL;}
 \"\" {Util::lexer_error("Empty string literals are not allowed.");}

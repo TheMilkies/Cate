@@ -180,7 +180,9 @@ void yyfree ( void *  );
 
 #define yytext_ptr yytext
 
-#include "nonstd/FlexLexer.h"
+#include <FlexLexer.h>
+
+ 
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
