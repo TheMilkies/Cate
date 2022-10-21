@@ -59,15 +59,12 @@ public:
 	void check(); //check if everything is okay
 	void setup(); // set up directories and object files
 	void object_setup(); //set up files and object files.
-	void library_setup();
-	void include_setup();
+	
 	void build_objects(); //build the objects
 	void create_directories();
 
 	//general and self-explanitory
-	vector<string>& get_array_property(int32_t line, string& property);
-	void clear_property(int32_t line, string& property);
-	void add_to_property(int32_t line, string_view property, string_view value);
+	void add_library(string& value);
 	void set_property(int32_t line, string& property, string& value);
 
 	//threading

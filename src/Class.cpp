@@ -13,20 +13,12 @@ void Class::setup()
 
 	//calling object_setup() on another thread is a bit faster
 	std::thread object_thread(&Class::object_setup, this);
-	//std::thread include_thread(&Class::include_setup, this);
-	//std::thread library_thread(&Class::library_setup, this);
 
-	//useless debug line
-	/*if (object_files.size() != files.size())
-		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);*/ 
-	
 	//create output file's folder if doesn't already exist.
 	create_directories();
 
 	//wait until these finish
 	object_thread.join();
-	//include_thread.join(); 
-	//library_thread.join();
 }
 
 void Class::object_setup()
@@ -84,113 +76,28 @@ void Class::build_objects()
 	already_built = true;
 }
 
-void Class::include_setup()
+void Class::add_library(string& lib)
 {
-	if (!include_paths.empty())
+	//path check
+	int32_t position_of_last_slash = lib.find_last_of('/'); 
+	string path = lib.substr(0, position_of_last_slash+1);
+
+	if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
+		library_paths.insert(path);
+
+	//check if not static/local
+	if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
 	{
-		for(auto &path : include_paths)
-			all_include_paths += "-I" + path + ' ';
-	}
-}
-
-void Class::library_setup()
-{
-	for(auto &lib : libraries)
-	{
-		//path check
-		int32_t position_of_last_slash = lib.find_last_of('/'); 
-		string path = lib.substr(0, position_of_last_slash+1);
-
-		if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
-			library_paths.insert(path);
-
-		//check if not static/local
-		if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
-		{
-			Util::remove_extension(lib);
-			lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
-			Util::replace_all(lib, "lib", ""); //remove the lib part.
-			all_libraries += "-l";
-		}
-
-		all_libraries += lib + ' ';
+		Util::remove_extension(lib);
+		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
+		Util::replace_all(lib, "lib", ""); //remove the lib part.
+		all_libraries += "-l";
 	}
 
-	//can be rewritten but it's faster like this...?
-	for(auto &path : library_paths)
-		all_library_paths += "-L" + path + ' ';
+	all_libraries += lib + ' ';
 }
 
 //self explanitories, i cry every time C++ doesn't have switch for strings
-
-vector<string>& Class::get_array_property(int32_t line, string& property)
-{
-	if (property == "files")
-	{
-		return files;
-	}
-	else if (property == "libraries" || property == "libs")
-	{
-		return libraries;
-	}
-	/*else if (property == "incs" || property == "includes" || property == "include_paths")
-	{
-		return include_paths;
-	}*/
-	else
-		Util::fatal_error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array or is not a valid property.");
-}
-
-void Class::clear_property(int32_t line, string& property)
-{
-	if (property == "files")
-	{
-		static bool first_clear = true;
-		if (first_clear)
-		{
-			first_clear = false;
-			return;
-		}
-		files.clear();
-		all_object_files.clear();
-		object_files.clear();
-	}
-	else if (property == "libraries" || property == "libs")
-	{
-		static bool first_clear = true;
-		if (first_clear)
-		{
-			first_clear = false;
-			return;
-		}
-		libraries.clear();
-		all_library_paths.clear();
-		all_libraries.clear();
-	}
-	/*else if (property == "incs" || property == "includes" || property == "include_paths")
-	{
-		static bool first_clear = true;
-		if (first_clear)
-		{
-			first_clear = false;
-			return;
-		}
-		include_paths.clear();
-		all_include_paths.clear();
-	}*/
-	else
-		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array or is not a valid property name");
-}
-
-void Class::add_to_property(int32_t line, string_view property, string_view value)
-{
-	if (property == "files")
-		files.emplace_back(value);
-	else if (property == "libraries" || property == "libs")
-		libraries.emplace_back(value);
-	/*else if (property == "incs" || property == "includes" || property == "include_paths")
-		include_paths.emplace_back(value);*/
-}
 
 void Class::set_property(int32_t line, string& property, string& value)
 {

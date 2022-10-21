@@ -193,20 +193,33 @@ void Parser::array()
 		include_array();
 		return;
 	}
-
-	if(child == "libs" || child == "libraries")
+	else if(child == "libs" || child == "libraries")
 	{
 		library_array();
 		return;
 	}
+	else if(child != "files") //last edge case
+	{
+		Util::fatal_error(current.line, "\"" PURPLE + child + COLOR_RESET "\" cannot be set to an array or is not a valid property name");
+	}
 
-	current_class->clear_property(current.line, child); //clear array
+	//now files
+	vector<string>& current_property = current_class->files;
+	static bool first_clear = true;
+	if (first_clear)
+	{
+		first_clear = false;
+		goto skip_clear_files;
+	}
+	current_class->files.clear();
+	current_class->all_object_files.clear();
+	current_class->object_files.clear();
 	
-	vector<string>& current_property = current_class->get_array_property(current.line, child);
+skip_clear_files:
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != RCURLY)
 	{
-		expect(STRING_LITERAL, RECURSIVE, IDENTIFIER, COMMA, RCURLY);
+		expect(STRING_LITERAL, RECURSIVE, COMMA, RCURLY);
 		if (current.type == RECURSIVE)
 		{
 			recursive();
@@ -214,22 +227,6 @@ void Parser::array()
 		else if (current.type == STRING_LITERAL)
 		{
 			current_property.emplace_back(current.value);
-		}
-		else if (current.type == IDENTIFIER)
-		{
-			if (child == "libs")
-			{
-				if (is_defined(current.value))
-					current_property.emplace_back(
-							classes[current.value]->out_name);
-				else
-					Util::fatal_error(current.line, "\"" + current.value + "\" is not defined");
-			}
-			else
-			{
-				Util::fatal_error(current.line, "classes can only be included in the " highlight_var("libraries")
-													" (or " highlight_var("libs") ") property.");
-			}
 		}
 	}
 }
@@ -253,44 +250,34 @@ void Parser::library_array()
 	if (first) //this saves a bit of time
 	{
 		first = false;
-		goto skip_clear_here;
+		goto skip_clear_libraries;
 	}
 
 	current_class->all_libraries.clear();
 	current_class->all_library_paths.clear();
 
-skip_clear_here:
+skip_clear_libraries:
 	while (current.type != RCURLY)
 	{
 		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
 		if (current.type == STRING_LITERAL)
 		{
-			string &lib = current.value;
-			int32_t position_of_last_slash = lib.find_last_of('/'); 
-
-			if(position_of_last_slash != string::npos);
-			{
-				string path = lib.substr(0, position_of_last_slash+1);
-
-				if (!path.empty() && current_class->library_paths.find(path) == current_class->library_paths.end()) //if not in library paths, add it
-					current_class->all_library_paths += "-L" + path + ' ';
-			}
-
-			if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
-			{
-				Util::remove_extension(lib);
-				lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
-				Util::replace_all(lib, "lib", ""); //remove the lib part.
-				current_class->all_libraries += "-l";
-			}
-
-			current_class->all_libraries += lib + ' ';
+			current_class->add_library(current.value);
 		}
+		else if(current.type == IDENTIFIER)
+		{
+			if (is_defined(current.value))
+				current_class->add_library(classes[current.value]->out_name);
+			else
+				Util::fatal_error(current.line, "\"" + current.value + "\" is not defined");
+		}
+		
 	}
 }
 
 bool Parser::special_case()
 {
+#define set_bool(x) current_class->x = expect_bool(); return true;
 	if (child == "type")
 	{
 		expect_type();
@@ -300,19 +287,17 @@ bool Parser::special_case()
 	}
 	else if (child == "threading")
 	{
-		current_class->threading = expect_bool();
-		return true;
+		set_bool(threading);
 	}
 	else if (child == "smolize" || child == "smol")
 	{
-		current_class->smol = expect_bool();
-		return true;
+		set_bool(smol);
 	}
 	else if (child == "link")
 	{
-		current_class->link = expect_bool();
-		return true;
+		set_bool(link);
 	}
+#undef set_bool(x)
 
 	return false;
 }
