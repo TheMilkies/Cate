@@ -92,10 +92,7 @@ void Parser::declare_library()
 	declare(); //already wrote that code, reusing it.
 
 	expect(LPAREN);
-
-	//temp_type = current.type;
 	current_class->is_static = expect_type(); //if current token is static, set the type to static.
-
 	expect(RPAREN);
 }
 

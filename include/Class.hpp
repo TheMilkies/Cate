@@ -19,7 +19,7 @@ public:
 
 	//user defined in .cate file
 	string name, flags, out_name, out_dir, compiler, final_flags, standard;
-	vector<string> files, libraries, object_files, include_paths;
+	vector<string> files, object_files;
 
 	//filled from build();
 	robin_hood::unordered_set<string> library_paths;
@@ -33,16 +33,13 @@ public:
 		//these should be enough for most small/medium-sized projects
 		name.reserve(16);
 		files.reserve(32);
-		object_files.reserve(512);
-		libraries.reserve(8);
-		library_paths.reserve(8);
+		object_files.reserve(32);
+		library_paths.reserve(32);
 		all_libraries.reserve(128);
-		include_paths.reserve(125);
 		threads.reserve(thread_count * 4);
 
 		all_include_paths.reserve(256);
-		all_library_paths.reserve(8*16);
-		all_libraries.reserve(8*16);
+		all_library_paths.reserve(64);
 		all_object_files.reserve(32*16);
 
 		compiler.reserve(16);

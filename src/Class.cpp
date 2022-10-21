@@ -149,7 +149,7 @@ void Class::check()
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 
-	if(!standard.empty())
+	if (!standard.empty())
 		flags += " -std=" + standard + " ";
 }
 
