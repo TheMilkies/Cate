@@ -150,7 +150,6 @@ void Parser::parse()
 					}
 					else 
 					{
-						current_class->clear_property(current.line, child); //clear array
 						if (current.type == LCURLY)
 							array(); //start the array
 						else if (current.type == RECURSIVE)
@@ -188,6 +187,21 @@ void Parser::parse()
 
 void Parser::array()
 {
+	//this is so jank yet so fast.
+	if(child == "incs" || child == "includes" || child == "include_paths")
+	{
+		include_array();
+		return;
+	}
+
+	if(child == "libs" || child == "libraries")
+	{
+		library_array();
+		return;
+	}
+
+	current_class->clear_property(current.line, child); //clear array
+	
 	vector<string>& current_property = current_class->get_array_property(current.line, child);
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != RCURLY)
@@ -216,6 +230,61 @@ void Parser::array()
 				Util::fatal_error(current.line, "classes can only be included in the " highlight_var("libraries")
 													" (or " highlight_var("libs") ") property.");
 			}
+		}
+	}
+}
+
+void Parser::include_array()
+{
+	current_class->all_include_paths.clear();
+	while (current.type != RCURLY)
+	{
+		expect(STRING_LITERAL, COMMA, RCURLY);
+		if (current.type == STRING_LITERAL)
+		{
+			current_class->all_include_paths += "-I" + current.value + ' ';
+		}
+	}
+}
+
+void Parser::library_array()
+{
+	static bool first = true;
+	if (first) //this saves a bit of time
+	{
+		first = false;
+		goto skip_clear_here;
+	}
+
+	current_class->all_libraries.clear();
+	current_class->all_library_paths.clear();
+
+skip_clear_here:
+	while (current.type != RCURLY)
+	{
+		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
+		if (current.type == STRING_LITERAL)
+		{
+			string &lib = current.value;
+			int32_t position_of_last_slash = lib.find_last_of('/'); 
+
+			if(position_of_last_slash != string::npos);
+			{
+				string path = lib.substr(0, position_of_last_slash+1);
+
+				if (!path.empty() && current_class->library_paths.find(path) == current_class->library_paths.end()) //if not in library paths, add it
+					current_class->all_library_paths += "-L" + path + ' ';
+			}
+
+			if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
+			{
+				Util::remove_extension(lib);
+				lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
+				Util::replace_all(lib, "lib", ""); //remove the lib part.
+				current_class->all_libraries += "-l";
+			}
+
+			current_class->all_libraries += lib + ' ';
 		}
 	}
 }

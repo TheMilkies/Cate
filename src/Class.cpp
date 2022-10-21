@@ -13,23 +13,20 @@ void Class::setup()
 
 	//calling object_setup() on another thread is a bit faster
 	std::thread object_thread(&Class::object_setup, this);
-	std::thread include_thread(&Class::include_setup, this);
-	std::thread library_thread(&Class::library_setup, this);
+	//std::thread include_thread(&Class::include_setup, this);
+	//std::thread library_thread(&Class::library_setup, this);
 
 	//useless debug line
 	/*if (object_files.size() != files.size())
 		Util::warning("somehow the amount of object files is not equal to hte amount of source files in " + name);*/ 
 	
-	//create build folder if it doesn't exist
-	Util::create_folder(out_dir.c_str());
-
 	//create output file's folder if doesn't already exist.
 	create_directories();
 
 	//wait until these finish
 	object_thread.join();
-	include_thread.join(); 
-	library_thread.join();
+	//include_thread.join(); 
+	//library_thread.join();
 }
 
 void Class::object_setup()
@@ -136,12 +133,12 @@ vector<string>& Class::get_array_property(int32_t line, string& property)
 	{
 		return libraries;
 	}
-	else if (property == "incs" || property == "includes" || property == "include_paths")
+	/*else if (property == "incs" || property == "includes" || property == "include_paths")
 	{
 		return include_paths;
-	}
+	}*/
 	else
-		Util::fatal_error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array");
+		Util::fatal_error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array or is not a valid property.");
 }
 
 void Class::clear_property(int32_t line, string& property)
@@ -170,7 +167,7 @@ void Class::clear_property(int32_t line, string& property)
 		all_library_paths.clear();
 		all_libraries.clear();
 	}
-	else if (property == "incs" || property == "includes" || property == "include_paths")
+	/*else if (property == "incs" || property == "includes" || property == "include_paths")
 	{
 		static bool first_clear = true;
 		if (first_clear)
@@ -180,7 +177,7 @@ void Class::clear_property(int32_t line, string& property)
 		}
 		include_paths.clear();
 		all_include_paths.clear();
-	}
+	}*/
 	else
 		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to an array or is not a valid property name");
 }
@@ -191,8 +188,8 @@ void Class::add_to_property(int32_t line, string_view property, string_view valu
 		files.emplace_back(value);
 	else if (property == "libraries" || property == "libs")
 		libraries.emplace_back(value);
-	else if (property == "incs" || property == "includes" || property == "include_paths")
-		include_paths.emplace_back(value);
+	/*else if (property == "incs" || property == "includes" || property == "include_paths")
+		include_paths.emplace_back(value);*/
 }
 
 void Class::set_property(int32_t line, string& property, string& value)
@@ -259,6 +256,7 @@ void Class::smolize()
 
 void Class::create_directories()
 {
+	Util::create_folder(out_dir.c_str());
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	if (!path.empty() && path != "./")
 	{

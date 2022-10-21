@@ -18,6 +18,10 @@ private:
 	void define(const string &identifier);
 	inline bool is_defined(const string& identifier) {return (classes.find(identifier) != classes.end());}
 	void array();
+
+	void include_array();
+	void library_array();
+
 	void declare();
 	void declare_library();
 	void recursive();
