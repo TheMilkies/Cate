@@ -51,7 +51,7 @@ void Class::build_objects()
 	command_template = compiler + ' ' + flags + ' ' + all_include_paths + "-c "; //this is a nice optimization
 	for (int32_t i = 0; i < files.size(); i+=thread_count)
 	{
-		for (int32_t j = 0; j < thread_count; j++)
+		for (int32_t j = 0; j < thread_count; ++j)
 		{
 			int32_t current = i+j;
 			if (current > files.size()) break; //current file index check

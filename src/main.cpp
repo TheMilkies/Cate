@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	//get specified
 	else
 	{
-		for (int32_t i = ARGC_START; i < argc; i++)
+		for (int32_t i = ARGC_START; i < argc; ++i)
 		{
 			if (argv[i][0] == '-')
 			{

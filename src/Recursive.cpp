@@ -63,7 +63,7 @@ void Parser::recursive()
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)
-				current_class->files.emplace_back(p.path().string().c_str()+2);
+				current_class->files.emplace_back(p.path().string().c_str()+2); //skip ./
 		}
 	}
 	else
@@ -75,5 +75,4 @@ void Parser::recursive()
 				current_class->files.emplace_back(p.path().string());
 		}
 	}
-	
 }
