@@ -44,7 +44,7 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.2/linux_cate_v2.2.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.2/linux_cate_v2.4.0.zip
 unzip linux_cate_v2.4.0.zip
 sudo ./install.sh
 cd ..
