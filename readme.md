@@ -3,7 +3,7 @@
   Cate is a simple build system for C/C++ with C-like syntax.
 </h3>
 <p align="center">
-  <img align="center" src="cate_example.png">
+  <img align="center" src="github_stuff/cate_example.png">
 </p>
 
 ## Introduction
@@ -55,7 +55,8 @@ rm -rf catering
 Make sure you have these installed:
 - A Unix-like operating system
 - A C++17 compiler (`g++` or `clang++`)
-- GNU Flex 2.6.4 or greater ([setup here](flex_setup.md))
+*optional*
+- GNU Flex 2.6.4 or greater ([setup here](github_stuff/flex_setup.md))
 
 ### Using build.sh
 Run `./build.sh`, It'll ask you if you'd like to install at the end.
