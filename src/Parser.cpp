@@ -158,13 +158,9 @@ void Parser::parse()
 		
 		case SYSTEM:
 			if (system_allowed)
-			{
 				Util::user_system(current.line, string_function().value);
-			}
 			else
-			{
 				current = tokens[index += 3];
-			}
 			break;
 
 		default:

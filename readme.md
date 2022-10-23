@@ -26,6 +26,7 @@ You may be wondering what issues Cate solves, let us clear it up for you!
 1. Cate is extremely easy to learn, it doesn't require learning an entirely new language just to build a project!
 2. Cate (unlike CMake) has a consistent syntax that doesn't require documentation.
 3. Cate is smol, It has everything it needs and a little more to keep the 1% happy.
+4. Cate, unlike Make, just cates sense!
 
 ## Installing Cate
 If you're still here; that means you suffered enough CMake (or Autotools) to reconsider your life choices, Thank you for choosing Cate!
@@ -33,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.2/cate_2.2-0_amd64.deb
-sudo dpkg -i cate_2.2-0_amd64.deb
-rm cate_2.2-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.2/cate_2.4-0_amd64.deb
+sudo dpkg -i cate_2.4-0_amd64.deb
+rm cate_2.4-0_amd64.deb
 ```
 
 ### Other distributions
@@ -44,7 +45,7 @@ Run the following commands:
 mkdir catering
 cd catering
 wget https://github.com/TheMilkies/Cate/releases/download/v2.2/linux_cate_v2.2.0.zip
-unzip linux_cate_v2.2.0.zip
+unzip linux_cate_v2.4.0.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -163,7 +164,9 @@ Both classes have these properties, even if they don't make sense for the class
 - `void clean()`: Deletes project/library's build directory.
 
 ### General functions
-- `Array<String> recursive(String path)`: Get all files in path ending with an extension. Example: `project.files = recursive("src/*.c");`
+- `Array<String> recursive(String path)`: Get all files in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
+
+- - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
 - `void system(String command)`: Run command. Would be skipped if user runs Cate with the `-D` flag.
 
 ### Catel
@@ -186,4 +189,5 @@ Special thanks to
 - **Autotools** for being the worst build system to ever exist. 
 
 Without these crimes against humanity, Cate would not have existed.
+
 Thank you; Make, CMake, and Autotools for being so terrible.
