@@ -13,8 +13,11 @@ out_exec="out/cate"; mkdir -p out
 cflags="-Iinclude -lstdc++ -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -O3 -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 
 build_() {
-    if [ src/$1.cpp -nt $build_folder/src_$1.o ]; then
-        $CC src/$1.cpp $cflags -c -o $build_folder/src_$1.o
+    obj_name="src_$1"
+    obj_name_mod="${obj_name/\//"_"}"    
+
+    if [ src/$1.cpp -nt $build_folder/$obj_name_mod.o ]; then
+        $CC src/$1.cpp $cflags -c -o $build_folder/$obj_name_mod.o
     fi
 }
 
@@ -25,27 +28,27 @@ _build() {
     fi
 }
 
-_build Lexer &
+_build Parser/Lexer &
 
-_build Class &
+_build Class/Class &
 
-_build Parser &
+_build Parser/Parser &
 
-_build ParserExpect &
+_build Parser/ParserExpect &
 
-_build ParserArrays &
+_build Parser/ParserArrays &
 
-_build Recursive &
+_build Parser/Recursive &
 
 _build Util &
 
-_build Library &
-
 wait < <(jobs -p)
 
-_build Project &
+_build Class/Library &
 
-_build ClassMethods &
+_build Class/Project &
+
+_build Class/ClassMethods &
 
 _build Catel &
 

@@ -66,11 +66,6 @@ Run `cate`, Unlike Make; It'll automatically detect the thread count.
 
 Use `sudo cate install` to install
 
-### Using Make
-Run `make -jN` where N is your thread count, you don't want it to build single-threaded.
-
-Use `sudo make install` to install
-
 ## Using Cate
 Cate's CLI is intuitive, but doesn't offer much. You can **not** set `cflags` with a command (unlike Autotools), but you get the minimum required to work with Cate.
 
