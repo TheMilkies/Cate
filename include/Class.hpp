@@ -15,7 +15,9 @@ class Class
 {
 public:
 	//filled by setup() and build()
-	string all_object_files, all_libraries, all_library_paths, all_include_paths;
+	string all_object_files, all_libraries,
+		   all_library_paths, all_include_paths,
+		   all_definitions;
 
 	//user defined in .cate file
 	string name, flags, out_name, out_dir, compiler, final_flags, standard;
@@ -28,26 +30,7 @@ public:
 	bool already_built = false, needs_rebuild = false;
 	bool link = true, threading = false, smol = false;
 	
-	Class()
-	{
-		//these should be enough for most small/medium-sized projects
-		name.reserve(16);
-		files.reserve(32);
-		object_files.reserve(32);
-		library_paths.reserve(32);
-		all_libraries.reserve(128);
-		threads.reserve(thread_count * 4);
-
-		all_include_paths.reserve(256);
-		all_library_paths.reserve(64);
-		all_object_files.reserve(32*16);
-
-		compiler.reserve(16);
-		final_flags.reserve(64);
-		out_name.reserve(32);
-		flags.reserve(256);
-		out_dir.reserve(64);
-	}
+	Class();
 	
 	virtual ~Class() {};
 	virtual void build() = 0; //class defined

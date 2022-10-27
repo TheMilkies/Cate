@@ -5,6 +5,7 @@ cate.flags = "-fpermissive -g -funsafe-math-optimizations -ffast-math -fno-signe
 cate.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 cate.build_directory = "cate/build"
 cate.incs = {"include"}
+cate.defs = {"TRACK_ALLOCS"}
 cate.threading = true
 cate.out = "out/cate"
 cate.build()

@@ -14,6 +14,10 @@ void Parser::array()
 	{
 		include_array();
 	}
+	else if(child == "defs" || child == "definitions" || child == "defines")
+	{
+		definitions_array();
+	}
 	else
 	{
 		Util::fatal_error(current.line, "\"" PURPLE + child + COLOR_RESET
@@ -31,6 +35,19 @@ void Parser::include_array()
 		if (current.type == STRING_LITERAL)
 		{
 			current_class->all_include_paths += "-I" + current.value + ' ';
+		}
+	}
+}
+
+void Parser::definitions_array()
+{
+	current_class->all_definitions.clear();
+	while (current.type != RCURLY)
+	{
+		expect(STRING_LITERAL, COMMA, RCURLY);
+		if (current.type == STRING_LITERAL)
+		{
+			current_class->all_definitions += "-D" + current.value + ' ';
 		}
 	}
 }
@@ -62,7 +79,6 @@ skip_clear_libraries:
 			else
 				Util::fatal_error(current.line, "\"" + current.value + "\" is not defined");
 		}
-		
 	}
 }
 

@@ -16,6 +16,15 @@ bool get_default_file_name();
 
 //bool call_competitor();
 
+#ifdef TRACK_ALLOCS
+int allocs_count = 0;
+void* operator new(size_t size)
+{
+	++allocs_count;
+	return malloc(size);
+}
+#endif // TRACK_ALLOCS
+
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
@@ -142,6 +151,11 @@ int main(int argc, char *argv[])
 	Parser* parser = new Parser(file_name);
 
 	delete parser; //yay
+
+#ifdef TRACK_ALLOCS
+	std::cout << "Total allocs: " << allocs_count << "\n";
+#endif // TRACK_ALLOCS
+
 	return 0;
 }
 
