@@ -6,7 +6,7 @@ if [ $# -eq 0 ]; then
 fi
 
 sed -i 's/(Development)/(Release)/g' include/Util.hpp #change Development to Release
-touch src/main.cpp # to make sure it changes
+touch src/Help.cpp # to make sure it changes
 if cate release_smol -t16 -f; then
 	sed -i 's/(Release)/(Development)/g' include/Util.hpp #change it back
 	cd release

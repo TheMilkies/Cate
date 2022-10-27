@@ -28,7 +28,7 @@ bool Parser::expect_bool()
 
 	if (current.type != B_TRUE && current.type != B_FALSE)
 	{
-		Util::fatal_error(current.line, "Expected a boolean (true | false) value");
+		Util::fatal_error(current.line, "Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
 	}
 	return (current.type == B_TRUE);
 }
