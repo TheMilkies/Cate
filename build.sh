@@ -33,11 +33,15 @@ _build Parser &
 
 _build ParserExpect &
 
+_build ParserArrays &
+
 _build Recursive &
 
 _build Util &
 
 _build Library &
+
+wait < <(jobs -p)
 
 _build Project &
 

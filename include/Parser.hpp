@@ -21,6 +21,7 @@ private:
 
 	void include_array();
 	void library_array();
+	void files_array();
 
 	void declare();
 	void declare_library();

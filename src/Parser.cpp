@@ -26,7 +26,8 @@ Parser::Parser(const string& file_name)
 
 	ParserToken temp;
 	
-	while (temp.type = (ParserTokenKind)lexer->yylex()) //Flex doesn't work in a way you might expect, so we make it easier to work with
+	//Flex doesn't work in a way you might expect, so we make it easier to work with
+	while (temp.type = (ParserTokenKind)lexer->yylex()) 
 	{
 		temp.value = ""; //reset to save some memory
 		temp.line = lexer_line; //defined in lexer.l
@@ -142,7 +143,8 @@ void Parser::parse()
 
 					if (current.type == STRING_LITERAL)
 					{
-						current_class->set_property(current.line, child, current.value); //set current property to the string literal
+						//set current property to the string literal
+						current_class->set_property(current.line, child, current.value); 
 					}
 					else 
 					{
@@ -172,96 +174,6 @@ void Parser::parse()
 	}
 
 	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
-}
-
-void Parser::array()
-{
-	//this is so jank yet so fast.
-	if(child == "incs" || child == "includes" || child == "include_paths")
-	{
-		include_array();
-		return;
-	}
-	else if(child == "libs" || child == "libraries")
-	{
-		library_array();
-		return;
-	}
-	else if(child != "files") //last edge case
-	{
-		Util::fatal_error(current.line, "\"" PURPLE + child + COLOR_RESET "\" cannot be set to an array or is not a valid property name");
-	}
-
-	//now files
-	vector<string>& current_property = current_class->files;
-	static bool first_clear = true;
-	if (first_clear)
-	{
-		first_clear = false;
-		goto skip_clear_files;
-	}
-	current_class->files.clear();
-	current_class->all_object_files.clear();
-	current_class->object_files.clear();
-	
-skip_clear_files:
-	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
-	while (current.type != RCURLY)
-	{
-		expect(STRING_LITERAL, RECURSIVE, COMMA, RCURLY);
-		if (current.type == RECURSIVE)
-		{
-			recursive();
-		}
-		else if (current.type == STRING_LITERAL)
-		{
-			current_property.emplace_back(current.value);
-		}
-	}
-}
-
-void Parser::include_array()
-{
-	current_class->all_include_paths.clear();
-	while (current.type != RCURLY)
-	{
-		expect(STRING_LITERAL, COMMA, RCURLY);
-		if (current.type == STRING_LITERAL)
-		{
-			current_class->all_include_paths += "-I" + current.value + ' ';
-		}
-	}
-}
-
-void Parser::library_array()
-{
-	static bool first = true;
-	if (first) //this saves a bit of time
-	{
-		first = false;
-		goto skip_clear_libraries;
-	}
-
-	current_class->all_libraries.clear();
-	current_class->all_library_paths.clear();
-
-skip_clear_libraries:
-	while (current.type != RCURLY)
-	{
-		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
-		if (current.type == STRING_LITERAL)
-		{
-			current_class->add_library(current.value);
-		}
-		else if(current.type == IDENTIFIER)
-		{
-			if (is_defined(current.value))
-				current_class->add_library(classes[current.value]->out_name);
-			else
-				Util::fatal_error(current.line, "\"" + current.value + "\" is not defined");
-		}
-		
-	}
 }
 
 bool Parser::special_case()
