@@ -31,7 +31,7 @@ void Parser::include_array()
 	current_class->all_include_paths.clear();
 	while (current.type != RCURLY)
 	{
-		expect(STRING_LITERAL, COMMA, RCURLY);
+		expect_string_array();
 		if (current.type == STRING_LITERAL)
 		{
 			current_class->all_include_paths += "-I" + current.value + ' ';
@@ -44,7 +44,7 @@ void Parser::definitions_array()
 	current_class->all_definitions.clear();
 	while (current.type != RCURLY)
 	{
-		expect(STRING_LITERAL, COMMA, RCURLY);
+		expect_string_array();
 		if (current.type == STRING_LITERAL)
 		{
 			current_class->all_definitions += "-D" + current.value + ' ';

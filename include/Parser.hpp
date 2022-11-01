@@ -23,7 +23,8 @@ private:
 	void library_array();
 	void files_array();
 	void definitions_array();
-
+	void expect_string_array();
+	
 	void declare();
 	void declare_library();
 	void recursive();

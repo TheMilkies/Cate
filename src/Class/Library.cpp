@@ -8,7 +8,7 @@ void Library::build()
 {	
 	if (!already_built)
 	{
-		flags += " -fPIC "; //make library basically
+		flags += " -fPIC -shared "; //make library basically
 		setup();
 		build_objects();
 	}

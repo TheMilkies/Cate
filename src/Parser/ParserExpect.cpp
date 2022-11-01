@@ -68,6 +68,16 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 	}
 }
 
+void Parser::expect_string_array()
+{
+	current = next();
+
+	if (current.type != STRING_LITERAL && current.type != COMMA && current.type != RCURLY)
+	{
+		Util::fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` )");
+	}
+}
+
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
 {
 	current = next();
