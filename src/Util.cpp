@@ -84,30 +84,6 @@ namespace Util
 		s = oss.str();
 	}
 
-	/*string replace_all_safe( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
-		string_view s,
-		string_view toReplace,
-		string_view replaceWith
-	) {
-		std::ostringstream oss;
-		oss.str().reserve(s.length());
-		std::size_t pos = 0;
-		std::size_t prevPos = pos;
-
-		while (true) {
-			prevPos = pos;
-			pos = s.find(toReplace, pos);
-			if (pos == string::npos)
-				break;
-			oss << s.substr(prevPos, pos - prevPos);
-			oss << replaceWith;
-			pos += toReplace.size();
-		}
-
-		oss << s.substr(prevPos);
-		return oss.str();
-	}*/
-
 	long long get_modified_time(const char *path)
 	{
 		struct stat attr;
@@ -168,12 +144,12 @@ namespace Util
 			if (mkdir(path, 0700) && errno != EEXIST)
 		#endif // OSCheck
 				fatal_error(0, string("Could not create folder \"") + path + "\"\n"
-				"Maybe try running mkdir "
+				"Maybe try running \"" BLUE
+				"mkdir "
 				#ifndef __WIN32
-				"-p "
+				GREEN "-p "
 				#endif // unix
-				+ path
-				+ "\n"
+				PURPLE + path + "\"" COLOR_RESET
 				);
 		}
 	} 

@@ -37,9 +37,7 @@ void Parser::include_array()
 			current_class->all_include_paths += "-I" + current.value + ' ';
 		}
 		else if (current.type == RECURSIVE)
-		{
 			include_recursive();
-		}
 	}
 }
 
@@ -85,7 +83,6 @@ skip_clear_libraries:
 		}
 	}
 }
-
 
 void Parser::files_array()
 {
