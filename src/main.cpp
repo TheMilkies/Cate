@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!file_name.empty() && !Util::ends_with(file_name, ".cate"))
+	if (!file_name.empty() && !ends_with(file_name, ".cate"))
 		file_name += ".cate";
 
 	if(catel_exists) parse_catel();

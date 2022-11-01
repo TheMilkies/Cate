@@ -6,6 +6,7 @@ class Project : public Class
 {
 public:
 	void build() override;
+
 	Project();
 	~Project();
 	/// @brief Generate the long command with `objects` as the objects

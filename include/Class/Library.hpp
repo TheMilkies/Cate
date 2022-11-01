@@ -6,6 +6,7 @@ class Library : public Class
 {
 public:
 	void build() override;
+
 	Library();
 	~Library();
 };

@@ -34,11 +34,10 @@ public:
 	
 	virtual ~Class() {};
 	virtual void build() = 0; //class defined
-	void clean();
 
-	void check(); //check if everything is okay
+	void clean();
 	void setup(); // set up directories and object files
-	void object_setup(); //set up files and object files.
+	void check(); //check if everything is okay
 	
 	void build_objects(); //build the objects
 	void create_directories();
@@ -47,16 +46,21 @@ public:
 	void add_library(string& value);
 	void set_property(int32_t line, string& property, string& value);
 
+	//other
+	void smolize();
+
+	inline void print_done(string_view name) {
+		std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
+	}
+private:
 	//threading
 	void build_object(int32_t i); 
 	vector<std::thread>threads;
 	string command_template;
 
-	//other
-	void smolize();
-	inline void print_done(string_view name) {
-		std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
-	}
+	void object_setup(); //set up files and object files.
+
+	string get_stripped_name();
 };
 
 #endif

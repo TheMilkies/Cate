@@ -57,6 +57,9 @@
 		"stop_token": "cpp",
 		"streambuf": "cpp",
 		"cinttypes": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"flexdef.h": "c",
+		"stdint.h": "c",
+		"stdlib.h": "c"
 	}
 }

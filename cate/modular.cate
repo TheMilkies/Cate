@@ -7,7 +7,7 @@ Library CateParser(dynamic);
 .incs = {"include"}
 .libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 .threading = true
-.build();
+.build()
 
 Library CateClass(dynamic);
 .compiler = "g++";
@@ -18,7 +18,7 @@ Library CateClass(dynamic);
 .incs = {"include"}
 .libs = {"stdc++fs"}
 .threading = true
-.build();
+.build()
 
 Project cate
 .compiler = "g++"
@@ -32,5 +32,5 @@ Project cate
 .smolize = true
 .build()
 
-system("cp out/libcateparser.so /usr/lib")
-system("cp out/libcateclass.so /usr/lib")
+system("cp out/libcateparser.so /usr/lib/libcateparser.so")
+system("cp out/libcateclass.so /usr/lib/libcateparser.so")

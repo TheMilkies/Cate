@@ -4,6 +4,8 @@
 #include "Class/Project.hpp"
 #include "Class/Library.hpp"
 
+using namespace Util;
+
 /*
 	why hello there!
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
@@ -18,7 +20,7 @@ Parser::Parser(const string& file_name)
 {
 	std::ifstream file(file_name);
 	if (file.fail())
-		Util::command_error("Cannot open file \"" + file_name + "\"");
+		command_error("Cannot open file \"" + file_name + "\"");
 	
 	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout); //create the lexer
 	tokens.reserve(128); //optimization
@@ -62,7 +64,7 @@ Parser::~Parser()
 void Parser::define(const string &identifier)
 {
 	if (is_defined(identifier))
-		Util::fatal_error(current.line, "\"" + identifier + "\" was already defined");
+		fatal_error(current.line, "\"" + identifier + "\" was already defined");
 	
 	//this is technically a factory... oh well
 	if (temp_type == PROJECT)
@@ -119,7 +121,7 @@ void Parser::parse()
 			parent = current.value;
 
 			if (!is_defined(parent))
-				Util::fatal_error(current.line, "\"" + parent + "\" is not defined.");
+				fatal_error(current.line, "\"" + parent + "\" is not defined.");
 
 			if (current_class->name != parent)
 				current_class = classes[parent];
@@ -163,13 +165,13 @@ void Parser::parse()
 		
 		case SYSTEM:
 			if (system_allowed)
-				Util::user_system(current.line, string_function().value);
+				user_system(current.line, string_function().value);
 			else
 				current = tokens[index += 3];
 			break;
 
 		default:
-			Util::error(current.line, "Did not expect " + token_names[current.type] + ".");
+			error(current.line, "Did not expect " + token_names[current.type] + ".");
 			break;
 		}
 
@@ -185,7 +187,7 @@ bool Parser::special_case()
 	if (child == "type")
 	{
 		current_class->is_static = expect_type();
-		current_class->needs_rebuild += (!Util::file_exists(current_class->out_name.c_str())); 
+		current_class->needs_rebuild += (!file_exists(current_class->out_name.c_str())); 
 		return true;
 	}
 	else if (child == "threading")

@@ -49,6 +49,8 @@ namespace Util
 	void user_system(int32_t line, string_view command);
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
+
+	void check_root();
 } // namespace Util
 
 #define highlight_func(x) YELLOW x COLOR_RESET
@@ -59,5 +61,7 @@ namespace Util
 /// @param a Path to check
 /// @param b Other path to check
 #define newer_than(a, b) (Util::get_modified_time(a.c_str()) < Util::get_modified_time(b.c_str()))
+#define string_find(x, text) (x.find(text) != string::npos)
+
 
 #endif

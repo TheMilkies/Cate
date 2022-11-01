@@ -153,4 +153,14 @@ namespace Util
 				);
 		}
 	}
+
+	//coming maybe soon
+	/*void check_root()
+	{
+		if (getuid() != 0)
+		{
+			Util::error("Catefile wants to install but user is not root.");
+			exit(2);
+		}
+	}*/
 } // namespace Util
