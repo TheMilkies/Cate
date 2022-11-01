@@ -152,5 +152,5 @@ namespace Util
 				PURPLE + path + "\"" COLOR_RESET
 				);
 		}
-	} 
+	}
 } // namespace Util

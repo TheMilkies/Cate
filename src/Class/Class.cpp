@@ -105,7 +105,10 @@ void Class::add_library(string& lib)
 	string path = lib.substr(0, position_of_last_slash+1);
 
 	if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
+	{
 		library_paths.insert(path);
+		all_libraries += "-L" + path + ' ';
+	}
 
 	//check if not static/local
 	if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
