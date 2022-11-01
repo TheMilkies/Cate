@@ -33,3 +33,6 @@ Project cate
 .threading = true
 .smolize = true
 .build()
+
+system("cp out/libcateparser.so /usr/lib")
+system("cp out/libcateclass.so /usr/lib")
