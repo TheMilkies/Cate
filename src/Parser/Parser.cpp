@@ -29,7 +29,7 @@ Parser::Parser(const string& file_name)
 	//Flex doesn't work in a way you might expect, so we make it easier to work with
 	while (temp.type = (ParserTokenKind)lexer->yylex()) 
 	{
-		temp.value = ""; //reset to save some memory
+		temp.value.clear(); //reset to save some memory
 		temp.line = lexer_line; //defined in lexer.l
 		
 		if (temp.type == STRING_LITERAL)
@@ -124,7 +124,10 @@ void Parser::parse()
 			if (current_class->name != parent)
 				current_class = classes[parent];
 
-			expect_and_then(DOT, IDENTIFIER);
+			expect(DOT); //will go automatically to DOT, no goto needed
+
+		case DOT:
+			expect(IDENTIFIER);
 			child = current.value;
 
 			//object_method: property function_parens
