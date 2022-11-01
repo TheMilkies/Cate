@@ -2,7 +2,7 @@
 
 %{
 	#include <iostream>
-	#include "ParserTokens.hpp"
+	#include "Parser/ParserTokens.hpp"
 	#include "Util.hpp"
 	using namespace std;
 	int lexer_line = 1;

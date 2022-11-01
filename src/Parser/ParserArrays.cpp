@@ -1,4 +1,4 @@
-#include "Parser.hpp"
+#include "Parser/Parser.hpp"
 
 void Parser::array()
 {
@@ -31,10 +31,14 @@ void Parser::include_array()
 	current_class->all_include_paths.clear();
 	while (current.type != RCURLY)
 	{
-		expect_string_array();
+		expect_string_recursive_array();
 		if (current.type == STRING_LITERAL)
 		{
 			current_class->all_include_paths += "-I" + current.value + ' ';
+		}
+		else if (current.type == RECURSIVE)
+		{
+			include_recursive();
 		}
 	}
 }
@@ -101,7 +105,7 @@ skip_clear_files:
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != RCURLY)
 	{
-		expect(STRING_LITERAL, RECURSIVE, COMMA, RCURLY);
+		expect_string_recursive_array();
 		if (current.type == RECURSIVE)
 		{
 			recursive();

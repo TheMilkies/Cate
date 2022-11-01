@@ -1,4 +1,4 @@
-#include "Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
+#include "Parser/Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
 
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser

@@ -1629,7 +1629,7 @@ static const yy_state_type yy_NUL_trans[76] = { 0,
 #line 1 "src/lexer.l"
 #line 4 "src/lexer.l"
 	#include <iostream>
-	#include "ParserTokens.hpp"
+	#include "Parser/ParserTokens.hpp"
 	#include "Util.hpp"
 	using namespace std;
 	int lexer_line = 1;

@@ -1,4 +1,4 @@
-#include "Parser.hpp"
+#include "Parser/Parser.hpp"
 
 void Parser::expect(ParserTokenKind type)
 {
@@ -75,6 +75,17 @@ void Parser::expect_string_array()
 	if (current.type != STRING_LITERAL && current.type != COMMA && current.type != RCURLY)
 	{
 		Util::fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` )");
+	}
+}
+
+void Parser::expect_string_recursive_array()
+{
+	current = next();
+
+	if (current.type != STRING_LITERAL && current.type != RECURSIVE && current.type != COMMA && current.type != RCURLY)
+	{
+		Util::fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` ) or "
+						 highlight_func("recursive()"));
 	}
 }
 

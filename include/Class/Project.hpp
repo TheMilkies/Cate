@@ -1,6 +1,6 @@
 #if !defined(Project_HPP)
 #define Project_HPP
-#include "Class.hpp"
+#include "Class/Class.hpp"
 
 class Project : public Class
 {

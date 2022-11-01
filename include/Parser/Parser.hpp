@@ -1,10 +1,10 @@
 #if !defined(Parser_HPP)
 #define Parser_HPP
 #include "Util.hpp"
-#include "ParserTokens.hpp"
-#include "Class.hpp"
+#include "Parser/ParserTokens.hpp"
+#include "Class/Class.hpp"
 
-#include <unordered_map>
+//#include <unordered_map>
 
 //from main.cpp
 extern bool parser_exit;
@@ -24,10 +24,14 @@ private:
 	void files_array();
 	void definitions_array();
 	void expect_string_array();
+	void expect_string_recursive_array();
 	
 	void declare();
 	void declare_library();
+
 	void recursive();
+	void include_recursive();
+
 	Class *current_class;
 	ParserTokenKind temp_type;
 

@@ -1,4 +1,4 @@
-#include "Class.hpp"
+#include "Class/Class.hpp"
 
 extern int32_t thread_count;
 

@@ -1,8 +1,8 @@
-#include "Parser.hpp"
-#include "Lexer.hpp"
+#include "Parser/Parser.hpp"
+#include "Parser/Lexer.hpp"
 
-#include "Project.hpp"
-#include "Library.hpp"
+#include "Class/Project.hpp"
+#include "Class/Library.hpp"
 
 /*
 	why hello there!
