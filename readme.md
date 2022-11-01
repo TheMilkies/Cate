@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.2/cate_2.4-0_amd64.deb
-sudo dpkg -i cate_2.4-0_amd64.deb
-rm cate_2.4-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.5/cate_2.5-0_amd64.deb
+sudo dpkg -i cate_2.5-0_amd64.deb
+rm cate_2.5-0_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.2/linux_cate_v2.4.0.zip
-unzip linux_cate_v2.4.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.5/linux_cate_v2.5.0.zip
+unzip linux_cate_v2.5.0.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -104,7 +104,7 @@ You've come this far! Good Job!
 Cate breaks most known build system conventions by forcing you to use multiple files for different targets and having a file extension (unlike CMake, Make, Autotools, and many more). For a debug build; you'll have a `debug.cate`. For a cross-platform build; you'll have a `platformname.cate`. 
 
 ### Syntax
-Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int literals (0123456789) as of yet (and hopefully forever).
+Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int literals (0123456789) as of yet (and hopefully forever). 
 
 **Cate does not support** `a.property = b.property;` **syntax**
 
@@ -136,6 +136,14 @@ library.out = "out/liblibrary.a";
 library.build();
 ```
 
+Cate (since 2.5) does not require the object names to be repeated.
+```css
+Project proj;
+.flags = "-O3";
+.files = "src/main.c";
+.build();
+```
+
 ### Properties
 Both classes have these properties, even if they don't make sense for the class
 
@@ -160,7 +168,7 @@ Both classes have these properties, even if they don't make sense for the class
 - `void clean()`: Deletes project/library's build directory.
 
 ### General functions
-- `Array<String> recursive(String path)`: Get all files in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
+- `Array<String> recursive(String path)`: Get all files (or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
 
 - - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
 - `void system(String command)`: Run command. Would be skipped if user runs Cate with the `-D` flag.
