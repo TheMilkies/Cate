@@ -102,7 +102,7 @@ void Parser::include_recursive()
 	string &path = rd.path;
 	bool &subrecursive = rd.subrecursive;
 
-	if (string_find(path, '*')) //if more than one foundallall
+	if (string_find(path, '*')) //if more than one found
 		fatal_error(current.line, "Multiple wildcards are not allowed");
 
 	current_class->all_include_paths += "-I" + path + ' ';

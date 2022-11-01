@@ -1,5 +1,7 @@
 #include "Parser/Parser.hpp"
 
+using namespace Util;
+
 void Parser::array()
 {
 	if(child == "files") //last edge case
@@ -20,7 +22,7 @@ void Parser::array()
 	}
 	else
 	{
-		Util::fatal_error(current.line, "\"" PURPLE + child + COLOR_RESET
+		fatal_error(current.line, "\"" PURPLE + child + COLOR_RESET
 			"\" cannot be set to an "
 			"array or is not a valid property name");
 	}
@@ -79,7 +81,7 @@ skip_clear_libraries:
 			if (is_defined(current.value))
 				current_class->add_library(classes[current.value]->out_name);
 			else
-				Util::fatal_error(current.line, "\"" + current.value + "\" is not defined");
+				fatal_error(current.line, "\"" + current.value + "\" is not defined");
 		}
 	}
 }

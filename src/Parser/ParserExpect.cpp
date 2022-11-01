@@ -1,12 +1,14 @@
 #include "Parser/Parser.hpp"
 
+using namespace Util;
+
 void Parser::expect(ParserTokenKind type)
 {
 	current = next(); //get next token to compare
 
 	if (current.type != type)
 	{
-		Util::error(current.line, "Expected " + token_names[type] +
+		error(current.line, "Expected " + token_names[type] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -17,7 +19,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 
 	if (current.type != type && current.type != type2)
 	{
-		Util::error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] +
+		error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -28,7 +30,7 @@ bool Parser::expect_bool()
 
 	if (current.type != B_TRUE && current.type != B_FALSE)
 	{
-		Util::fatal_error(current.line, "Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
+		fatal_error(current.line, "Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
 	}
 	return (current.type == B_TRUE);
 }
@@ -39,7 +41,7 @@ bool Parser::expect_type()
 
 	if (current.type != STATIC && current.type != DYNAMIC)
 	{
-		Util::error(current.line, "Expected a LibraryType (static | dynamic) value");
+		error(current.line, "Expected a LibraryType (static | dynamic) value");
 	}
 
 	return current.type == STATIC;
@@ -51,7 +53,7 @@ void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 
 	if (current.type != type && tokens[index+1].type != type2)
 	{
-		Util::error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
+		error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
 	}
 	
 	current = next();
@@ -63,7 +65,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3)
 	{
-		Util::fatal_error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		fatal_error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -74,7 +76,7 @@ void Parser::expect_string_array()
 
 	if (current.type != STRING_LITERAL && current.type != COMMA && current.type != RCURLY)
 	{
-		Util::fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` )");
+		fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` )");
 	}
 }
 
@@ -84,7 +86,7 @@ void Parser::expect_string_recursive_array()
 
 	if (current.type != STRING_LITERAL && current.type != RECURSIVE && current.type != COMMA && current.type != RCURLY)
 	{
-		Util::fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` ) or "
+		fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 highlight_func("recursive()"));
 	}
 }
@@ -95,7 +97,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
 	{
-		Util::error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" or " + token_names[type4] + " but got " + token_names[current.type]);
 	}
 }
@@ -106,7 +108,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4 && current.type != type5)
 	{
-		Util::error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" or " + token_names[type4] + " or " + token_names[type5] + " but got " + token_names[current.type]);
 	}
 }
@@ -118,7 +120,7 @@ void Parser::void_function()
 
 	if (current.type != RPAREN)
 	{
-		Util::error(current.line,
+		error(current.line,
 					"Missing ')'");
 	}
 }
@@ -131,7 +133,7 @@ ParserToken Parser::string_function()
 	ParserToken to_return = current;
 	if (tokens[index+1].type != RPAREN)
 	{
-		Util::error(current.line,
+		error(current.line,
 					"Missing ')'");
 	}
 
