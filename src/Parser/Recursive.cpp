@@ -49,8 +49,8 @@ void Parser::recursive()
 		return include_recursive();
 
 	if (child != "files")
-		Util::fatal_error(current.line, "only the " highlight_var("files")
-						" property can be set to result of recursive search.");
+		Util::fatal_error(current.line, "only the " highlight_var("files") " and " highlight_var("includes")
+						" properties can be set to result of recursive search.");
 	
 	recursive_setup();
 
@@ -96,8 +96,6 @@ void Parser::recursive()
 
 void Parser::include_recursive()
 {
-	current = string_function(); 
-
 	recursive_setup();
 	
 	string &path = rd.path;
