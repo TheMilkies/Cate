@@ -80,17 +80,18 @@ int main(int argc, char *argv[])
 
 					if(catel_exists) parse_catel();
 
-					std::cout << CYAN;
+					string all; all.reserve(64);
 					for (auto &p : fs::directory_iterator(dir)) //iterate over the files
 					{
+						if(catefiles) all += ", ";
 						if (p.path().extension() == ".cate")
 						{
-							std::cout << p.path().stem().string() << ", ";
+							all += p.path().stem().string();
 							catefiles = true;
 						}
 					}
 					if (catefiles)
-						std::cout << COLOR_RESET "\n";
+						std::cout << CYAN << all << COLOR_RESET "\n";
 					else
 						std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
 

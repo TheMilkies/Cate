@@ -30,6 +30,7 @@ private:
 	void declare_library();
 
 	void recursive();
+	void recursive_setup();
 	void include_recursive();
 
 	Class *current_class;

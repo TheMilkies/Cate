@@ -1,10 +1,10 @@
 Project cate;
-cate.compiler = "g++"
-cate.files = recursive("src/**.cpp")
-cate.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast "
-cate.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
-cate.build_directory = "cate/build"
-cate.incs = {"include"}
-cate.threading = true
-cate.out = "out/cate"
-cate.build()
+.compiler = "g++"
+.files = recursive("src/**.cpp")
+.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast "
+.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
+.build_directory = "cate/build"
+.incs = {"include"}
+.threading = true
+.out = "out/cate"
+.build()

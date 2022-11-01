@@ -1,42 +1,63 @@
 #include "Parser/Parser.hpp"
 #define string_find(x, text) (x.find(text) != string::npos)
 
-void Parser::recursive()
+static struct
 {
-	if(child == "incs" || child == "includes" || child == "include_paths")
-	{
-		return include_recursive();
-	}
+	string path;
+	int32_t location_of_wildcard = 0;
+	bool subrecursive;
+} rd;
 
-	if (child != "files")
-		Util::fatal_error(current.line, "only the " highlight_var("files")
-						" property can be set to result of recursive search.");
-	
+void Parser::recursive_setup()
+{
 	current = string_function(); 
 
 	if (current.value.empty()) //should NEVER happen
 		Util::fatal_error(current.line, highlight_func("recursive()")
 		" was given an empty string literal");
-	
-	//wildcard stuff
-	int32_t location_of_wildcard = current.value.find('*');
-	bool subrecursive = false;
 
-	if (location_of_wildcard == string::npos) //if not found
+	rd.location_of_wildcard = current.value.find('*');
+	rd.subrecursive = false;
+
+	if (rd.location_of_wildcard == string::npos) //if not found
 		Util::error("Wildcard (*) was not found in " highlight_func("recursive()"));
 
-	if (current.value[location_of_wildcard+1] == '/')
+	if (current.value[rd.location_of_wildcard+1] == '/')
 		Util::error(highlight_func("recursive()")
 			" does not support folder recursion (f/*/*.c). Use subrecursive (f/**.c)");
 	
-	if (current.value[location_of_wildcard+1] == '*')
+	if (current.value[rd.location_of_wildcard+1] == '*')
 	{
-		++location_of_wildcard;
-		subrecursive = true;
+		++rd.location_of_wildcard;
+		rd.subrecursive = true;
 	}
+
+	rd.path = current.value.substr(0, rd.location_of_wildcard - rd.subrecursive); //extract path
 	
-	string path = current.value.substr(0, location_of_wildcard - subrecursive), //extract path
-				  extension = current.value.substr(location_of_wildcard+1); //extract extension
+	Util::replace_all(rd.path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
+
+	if (!fs::is_directory(rd.path)) //check if directory exists
+	{
+		if(!rd.path.empty())
+			Util::fatal_error(current.line, "Directory \"" + rd.path + "\" doesn't exist");
+	}
+}
+
+void Parser::recursive()
+{
+	if(child == "incs" || child == "includes" || child == "include_paths")
+		return include_recursive();
+
+	if (child != "files")
+		Util::fatal_error(current.line, "only the " highlight_var("files")
+						" property can be set to result of recursive search.");
+	
+	recursive_setup();
+
+	string &path = rd.path;
+	bool &subrecursive = rd.subrecursive;
+
+	string extension = current.value.substr(rd.location_of_wildcard+1); //extract extension
 	
 	if (extension.empty())
 	{
@@ -48,14 +69,6 @@ void Parser::recursive()
 	{
 		Util::fatal_error(current.line, highlight_func("recursive()")
 		   " does not allow \"all file extensions\" (.*) recursion.");
-	}
-	
-	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
-
-	if (!fs::is_directory(path)) //check if directory exists
-	{
-		if(!path.empty())
-			Util::fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
 	}
 
 	if (string_find(path, '*') || string_find(extension, '*')) //if more than one found
@@ -85,36 +98,10 @@ void Parser::include_recursive()
 {
 	current = string_function(); 
 
-	if (current.value.empty()) //should NEVER happen
-		Util::fatal_error(current.line, highlight_func("recursive()")
-		" was given an empty string literal");
+	recursive_setup();
 	
-	//wildcard stuff
-	int32_t location_of_wildcard = current.value.find('*');
-	bool subrecursive = false;
-
-	if (location_of_wildcard == string::npos) //if not found
-		Util::error("Wildcard (*) was not found in " highlight_func("recursive()"));
-
-	if (current.value[location_of_wildcard+1] == '/')
-		Util::error(highlight_func("recursive()")
-			" does not support folder recursion (f/*/). Use subrecursive (f/**)");
-	
-	if (current.value[location_of_wildcard+1] == '*')
-	{
-		++location_of_wildcard;
-		subrecursive = true;
-	}
-	
-	string path = current.value.substr(0, location_of_wildcard - subrecursive);
-
-	Util::replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
-
-	if (!fs::is_directory(path)) //check if directory exists
-	{
-		if(!path.empty())
-			Util::fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
-	}
+	string &path = rd.path;
+	bool &subrecursive = rd.subrecursive;
 
 	if (string_find(path, '*')) //if more than one foundallall
 		Util::fatal_error(current.line, "Multiple wildcards are not allowed");

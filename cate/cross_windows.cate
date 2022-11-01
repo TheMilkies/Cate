@@ -1,17 +1,17 @@
 //wincate, cross build from a better os
 
 Project cate
-cate.compiler = "x86_64-w64-mingw32-g++" //fight me
-cate.files = {recursive("src/*.cpp")}
+.compiler = "x86_64-w64-mingw32-g++" //fight me
+.files = {recursive("src/*.cpp")}
 
 //the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
-cate.build_directory = "cate/build"
-cate.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast -static"
-cate.libs = {"externals/windows_libfl.a"} //use the static library because i hate windows dlls
+.build_directory = "cate/build"
+.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast -static"
+.libs = {"externals/windows_libfl.a"} //use the static library because i hate windows dlls
 
-cate.incs = {"include"}
-cate.threading = true
-cate.smolize = true //save a few hundred kilobytes
-cate.out = "out/cate.exe"
+.incs = {"include"}
+.threading = true
+.smolize = true //save a few hundred kilobytes
+.out = "out/.exe"
 
-cate.build()
+.build()
