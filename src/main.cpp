@@ -58,71 +58,80 @@ int main(int argc, char *argv[])
 		{
 			if (argv[i][0] == '-')
 			{
-				switch (argv[i][1]) //check the second character of the argument
+			switch (argv[i][1]) //check the second character of the argument
+			{
+			//case 'j': //uncomment this if you want compatibility with naje
+			case 't': {
+				char* num;
+
+				if(argv[i][2] != NULL)
+					num = argv[i]+2;
+				else if(argv[i+1] != NULL)
+					num = argv[++i]; //skip next because it's an int
+				else
+					command_error("Missing argument \"-t\"");
+
+				int sub = atoi(num); //get everything after "-t"
+				if (sub != 0) //if 0 or invalid
+					thread_count = sub;
+
+				//std::cout << thread_count << '\n;//debug
+
+			}	break;
+
+			case 'v': //cate version
+				std::cout << CATE_VERSION "\n";
+				return 0; //exit after
+				break;
+
+			case 'l':{ //list directory
+				bool catefiles = false;
+
+				if(catel_exists) parse_catel();
+
+				string all; all.reserve(64);
+				for (const auto &p : fs::directory_iterator(dir)) //iterate over the files
 				{
-				case 't': {
-					if (argv[i+1] == NULL && argv[i][2] == NULL) //if just "-t"
-						command_error("Missing argument \"-t\"");
-					
-					int sub = atoi((char*) (argv[i] + 2)); //get everything after "-t"
-					if (sub != 0) //if 0 or invalid
-						thread_count = sub;
-					
-				}	break;
-
-				case 'v': //cate version
-					std::cout << CATE_VERSION "\n";
-					return 0; //exit after
-					break;
-
-				case 'l':{ //list directory
-					bool catefiles = false;
-
-					if(catel_exists) parse_catel();
-
-					string all; all.reserve(64);
-					for (auto &p : fs::directory_iterator(dir)) //iterate over the files
+					if(catefiles) all += ", ";
+					if (p.path().extension() == ".cate")
 					{
-						if(catefiles) all += ", ";
-						if (p.path().extension() == ".cate")
-						{
-							all += p.path().stem().string();
-							catefiles = true;
-						}
+						all += p.path().stem().string();
+						catefiles = true;
 					}
-					if (catefiles)
-						std::cout << CYAN << all << COLOR_RESET "\n";
-					else
-						std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
-
-					return 0;
-				} break;
-				
-				case 'h':
-				case '?': //shows help
-					help();
-					return 0; //exit after
-					break;
-				
-				case 'D': //disable system
-					system_allowed = false;
-					break;
-				
-				case 'S': //disable system
-					force_smol = true;
-					break;
-
-				case 'f': //force rebuild
-					force_rebuild = true;
-					break;
-			
-				default: //unknown
-					command_error(
-						string("Unknown argument \"") + argv[i] + "\", "
-							   "Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
-					);
-					break;
 				}
+				if (catefiles)
+					std::cout << CYAN << all << COLOR_RESET "\n";
+				else
+					std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
+
+				return 0;
+			} break;
+			
+			case 'h':
+			case '?': //shows help
+				help();
+				return 0; //exit after
+				break;
+			
+			case 'D': //disable system
+				system_allowed = false;
+				break;
+			
+			case 'S': //disable system
+				force_smol = true;
+				break;
+
+			case 'f': //force rebuild
+				force_rebuild = true;
+				break;
+		
+			default: //unknown
+				command_error(
+					string("Unknown argument \"") + argv[i] + "\", "
+							"Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
+				);
+				break;
+			}
 			}
 			else //must be a filename now
 			{
@@ -142,10 +151,10 @@ int main(int argc, char *argv[])
 	if(file_name.empty())
 	{
 		if (!get_default_file_name() || file_name.empty())
-		{
 			command_error("No input file");
-		}
 	}
+
+	//std::cout << file_name << '\n; //debug
 
 	Parser* parser = new Parser(file_name);
 
