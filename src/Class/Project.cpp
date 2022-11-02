@@ -9,21 +9,8 @@ void Project::build()
 	//one file
 	if(files.size() == 1)
 	{
-		if(newer_than(out_name, files[0]))
-		{
-			check();
-
-			create_directories();
-
-			files[0] += ' ';
-
-			Util::system (
-				//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
-				command_gen(files[0])
-			);
-			goto done;
-		}
-		already_built = true;
+		single_file_build();
+		goto done;
 	}
 
 	//multi file
@@ -49,6 +36,26 @@ void Project::build()
 done:
 	smolize();
 	print_done(name);
+}
+
+void Project::single_file_build()
+{
+	string& file = files[0];
+	if(newer_than(out_name, file))
+	{
+		if(!already_built) check();
+
+		create_directories();
+
+		file += ' ';
+
+		Util::system (
+			//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
+			command_gen(file)
+		);
+
+		already_built = true;
+	}
 }
 
 inline string Project::command_gen(string& objects)

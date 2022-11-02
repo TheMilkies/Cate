@@ -6,6 +6,7 @@ class Project : public Class
 {
 public:
 	void build() override;
+	void single_file_build();
 
 	Project();
 	~Project();
