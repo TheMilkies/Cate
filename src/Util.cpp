@@ -16,41 +16,43 @@ extern bool parser_exit;
 
 #define ERROR RED BOLD "Error" COLOR_RESET
 
+using std::cout;
+
 namespace Util
 {
 	void error(string_view problem)
 	{
-		std::cout << ERROR ": " << problem << "\n";
+		cout << ERROR ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void lexer_error(string problem)
 	{
-		std::cout << ERROR " in line " << lexer_line << ": " << problem << "\n";
+		cout << ERROR " in line " << lexer_line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void error(int32_t line, string_view problem)
 	{
-		std::cout << ERROR " in line " << line << ": " << problem << "\n";
+		cout << ERROR " in line " << line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void fatal_error(int32_t line, string_view problem)
 	{
-		std::cout << ERROR " in line " << line << ": " << problem << "\nTerminating.\n";
+		cout << ERROR " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);
 	}
 
 	void command_error(string_view problem)
 	{
-		std::cout << ERROR " in command: " << problem << "\n";
+		cout << ERROR " in command: " << problem << "\n";
 		exit(1);
 	}
 
 	void build_error(string_view name, string_view problem)
 	{
-		std::cout <<  ERROR ": Cannot build \""
+		cout <<  ERROR ": Cannot build \""
 						  << name << "\" because " << problem << "\nTerminating.\n";
 		exit(1);
 	}
@@ -102,7 +104,7 @@ namespace Util
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
-			std::cout << ERROR ": Error in build command.\n";
+			cout << ERROR ": Error in build command.\n";
 			exit(1);
 		}
 	}
@@ -112,14 +114,15 @@ namespace Util
 		if (command.empty()) return;
 		
 		int32_t ret = std::system(command.data());
+		int32_t exit_status = WEXITSTATUS(ret);
 
-		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
+		if (WIFEXITED(ret) && exit_status != 0)
 		{
-			std::cout << ERROR " in " highlight_func("system") " call ran by line " << line << ".\n"
-								  "Ran \"" << command << "\"\nExited with code " << WEXITSTATUS(ret) << '\n';
+			cout << ERROR " in " highlight_func("system") " call ran by line " << line << ".\n"
+			"Ran \"" << command << "\"\nExited with code " << exit_status << '\n';
 		}
 
-		std::cout << command << "\n";
+		cout << command << "\n";
 	}
 
 	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow, should be rewritten

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <algorithm>
 #include <sstream>
 
 #if __has_include(<experimental/filesystem>)

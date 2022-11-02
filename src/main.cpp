@@ -141,13 +141,8 @@ int main(int argc, char *argv[])
 
 	if(file_name.empty())
 	{
-		if (get_default_file_name())
+		if (!get_default_file_name() || file_name.empty())
 		{
-			if(file_name.empty()) goto no_file; // don't ask
-		}
-		else
-		{
-			no_file:
 			command_error("No input file");
 		}
 	}
@@ -189,6 +184,12 @@ bool get_default_file_name()
 	{
 		std::cout << "No catefiles found, but found a makefile.\nRunning Make\n";
 		system("make -j" + std::to_string(thread_count));
+		return true;
+	}
+	else if(file_exists("CMakeLists.txt"))
+	{
+		std::cout << "No catefiles found, but found CMake.\nRunning CMake\n";
+		system("mkdir build;cd build;make -j" + std::to_string(thread_count));
 		return true;
 	}
 }*/

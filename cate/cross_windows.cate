@@ -6,8 +6,8 @@ Project cate
 
 //the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
 .build_directory = "cate/build"
-.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast -static"
-.libs = {"externals/windows_libfl.a"} //use the static library because i hate windows dlls
+.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast -static"
+.libs = {"externals/windows_libfl.a", "stdc++fs"} //use the static library because i hate windows dlls
 
 .incs = {"include"}
 .threading = true

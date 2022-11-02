@@ -28,10 +28,12 @@ void Class::clean()
 	if (out_dir.empty())
 		out_dir = "build";
 
+	string command =
 #ifdef __WIN32
-	string command = "del -f -q " + out_dir + "/*" OBJ_EXTENSION;	
+	"del -f -q "	
 #else
-	string command = "rm -f " + out_dir + "/*" OBJ_EXTENSION;
+	"rm -f " 
 #endif // OS Check
+	+ out_dir + "/*" OBJ_EXTENSION;
 	Util::system(command);
 }

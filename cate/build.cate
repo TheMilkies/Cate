@@ -1,7 +1,7 @@
-Project cate;
+Project cate
 .compiler = "g++"
 .files = recursive("src/**.cpp")
-.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast "
+.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 .build_directory = "cate/build"
 .incs = {"include"}
