@@ -36,7 +36,7 @@ void Parser::include_array()
 		expect_string_recursive_array();
 		if (current.type == STRING_LITERAL)
 		{
-			current_class->all_include_paths += "-I" + current.value + ' ';
+			current_class->add_include(current.value);
 		}
 		else if (current.type == RECURSIVE)
 			include_recursive();

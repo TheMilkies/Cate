@@ -2,6 +2,9 @@
 
 using namespace Util;
 
+#define sub_file_iterator(p) for (const auto& p : fs::recursive_directory_iterator(path))
+#define file_iterator(p) for (const auto& p : fs::directory_iterator(path))
+
 static struct
 {
 	string path;
@@ -13,34 +16,38 @@ void Parser::recursive_setup()
 {
 	current = string_function(); 
 
+	string &path = rd.path;
+	bool &subrecursive = rd.subrecursive;
+	int32_t &location_of_wildcard = rd.location_of_wildcard;
+
 	if (current.value.empty()) //should NEVER happen
 		fatal_error(current.line, highlight_func("recursive()")
 		" was given an empty string literal");
 
-	rd.location_of_wildcard = current.value.find('*');
-	rd.subrecursive = false;
+	location_of_wildcard = current.value.find('*');
+	subrecursive = false;
 
-	if (rd.location_of_wildcard == string::npos) //if not found
+	if (location_of_wildcard == string::npos) //if not found
 		error("Wildcard (*) was not found in " highlight_func("recursive()"));
 
-	if (current.value[rd.location_of_wildcard+1] == '/')
+	if (current.value[location_of_wildcard+1] == '/')
 		error(highlight_func("recursive()")
 			" does not support folder recursion (f/*/*.c). Use subrecursive (f/**.c)");
 	
-	if (current.value[rd.location_of_wildcard+1] == '*')
+	if (current.value[location_of_wildcard+1] == '*')
 	{
-		++rd.location_of_wildcard;
-		rd.subrecursive = true;
+		++location_of_wildcard;
+		subrecursive = true;
 	}
 
-	rd.path = current.value.substr(0, rd.location_of_wildcard - rd.subrecursive); //extract path
+	path = current.value.substr(0, location_of_wildcard - subrecursive); //extract path
 	
-	replace_all(rd.path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
+	replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
-	if (!fs::is_directory(rd.path)) //check if directory exists
+	if (!fs::is_directory(path)) //check if directory exists
 	{
-		if(!rd.path.empty())
-			fatal_error(current.line, "Directory \"" + rd.path + "\" doesn't exist");
+		if(!path.empty())
+			fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
 	}
 }
 
@@ -57,6 +64,8 @@ void Parser::recursive()
 
 	string &path = rd.path;
 	bool &subrecursive = rd.subrecursive;
+
+	vector<string>& files = current_class->files;
 
 	string extension = current.value.substr(rd.location_of_wildcard+1); //extract extension
 	
@@ -77,20 +86,20 @@ void Parser::recursive()
 
 	if (subrecursive)
 	{
-		for (const auto &p : fs::recursive_directory_iterator(path)) //iterate over the files
+		sub_file_iterator(p) //iterate over the files
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)
-				current_class->files.emplace_back(p.path().string());
+				files.emplace_back(p.path().string());
 		}
 	}
 	else
 	{
-		for (const auto &p : fs::directory_iterator(path)) //iterate over the files
+		file_iterator(p) //uses p
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)
-				current_class->files.emplace_back(p.path().string());
+				files.emplace_back(p.path().string());
 		}
 	}
 }
@@ -105,22 +114,22 @@ void Parser::include_recursive()
 	if (string_find(path, '*')) //if more than one found
 		fatal_error(current.line, "Multiple wildcards are not allowed");
 
-	current_class->all_include_paths += "-I" + path + ' ';
+	current_class->add_include(path);
 
 	if(subrecursive)
 	{
-		for (const auto& p : fs::recursive_directory_iterator(path))
+		sub_file_iterator(p)
 		{
 			if(fs::is_directory(p.path()))
-				current_class->all_include_paths += "-I" + p.path().string() + ' ';
+				current_class->add_include(p.path().string());
 		}
 	}
 	else
 	{
-		for (const auto& p : fs::directory_iterator(path))
+		file_iterator(p)
 		{
 			if(fs::is_directory(p.path()))
-				current_class->all_include_paths += "-I" + p.path().string() + ' ';
+				current_class->add_include(p.path().string());
 		}
 	}
 }

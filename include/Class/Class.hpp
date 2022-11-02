@@ -49,6 +49,10 @@ public:
 	//other
 	void smolize();
 
+	inline void add_include(const string& path) {
+		all_include_paths += "-I" + path + ' ';
+	}
+
 	inline void print_done(string_view name) {
 		std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 	}
