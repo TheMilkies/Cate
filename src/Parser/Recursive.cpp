@@ -28,10 +28,10 @@ void Parser::recursive_setup()
 	subrecursive = false;
 
 	if (location_of_wildcard == string::npos) //if not found
-		error("Wildcard (*) was not found in " highlight_func("recursive()"));
+		fatal_error(current.line, "Wildcard (*) was not found in " highlight_func("recursive()"));
 
 	if (current.value[location_of_wildcard+1] == '/')
-		error(highlight_func("recursive()")
+		fatal_error(current.line, highlight_func("recursive()")
 			" does not support folder recursion (f/*/*.c). Use subrecursive (f/**.c)");
 	
 	if (current.value[location_of_wildcard+1] == '*')
@@ -58,7 +58,7 @@ void Parser::recursive()
 
 	if (child != "files")
 		fatal_error(current.line, "only the " highlight_var("files") " and " highlight_var("includes")
-						" properties can be set to result of recursive search.");
+				" properties can be set to result of recursive search.");
 	
 	recursive_setup();
 
@@ -95,7 +95,7 @@ void Parser::recursive()
 	}
 	else
 	{
-		file_iterator(p) //uses p
+		file_iterator(p)
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)

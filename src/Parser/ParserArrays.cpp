@@ -4,7 +4,7 @@ using namespace Util;
 
 void Parser::array()
 {
-	if(child == "files") //last edge case
+	if(child == "files")
 	{
 		files_array();
 	}
@@ -35,9 +35,7 @@ void Parser::include_array()
 	{
 		expect_string_recursive_array();
 		if (current.type == STRING_LITERAL)
-		{
 			current_class->add_include(current.value);
-		}
 		else if (current.type == RECURSIVE)
 			include_recursive();
 	}
@@ -63,13 +61,13 @@ void Parser::library_array()
 	if (first) //this saves a bit of time
 	{
 		first = false;
-		goto skip_clear_libraries;
+	}
+	else
+	{
+		current_class->all_libraries.clear();
+		current_class->all_library_paths.clear();
 	}
 
-	current_class->all_libraries.clear();
-	current_class->all_library_paths.clear();
-
-skip_clear_libraries:
 	while (current.type != RCURLY)
 	{
 		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
@@ -95,13 +93,14 @@ void Parser::files_array()
 	if (first_clear)
 	{
 		first_clear = false;
-		goto skip_clear_files;
 	}
-	current_class->files.clear();
-	current_class->all_object_files.clear();
-	current_class->object_files.clear();
+	else
+	{
+		current_class->files.clear();
+		current_class->all_object_files.clear();
+		current_class->object_files.clear();
+	}
 	
-skip_clear_files:
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
 	while (current.type != RCURLY)
 	{
