@@ -45,13 +45,14 @@ void Parser::include_array()
 
 void Parser::definitions_array()
 {
-	current_class->all_definitions.clear();
+	string& definitions = current_class->all_definitions;
+	definitions.clear();
 	while (current.type != RCURLY)
 	{
 		expect_string_array();
 		if (current.type == STRING_LITERAL)
 		{
-			current_class->all_definitions += "-D" + current.value + ' ';
+			definitions += "-D" + current.value + ' ';
 		}
 	}
 }

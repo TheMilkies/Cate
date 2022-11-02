@@ -14,50 +14,45 @@ extern bool parser_exit;
 	#define WEXITSTATUS(status) (((status) & 0xff00) >> 8)
 #endif // __WIN32
 
+#define ERROR RED BOLD "Error" COLOR_RESET
+
 namespace Util
 {
 	void error(string_view problem)
 	{
-		std::cout << RED BOLD "Error" COLOR_RESET ": " << problem << "\n";
+		std::cout << ERROR ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void lexer_error(string problem)
 	{
-		std::cout << RED BOLD "Error" COLOR_RESET " in line " << lexer_line << ": " << problem << "\n";
+		std::cout << ERROR " in line " << lexer_line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void error(int32_t line, string_view problem)
 	{
-		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\n";
+		std::cout << ERROR " in line " << line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void fatal_error(int32_t line, string_view problem)
 	{
-		std::cout << RED BOLD "Error" COLOR_RESET " in line " << line << ": " << problem << "\nTerminating.\n";
+		std::cout << ERROR " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);
 	}
 
 	void command_error(string_view problem)
 	{
-		std::cout << RED BOLD "Error" COLOR_RESET " in command: " << problem << "\n";
+		std::cout << ERROR " in command: " << problem << "\n";
 		exit(1);
 	}
 
 	void build_error(string_view name, string_view problem)
 	{
-		std::cout <<  RED BOLD "Error" COLOR_RESET ": Cannot build \""
+		std::cout <<  ERROR ": Cannot build \""
 						  << name << "\" because " << problem << "\nTerminating.\n";
 		exit(1);
-	}
-
-	string remove_quotes(string &s) 
-	{
-		s.erase(0, 1); //remove first char
-		s.pop_back(); //remove last char
-		return s;
 	}
 
 	void replace_all( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
@@ -88,7 +83,7 @@ namespace Util
 	{
 		struct stat attr;
 		if (stat(path, &attr) != 0) //check if file exists
-			return 0; //will always recompile since file doesn't exist
+			return 0; //will always recompile since object file doesn't exist
 
 		//return last modified time
 	#ifdef __WIN32
@@ -101,14 +96,13 @@ namespace Util
 	//no system_allowed check here because it's ran by build threads
 	void system(string_view command)
 	{
-		if (command.empty())
-			return;
+		if (command.empty()) return;
 
 		int32_t ret = std::system(command.data());
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
-			std::cout << RED BOLD "Error" COLOR_RESET ": Error in build command.\n";
+			std::cout << ERROR ": Error in build command.\n";
 			exit(1);
 		}
 	}
@@ -121,7 +115,7 @@ namespace Util
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
-			std::cout << RED BOLD "Error" COLOR_RESET " in " highlight_func("system") " call ran by line " << line << ".\n"
+			std::cout << ERROR " in " highlight_func("system") " call ran by line " << line << ".\n"
 								  "Ran \"" << command << "\"\nExited with code " << WEXITSTATUS(ret) << '\n';
 		}
 

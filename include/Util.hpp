@@ -27,7 +27,6 @@ namespace Util
 	void build_error(string_view name, string_view problem);
 
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
-	string remove_quotes(string &s);
 
 	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
