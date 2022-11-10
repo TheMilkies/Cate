@@ -85,20 +85,6 @@ void Parser::declare()
 	define(current.value);
 }
 
-void Parser::declare_library()
-{
-	/* library_declaration: library identifier '(' lib_type ')' {
-			define(type, identifier);
-			current.type = lib_type;
-		} */
-
-	declare(); //already wrote that code, reusing it.
-
-	expect(LPAREN);
-	current_class->is_static = expect_type(); //if current token is static, set the type to static.
-	expect(RPAREN);
-}
-
 void Parser::parse()
 {
 	current = next(); //gets the first token (0)
@@ -113,7 +99,10 @@ void Parser::parse()
 			break;
 
 		case LIBRARY:
-			declare_library();
+			declare();
+			expect(LPAREN);
+			current_class->is_static = expect_type(); //will set to static if static
+			expect(RPAREN);
 			break;
 
 		case IDENTIFIER:
@@ -167,7 +156,7 @@ void Parser::parse()
 			if (system_allowed)
 				user_system(current.line, string_function().value);
 			else
-				current = tokens[index += 3];
+				current = tokens[index += 3]; // skip
 			break;
 
 		default:

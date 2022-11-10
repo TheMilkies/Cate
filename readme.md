@@ -114,9 +114,9 @@ Project project;
 project.files = {"src/main.c"};
 project.includes = {"include"};
 project.libs = {/*add libraries here*/};
-project.flags = "-O2";
+project.flags = "/*flags here*/";
 project.smol = true;
-project.out = "project";
+project.out = "/*out name here*/";
 
 project.build();
 ```
@@ -148,6 +148,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `Array<String> files`: Files of the project/library. No default.
 - `Array<String> incs|includes|include_paths`: Include paths of the project/library. Defaults to `"include/"` if present.
+- `Array<String> defs|defines|definitions`: Definitions. Default is set by the compiler. 
 
 - `String out`: The output file name. Defaults to identifier.
 - `String compiler`: The compiler to use. Default is `cc`.

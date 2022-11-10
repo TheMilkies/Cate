@@ -27,8 +27,7 @@ private:
 	void expect_string_recursive_array();
 	
 	void declare();
-	void declare_library();
-
+	
 	void recursive();
 	void recursive_setup();
 	void include_recursive();

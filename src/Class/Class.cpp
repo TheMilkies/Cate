@@ -7,7 +7,7 @@ extern bool force_rebuild, force_smol;
 Class::Class()
 {
 	//these should be enough for most small/medium-sized projects
-	name.reserve(16);
+	name.reserve(32);
 	files.reserve(32);
 	object_files.reserve(32);
 	library_paths.reserve(32);
@@ -15,7 +15,7 @@ Class::Class()
 	threads.reserve(thread_count * 4);
 
 	all_include_paths.reserve(256);
-	all_library_paths.reserve(64);
+	all_library_paths.reserve(128);
 	all_object_files.reserve(512);
 	all_definitions.reserve(256);
 
@@ -75,7 +75,7 @@ void Class::build_objects()
 	//if (already_built) return; //i don't think this is needed
 
 	if (thread_count >= files.size()) //this is very important.
-		thread_count = files.size();
+		thread_count  = files.size();
 
 	command_template.reserve(512);
 	command_template = compiler + ' ' + flags + ' ' + all_definitions + all_include_paths + "-c "; //this is a nice optimization
