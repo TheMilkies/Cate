@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 			{
 			switch (argv[i][1]) //check the second character of the argument
 			{
-			//case 'j': //uncomment this if you want compatibility with naje
+			//case 'j': //uncomment this if you want compatibility with nake
 			case 't': {
 				char* num;
 
@@ -171,17 +171,11 @@ bool get_default_file_name()
 {
 	using namespace Util;
 	if (file_exists("build.cate"))
-	{
 		file_name = "build.cate";
-	}
 	else if(file_exists("cate/build.cate"))
-	{
 		file_name = "cate/build.cate";
-	}
 	else
-	{
 		return false;
-	}
 	return true;
 }
 

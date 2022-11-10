@@ -49,23 +49,21 @@ void Parser::definitions_array()
 	{
 		expect_string_array();
 		if (current.type == STRING_LITERAL)
-		{
 			definitions += "-D" + current.value + ' ';
-		}
 	}
 }
 
 void Parser::library_array()
 {
 	static bool first = true;
-	if (first) //this saves a bit of time
-	{
-		first = false;
-	}
-	else
+	if (!first) //this saves a bit of time
 	{
 		current_class->all_libraries.clear();
 		current_class->all_library_paths.clear();
+	}
+	else
+	{
+		first = false;
 	}
 
 	while (current.type != RCURLY)
@@ -90,15 +88,15 @@ void Parser::files_array()
 	//now files
 	vector<string>& current_property = current_class->files;
 	static bool first_clear = true;
-	if (first_clear)
-	{
-		first_clear = false;
-	}
-	else
+	if (!first_clear)
 	{
 		current_class->files.clear();
 		current_class->all_object_files.clear();
 		current_class->object_files.clear();
+	}
+	else
+	{
+		first_clear = false;
 	}
 	
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.

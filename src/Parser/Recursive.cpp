@@ -46,8 +46,7 @@ void Parser::recursive_setup()
 
 	if (!fs::is_directory(path)) //check if directory exists
 	{
-		if(!path.empty())
-			fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
+		fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
 	}
 }
 
@@ -72,7 +71,7 @@ void Parser::recursive()
 	if (extension.empty())
 	{
 		fatal_error(current.line, highlight_func("recursive()")
-							" was not given an extension to find.");
+				" was not given an extension to find.");
 	}
 
 	if (extension == ".*")
