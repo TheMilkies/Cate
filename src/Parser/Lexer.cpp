@@ -300,10 +300,6 @@ int yyFlexLexer::yywrap() { return 1;}
 
 /* %% [1.5] DFA */
 
-/* START of m4 controls */
-/* M4_MODE_NULTRANS */
-/* END of m4 controls */
-
 /* START of Flex-generated definitions */
 #define YY_NUM_RULES 27
 #define YY_END_OF_BUFFER 28
@@ -343,12 +339,6 @@ struct yy_trans_info
 /* %% [2.0] data tables for the DFA are inserted here */
 
 /* footprint: 1216 bytes */
-
-/* m4 controls begin */
-/* M4_MODE_HAS_BACKING_UP */
-/* M4_MODE_NEED_YY_CP */
-/* M4_MODE_NULTRANS_WRAP */
-/* m4 controls end */
 
 static const flex_int16_t yy_nxt[][128] =
 {
@@ -1835,7 +1825,7 @@ YY_DECL {
 			(yy_last_accepting_cpos) = yy_cp;
 		}
 
-				yy_cp++;
+				++yy_cp;
 			}
 			yy_current_state = -yy_current_state;
 
@@ -2610,7 +2600,7 @@ int yyFlexLexer::yyinput()
 void yyFlexLexer::yyrestart( std::istream& input_file )
 
 {
-		size_t new_size = 0;
+        size_t new_size = 0;
 	yy_state_type *new_state_buf = 0;
 
 	if ( yy_current_buffer() == NULL ) {
@@ -2651,7 +2641,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
 void yyFlexLexer::yy_switch_to_buffer( yybuffer new_buffer )
 
 {
-		size_t new_size = 0;
+        size_t new_size = 0;
 	yy_state_type *new_state_buf = 0;
 
 	/* TODO. We should be able to replace this entire function body
@@ -3010,4 +3000,3 @@ static int yy_flex_strlen (const char * s )
 
 
 #line 67 "src/lexer.l"
-
