@@ -1,18 +1,18 @@
-Library CateParser(dynamic);
-.compiler = "g++";
-.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast";
-.out = "out/libcateparser.so";
-.files = {recursive("src/Parser/*.cpp")};
+Library CateParser(dynamic)
+.compiler = "g++"
+.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
+.out = "out/libcateparser.so"
+.files = recursive("src/Parser/*.cpp")
 .obj_dir = "cate/build"
 .libs = {"stdc++fs"}
 .threading = true
 .build()
 
-Library CateClass(dynamic);
-.compiler = "g++";
-.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast";
-.out = "out/libcateclass.so";
-.files = {recursive("src/Class/*.cpp")};
+Library CateClass(dynamic)
+.compiler = "g++"
+.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
+.out = "out/libcateclass.so"
+.files = recursive("src/Class/*.cpp")
 .obj_dir = "cate/build"
 .libs = {"stdc++fs"}
 .threading = true
@@ -20,10 +20,10 @@ Library CateClass(dynamic);
 
 Project cate
 .compiler = "g++"
-.files = {recursive("src/*.cpp")}
+.files = recursive("src/*.cpp")
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .out = "out/cate"
-.libs = {"out/libcateparser.so", "out/libcateclass.so", "stdc++fs"}
+.libs = {CateClass, CateParser, "stdc++fs"}
 .obj_dir = "cate/build"
 .threading = true
 .smolize = true
