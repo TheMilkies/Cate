@@ -55,7 +55,7 @@ public:
 	}
 
 	inline void print_done(string_view name) {
-		std::cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
+		cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 	}
 private:
 	//threading

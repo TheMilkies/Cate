@@ -36,4 +36,6 @@
 using std::string;
 using std::string_view;
 using std::vector;
+
+using std::cout;
 #endif

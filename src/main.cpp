@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			//if(call_competitor()) return 0;
-			std::cout << "No catefiles detected, Have some help\n";
+			cout << "No catefiles detected, Have some help\n";
 			help();
 			return 1;
 		}
@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 				if (sub != 0) //if 0 or invalid
 					thread_count = sub;
 
-				//std::cout << thread_count << '\n;//debug
+				//cout << thread_count << '\n;//debug
 
 			}	break;
 
 			case 'v': //cate version
-				std::cout << CATE_VERSION "\n";
+				cout << CATE_VERSION "\n";
 				return 0; //exit after
 				break;
 
@@ -100,9 +100,9 @@ int main(int argc, char *argv[])
 					}
 				}
 				if (catefiles)
-					std::cout << CYAN << all << COLOR_RESET "\n";
+					cout << CYAN << all << COLOR_RESET "\n";
 				else
-					std::cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
+					cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
 
 				return 0;
 			} break;
@@ -154,14 +154,14 @@ int main(int argc, char *argv[])
 			command_error("No input file");
 	}
 
-	//std::cout << file_name << '\n; //debug
+	//cout << file_name << '\n; //debug
 
 	Parser* parser = new Parser(file_name);
 
 	delete parser; //yay
 
 #ifdef TRACK_ALLOCS
-	std::cout << "Total allocs: " << allocs_count << "\n";
+	cout << "Total allocs: " << allocs_count << "\n";
 #endif // TRACK_ALLOCS
 
 	return 0;
@@ -185,13 +185,13 @@ bool get_default_file_name()
 	using namespace Util;
 	if(file_exists("Makefile") || file_exists("makefile"))
 	{
-		std::cout << "No catefiles found, but found a makefile.\nRunning Make\n";
+		cout << "No catefiles found, but found a makefile.\nRunning Make\n";
 		system("make -j" + std::to_string(thread_count));
 		return true;
 	}
 	else if(file_exists("CMakeLists.txt"))
 	{
-		std::cout << "No catefiles found, but found CMake.\nRunning CMake\n";
+		cout << "No catefiles found, but found CMake.\nRunning CMake\n";
 		system("mkdir build;cd build;make -j" + std::to_string(thread_count));
 		return true;
 	}
