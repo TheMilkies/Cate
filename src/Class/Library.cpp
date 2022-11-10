@@ -4,11 +4,17 @@ Library::Library() {}
 
 Library::~Library() {}
 
+void Library::generate_name()
+{
+	out_name = "out/lib" + name;
+	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
+}
+
 void Library::build() 
 {	
 	if (!already_built)
 	{
-		flags += " -fPIC  "; //make library basically
+		flags += " -fPIC "; //make library basically
 		setup();
 		build_objects();
 	}

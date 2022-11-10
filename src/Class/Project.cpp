@@ -4,6 +4,15 @@ Project::Project() {}
 
 Project::~Project() {}
 
+void Project::generate_name()
+{
+	out_name = name
+#ifdef __WIN32
+	+= ".exe"
+#endif
+	;
+}
+
 void Project::build() 
 {
 	//one file

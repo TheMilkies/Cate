@@ -158,11 +158,7 @@ void Class::check()
 		compiler = "cc";
 
 	if (out_name.empty())
-	#ifdef __WIN32
-		out_name = name + ".exe";
-	#else
-		out_name = name;
-	#endif // YAOC: Yet Another OS Check
+		generate_name();
 
 	if (out_dir.empty())
 		out_dir = "build";
@@ -190,8 +186,7 @@ void Class::create_directories()
 {
 	Util::create_folder(out_dir.c_str());
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
+	
 	if (!path.empty() && path != "./")
-	{
 		Util::create_folder(path.c_str());
-	}
 }

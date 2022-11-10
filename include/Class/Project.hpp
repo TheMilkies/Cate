@@ -7,6 +7,7 @@ class Project : public Class
 public:
 	void build() override;
 	void single_file_build();
+	void generate_name() override;
 
 	Project();
 	~Project();

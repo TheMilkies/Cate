@@ -6,9 +6,11 @@
 #ifdef __WIN32
 	#define ARGC_START 0
 	#define OBJ_EXTENSION ".obj" //windows, why?
+	#define DYNAMIC_EXTENSION ".dll"
 #else
 	#define ARGC_START 1
 	#define OBJ_EXTENSION ".o"
+	#define DYNAMIC_EXTENSION ".so"
 #endif // OS check
 
 extern int32_t lexer_line;

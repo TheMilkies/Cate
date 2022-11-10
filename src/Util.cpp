@@ -139,7 +139,7 @@ namespace Util
 			if (!CreateDirectory(path, NULL))
 		#else
 			if (mkdir(path, 0700) && errno != EEXIST)
-		#endif // OSCheck
+		#endif // OSCheck2
 				fatal_error(0, string("Could not create folder \"") + path + "\"\n"
 				"Maybe try running \"" BLUE
 				"mkdir "
