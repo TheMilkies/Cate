@@ -1,4 +1,4 @@
-%option c++ noinput nounput noyywrap
+%option c++ noinput nounput
 
 %{
 	#include <iostream>
