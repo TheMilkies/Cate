@@ -86,13 +86,14 @@ void Class::build_objects()
 
 		for(auto &thread : threads)
 		{
-			thread.join(); //make sure the main thread waits until they finish.
+			if (thread.joinable())
+				thread.join(); //make sure the main thread waits until they finish.
 		}
 		
 		threads.clear(); //clear them so we won't run them again.
 	}
 
-	 //set by the threads, don't add libraries if you don't need to
+	//set by the threads, don't add libraries if you don't need to
 	if (!needs_rebuild) return;
 
 	already_built = true;
@@ -149,7 +150,10 @@ void Class::set_property(int32_t line, string& property, string& value)
 void Class::check()
 {
 	if (parser_exit)
+	{
 		Util::build_error(name, "of previous errors");
+		exit(1);
+	}
 
 	if (files.empty())
 		Util::build_error(name, "it has no files");
@@ -161,7 +165,13 @@ void Class::check()
 		generate_name();
 
 	if (out_dir.empty())
-		out_dir = "build";
+	{
+		//automation
+		if (fs::is_directory("obj"))
+			out_dir = "obj";
+		else
+			out_dir = "build";
+	}
 
 	if (threading)
 		flags += " -pthread ";
@@ -173,6 +183,7 @@ void Class::check()
 	if (!standard.empty())
 		flags += " -std=" + standard + " ";
 	
+	//automation
 	if (all_include_paths.empty() && fs::is_directory("include"))
 		all_include_paths = " -Iinclude ";
 }

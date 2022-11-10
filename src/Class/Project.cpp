@@ -19,7 +19,7 @@ void Project::build()
 	if(files.size() == 1)
 	{
 		single_file_build();
-		goto done;
+		return;
 	}
 
 	//multi file
@@ -64,6 +64,8 @@ void Project::single_file_build()
 		);
 
 		already_built = true;
+		smolize();
+		print_done(name);
 	}
 }
 

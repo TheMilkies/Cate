@@ -7,8 +7,8 @@ extern string file_name, dir;
 void parse_catel()
 {
 	using namespace Util;
-	std::ifstream file(".catel");
 
+	std::ifstream file(".catel");
 	if (file.fail()) return;
 
 	string s1, s2, def = "build.cate";
