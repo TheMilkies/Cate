@@ -2,7 +2,7 @@ Project cate
 .compiler = "g++"
 .files = recursive("src/**.cpp")
 .flags = "-fpermissive -g -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast "
-.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
+.libs = {"stdc++fs"}
 .build_directory = "cate/build"
 .defs = {"TRACK_ALLOCS"}
 .threading = true

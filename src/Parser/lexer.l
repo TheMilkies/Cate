@@ -1,4 +1,4 @@
-%option c++ noinput nounput 
+%option c++ noinput nounput noyywrap
 
 %{
 	#include <iostream>
@@ -52,6 +52,7 @@
 "static" {return STATIC;}
 "system" {return SYSTEM;}
 "recursive" {return RECURSIVE;}
+"iterate" {return RECURSIVE;}
 "true" {return B_TRUE;}
 "false" {return B_FALSE;}
 [a-zA-Z_0-9]+ {return IDENTIFIER;}

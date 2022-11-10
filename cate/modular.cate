@@ -4,7 +4,7 @@ Library CateParser(dynamic);
 .out = "out/libcateparser.so";
 .files = {recursive("src/Parser/*.cpp")};
 .obj_dir = "cate/build"
-.libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
+.libs = {"stdc++fs"}
 .threading = true
 .build()
 
