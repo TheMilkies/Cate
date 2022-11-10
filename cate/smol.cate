@@ -1,11 +1,10 @@
 Project cate
 .compiler = "g++"
-.files = {recursive("src/**.cpp")}
+.files = recursive("src/**.cpp")
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .out = "out/cate"
 .libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 .obj_dir = "cate/build"
-.incs = {"include"}
 .threading = true
 .smolize = true
 .build()

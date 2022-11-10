@@ -4,7 +4,6 @@ Library CateParser(dynamic);
 .out = "out/libcateparser.so";
 .files = {recursive("src/Parser/*.cpp")};
 .obj_dir = "cate/build"
-.incs = {"include"}
 .libs = {"externals/linux_amd64_libfl.a", "stdc++fs"}
 .threading = true
 .build()
@@ -15,7 +14,6 @@ Library CateClass(dynamic);
 .out = "out/libcateclass.so";
 .files = {recursive("src/Class/*.cpp")};
 .obj_dir = "cate/build"
-.incs = {"include"}
 .libs = {"stdc++fs"}
 .threading = true
 .build()
@@ -27,7 +25,6 @@ Project cate
 .out = "out/cate"
 .libs = {"out/libcateparser.so", "out/libcateclass.so", "stdc++fs"}
 .obj_dir = "cate/build"
-.incs = {"include"}
 .threading = true
 .smolize = true
 .build()

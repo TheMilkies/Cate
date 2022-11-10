@@ -9,7 +9,6 @@ Project cate
 .flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast -static"
 .libs = {"externals/windows_libfl.a", "stdc++fs"} //use the static library because i hate windows dlls
 
-.incs = {"include"}
 .threading = true
 .smolize = true //save a few hundred kilobytes
 .out = "out/.exe"

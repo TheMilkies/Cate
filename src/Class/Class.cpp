@@ -172,6 +172,9 @@ void Class::check()
 
 	if (!standard.empty())
 		flags += " -std=" + standard + " ";
+	
+	if (all_include_paths.empty() && fs::is_directory("include"))
+		all_include_paths = " -Iinclude ";
 }
 
 void Class::smolize()
