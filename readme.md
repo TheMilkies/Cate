@@ -150,7 +150,9 @@ Both classes have these properties, even if they don't make sense for the class
 - `Array<String> incs|includes|include_paths`: Include paths of the project/library. Defaults to `"include/"` if present.
 - `Array<String> defs|defines|definitions`: Definitions. Default is set by the compiler. 
 
-- `String out`: The output file name. Defaults to identifier.
+- `String out`: The output file name. 
+- - In projects: Defaults to the identifier.
+- - In libraries: Defaults to "lib" + the identifier + the extension for the library type..
 - `String compiler`: The compiler to use. Default is `cc`.
 - `String std|standard`: The C/C++ standard to use. Default is set by the compiler.
 - `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in. Defaults to `"build"`, unless a directory named `"obj"` is present; where it'd use it.
