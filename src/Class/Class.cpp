@@ -31,7 +31,15 @@ void Class::setup()
 	//if (already_built) return; //i don't think this is needed
 	check();
 
-	if(force_rebuild) clean();
+	static bool bypass_force = false; //for when making static and dynamic
+	if(force_rebuild)
+	{
+		if(!bypass_force)
+		{
+			clean();
+			bypass_force = true;
+		}
+	}
 
 	//calling object_setup() on another thread is a bit faster
 	std::thread object_thread(&Class::object_setup, this);

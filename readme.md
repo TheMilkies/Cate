@@ -96,8 +96,6 @@ mkdir cate include src
 touch cate/build.cate src/main.c
 ```
 
-(We are working on a tool called "cater" which will do this and more automatically)
-
 ## Creating Catefiles (Catering)
 You've come this far! Good Job!
 
@@ -117,6 +115,7 @@ project.files = {"src/main.c"};
 project.includes = {"include"};
 project.libs = {/*add libraries here*/};
 project.flags = "-O2";
+project.smol = true;
 project.out = "project";
 
 project.build();
@@ -148,17 +147,17 @@ Project proj;
 Both classes have these properties, even if they don't make sense for the class
 
 - `Array<String> files`: Files of the project/library. No default.
-- `Array<String> incs|includes|include_paths`: Include paths of the project/library. No default.
+- `Array<String> incs|includes|include_paths`: Include paths of the project/library. Defaults to `"include/"` if present.
 
 - `String out`: The output file name. Defaults to identifier.
 - `String compiler`: The compiler to use. Default is `cc`.
 - `String std|standard`: The C/C++ standard to use. Default is set by the compiler.
-- `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in.
+- `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in. Defaults to `"build"`, unless a directory named `"obj"` is present; where it'd use it.
 - `String flags`: The cflags of the project/library, All object files are compiled with them. Default is empty.
 - `String final_flags`: The cflags ran at the end (linking step) of the project/library's compilation. Default is empty.
 
 - `bool link`: Whether to run the linking step or not. Default is `true`.
-- `bool threading`: Whether to add `-pthread` to build command. Default is `false`.
+- `bool threading`: Whether to add `-pthread` to build command. Default is `false`. (Just syntactical sugar.)
 - `bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
 
 - `LibraryType type`: Type of library, `static` or `dynamic`. Gets from library "constructor".
@@ -171,7 +170,7 @@ Both classes have these properties, even if they don't make sense for the class
 - `Array<String> recursive(String path)`: Get all files (or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
 
 - - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
-- `void system(String command)`: Run command. Would be skipped if user runs Cate with the `-D` flag.
+- `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 
 ### Catel
 A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.
