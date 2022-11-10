@@ -3,5 +3,5 @@
 int main(int argc, char const *argv[])
 {
 	greet("World");
-	return 0;
+	return 1;
 }

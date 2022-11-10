@@ -32,8 +32,7 @@ void Project::build()
 	if (link)
 	{
 		//if file doesn't exist
-		if (!Util::file_exists(out_name.c_str())
-		||   fs::is_directory(out_name.c_str()))
+		if (!Util::file_exists(out_name.c_str()))
 			needs_rebuild = true;
 
 		if (!needs_rebuild) return;
