@@ -1,6 +1,5 @@
 Library greeter(static);
 greeter.flags = "-O3";
-greeter.out = "out/libgreeter.a";
 greeter.files = {"src/libgreeter/greeter.c"};
 greeter.includes = {"include"};
 greeter.build();

@@ -14,7 +14,8 @@ void Library::build()
 {	
 	if (!already_built)
 	{
-		flags += " -fPIC "; //make library basically
+		if(!string_find(flags, "-fPIC"))
+			flags += " -fPIC "; //make library basically
 		setup();
 		build_objects();
 	}
