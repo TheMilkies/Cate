@@ -131,7 +131,8 @@ namespace Util
 		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 	}
 
-	void create_folder(const char* path) {
+	void create_folder(const char* path)
+	{
 		struct stat st {0};
 
 		if (stat(path, &st) == -1) { //if folder does not exist.
@@ -143,9 +144,9 @@ namespace Util
 				fatal_error(0, string("Could not create folder \"") + path + "\"\n"
 				"Maybe try running \"" BLUE
 				"mkdir "
-				#ifndef __WIN32
+#ifndef __WIN32
 				GREEN "-p "
-				#endif // unix
+#endif // unix
 				PURPLE + path + "\"" COLOR_RESET
 				);
 		}

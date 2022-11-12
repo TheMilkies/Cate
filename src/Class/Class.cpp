@@ -194,8 +194,13 @@ void Class::check()
 		flags += " -std=" + standard + " ";
 	
 	//automation
-	if (all_include_paths.empty() && fs::is_directory("include"))
-		all_include_paths = " -Iinclude ";
+	if (all_include_paths.empty())
+	{
+		if (fs::is_directory("include"))
+			all_include_paths = " -Iinclude ";
+		else if (fs::is_directory("inc"))
+			all_include_paths = " -Iinc ";
+	}
 }
 
 void Class::smolize()

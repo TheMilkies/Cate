@@ -5,7 +5,7 @@ Project cate
 .files = recursive("src/**.cpp")
 
 //the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
-.build_directory = "cate/build"
+
 .flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast -static"
 .libs = {"stdc++fs"} //use the static library because i hate windows dlls
 

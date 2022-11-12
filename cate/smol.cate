@@ -4,7 +4,6 @@ Project cate
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .out = "out/cate"
 .libs = {"stdc++fs"}
-.obj_dir = "cate/build"
 .threading = true
 .smolize = true
 .build()
