@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.5/cate_2.5-0_amd64.deb
-sudo dpkg -i cate_2.5-0_amd64.deb
-rm cate_2.5-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.6/cate_2.6-0_amd64.deb
+sudo dpkg -i cate_2.6-0_amd64.deb
+rm cate_2.6-0_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.5/linux_cate_v2.5.0.zip
-unzip linux_cate_v2.5.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.6/linux_cate_v2.6.0.zip
+unzip linux_cate_v2.6.0.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -135,7 +135,7 @@ library.out = "out/liblibrary.a";
 library.build();
 ```
 
-Cate (since 2.5) does not require the object names to be repeated.
+Cate (since 2.6) does not require the object names to be repeated.
 ```css
 Project proj;
 .flags = "-O3";

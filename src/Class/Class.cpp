@@ -175,7 +175,9 @@ void Class::check()
 	if (out_dir.empty())
 	{
 		//automation
-		if (fs::is_directory("obj"))
+		if (fs::is_directory("cate"))
+			out_dir = "cate/build";
+		else if (fs::is_directory("obj"))
 			out_dir = "obj";
 		else
 			out_dir = "build";
