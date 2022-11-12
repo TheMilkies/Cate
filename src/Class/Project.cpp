@@ -1,5 +1,7 @@
 #include "Class/Project.hpp"
 
+extern bool force_rebuild;
+
 Project::Project() {}
 
 Project::~Project() {}
@@ -51,7 +53,7 @@ void Project::single_file_build()
 {
 	if(!already_built) setup();
 	string& file = files[0];
-	if(newer_than(out_name, file))
+	if(newer_than(out_name, file) || force_rebuild)
 	{
 		if(!already_built) check();
 
