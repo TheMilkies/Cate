@@ -2,15 +2,15 @@
 
 Project cate
 .compiler = "x86_64-w64-mingw32-g++" //fight me
-.files = {recursive("src/*.cpp")}
+.files = recursive("src/**.cpp")
 
 //the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
 .build_directory = "cate/build"
 .flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast -static"
-.libs = {"externals/windows_libfl.a", "stdc++fs"} //use the static library because i hate windows dlls
+.libs = {"stdc++fs"} //use the static library because i hate windows dlls
 
 .threading = true
 .smolize = true //save a few hundred kilobytes
-.out = "out/.exe"
+.out = "out/cate.exe"
 
 .build()
