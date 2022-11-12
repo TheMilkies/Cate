@@ -2,6 +2,9 @@
 #define Util_HPP
 #include "inc.hpp"
 #define CATE_VERSION "v2.6 (Development)"
+#ifdef MODS
+#define CATE_VERSION "v2.6 (Development Modded)"
+#endif // MODS
 
 #ifdef __WIN32
 	#define ARGC_START 0

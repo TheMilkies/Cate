@@ -1,5 +1,9 @@
 #include "Parser/Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
 
+#ifdef MODS
+#include "Mods/mods.h"
+#endif // MODS
+
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
 bool parser_exit = false, system_allowed = true,
@@ -13,8 +17,6 @@ string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";
 
 void parse_catel(); // Catel.cpp
 bool get_default_file_name();
-
-//bool call_competitor();
 
 #ifdef TRACK_ALLOCS
 int allocs_count = 0;
@@ -45,7 +47,9 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			//if(call_competitor()) return 0;
+		#ifdef CALL_COMPETITOR
+			if(call_competitor()) return 0;
+		#endif // CALL_COMPETITOR
 			cout << "No catefiles detected, Have some help\n";
 			help();
 			return 1;
@@ -178,21 +182,3 @@ bool get_default_file_name()
 		return false;
 	return true;
 }
-
-//this is a maybe
-/*bool call_competitor()
-{
-	using namespace Util;
-	if(file_exists("Makefile") || file_exists("makefile"))
-	{
-		cout << "No catefiles found, but found a makefile.\nRunning Make\n";
-		system("make -j" + std::to_string(thread_count));
-		return true;
-	}
-	else if(file_exists("CMakeLists.txt"))
-	{
-		cout << "No catefiles found, but found CMake.\nRunning CMake\n";
-		system("mkdir build;cd build;make -j" + std::to_string(thread_count));
-		return true;
-	}
-}*/
