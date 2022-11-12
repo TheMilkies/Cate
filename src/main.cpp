@@ -156,6 +156,9 @@ int main(int argc, char *argv[])
 	{
 		if (!get_default_file_name() || file_name.empty())
 			command_error("No input file");
+	#ifdef CALL_COMPETITOR
+		else if(call_competitor()) return 0; 
+	#endif
 	}
 
 	//cout << file_name << '\n; //debug

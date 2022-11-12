@@ -112,7 +112,7 @@ namespace Util
 	void user_system(int32_t line, string_view command)
 	{
 		if (command.empty()) return;
-		
+	
 		int32_t ret = std::system(command.data());
 		int32_t exit_status = WEXITSTATUS(ret);
 
