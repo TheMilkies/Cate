@@ -21,17 +21,17 @@ void Parser::recursive_setup()
 	int32_t &location_of_wildcard = rd.location_of_wildcard;
 
 	if (current.value.empty()) //should NEVER happen
-		fatal_error(current.line, highlight_func("recursive()")
+		fatal_error(current.line, hl_func("recursive()")
 		" was given an empty string literal");
 
 	location_of_wildcard = current.value.find('*');
 	subrecursive = false;
 
 	if (location_of_wildcard == string::npos) //if not found
-		fatal_error(current.line, "Wildcard (*) was not found in " highlight_func("recursive()"));
+		fatal_error(current.line, "Wildcard (*) was not found in " hl_func("recursive()"));
 
 	if (current.value[location_of_wildcard+1] == '/')
-		fatal_error(current.line, highlight_func("recursive()")
+		fatal_error(current.line, hl_func("recursive()")
 			" does not support folder recursion (f/*/*.c). Use subrecursive (f/**.c)");
 	
 	if (current.value[location_of_wildcard+1] == '*')
@@ -56,7 +56,7 @@ void Parser::recursive()
 		return include_recursive();
 
 	if (child != "files")
-		fatal_error(current.line, "only the " highlight_var("files") " and " highlight_var("includes")
+		fatal_error(current.line, "only the " hl_var("files") " and " hl_var("includes")
 				" properties can be set to result of recursive search.");
 	
 	recursive_setup();
@@ -70,13 +70,13 @@ void Parser::recursive()
 	
 	if (extension.empty())
 	{
-		fatal_error(current.line, highlight_func("recursive()")
+		fatal_error(current.line, hl_func("recursive()")
 				" was not given an extension to find.");
 	}
 
 	if (extension == ".*")
 	{
-		fatal_error(current.line, highlight_func("recursive()")
+		fatal_error(current.line, hl_func("recursive()")
 		   " does not allow \"all file extensions\" (.*) recursion.");
 	}
 

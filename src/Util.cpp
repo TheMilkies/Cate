@@ -118,7 +118,7 @@ namespace Util
 
 		if (WIFEXITED(ret) && exit_status != 0)
 		{
-			cout << ERROR " in " highlight_func("system") " call ran by line " << line << ".\n"
+			cout << ERROR " in " hl_func("system") " call ran by line " << line << ".\n"
 			"Ran \"" << command << "\"\nExited with code " << exit_status << '\n';
 		}
 

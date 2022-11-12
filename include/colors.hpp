@@ -10,6 +10,6 @@
 #define PURPLE "\033[35m"
 #define CYAN "\033[36m"
 
-#define highlight_func(x) YELLOW x COLOR_RESET
-#define highlight_var(x) PURPLE x COLOR_RESET
-#define highlight_flag(x) "\e[1;32m\t" x COLOR_RESET
+#define hl_func(x) YELLOW x COLOR_RESET
+#define hl_var(x) PURPLE x COLOR_RESET
+#define hl_flag(x) "\e[1;32m\t" x COLOR_RESET

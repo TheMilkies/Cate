@@ -21,10 +21,10 @@ static string token_names[] = {
 	"\"Library\"",
 	"\"static\"",
 	"\"dynamic\"",
-	highlight_func("recursive"),
+	hl_func("recursive"),
 	"a string literal",
 	"an identifier",
-	highlight_func("system"),
+	hl_func("system"),
 	"\"true\"",
 	"\"false\"",
 };

@@ -35,7 +35,7 @@ namespace Util
 
 	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
-	string replace_all_safe(string_view s, string_view toReplace, string_view replaceWith);
+	//string replace_all_safe(string_view s, string_view toReplace, string_view replaceWith);
 
 	/// @brief Returns the modified time of the given path 
 	/// @param path Path to check
@@ -57,9 +57,9 @@ namespace Util
 	void check_root();
 } // namespace Util
 
-#define highlight_func(x) YELLOW x COLOR_RESET
-#define highlight_var(x) PURPLE x COLOR_RESET
-#define highlight_flag(x) "\e[1;32m" "\t" x ": " COLOR_RESET
+#define hl_func(x) YELLOW x COLOR_RESET
+#define hl_var(x) PURPLE x COLOR_RESET
+#define hl_flag(x) "\e[1;32m" "\t" x ": " COLOR_RESET
 
 /// @brief Returns if a file is a newer than another 
 /// @param a Path to check
