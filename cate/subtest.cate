@@ -1,2 +1,3 @@
 subcate("smol") //this should not error
 subcate("subtest") //this should error
+subcate("smol") //if i messed up somehow and the previous failed to error, this should error

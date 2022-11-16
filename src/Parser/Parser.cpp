@@ -23,10 +23,8 @@ static robin_hood::unordered_set<string> opened_files;
 Parser::Parser(const string& file_name)
 {
 	if (opened_files.find(file_name) != opened_files.end())
-	{
-		command_error("Already parsed \"" + file_name + "\"");
-		return;
-	}
+		fatal_error(0, "Already parsed \"" + file_name + "\"");
+
 	opened_files.insert(file_name);
 	
 	std::ifstream file(file_name);

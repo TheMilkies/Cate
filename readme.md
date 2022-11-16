@@ -171,9 +171,11 @@ Both classes have these properties, even if they don't make sense for the class
 
 ### General functions
 - `Array<String> recursive(String path)`: Get all files (or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
-
 - - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
+- - `recursive()` is also called `iterate()`.
+
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
+- `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
 
 ### Catel
 A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.
