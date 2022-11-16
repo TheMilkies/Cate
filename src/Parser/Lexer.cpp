@@ -2756,7 +2756,6 @@ void yyFlexLexer::yyunput_r( int c, char* yy_bp)
 int yyFlexLexer::yywrap() {return 1;}
 
 int yyFlexLexer::yyinput()
-
 {
 	int c;
 	

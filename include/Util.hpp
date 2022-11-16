@@ -1,7 +1,7 @@
 #if !defined(Util_HPP)
 #define Util_HPP
 #include "inc.hpp"
-#define CATE_VERSION "v2.6 (Development)"
+#define CATE_VERSION "v2.7 (Development)"
 #ifdef MODS
 #define CATE_VERSION "v2.6 (Development Modded)"
 #endif // MODS
@@ -55,6 +55,8 @@ namespace Util
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 
 	void check_root();
+
+	void add_cate_ending(std::string& s);
 } // namespace Util
 
 #define hl_func(x) YELLOW x COLOR_RESET

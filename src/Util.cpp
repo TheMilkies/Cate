@@ -152,6 +152,12 @@ namespace Util
 		}
 	}
 
+	void add_cate_ending(std::string& s)
+	{
+		if (!s.empty() && !ends_with(s, ".cate"))
+			s += ".cate";
+	}
+
 	//coming maybe soon
 	/*void check_root()
 	{

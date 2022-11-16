@@ -148,8 +148,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!file_name.empty() && !ends_with(file_name, ".cate"))
-		file_name += ".cate";
+	add_cate_ending(file_name);
 
 	if(catel_exists) parse_catel();
 

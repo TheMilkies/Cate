@@ -6,6 +6,10 @@
 
 using namespace Util;
 
+extern string dir;
+
+static robin_hood::unordered_set<string> opened_files;
+
 /*
 	why hello there!
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
@@ -18,7 +22,16 @@ using namespace Util;
 
 Parser::Parser(const string& file_name)
 {
+	if (opened_files.find(file_name) != opened_files.end())
+	{
+		command_error("Already parsed \"" + file_name + "\"");
+		return;
+	}
+
+	opened_files.insert(file_name);
+	
 	std::ifstream file(file_name);
+
 	if (file.fail())
 		command_error("Cannot open file \"" + file_name + "\"");
 	
@@ -158,6 +171,26 @@ void Parser::parse()
 			else
 				current = tokens[index += 3]; // skip
 			break;
+
+		case SUBCATE: {
+			string name = string_function().value;
+			string run;
+		
+			add_cate_ending(name);
+
+			if(file_exists(name.c_str())) run = name;
+			else
+			{
+				name = dir + '/' + name;
+				if(file_exists(name.c_str())) run = name;
+				else fatal_error(current.line, "File \"" + name + "\" not found.");
+			}
+			
+
+			Parser* sub = new Parser(run);
+			delete sub;
+
+		}	break;
 
 		default:
 			error(current.line, "Did not expect " + token_names[current.type] + ".");
