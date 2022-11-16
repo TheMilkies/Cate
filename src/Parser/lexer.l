@@ -38,6 +38,13 @@
 	++lexer_line;
 }
 
+"#" {
+	int c;
+	while((c = yyinput()) != 0 && c != '\n');
+
+	++lexer_line;
+}
+
 \. {return DOT;}
 \, {return COMMA;}
 ";" {}

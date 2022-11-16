@@ -27,11 +27,9 @@ Parser::Parser(const string& file_name)
 		command_error("Already parsed \"" + file_name + "\"");
 		return;
 	}
-
 	opened_files.insert(file_name);
 	
 	std::ifstream file(file_name);
-
 	if (file.fail())
 		command_error("Cannot open file \"" + file_name + "\"");
 	
@@ -174,20 +172,18 @@ void Parser::parse()
 
 		case SUBCATE: {
 			string name = string_function().value;
-			string run;
 		
 			add_cate_ending(name);
 
-			if(file_exists(name.c_str())) run = name;
-			else
+			if(!file_exists(name.c_str()))
 			{
 				name = dir + '/' + name;
-				if(file_exists(name.c_str())) run = name;
-				else fatal_error(current.line, "File \"" + name + "\" not found.");
+				if(!file_exists(name.c_str()))
+					fatal_error(current.line, "File \"" + name + "\" not found.");
 			}
 			
 
-			Parser* sub = new Parser(run);
+			Parser* sub = new Parser(name);
 			delete sub;
 
 		}	break;
