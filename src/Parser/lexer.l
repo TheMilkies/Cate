@@ -55,6 +55,7 @@
 "iterate" {return RECURSIVE;}
 "true" {return B_TRUE;}
 "false" {return B_FALSE;}
+"subcate" {return SUBCATE;}
 [a-zA-Z_0-9]+ {return IDENTIFIER;}
 
 "(" {return LPAREN;}

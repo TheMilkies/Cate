@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 			{
 			switch (argv[i][1]) //check the second character of the argument
 			{
-			//case 'j': //uncomment this if you want compatibility with nake
+			case 'j': //uncomment this if you want compatibility with nake
 			case 't': {
 				char* num;
 
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
 				if(catel_exists) parse_catel();
 
-				string all; all.reserve(64);
+				string all; all.reserve(128);
 				for (const auto &p : fs::directory_iterator(dir)) //iterate over the files
 				{
 					if(catefiles) all += ", ";
@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
 				force_smol = true;
 				break;
 
+			case 'B': //make compatibility
 			case 'f': //force rebuild
 				force_rebuild = true;
 				break;

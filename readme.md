@@ -70,11 +70,11 @@ Use `sudo cate install` to install
 Cate's CLI is intuitive, but doesn't offer much. You can **not** set `cflags` with a command (unlike Autotools), but you get the minimum required to work with Cate.
 
 ### Flags (Options)
-- `-tN`: Set thread count to N. Cate automatically detects thread count so this isn't required.
+- `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
 - `-D`: Disable all user-defined `system()` calls in script.
 - `-S`: Smolize even if not set in script.
-- `-f`: Forcefully rebuild project, by deleting its object files
+- `-f` (and `-B`): Forcefully rebuild project, by deleting its object files.
 - `-v`: Shows the installed Cate version. 
 - `-h`: Shows help and Cate version. 
 

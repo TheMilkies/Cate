@@ -10,7 +10,7 @@ static struct
 	string path;
 	int32_t location_of_wildcard = 0;
 	bool subrecursive;
-} rd;
+} rd; //recursive data
 
 void Parser::recursive_setup()
 {

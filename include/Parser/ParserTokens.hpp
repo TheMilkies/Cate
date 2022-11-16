@@ -27,6 +27,7 @@ static string token_names[] = {
 	hl_func("system"),
 	"\"true\"",
 	"\"false\"",
+	hl_func("subcate"),
 };
 
 enum ParserTokenKind: uint8_t
@@ -49,6 +50,7 @@ enum ParserTokenKind: uint8_t
 	SYSTEM,
 	B_TRUE,
 	B_FALSE,
+	SUBCATE,
 };
 	
 struct ParserToken
