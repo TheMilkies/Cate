@@ -143,6 +143,7 @@ typedef struct yy_buffer_state *yybuffer;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
+
 #ifndef YY_TYPEDEF_YY_SIZE_T
 #define YY_TYPEDEF_YY_SIZE_T
 typedef size_t yy_size_t;
@@ -2751,6 +2752,8 @@ void yyFlexLexer::yyunput_r( int c, char* yy_bp)
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
 }
+
+int yyFlexLexer::yywrap() {return 1;}
 
 int yyFlexLexer::yyinput()
 
