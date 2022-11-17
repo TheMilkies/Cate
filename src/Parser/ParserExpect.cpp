@@ -102,7 +102,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 	}
 }
 
-void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5)
+/*void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5)
 {
 	current = next();
 
@@ -111,7 +111,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 		error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" or " + token_names[type4] + " or " + token_names[type5] + " but got " + token_names[current.type]);
 	}
-}
+}*/
 
 void Parser::void_function()
 {

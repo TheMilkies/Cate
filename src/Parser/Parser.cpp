@@ -70,8 +70,13 @@ Parser::~Parser()
 		delete c.second; //free the pointers
 }
 
-void Parser::define(const string &identifier)
+void Parser::define()
 {
+	temp_type = current.type; //library or project
+
+	expect(IDENTIFIER);
+	string &identifier = current.value;
+
 	if (is_defined(identifier))
 		fatal_error(current.line, "\"" + identifier + "\" was already defined");
 	
@@ -86,14 +91,6 @@ void Parser::define(const string &identifier)
 	current_class->name = identifier; //set its name to the identifier
 }
 
-void Parser::declare()
-{
-	//declaration: type identifier {define(type, identifier);}
-	temp_type = current.type; //library or project
-	expect(IDENTIFIER);
-	define(current.value);
-}
-
 void Parser::parse()
 {
 	current = next(); //gets the first token (0)
@@ -104,11 +101,11 @@ void Parser::parse()
 		switch (current.type)
 		{
 		case PROJECT:
-			declare();
+			define();
 			break;
 
 		case LIBRARY:
-			declare();
+			define();
 			expect(LPAREN);
 			current_class->is_static = expect_type(); //will set to static if static
 			expect(RPAREN);
@@ -180,7 +177,7 @@ void Parser::parse()
 					fatal_error(current.line, "File \"" + name + "\" not found.");
 			}
 			
-
+			//start the subcate instance
 			Parser* sub = new Parser(name);
 			delete sub;
 

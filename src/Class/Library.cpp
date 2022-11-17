@@ -38,12 +38,12 @@ void Library::build()
 		}
 		else
 		{
-			command = compiler + " -shared -o " + out_name + " " + all_object_files + final_flags + " " + flags;
+			command = compiler + " -g -shared -o " + out_name + " " + all_object_files + final_flags + " " + flags;
 		}
 		
 		Util::system(command);
 	}
 	
 	smolize();
-	print_done(name + build_type);
+	print_done_message_with(name + build_type);
 }

@@ -183,8 +183,6 @@ void yyfree ( void *  );
 
 #include <FlexLexer.h>
 
-int yyFlexLexer::yywrap() { return 1;}
-
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
 

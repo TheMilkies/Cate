@@ -54,7 +54,7 @@ public:
 		all_include_paths += "-I" + path + ' ';
 	}
 
-	inline void print_done(string_view name) {
+	inline void print_done_message_with(string_view name) {
 		cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 	}
 private:

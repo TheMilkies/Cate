@@ -19,10 +19,7 @@ void Project::build()
 {
 	//one file
 	if(files.size() == 1)
-	{
-		single_file_build();
-		return;
-	}
+		return single_file_build();
 
 	//multi file
 	if (!already_built)
@@ -33,7 +30,6 @@ void Project::build()
 
 	if (link)
 	{
-		//if file doesn't exist
 		if (!Util::file_exists(out_name.c_str()))
 			needs_rebuild = true;
 
@@ -41,12 +37,12 @@ void Project::build()
 
 		Util::system(
 			//command = $CC -o$OUT_NAME $OBJ $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
-			command_gen(all_object_files)
+			generate_command_for(all_object_files)
 		);
 	}
 done:
 	smolize();
-	print_done(name);
+	print_done_message_with(name);
 }
 
 void Project::single_file_build()
@@ -59,20 +55,20 @@ void Project::single_file_build()
 
 		create_directories();
 
-		file += ' ';
+		file += ' '; //needed because it'd be $FILE$FLAGS (compiler doesn't like that.)
 
 		Util::system (
 			//command = $CC -o$OUT_NAME $FILE $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
-			command_gen(file)
+			generate_command_for(file)
 		);
 
 		already_built = true;
 		smolize();
-		print_done(name);
+		print_done_message_with(name);
 	}
 }
 
-inline string Project::command_gen(string& objects)
+inline string Project::generate_command_for(string& objects)
 {
 	return compiler + " -o" + out_name + " " +
 		   objects + flags + " " +

@@ -15,7 +15,7 @@ extern bool system_allowed;
 class Parser
 {
 private:
-	void define(const string &identifier);
+	void define();
 	inline bool is_defined(const string& identifier) {return (classes.find(identifier) != classes.end());}
 	void array();
 
@@ -26,7 +26,7 @@ private:
 	void expect_string_array();
 	void expect_string_recursive_array();
 	
-	void declare();
+	//void declare();
 	
 	void recursive();
 	void recursive_setup();
@@ -61,7 +61,7 @@ private:
 	void expect_and_then(ParserTokenKind type, ParserTokenKind type2);
 	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3);
 	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4);
-	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5);
+	//void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5);
 
 	void parse(); //called from constructor, should be rewritten to not do that
 public:

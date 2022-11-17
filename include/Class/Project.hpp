@@ -14,7 +14,7 @@ public:
 	/// @brief Generate the long command with `objects` as the objects
 	/// @param objects 
 	/// @return the builds command with `objects`
-	string command_gen(string& objects);
+	string generate_command_for(string& objects);
 };
 
 #endif
