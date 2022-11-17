@@ -147,7 +147,7 @@ namespace Util
 #ifndef __WIN32
 				GREEN "-p "
 #endif // unix
-				PURPLE + path + "\"" COLOR_RESET
+				PURPLE + path + COLOR_RESET "\""
 				);
 		}
 	}

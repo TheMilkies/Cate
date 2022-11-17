@@ -20,27 +20,29 @@ void Parser::recursive_setup()
 	bool &subrecursive = rd.subrecursive;
 	int32_t &location_of_wildcard = rd.location_of_wildcard;
 
-	if (current.value.empty()) //should NEVER happen
+	string& argument = current.value;
+
+	if (argument.empty()) //should NEVER happen
 		fatal_error(current.line, hl_func("recursive()")
 		" was given an empty string literal");
 
-	location_of_wildcard = current.value.find('*');
+	location_of_wildcard = argument.find('*');
 	subrecursive = false;
 
 	if (location_of_wildcard == string::npos) //if not found
 		fatal_error(current.line, "Wildcard (*) was not found in " hl_func("recursive()"));
 
-	if (current.value[location_of_wildcard+1] == '/')
+	if (argument[location_of_wildcard+1] == '/')
 		fatal_error(current.line, hl_func("recursive()")
 			" does not support folder recursion (f/*/*.c). Use subrecursive (f/**.c)");
 	
-	if (current.value[location_of_wildcard+1] == '*')
+	if (argument[location_of_wildcard+1] == '*')
 	{
 		++location_of_wildcard;
 		subrecursive = true;
 	}
 
-	path = current.value.substr(0, location_of_wildcard - subrecursive); //extract path
+	path = argument.substr(0, location_of_wildcard - subrecursive); //extract path
 	
 	replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 

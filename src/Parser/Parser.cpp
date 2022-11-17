@@ -86,7 +86,7 @@ void Parser::define()
 	else //library
 		classes[identifier] = new Library;
 
-	current_class = classes[current.value]; //set the pointer to the current class
+	current_class = classes[identifier]; //set the pointer to the current class
 
 	current_class->name = identifier; //set its name to the identifier
 }
