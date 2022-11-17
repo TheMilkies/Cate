@@ -20,11 +20,11 @@ public:
 		   all_definitions;
 
 	//user defined in .cate file
-	string name, flags, out_name, out_dir, compiler, final_flags, standard;
+	string name, flags, out_name, object_dir, compiler, final_flags, standard;
 	vector<string> files, object_files;
 
 	//filled from build();
-	robin_hood::unordered_set<string> library_paths;
+	robin_hood::unordered_set<string> loaded_library_paths;
 
 	bool is_static; //only in library
 	bool already_built = false, needs_rebuild = false;
@@ -41,9 +41,9 @@ public:
 	void check(); //check if everything is okay
 	
 	void build_objects(); //build the objects
-	void create_directories();
 
 	//general and self-explanitory
+	void create_directories();
 	void add_library(string& value);
 	void set_property(int32_t line, string& property, string& value);
 
@@ -60,10 +60,10 @@ public:
 private:
 	//threading
 	void build_object(int32_t i); 
-	vector<std::thread>threads;
+	vector<std::thread> threads;
 	string command_template;
 
-	void object_setup(); //set up files and object files.
+	void setup_objects(); //set up files and object files.
 
 	string get_stripped_name();
 };

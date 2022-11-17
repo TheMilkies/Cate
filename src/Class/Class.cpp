@@ -10,7 +10,7 @@ Class::Class()
 	name.reserve(32);
 	files.reserve(32);
 	object_files.reserve(32);
-	library_paths.reserve(32);
+	loaded_library_paths.reserve(32);
 	all_libraries.reserve(128);
 	threads.reserve(thread_count * 4);
 
@@ -23,7 +23,7 @@ Class::Class()
 	final_flags.reserve(64);
 	out_name.reserve(32);
 	flags.reserve(256);
-	out_dir.reserve(64);
+	object_dir.reserve(64);
 }
 
 void Class::setup()
@@ -41,8 +41,8 @@ void Class::setup()
 		}
 	}
 
-	//calling object_setup() on another thread is a bit faster
-	std::thread object_thread(&Class::object_setup, this);
+	//calling setup_objects() on another thread is a bit faster
+	std::thread object_thread(&Class::setup_objects, this);
 
 	//create output file's folder if doesn't already exist.
 	create_directories();
@@ -51,7 +51,7 @@ void Class::setup()
 	object_thread.join();
 }
 
-void Class::object_setup()
+void Class::setup_objects()
 {
 	for(auto file : files)
 	{
@@ -59,7 +59,7 @@ void Class::object_setup()
 		//Util::replace_all(file, "./", ""); // "./" -> ""
 		Util::replace_all(file, "/", "_"); // "/" -> "_"
 		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
-		file = out_dir + "/" + file; // folder/object.o
+		file = object_dir + "/" + file; // folder/object.o
 		all_object_files += file + " "; //used in final build process, all are linked
 		object_files.emplace_back(file); //for build
 	}
@@ -113,9 +113,9 @@ void Class::add_library(string& lib)
 	int32_t position_of_last_slash = lib.find_last_of('/'); 
 	string path = lib.substr(0, position_of_last_slash+1);
 
-	if (!path.empty() && library_paths.find(path) == library_paths.end()) //if not in library paths, add it
+	if (!path.empty() && loaded_library_paths.find(path) == loaded_library_paths.end()) //if not in library paths, add it
 	{
-		library_paths.insert(path);
+		loaded_library_paths.insert(path);
 		all_libraries += "-L" + path + ' ';
 	}
 
@@ -147,7 +147,7 @@ void Class::set_property(int32_t line, string& property, string& value)
 			 property == "object_folder"   ||
 			 property == "obj_dir"		   ||
 			 property == "build_dir")
-		out_dir = value;
+		object_dir = value;
 	else if (property == "standard" ||
 			 property == "std")
 		standard = value;
@@ -172,15 +172,15 @@ void Class::check()
 	if (out_name.empty())
 		generate_name();
 
-	if (out_dir.empty())
+	if (object_dir.empty())
 	{
 		//automation
 		if (fs::is_directory("cate"))
-			out_dir = "cate/build";
+			object_dir = "cate/build";
 		else if (fs::is_directory("obj"))
-			out_dir = "obj";
+			object_dir = "obj";
 		else
-			out_dir = "build";
+			object_dir = "build";
 	}
 
 	if (threading)
@@ -213,7 +213,7 @@ void Class::smolize()
 
 void Class::create_directories()
 {
-	Util::create_folder(out_dir.c_str());
+	Util::create_folder(object_dir.c_str());
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	
 	if (!path.empty() && path != "./")

@@ -1,3 +1,3 @@
-system("cate
-cp -f ./out/cate /usr/bin/cate
+subcate("smol")
+system("cp -f ./out/cate /usr/bin/cate
 cp -f docs/manpages/cate.1 /usr/local/share/man/man1/")

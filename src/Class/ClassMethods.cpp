@@ -25,8 +25,8 @@ bool Parser::object_method()
 
 void Class::clean() 
 {
-	if (out_dir.empty())
-		out_dir = "build";
+	if (object_dir.empty())
+		object_dir = "build";
 
 	string command =
 #ifdef __WIN32
@@ -34,6 +34,6 @@ void Class::clean()
 #else
 	"rm -f " 
 #endif // OS Check
-	+ out_dir + "/*" OBJ_EXTENSION;
+	+ object_dir + "/*" OBJ_EXTENSION;
 	Util::system(command);
 }
