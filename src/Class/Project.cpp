@@ -51,7 +51,7 @@ done:
 
 void Project::single_file_build()
 {
-	if(!already_built) setup();
+	//if(!already_built) setup();
 	string& file = files[0];
 	if(newer_than(out_name, file) || force_rebuild)
 	{
