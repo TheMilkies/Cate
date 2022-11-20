@@ -1,6 +1,7 @@
-Project test;
+subcate("static")
+
+Project test
 .libs = {"out/libgreeter.a"}
 .files = {"src/test/test.c"}
-.incs = {"include"}
 .out = "a_test"
-.build();
+.build()

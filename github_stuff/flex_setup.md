@@ -8,7 +8,7 @@ Clone the [Flex repository](https://github.com/westes/flex)
 
 `git clone https://github.com/westes/flex.git`
 
-CD inside the directory ``
+CD inside the directory
 
 `cd flex/`
 
@@ -16,5 +16,5 @@ Run these commands one after the other and check errors for missing packages:
 ```sh
 ./autogen.sh
 ./configure
-make -j4
+make -j`nproc`
 sudo make install```
