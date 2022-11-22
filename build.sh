@@ -80,7 +80,7 @@ case "$response" in
             sudo cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
         elif command -v sudo &> /dev/null; then
             doas $install_command
-            sudo cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
+            doas cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
         elif [ "$EUID" -e 0]; then
             $install_command
         else

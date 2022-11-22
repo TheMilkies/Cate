@@ -1,4 +1,4 @@
-build/*.o
+cate/build/*.o
 *.o
 out/*
 release/
