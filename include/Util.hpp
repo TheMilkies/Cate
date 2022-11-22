@@ -46,6 +46,7 @@ namespace Util
 	/// @brief Creates a folder if it doesn't already exist.
 	/// @param path Path of the folder to create
 	void create_folder(const char* path);
+	void recursively_create_folder(const char* path); //written by Neuron from stackoverflow
 
 	/// @brief Like std::system, but exits if the command returns anything other than 0.
 	/// @param command The command to execute.

@@ -32,13 +32,10 @@ void Class::setup()
 	check();
 
 	static bool bypass_force = false; //for when making static and dynamic
-	if(force_rebuild)
+	if(force_rebuild && !bypass_force)
 	{
-		if(!bypass_force)
-		{
-			clean();
-			bypass_force = true;
-		}
+		clean();
+		bypass_force = true;
 	}
 
 	//calling setup_objects() on another thread is a bit faster
@@ -67,7 +64,10 @@ void Class::setup_objects()
 //this is for threads.
 void Class::build_object(int32_t i)
 {
-	Util::system(command_template + files[i] + " -o " + object_files[i]); //will exit if it can't compile
+	Util::system(
+		command_template + files[i] +
+		" -o " + object_files[i]
+		); //will exit if it can't compile
 }
 
 void Class::build_objects()
@@ -158,10 +158,7 @@ void Class::set_property(int32_t line, string& property, string& value)
 void Class::check()
 {
 	if (parser_exit)
-	{
 		Util::build_error(name, "of previous errors");
-		exit(1);
-	}
 
 	if (files.empty())
 		Util::build_error(name, "it has no files");
@@ -217,5 +214,5 @@ void Class::create_directories()
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	
 	if (!path.empty() && path != "./")
-		Util::create_folder(path.c_str());
+		Util::recursively_create_folder(path.c_str());
 }

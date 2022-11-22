@@ -8,6 +8,7 @@ extern bool parser_exit;
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <string.h>
 
 #ifdef __WIN32
 	#define WIFEXITED(status) ((status) & 0x7f)
@@ -131,25 +132,46 @@ namespace Util
 		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 	}
 
+	void recursively_create_folder(const char* path) //written by Neuron from stackoverflow
+	{
+		struct stat st {0};
+		if (stat(path, &st) != -1) return;
+
+		char tmp[512];
+		char *p = NULL;
+		size_t len;
+
+		snprintf(tmp, sizeof(tmp),"%s",path);
+		len = strlen(tmp);
+		if (tmp[len - 1] == '/')
+			tmp[len - 1] = 0;
+		for (p = tmp + 1; *p; p++)
+			if (*p == '/') {
+				*p = 0;
+				create_folder(tmp);
+				*p = '/';
+			}
+		create_folder(tmp);
+	}
+
 	void create_folder(const char* path)
 	{
 		struct stat st {0};
-
-		if (stat(path, &st) == -1) { //if folder does not exist.
-		#ifdef __WIN32
-			if (!CreateDirectory(path, NULL))
-		#else
-			if (mkdir(path, 0700) && errno != EEXIST)
-		#endif // OSCheck2
-				fatal_error(0, string("Could not create folder \"") + path + "\"\n"
-				"Maybe try running \"" BLUE
-				"mkdir "
+		if (stat(path, &st) != -1) return; //if folder does not exist.
+		
+	#ifdef __WIN32
+		if (!CreateDirectory(path, NULL))
+	#else
+		if (mkdir(path, 0700) && errno != EEXIST)
+	#endif // OSCheck2
+			fatal_error(0, string("Could not create folder \"") + path + "\"\n"
+			"Maybe try running \"" BLUE
+			"mkdir "
 #ifndef __WIN32
-				GREEN "-p "
+			GREEN "-p "
 #endif // unix
-				PURPLE + path + COLOR_RESET "\""
-				);
-		}
+			PURPLE + path + COLOR_RESET "\""
+			);
 	}
 
 	void add_cate_ending(std::string& s)

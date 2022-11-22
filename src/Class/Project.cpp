@@ -18,8 +18,7 @@ void Project::generate_name()
 void Project::build() 
 {
 	//one file
-	if(files.size() == 1)
-		return single_file_build();
+	if(files.size() == 1) return single_file_build();
 
 	//multi file
 	if (!already_built)
@@ -40,7 +39,7 @@ void Project::build()
 			generate_command_for(all_object_files)
 		);
 	}
-done:
+
 	smolize();
 	print_done_message_with(name);
 }
