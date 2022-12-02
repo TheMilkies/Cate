@@ -68,7 +68,7 @@ void Class::build_object(int32_t i)
 	Util::system(
 		command_template + files[i] +
 		" -o " + object_files[i]
-		); //will exit if it can't compile
+	); //will exit if it can't compile
 }
 
 void Class::build_objects()
@@ -158,7 +158,7 @@ void Class::set_property(int32_t line, string& property, string& value)
 
 void Class::build_error(string_view problem)
 {
-	cout << ERROR   ": Cannot build \"" << name
+	cout << ERROR ": Cannot build \"" << name
 		<< "\" because " << problem << "\nTerminating.\n";
 	exit(1);
 }
@@ -218,10 +218,9 @@ void Class::smolize()
 
 void Class::create_directories()
 {
-	string path = object_dir.substr(0, object_dir.find_last_of('/')+1);
 	Util::create_folder(object_dir.c_str());
 	
-	path = out_name.substr(0, out_name.find_last_of('/')+1);
+	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	
 	if (!path.empty() && path != "./")
 		Util::recursively_create_folder(path.c_str());

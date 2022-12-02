@@ -1,6 +1,6 @@
 Project cate
 .compiler = "g++"
-.files = iterate("src/**.cpp")
+.files = iterate("src/**.cpp"
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .out = "out/cate"
 .libs = {"stdc++fs"}

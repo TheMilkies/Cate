@@ -60,6 +60,9 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 {
 	current = next();
 
+	if (current.type == 0)
+		fatal("Unexpected end of file");
+
 	if (current.type != type && current.type != type2 && current.type != type3)
 	{
 		fatal("Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
@@ -71,6 +74,9 @@ void Parser::expect_string_array()
 {
 	current = next();
 
+	if (current.type == 0)
+		fatal("Unexpected end of file");
+
 	if (current.type != STRING_LITERAL && current.type != COMMA && current.type != RCURLY)
 	{
 		fatal("Expected a string array ( `{\"like\", \"this\"}` )");
@@ -80,6 +86,9 @@ void Parser::expect_string_array()
 void Parser::expect_string_recursive_array()
 {
 	current = next();
+
+	if (current.type == 0)
+		fatal("Unexpected end of file");
 
 	if (current.type != STRING_LITERAL && current.type != RECURSIVE && current.type != COMMA && current.type != RCURLY)
 	{
@@ -91,6 +100,9 @@ void Parser::expect_string_recursive_array()
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
 {
 	current = next();
+
+	if (current.type == 0)
+		fatal("Unexpected end of file");
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
 	{
@@ -116,7 +128,10 @@ void Parser::void_function()
 	current = tokens[index += 2];
 
 	if (current.type != RPAREN)
-		error(current.line, "Missing ')'");
+	{
+		warn(current.line, "Missing ')'");
+		current = tokens[index -= 1]; //go back one
+	}
 }
 
 //expects '(' string_literal ')' and then returns the string_literal token
@@ -127,8 +142,8 @@ ParserToken Parser::string_function()
 	ParserToken to_return = current;
 	if (tokens[index+1].type != RPAREN)
 	{
-		error(current.line,
-					"Missing ')'");
+		warn(tokens[index+1].line, "Missing ')'");
+		current = tokens[index -= 1]; //go back one
 	}
 
 	current = next();

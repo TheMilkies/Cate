@@ -30,6 +30,12 @@ namespace Util
 	void lexer_error(std::string problem); //has the std here because flex /neg
 	void fatal_error(int32_t line, string_view problem);
 
+	inline void warn(int32_t line, string_view problem)
+	{
+		cout << BOLD YELLOW "Warning " COLOR_RESET "in line " << line << 
+		": " << problem << "\n";
+	}
+
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
 
 	//there are two of these because i'm lazy.
