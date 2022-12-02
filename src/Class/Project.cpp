@@ -46,11 +46,11 @@ void Project::build()
 
 void Project::single_file_build()
 {
-	string& file = files[0];
-	if(newer_than(file, out_name) || force_rebuild)
-	{
-		if(!already_built) check();
+	if(!already_built) check();
 
+	string& file = files[0];
+	if(newer_than(out_name, file) || force_rebuild)
+	{
 		create_directories();
 
 		file += ' '; //needed because it'd be $FILE$FLAGS (compiler doesn't like that.)
