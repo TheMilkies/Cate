@@ -17,8 +17,8 @@ void Parser::object_method()
 	}
 	else
 	{
-		fatal(string("Unknown member function \"" YELLOW) +
-		child.c_str() + "()" COLOR_RESET "\"");
+		fatal(string("\"" YELLOW) +
+		child.c_str() + "()" COLOR_RESET "\" is not a valid member function");
 	}
 }
 

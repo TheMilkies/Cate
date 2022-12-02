@@ -84,7 +84,7 @@ void Parser::expect_string_recursive_array()
 	current = next();
 
 	if (current.type == END)
-		fatal("Unexpected end of file");
+		fatal_error(tokens[index-1].line, "Unexpected end of file");
 
 	if (current.type != STRING_LITERAL && current.type != RECURSIVE && current.type != COMMA && current.type != RCURLY)
 	{
@@ -98,7 +98,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 	current = next();
 
 	if (current.type == END)
-		fatal("Unexpected end of file");
+		fatal_error(tokens[index-1].line, "Unexpected end of file");
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
 	{
@@ -138,7 +138,7 @@ ParserToken Parser::string_function()
 	ParserToken to_return = current;
 	if (tokens[index+1].type != RPAREN)
 	{
-		warn(tokens[index+1].line, "Missing ')'");
+		warn(current.line, "Missing ')'");
 		current = tokens[index -= 1]; //go back one
 	}
 

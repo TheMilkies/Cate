@@ -3,7 +3,7 @@
 #include "inc.hpp"
 #define CATE_VERSION "v2.7 (Development)"
 #ifdef MODS
-#define CATE_VERSION "v2.6 (Development Modded)"
+#define CATE_VERSION "v2.7 (Development Modded)"
 #endif // MODS
 
 #ifdef __WIN32
@@ -36,7 +36,7 @@ namespace Util
 		": " << problem << "\n";
 	}
 
-	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
+	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of('.'));}
 
 	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
@@ -56,11 +56,14 @@ namespace Util
 	/// @brief Like std::system, but exits if the command returns anything other than 0.
 	/// @param command The command to execute.
 	void system(string_view command);
+	/// @brief The system() command the user can execute
+	/// @param line The line it's in
+	/// @param command The command to execute.
 	void user_system(int32_t line, string_view command);
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 
-	void check_root();
+	//void check_root();
 
 	void add_cate_ending(std::string& s);
 } // namespace Util
