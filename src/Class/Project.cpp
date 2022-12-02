@@ -46,9 +46,8 @@ void Project::build()
 
 void Project::single_file_build()
 {
-	//if(!already_built) setup();
 	string& file = files[0];
-	if(newer_than(out_name, file) || force_rebuild)
+	if(newer_than(file, out_name) || force_rebuild)
 	{
 		if(!already_built) check();
 
