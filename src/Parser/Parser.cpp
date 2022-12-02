@@ -151,7 +151,7 @@ void Parser::parse()
 						if (current.type == LCURLY)
 							array(); //start the array
 						else if (current.type == RECURSIVE)
-							recursive();
+							files_recursive();
 					}
 				}
 			}

@@ -25,9 +25,9 @@ extern int32_t lexer_line;
 namespace Util
 {
 	void error(string_view problem);
+	void error(int32_t line, string_view problem);
 	void command_error(string_view problem);
 	void lexer_error(std::string problem); //has the std here because flex /neg
-	void error(int32_t line, string_view problem);
 	void fatal_error(int32_t line, string_view problem);
 	void build_error(string_view name, string_view problem);
 
@@ -69,6 +69,5 @@ namespace Util
 /// @param b Other path to check
 #define newer_than(a, b) (Util::get_modified_time(a.c_str()) < Util::get_modified_time(b.c_str()))
 #define string_find(x, text) (x.find(text) != string::npos)
-
 
 #endif

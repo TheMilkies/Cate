@@ -34,8 +34,9 @@ void Parser::include_array()
 	while (current.type != RCURLY)
 	{
 		expect_string_recursive_array();
+		auto& item = current.value;
 		if (current.type == STRING_LITERAL)
-			current_class->add_include(current.value);
+			current_class->add_include(item);
 		else if (current.type == RECURSIVE)
 			include_recursive();
 	}
@@ -43,13 +44,14 @@ void Parser::include_array()
 
 void Parser::definitions_array()
 {
-	string& definitions = current_class->all_definitions;
+	auto& definitions = current_class->all_definitions;
 	definitions.clear();
 	while (current.type != RCURLY)
 	{
 		expect_string_array();
+		auto& item = current.value;
 		if (current.type == STRING_LITERAL)
-			definitions += "-D" + current.value + ' ';
+			definitions += "-D" + item + ' ';
 	}
 }
 
@@ -69,16 +71,17 @@ void Parser::library_array()
 	while (current.type != RCURLY)
 	{
 		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
+		auto& item = current.value;
 		if (current.type == STRING_LITERAL)
 		{
-			current_class->add_library(current.value);
+			current_class->add_library(item);
 		}
 		else if(current.type == IDENTIFIER)
 		{
-			if (is_defined(current.value))
-				current_class->add_library(classes[current.value]->out_name);
+			if (is_defined(item))
+				current_class->add_library(classes[item]->out_name);
 			else
-				fatal_error(current.line, "\"" + current.value + "\" is not defined");
+				fatal_error(current.line, "\"" + item + "\" is not defined");
 		}
 	}
 }
@@ -86,7 +89,7 @@ void Parser::library_array()
 void Parser::files_array()
 {
 	//now files
-	vector<string>& current_property = current_class->files;
+	auto& current_property = current_class->files;
 	static bool first_clear = true;
 	if (!first_clear)
 	{
@@ -105,7 +108,7 @@ void Parser::files_array()
 		expect_string_recursive_array();
 		if (current.type == RECURSIVE)
 		{
-			recursive();
+			files_recursive();
 		}
 		else if (current.type == STRING_LITERAL)
 		{

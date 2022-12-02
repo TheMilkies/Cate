@@ -28,7 +28,7 @@ private:
 	
 	//void declare();
 	
-	void recursive();
+	void files_recursive();
 	void recursive_setup();
 	void include_recursive();
 

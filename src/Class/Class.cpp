@@ -210,8 +210,10 @@ void Class::smolize()
 
 void Class::create_directories()
 {
+	string path = object_dir.substr(0, object_dir.find_last_of('/')+1);
 	Util::create_folder(object_dir.c_str());
-	string path = out_name.substr(0, out_name.find_last_of('/')+1);
+	
+	path = out_name.substr(0, out_name.find_last_of('/')+1);
 	
 	if (!path.empty() && path != "./")
 		Util::recursively_create_folder(path.c_str());

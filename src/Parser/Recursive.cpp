@@ -16,9 +16,9 @@ void Parser::recursive_setup()
 {
 	current = string_function(); 
 
-	string &path = rd.path;
-	bool &subrecursive = rd.subrecursive;
-	int32_t &location_of_wildcard = rd.location_of_wildcard;
+	auto& path = rd.path;
+	auto& subrecursive = rd.subrecursive;
+	auto& location_of_wildcard = rd.location_of_wildcard;
 
 	string& argument = current.value;
 
@@ -52,7 +52,7 @@ void Parser::recursive_setup()
 	}
 }
 
-void Parser::recursive()
+void Parser::files_recursive()
 {
 	if(child == "incs" || child == "includes" || child == "include_paths")
 		return include_recursive();
@@ -63,10 +63,10 @@ void Parser::recursive()
 	
 	recursive_setup();
 
-	string &path = rd.path;
-	bool &subrecursive = rd.subrecursive;
+	auto& path = rd.path;
+	auto& subrecursive = rd.subrecursive;
 
-	vector<string>& files = current_class->files;
+	auto& files = current_class->files;
 
 	string extension = current.value.substr(rd.location_of_wildcard+1); //extract extension
 	
@@ -109,8 +109,8 @@ void Parser::include_recursive()
 {
 	recursive_setup();
 	
-	string &path = rd.path;
-	bool &subrecursive = rd.subrecursive;
+	auto& path = rd.path;
+	auto& subrecursive = rd.subrecursive;
 
 	if (string_find(path, '*')) //if more than one found
 		fatal_error(current.line, "Multiple wildcards are not allowed");
