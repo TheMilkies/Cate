@@ -61,6 +61,8 @@ Parser::Parser(const string& file_name)
 	
 	delete lexer; //delete the monstrosity and free its memory
 
+	if(parser_exit) exit(1);
+
 	parse(); //start parsing
 }
 
