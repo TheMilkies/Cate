@@ -40,7 +40,7 @@ private:
 	ParserToken string_function(); //expects '(' STRING_LITERAL ')' and then returns the STRING_LITErAL token
 	
 	bool special_case(); //`type` and `link` 
-	bool object_method(); //all object methods
+	void object_method(); //all object methods
 
 	string child;
 private:

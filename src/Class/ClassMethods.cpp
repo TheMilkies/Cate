@@ -3,7 +3,7 @@
 //add new methods in include/Class.hpp, then implement them here
 
 //add them here first with `else if (child == "THING")`
-bool Parser::object_method()
+void Parser::object_method()
 {
 	if (child == "build") //void Class.build(void);
 	{
@@ -17,10 +17,9 @@ bool Parser::object_method()
 	}
 	else
 	{
-		return false; //if not any of those, it's a property
+		fatal(string("Unknown member function \"" YELLOW) +
+		child.c_str() + "()" COLOR_RESET "\"");
 	}
-
-	return true; //will go to the next token
 }
 
 void Class::clean() 

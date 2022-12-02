@@ -49,9 +49,7 @@ void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 	current = next();
 
 	if (current.type != type && tokens[index+1].type != type2)
-	{
 		error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
-	}
 	
 	current = next();
 }
@@ -60,7 +58,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 {
 	current = next();
 
-	if (current.type == 0)
+	if (current.type == END)
 		fatal("Unexpected end of file");
 
 	if (current.type != type && current.type != type2 && current.type != type3)
@@ -74,20 +72,18 @@ void Parser::expect_string_array()
 {
 	current = next();
 
-	if (current.type == 0)
+	if (current.type == END)
 		fatal("Unexpected end of file");
 
 	if (current.type != STRING_LITERAL && current.type != COMMA && current.type != RCURLY)
-	{
 		fatal("Expected a string array ( `{\"like\", \"this\"}` )");
-	}
 }
 
 void Parser::expect_string_recursive_array()
 {
 	current = next();
 
-	if (current.type == 0)
+	if (current.type == END)
 		fatal("Unexpected end of file");
 
 	if (current.type != STRING_LITERAL && current.type != RECURSIVE && current.type != COMMA && current.type != RCURLY)
@@ -101,7 +97,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 {
 	current = next();
 
-	if (current.type == 0)
+	if (current.type == END)
 		fatal("Unexpected end of file");
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
