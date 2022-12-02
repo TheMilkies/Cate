@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.6/cate_2.6-0_amd64.deb
-sudo dpkg -i cate_2.6-0_amd64.deb
-rm cate_2.6-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.7/cate_2.7-0_amd64.deb
+sudo dpkg -i cate_2.7-0_amd64.deb
+rm cate_2.7-0_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.6/linux_cate_v2.6.0.zip
-unzip linux_cate_v2.6.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.7/linux_cate_v2.7.0.zip
+unzip linux_cate_v2.7.0.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -181,7 +181,7 @@ Both classes have these properties, even if they don't make sense for the class
 A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.
 
 Here's an example Catel file:
-```
+```py
 def smol.cate
 dir cate
 ```

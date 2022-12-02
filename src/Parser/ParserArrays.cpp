@@ -34,9 +34,8 @@ void Parser::include_array()
 	while (current.type != RCURLY)
 	{
 		expect_string_recursive_array();
-		auto& item = current.value;
 		if (current.type == STRING_LITERAL)
-			current_class->add_include(item);
+			current_class->add_include(current.value);
 		else if (current.type == RECURSIVE)
 			include_recursive();
 	}
@@ -49,9 +48,8 @@ void Parser::definitions_array()
 	while (current.type != RCURLY)
 	{
 		expect_string_array();
-		auto& item = current.value;
 		if (current.type == STRING_LITERAL)
-			definitions += "-D" + item + ' ';
+			definitions += "-D" + current.value + ' ';
 	}
 }
 

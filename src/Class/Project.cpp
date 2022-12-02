@@ -70,7 +70,7 @@ void Project::single_file_build()
 inline string Project::generate_command_for(string& objects)
 {
 	return compiler + " -o" + out_name + " " +
-		   objects + flags + " " +
+		   objects + flags + " " + all_definitions +
 		   all_library_paths + all_libraries + " " +
 		   all_include_paths + final_flags;
 }
