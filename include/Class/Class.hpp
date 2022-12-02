@@ -63,6 +63,8 @@ private:
 	vector<std::thread> threads;
 	string command_template;
 
+	void build_error(string_view problem);
+
 	void setup_objects(); //set up files and object files.
 
 	string get_stripped_name();

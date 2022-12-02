@@ -29,7 +29,6 @@ namespace Util
 	void command_error(string_view problem);
 	void lexer_error(std::string problem); //has the std here because flex /neg
 	void fatal_error(int32_t line, string_view problem);
-	void build_error(string_view name, string_view problem);
 
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of("."));}
 
@@ -63,6 +62,8 @@ namespace Util
 #define hl_func(x) YELLOW x COLOR_RESET
 #define hl_var(x) PURPLE x COLOR_RESET
 #define hl_flag(x) "\e[1;32m" "\t" x ": " COLOR_RESET
+
+#define ERROR RED BOLD "Error" COLOR_RESET
 
 /// @brief Returns if a file is a newer than another 
 /// @param a Path to check

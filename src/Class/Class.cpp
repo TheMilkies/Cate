@@ -1,4 +1,5 @@
 #include "Class/Class.hpp"
+#include "Util.hpp"
 
 extern int32_t thread_count;
 
@@ -155,13 +156,20 @@ void Class::set_property(int32_t line, string& property, string& value)
 		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to a string or is not a valid property name");
 }
 
+void Class::build_error(string_view problem)
+{
+	cout << ERROR   ": Cannot build \"" << name
+		<< "\" because " << problem << "\nTerminating.\n";
+	exit(1);
+}
+
 void Class::check()
 {
 	if (parser_exit)
-		Util::build_error(name, "of previous errors");
+		build_error("of previous errors");
 
 	if (files.empty())
-		Util::build_error(name, "it has no files");
+		build_error("it has no files");
 
 	if (compiler.empty())
 		compiler = "cc";

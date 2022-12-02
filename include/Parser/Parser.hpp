@@ -3,6 +3,7 @@
 #include "Util.hpp"
 #include "Parser/ParserTokens.hpp"
 #include "Class/Class.hpp"
+#define fatal(text) Util::fatal_error(current.line, text)
 
 //#include <unordered_map>
 

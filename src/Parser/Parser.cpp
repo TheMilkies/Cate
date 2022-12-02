@@ -78,7 +78,7 @@ void Parser::define()
 	string &identifier = current.value;
 
 	if (is_defined(identifier))
-		fatal_error(current.line, "\"" + identifier + "\" was already defined");
+		fatal("\"" + identifier + "\" was already defined");
 	
 	//this is technically a factory... oh well
 	if (temp_type == PROJECT)
@@ -116,7 +116,7 @@ void Parser::parse()
 			parent = current.value;
 
 			if (!is_defined(parent))
-				fatal_error(current.line, "\"" + parent + "\" is not defined.");
+				fatal("\"" + parent + "\" is not defined.");
 
 			if (current_class->name != parent)
 				current_class = classes[parent];
@@ -174,7 +174,7 @@ void Parser::parse()
 			{
 				name = dir + '/' + name;
 				if(!file_exists(name.c_str()))
-					fatal_error(current.line, "File \"" + name + "\" not found.");
+					fatal("File \"" + name + "\" not found.");
 			}
 			
 			//start the subcate instance

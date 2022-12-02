@@ -29,9 +29,8 @@ bool Parser::expect_bool()
 	current = next();
 
 	if (current.type != B_TRUE && current.type != B_FALSE)
-	{
-		fatal_error(current.line, "Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
-	}
+		fatal("Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
+
 	return (current.type == B_TRUE);
 }
 
@@ -40,9 +39,7 @@ bool Parser::expect_type()
 	current = next();
 
 	if (current.type != STATIC && current.type != DYNAMIC)
-	{
 		error(current.line, "Expected a LibraryType (static | dynamic) value");
-	}
 
 	return current.type == STATIC;
 }
@@ -65,7 +62,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 	if (current.type != type && current.type != type2 && current.type != type3)
 	{
-		fatal_error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
+		fatal("Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
 					" but got " + token_names[current.type]);
 	}
 }
@@ -76,7 +73,7 @@ void Parser::expect_string_array()
 
 	if (current.type != STRING_LITERAL && current.type != COMMA && current.type != RCURLY)
 	{
-		fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` )");
+		fatal("Expected a string array ( `{\"like\", \"this\"}` )");
 	}
 }
 
@@ -86,7 +83,7 @@ void Parser::expect_string_recursive_array()
 
 	if (current.type != STRING_LITERAL && current.type != RECURSIVE && current.type != COMMA && current.type != RCURLY)
 	{
-		fatal_error(current.line, "Expected a string array ( `{\"like\", \"this\"}` ) or "
+		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 hl_func("recursive()"));
 	}
 }
@@ -119,10 +116,7 @@ void Parser::void_function()
 	current = tokens[index += 2];
 
 	if (current.type != RPAREN)
-	{
-		error(current.line,
-					"Missing ')'");
-	}
+		error(current.line, "Missing ')'");
 }
 
 //expects '(' string_literal ')' and then returns the string_literal token

@@ -15,7 +15,6 @@ extern bool parser_exit;
 	#define WEXITSTATUS(status) (((status) & 0xff00) >> 8)
 #endif // __WIN32
 
-#define ERROR RED BOLD "Error" COLOR_RESET
 
 using std::cout;
 
@@ -48,13 +47,6 @@ namespace Util
 	void command_error(string_view problem)
 	{
 		cout << ERROR " in command: " << problem << "\n";
-		exit(1);
-	}
-
-	void build_error(string_view name, string_view problem)
-	{
-		cout <<  ERROR ": Cannot build \""
-						  << name << "\" because " << problem << "\nTerminating.\n";
 		exit(1);
 	}
 

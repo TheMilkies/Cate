@@ -23,17 +23,17 @@ void Parser::recursive_setup()
 	string& argument = current.value;
 
 	if (argument.empty()) //should NEVER happen
-		fatal_error(current.line, hl_func("recursive()")
+		fatal(hl_func("recursive()")
 		" was given an empty string literal");
 
 	location_of_wildcard = argument.find('*');
 	subrecursive = false;
 
 	if (location_of_wildcard == string::npos) //if not found
-		fatal_error(current.line, "Wildcard (*) was not found in " hl_func("recursive()"));
+		fatal("Wildcard (*) was not found in " hl_func("recursive()"));
 
 	if (argument[location_of_wildcard+1] == '/')
-		fatal_error(current.line, hl_func("recursive()")
+		fatal(hl_func("recursive()")
 			" does not support folder recursion (f/*/*.c). Use subrecursive (f/**.c)");
 	
 	if (argument[location_of_wildcard+1] == '*')
@@ -48,7 +48,7 @@ void Parser::recursive_setup()
 
 	if (!fs::is_directory(path)) //check if directory exists
 	{
-		fatal_error(current.line, "Directory \"" + path + "\" doesn't exist");
+		fatal("Directory \"" + path + "\" doesn't exist");
 	}
 }
 
@@ -58,7 +58,7 @@ void Parser::files_recursive()
 		return include_recursive();
 
 	if (child != "files")
-		fatal_error(current.line, "only the " hl_var("files") " and " hl_var("includes")
+		fatal("only the " hl_var("files") " and " hl_var("includes")
 				" properties can be set to result of recursive search.");
 	
 	recursive_setup();
@@ -72,18 +72,18 @@ void Parser::files_recursive()
 	
 	if (extension.empty())
 	{
-		fatal_error(current.line, hl_func("recursive()")
+		fatal(hl_func("recursive()")
 				" was not given an extension to find.");
 	}
 
 	if (extension == ".*")
 	{
-		fatal_error(current.line, hl_func("recursive()")
+		fatal(hl_func("recursive()")
 		   " does not allow \"all file extensions\" (.*) recursion.");
 	}
 
 	if (string_find(path, '*') || string_find(extension, '*')) //if more than one found
-		fatal_error(current.line, "Multiple wildcards are not allowed");
+		fatal("Multiple wildcards are not allowed");
 
 	if (subrecursive)
 	{
@@ -113,7 +113,7 @@ void Parser::include_recursive()
 	auto& subrecursive = rd.subrecursive;
 
 	if (string_find(path, '*')) //if more than one found
-		fatal_error(current.line, "Multiple wildcards are not allowed");
+		fatal("Multiple wildcards are not allowed");
 
 	current_class->add_include(path);
 

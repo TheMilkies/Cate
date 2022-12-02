@@ -22,7 +22,7 @@ void Parser::array()
 	}
 	else
 	{
-		fatal_error(current.line, "\"" PURPLE + child + COLOR_RESET
+		fatal("\"" PURPLE + child + COLOR_RESET
 			"\" cannot be set to an "
 			"array or is not a valid property name");
 	}
@@ -81,7 +81,7 @@ void Parser::library_array()
 			if (is_defined(item))
 				current_class->add_library(classes[item]->out_name);
 			else
-				fatal_error(current.line, "\"" + item + "\" is not defined");
+				fatal("\"" + item + "\" is not defined");
 		}
 	}
 }
