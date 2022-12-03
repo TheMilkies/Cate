@@ -99,10 +99,10 @@ touch cate/build.cate src/main.c
 ## Creating Catefiles (Catering)
 You've come this far! Good Job!
 
-Cate breaks most known build system conventions by forcing you to use multiple files for different targets and having a file extension (unlike CMake, Make, Autotools, and many more). For a debug build; you'll have a `debug.cate`. For a cross-platform build; you'll have a `platformname.cate`. 
+Cate breaks most known build-system conventions by forcing you to use multiple files for different targets, and having a file extension (unlike CMake, Make, Autotools, and many more). For a debug build you'll have a `debug.cate`, for a cross-platform build you'll have a `platformname.cate`. 
 
 ### Syntax
-Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int literals (0123456789) as of yet (and hopefully forever). 
+Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int-literals (0123456789) as of yet (and hopefully forever). Cate supports `#comments` in addition to C-comments.
 
 **Cate does not support** `a.property = b.property;` **syntax**
 
