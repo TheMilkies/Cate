@@ -2,17 +2,19 @@
 Library library(static);
 library.includes = {"include/libexample/"};
 library.files = {"libs/lib_example.c"};
-library.flags = "-O2 -g";
-library.out = "outs/libexample.a";
+library.flags = "-O2";
+library.out = "out/libexample.a"; //can be generated automatically
 library.build();
 
+//alternative syntax since 2.6
 /*Project*/
-Project project;
-project.files = recursive("src/*.c");
-project.includes = {"include/libexample/"};
-project.libraries = {library, "GL"};
-project.flags = "-O2";
-project.out = "outs/program";
-project.threading = true; 
-project.smol = true; /*minimal to no performance loss!*/
-project.build();
+Project project
+.files = recursive("src/*.c") //easy recursive syntax
+.includes = {"include/libexample/"}
+.libraries = {library, "GL"}
+.flags = "-O2"
+.out = "outs/program"
+.threading = true 
+.smol = true /*smaller executable,
+			   minimal to no performance loss!*/
+.build()
