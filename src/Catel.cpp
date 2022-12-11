@@ -30,8 +30,7 @@ void parse_catel()
 
 	if (dir.empty() || file_name.empty()) return;
 
-	if (!ends_with(file_name, ".cate"))
-		file_name += ".cate";
+	add_cate_ending(file_name);
 
 	string file_name_with_dir = dir + "/" + file_name;
 	
