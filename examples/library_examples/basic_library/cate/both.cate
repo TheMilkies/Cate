@@ -1,2 +1,11 @@
-subcate("dynamic")
-subcate("static")
+Library greeter(static)
+.flags = "-O3"
+.out = "out/libgreeter.a"
+.files = {"src/libgreeter/greeter.c"}
+.includes = {"include"}
+.build()
+
+//make dynamic now
+.type = dynamic
+.out = "out/libgreeter.so"
+.build()

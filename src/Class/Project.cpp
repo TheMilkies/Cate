@@ -29,9 +29,6 @@ void Project::build()
 
 	if (link)
 	{
-		if (!Util::file_exists(out_name.c_str()))
-			needs_rebuild = true;
-
 		if (!needs_rebuild) return;
 
 		Util::system(

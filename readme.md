@@ -161,7 +161,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `bool link`: Whether to run the linking step or not. Default is `true`.
 - `bool threading`: Whether to add `-pthread` to build command. Default is `false`. (Just syntactical sugar.)
-- `bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`.
+- `bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`. Do not use with libraries.
 
 - `LibraryType type`: Type of library, `static` or `dynamic`. Gets from library "constructor".
 

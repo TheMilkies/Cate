@@ -104,6 +104,9 @@ void Class::build_objects()
 
 	//set by the threads, don't add libraries if you don't need to
 	if (!needs_rebuild) return;
+#ifdef DEBUG
+	else std::cout << "finished " << name << '\n';
+#endif // DEBUG
 
 	already_built = true;
 }
@@ -165,6 +168,8 @@ void Class::build_error(string_view problem)
 
 void Class::check()
 {
+	using Util::file_exists;
+
 	if (parser_exit)
 		build_error("of previous errors");
 
@@ -176,6 +181,9 @@ void Class::check()
 
 	if (out_name.empty())
 		generate_name();
+
+	if (!file_exists(out_name.c_str()))
+		needs_rebuild = true;
 
 	if (object_dir.empty())
 	{

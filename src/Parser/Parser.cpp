@@ -22,9 +22,12 @@ static robin_hood::unordered_set<string> opened_files;
 
 Parser::Parser(const string& file_name)
 {
-	if (opened_files.size() > 0)
-		if (opened_files.find(file_name) != opened_files.end())
-			fatal_error(0, "Already built \"" + file_name + "\"");
+	if (opened_files.find(file_name) != opened_files.end())
+		fatal_error(0, "Already built \"" + file_name + "\"");
+
+#ifdef DEBUG
+	std::cout << "compiling " << file_name << '\n';
+#endif // DEBUG
 
 	opened_files.insert(file_name);
 	
