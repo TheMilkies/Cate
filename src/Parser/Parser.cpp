@@ -23,10 +23,10 @@ static robin_hood::unordered_set<string> opened_files;
 Parser::Parser(const string& file_name)
 {
 	if (opened_files.find(file_name) != opened_files.end())
-		fatal_error(0, "Already built \"" + file_name + "\"");
+		fatal("Already built \"" + file_name + "\"");
 
 #ifdef DEBUG
-	std::cout << "compiling " << file_name << '\n';
+	cout << "compiling " << file_name << '\n';
 #endif // DEBUG
 
 	opened_files.insert(file_name);
@@ -35,7 +35,7 @@ Parser::Parser(const string& file_name)
 	if (file.fail())
 		command_error("Cannot open file \"" + file_name + "\"");
 	
-	yyFlexLexer* lexer = new yyFlexLexer(file, std::cout); //create the lexer
+	yyFlexLexer* lexer = new yyFlexLexer(file, cout); //create the lexer
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
@@ -63,6 +63,7 @@ Parser::Parser(const string& file_name)
 	}
 	
 	delete lexer; //delete the monstrosity and free its memory
+	file.close();
 
 	if(parser_exit) exit(1);
 
@@ -101,7 +102,7 @@ void Parser::parse()
 {
 	current = next(); //gets the first token (0)
 	
-	string parent; parent.reserve(16); child.reserve(16); //parent.child
+	child.reserve(16);
 	while (current.type != END) //END = end of file
 	{
 		switch (current.type)
@@ -117,9 +118,9 @@ void Parser::parse()
 			expect(RPAREN);
 			break;
 
-		case IDENTIFIER:
+		case IDENTIFIER: {
 			/*property: string_literal '.' string_literal*/
-			parent = current.value;
+			auto& parent = current.value;
 
 			if (!is_defined(parent))
 				fatal("\"" + parent + "\" is not defined.");
@@ -128,6 +129,7 @@ void Parser::parse()
 				current_class = classes[parent];
 
 			expect(DOT); //will go automatically to DOT, no goto needed
+		}
 
 		case DOT:
 			expect(IDENTIFIER);
