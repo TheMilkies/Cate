@@ -25,7 +25,7 @@ void Parser::object_method()
 void Class::clean() 
 {
 	if (object_dir.empty())
-		object_dir = "build";
+		generate_object_dir_name();
 
 	string command =
 #ifdef __WIN32
