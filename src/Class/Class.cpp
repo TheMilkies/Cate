@@ -1,5 +1,6 @@
 #include "Class/Class.hpp"
 #include "Util.hpp"
+#include "Class/Global.hpp"
 
 extern int32_t thread_count;
 
@@ -186,7 +187,7 @@ void Class::check()
 		build_error("it has no files");
 
 	if (compiler.empty())
-		compiler = "cc";
+		compiler = global_values.compiler;
 
 	if (out_name.empty())
 		generate_name();
@@ -204,8 +205,15 @@ void Class::check()
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 
-	if (!standard.empty())
-		flags += " -std=" + standard + " ";
+	if (standard.empty())
+	{
+		if(!global_values.standard.empty())
+		{
+			standard = global_values.standard;
+			flags += " -std=" + standard + " ";
+		}
+	}
+	else flags += " -std=" + standard + " ";
 	
 	//automation
 	if (all_include_paths.empty())

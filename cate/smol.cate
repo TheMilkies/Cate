@@ -5,5 +5,5 @@ Project cate
 .out = "out/cate"
 .libs = {"stdc++fs"}
 .threading = true
-.smolize = true
+.smol = true
 .build()

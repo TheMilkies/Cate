@@ -56,7 +56,7 @@ void Parser::definitions_array()
 void Parser::library_array()
 {
 	static bool first = true;
-	if (!first) //this saves a bit of time
+	if (first) //this saves a bit of time
 	{
 		current_class->all_libraries.clear();
 		current_class->all_library_paths.clear();

@@ -4,6 +4,8 @@
 #include "Class/Project.hpp"
 #include "Class/Library.hpp"
 
+#include "Class/Global.hpp"
+
 using namespace Util;
 
 extern string dir;
@@ -118,6 +120,7 @@ void Parser::parse()
 			break;
 
 		case IDENTIFIER: {
+			if(global()) break;
 			/*property: string_literal '.' string_literal*/
 			auto& parent = current.value;
 
@@ -200,9 +203,23 @@ void Parser::parse()
 	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
 }
 
+#define set_string(x) expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = expect_bool(); return true;
+bool Parser::global()
+{
+	if (current.value == "compiler")
+	{
+		set_string(compiler);
+	}
+	else if (current.value == "standard" || current.value == "std")
+	{
+		set_string(standard);
+	}
+	return false;
+}
+
+#define set_bool(x) current_class->x = expect_bool(); return true;
 bool Parser::special_case()
 {
-#define set_bool(x) current_class->x = expect_bool(); return true;
 	if (child == "type")
 	{
 		current_class->is_static = expect_type();
@@ -221,7 +238,7 @@ bool Parser::special_case()
 	{
 		set_bool(link);
 	}
-#undef set_bool(x)
 
 	return false;
 }
+#undef set_bool(x)

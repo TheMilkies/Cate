@@ -8,8 +8,10 @@
 //system_allowed is the -D option, only affects `system(String)` in parser
 bool parser_exit = false, system_allowed = true,
 	 force_rebuild = false, force_smol = false;
+Global global_values;
 
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
+
 
 void help();
 

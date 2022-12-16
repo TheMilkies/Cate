@@ -1,0 +1,3 @@
+added global
+fixed clean bug
+can now recurse with `{"this/*.c"}`

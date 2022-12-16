@@ -3,9 +3,8 @@
 #include "Util.hpp"
 #include "Parser/ParserTokens.hpp"
 #include "Class/Class.hpp"
+#include "Class/Global.hpp"
 #define fatal(text) Util::fatal_error(current.line, text)
-
-//#include <unordered_map>
 
 //from main.cpp
 extern bool parser_exit;
@@ -41,6 +40,8 @@ private:
 	
 	bool special_case(); //`type` and `link` 
 	void object_method(); //all object methods
+
+	bool global();
 
 	string child;
 private:
