@@ -4,7 +4,7 @@ using namespace Util;
 
 void Parser::expect(ParserTokenKind type)
 {
-	current = next(); //get next token to compare
+	current = next(); 
 
 	if (current.type != type)
 	{
@@ -95,10 +95,10 @@ void Parser::expect_string_recursive_array()
 
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
 {
-	current = next();
+	if (tokens[index-1].type == END)
+		fatal_error(current.line, "Unexpected end of file");
 
-	if (current.type == END)
-		fatal_error(tokens[index-1].line, "Unexpected end of file");
+	current = next();
 
 	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4)
 	{
@@ -107,41 +107,37 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 	}
 }
 
-/*void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5)
+void Parser::optional_rparen()
 {
-	current = next();
-
-	if (current.type != type && current.type != type2 && current.type != type3 && current.type != type4 && current.type != type5)
+	if (current.type != RPAREN)
 	{
-		error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
-					" or " + token_names[type4] + " or " + token_names[type5] + " but got " + token_names[current.type]);
+		current = tokens[index -= 1]; //go back one
+		warn(current.line, "Missing ')'");
 	}
-}*/
+}
 
 void Parser::void_function()
 {
 	//it already checks if the next is '(', so we can just skip 2
 	current = tokens[index += 2];
 
-	if (current.type != RPAREN)
-	{
-		warn(current.line, "Missing ')'");
-		current = tokens[index -= 1]; //go back one
-	}
+	optional_rparen();
 }
 
 //expects '(' string_literal ')' and then returns the string_literal token
 ParserToken Parser::string_function()
 {
-	expect_and_then(LPAREN, STRING_LITERAL);
-
-	ParserToken to_return = current;
-	if (tokens[index+1].type != RPAREN)
+	current = next();
+	if(current.type != LPAREN || tokens[index+1].type != STRING_LITERAL)
 	{
-		warn(current.line, "Missing ')'");
-		current = tokens[index -= 1]; //go back one
+		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")"));
 	}
 
 	current = next();
+	ParserToken to_return = current;
+
+	current = next();
+	optional_rparen();
+
 	return to_return;
 }

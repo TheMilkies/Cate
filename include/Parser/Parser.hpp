@@ -62,7 +62,8 @@ private:
 	void expect_and_then(ParserTokenKind type, ParserTokenKind type2);
 	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3);
 	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4);
-	//void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4, ParserTokenKind type5);
+
+	void optional_rparen();
 
 	void parse(); //called from constructor, should be rewritten to not do that
 public:
