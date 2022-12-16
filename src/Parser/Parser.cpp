@@ -168,8 +168,7 @@ void Parser::parse()
 		case SYSTEM:
 			if (system_allowed)
 				user_system(current.line, string_function().value);
-			else
-				skip(3);
+			else skip(3);
 			break;
 
 		case SUBCATE: {

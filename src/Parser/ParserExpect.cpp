@@ -128,12 +128,9 @@ ParserToken Parser::string_function()
 {
 	current = next();
 	if(current.type != LPAREN || peek().type != STRING_LITERAL)
-	{
 		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")"));
-	}
 
-	current = next();
-	ParserToken to_return = current;
+	ParserToken to_return = next();
 
 	current = next();
 	optional_rparen();
