@@ -134,6 +134,9 @@ void Parser::parse()
 		}
 
 		case DOT:
+			if(current_class == nullptr)
+				fatal("No object was selected.");
+
 			expect(IDENTIFIER);
 			child = current.value;
 
@@ -206,13 +209,22 @@ void Parser::parse()
 #define set_string(x) expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.value; return true;
 bool Parser::global()
 {
-	if (current.value == "compiler")
+	auto& property = current.value;
+
+	if (property == "compiler")
 	{
 		set_string(compiler);
 	}
-	else if (current.value == "standard" || current.value == "std")
+	else if (property == "standard" || property == "std")
 	{
 		set_string(standard);
+	}
+	else if (property == "build_directory" ||
+			 property == "object_folder"   ||
+			 property == "obj_dir"		   ||
+			 property == "build_dir")
+	{
+		set_string(object_dir);
 	}
 	return false;
 }

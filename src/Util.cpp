@@ -1,4 +1,5 @@
 #include "Util.hpp"
+#include "Class/Global.hpp"
 
 extern bool parser_exit;
 
@@ -164,6 +165,16 @@ namespace Util
 	{
 		if (!s.empty() && !ends_with(s, ".cate"))
 			s += ".cate";
+	}
+
+	void generate_object_dir_name()
+	{
+		if (fs::is_directory("cate"))
+			global_values.object_dir = "cate/build";
+		else if (fs::is_directory("obj"))
+			global_values.object_dir = "obj";
+		else
+			global_values.object_dir = "build";
 	}
 
 	//coming maybe soon

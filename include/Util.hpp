@@ -62,6 +62,8 @@ namespace Util
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 
+	void generate_object_dir_name();
+
 	//void check_root();
 
 	void add_cate_ending(std::string& s);

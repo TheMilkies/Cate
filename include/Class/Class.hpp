@@ -68,7 +68,6 @@ private:
 	void setup_objects(); //set up files and object files.
 
 	string get_stripped_name();
-	void generate_object_dir_name();
 };
 
 #endif

@@ -166,16 +166,6 @@ void Class::build_error(string_view problem)
 	exit(1);
 }
 
-void Class::generate_object_dir_name()
-{
-	if (fs::is_directory("cate"))
-		object_dir = "cate/build";
-	else if (fs::is_directory("obj"))
-		object_dir = "obj";
-	else
-		object_dir = "build";
-}
-
 void Class::check()
 {
 	using Util::file_exists;
@@ -196,7 +186,11 @@ void Class::check()
 		needs_rebuild = true;
 
 	if (object_dir.empty())
-		generate_object_dir_name();
+	{
+		if(global_values.object_dir.empty())
+			Util::generate_object_dir_name();
+		object_dir = global_values.object_dir;
+	}
 
 	if (threading)
 		flags += " -pthread ";

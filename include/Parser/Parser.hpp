@@ -32,7 +32,7 @@ private:
 	void recursive_setup();
 	void include_recursive();
 
-	Class *current_class;
+	Class *current_class = nullptr;
 	ParserTokenKind temp_type;
 
 	void void_function(); //expects '(' ')' with nothing inside

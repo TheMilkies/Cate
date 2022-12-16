@@ -12,7 +12,6 @@ Global global_values;
 
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
 
-
 void help();
 
 string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";

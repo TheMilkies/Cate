@@ -3,7 +3,7 @@
 
 struct Global
 {
-	string compiler = "cc", standard;
+	string compiler = "cc", standard, object_dir;
 };
 
 extern Global global_values;
