@@ -151,12 +151,12 @@ namespace Util
 		if (mkdir(path, 0700) && errno != EEXIST)
 	#endif // OSCheck2
 			fatal_error(0, string("Could not create folder \"") + path + "\"\n"
-			"Maybe try running \"" BLUE
+			"Suggestion: try running `" BLUE
 			"mkdir "
 #ifndef __WIN32
 			GREEN "-p "
 #endif // unix
-			PURPLE + path + COLOR_RESET "\""
+			PURPLE + path + COLOR_RESET "`"
 			);
 	}
 

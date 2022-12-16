@@ -203,7 +203,7 @@ void Parser::parse()
 	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
 }
 
-#define set_string(x) expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = expect_bool(); return true;
+#define set_string(x) expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.value; return true;
 bool Parser::global()
 {
 	if (current.value == "compiler")
