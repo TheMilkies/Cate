@@ -7,7 +7,6 @@
 using namespace Util;
 
 extern string dir;
-
 static robin_hood::unordered_set<string> opened_files;
 
 /*
@@ -137,7 +136,7 @@ void Parser::parse()
 
 			//object_method: property function_parens
 			//this is a dumb and smart optimisation
-			if (tokens[index+1].type == LPAREN) object_method();
+			if (peek().type == LPAREN) object_method();
 			else
 			{
 				//assignment: property '=' expr
@@ -170,7 +169,7 @@ void Parser::parse()
 			if (system_allowed)
 				user_system(current.line, string_function().value);
 			else
-				current = tokens[index += 3]; // skip
+				skip(3);
 			break;
 
 		case SUBCATE: {

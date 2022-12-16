@@ -48,7 +48,7 @@ void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 {
 	current = next();
 
-	if (current.type != type && tokens[index+1].type != type2)
+	if (current.type != type && peek().type != type2)
 		error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
 	
 	current = next();
@@ -119,8 +119,7 @@ void Parser::optional_rparen()
 void Parser::void_function()
 {
 	//it already checks if the next is '(', so we can just skip 2
-	current = tokens[index += 2];
-
+	skip(2);
 	optional_rparen();
 }
 
@@ -128,7 +127,7 @@ void Parser::void_function()
 ParserToken Parser::string_function()
 {
 	current = next();
-	if(current.type != LPAREN || tokens[index+1].type != STRING_LITERAL)
+	if(current.type != LPAREN || peek().type != STRING_LITERAL)
 	{
 		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")"));
 	}

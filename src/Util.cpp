@@ -109,7 +109,7 @@ namespace Util
 			"Ran \"" << command << "\"\nExited with code " << exit_status << '\n';
 		}
 
-		cout << command << "\n";
+		else cout << "Running " << command << "\n";
 	}
 
 	bool ends_with(string_view value, string_view ending) //written by tshepang from stackoverflow, should be rewritten

@@ -65,6 +65,9 @@ private:
 
 	void optional_rparen();
 
+	inline ParserToken peek(int32_t how_much = 1) {return tokens[index + how_much];}
+	inline void skip(int32_t how_much = 1) {current = tokens[index += how_much];}
+
 	void parse(); //called from constructor, should be rewritten to not do that
 public:
 	Parser(const string& file_name);
