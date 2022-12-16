@@ -50,8 +50,8 @@
 ";" {}
 
 \"[^"]+\" {return STRING_LITERAL;}
-\"\" {Util::lexer_error("Empty string literals are not allowed.");}
-\" {Util::lexer_error("Missing ending quote.");}
+\"\" {Util::error(lexer_line, "Empty string literals are not allowed.");}
+\" {Util::error(lexer_line, "Missing ending quote.");}
 
 "Project" {return PROJECT;}
 "Library" {return LIBRARY;}
@@ -71,6 +71,6 @@
 "{" {return LCURLY;}
 "}" {return RCURLY;}
 
-. {Util::lexer_error("Unknown character");}
+. {Util::error(lexer_line, "Unknown character");}
 
 %%

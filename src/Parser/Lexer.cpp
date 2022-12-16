@@ -830,13 +830,13 @@ YY_RULE_SETUP
 YY_RULE_SETUP
 
 #line 53 "lexer.l"
-{Util::lexer_error("Empty string literals are not allowed.");}
+{Util::error(lexer_line, "Empty string literals are not allowed.");}
 	/*LINTED*/break;
 	case 12:
 YY_RULE_SETUP
 
 #line 54 "lexer.l"
-{Util::lexer_error("Missing ending quote.");}
+{Util::error(lexer_line, "Missing ending quote.");}
 	/*LINTED*/break;
 	case 13:
 YY_RULE_SETUP
@@ -938,7 +938,7 @@ YY_RULE_SETUP
 YY_RULE_SETUP
 
 #line 74 "lexer.l"
-{Util::lexer_error("Unknown character");}
+{Util::error(lexer_line, "Unknown character");}
 	/*LINTED*/break;
 	case 30:
 YY_RULE_SETUP

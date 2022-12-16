@@ -1,6 +1,6 @@
 Project cate
 .compiler = "g++"
-.files = recursive("src/**.cpp")
+.files = {"src/**.cpp"}
 .flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .libs = {"stdc++fs"}
 .threading = true

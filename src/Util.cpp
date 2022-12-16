@@ -26,12 +26,6 @@ namespace Util
 		parser_exit = true;
 	}
 
-	void lexer_error(string problem)
-	{
-		cout << ERROR " in line " << lexer_line << ": " << problem << "\n";
-		parser_exit = true;
-	}
-
 	void error(int32_t line, string_view problem)
 	{
 		cout << ERROR " in line " << line << ": " << problem << "\n";

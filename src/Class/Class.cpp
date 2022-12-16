@@ -66,8 +66,7 @@ void Class::setup_objects()
 void Class::build_object(int32_t i)
 {
 	Util::system(
-		command_template + files[i] +
-		" -o " + object_files[i]
+		command_template + object_files[i] + " " + files[i]
 	); //will exit if it can't compile
 }
 
@@ -79,7 +78,7 @@ void Class::build_objects()
 		thread_count  = files.size();
 
 	command_template.reserve(512);
-	command_template = compiler + ' ' + flags + ' ' + all_definitions + all_include_paths + "-c "; //this is a nice optimization
+	command_template = compiler + ' ' + flags + ' ' + all_definitions + all_include_paths + "-c -o"; //this is a nice optimization
 	for (int32_t i = 0; i < files.size(); i+=thread_count)
 	{
 		for (int32_t j = 0; j < thread_count; ++j)

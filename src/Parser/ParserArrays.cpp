@@ -104,13 +104,9 @@ void Parser::files_array()
 	while (current.type != RCURLY)
 	{
 		expect_string_recursive_array();
-		if (current.type == RECURSIVE)
-		{
+		if (current.type == RECURSIVE || string_find(current.value, '*'))
 			files_recursive();
-		}
 		else if (current.type == STRING_LITERAL)
-		{
 			current_property.emplace_back(current.value);
-		}
 	}
 }

@@ -1,1 +1,2 @@
-system("rm -rf cate/build/*.o");
+Project a
+.clean()

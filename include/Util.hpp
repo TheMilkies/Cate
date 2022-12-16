@@ -27,7 +27,6 @@ namespace Util
 	void error(string_view problem);
 	void error(int32_t line, string_view problem);
 	void command_error(string_view problem);
-	void lexer_error(std::string problem); //has the std here because flex /neg
 	void fatal_error(int32_t line, string_view problem);
 
 	inline void warn(int32_t line, string_view problem)
