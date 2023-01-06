@@ -104,14 +104,13 @@ void Parser::expect_library_recursive_array()
 	{
 		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 hl_func("recursive()") 
-						 " or an identifier"
-						 );
+						 " or an identifier");
 	}
 }
 
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
 {
-	if (tokens[index-1].type == END)
+	if (peek().type == END)
 		fatal_error(current.line, "Unexpected end of file");
 
 	current = next();

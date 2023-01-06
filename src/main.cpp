@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	if (argc < 2 && !catel_exists)
 	{
 		if (get_default_file_name());
-		else if (fs::is_directory("cate"))
+		else if (fs::is_directory(dir.c_str()))
 		{
 			if(catel_exists) command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe update your .catel file?");
 			else command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe create a .catel file?");
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 			{
 			switch (argv[i][1]) //check the second character of the argument
 			{
-			case 'j': //uncomment this if you want compatibility with nake
+			//case 'j': //uncomment this if you want compatibility with make
 			case 't': {
 				char* num;
 
@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
 				else
 					command_error("Missing argument \"-t\"");
 
-				int sub = atoi(num); //get everything after "-t"
-				if (sub != 0) //if 0 or invalid
+				int32_t sub = atoi(num); //get everything after "-t"
+				if (sub > 0) //if 0 or invalid
 					thread_count = sub;
 
 				//cout << thread_count << '\n;//debug
@@ -90,24 +90,24 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'l':{ //list directory
-				bool catefiles = false;
+				bool catefiles_found = false;
 
 				if(catel_exists) parse_catel();
 
 				string all; all.reserve(128);
 				for (const auto &p : fs::directory_iterator(dir)) //iterate over the files
 				{
-					if(catefiles) all += ", ";
+					if(catefiles_found) all += ", ";
 					if (p.path().extension() == ".cate")
 					{
 						all += p.path().stem().string();
-						catefiles = true;
+						catefiles_found = true;
 					}
 				}
-				if (catefiles)
+				if (catefiles_found)
 					cout << CYAN << all << COLOR_RESET "\n";
 				else
-					cout << BOLD RED "No catefiles found" COLOR_RESET "\n";
+					cout << BOLD RED "No catefiles_found found" COLOR_RESET "\n";
 
 				return 0;
 			} break;
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 				force_smol = true;
 				break;
 
-			case 'B': //make compatibility
+			//case 'B': //make compatibility
 			case 'f': //force rebuild
 				force_rebuild = true;
 				break;
