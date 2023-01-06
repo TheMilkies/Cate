@@ -85,12 +85,12 @@ void Parser::files_recursive()
 {
 	if (child != "files")
 	{
-		if(child == "incs" || child == "includes" || child == "include_paths")
-			return include_recursive();
-		else if(child == "libs" || child == "libraries")
+		if(child == "libs" || child == "libraries")
 			return library_recursive();
+		else if(child == "incs" || child == "includes" || child == "include_paths")
+			return include_recursive();
 
-		fatal("only the " hl_var("files") " and " hl_var("includes")
+		fatal("only the " hl_var("files") ", " hl_var("includes") ", and " hl_var("libraries")
 				" properties can be set to result of recursive search.");
 	}
 	

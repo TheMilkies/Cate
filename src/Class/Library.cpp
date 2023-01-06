@@ -25,7 +25,7 @@ void Library::set_type(int32_t line, bool is_static)
 	else
 	{
 		Util::remove_extension(out_name);
-		out_name += ".so";
+		out_name += DYNAMIC_EXTENSION;
 	}
 
 	needs_link += !Util::file_exists(out_name.c_str());
