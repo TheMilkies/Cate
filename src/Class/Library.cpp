@@ -14,23 +14,24 @@ void Library::set_type(int32_t line, bool is_static)
 {
 	if(this->is_static == is_static) return;
 	this->is_static = is_static;
+	
+	if(out_name.empty()) return;
 
-	if(is_static = true)
+	if(is_static)
 	{
-		if(Util::ends_with(out_name, ".so"))
-		{
-			out_name.pop_back();
-			out_name[out_name.length()] = 'a';
-		}
+		Util::remove_extension(out_name);
+		out_name += ".a";
 	}
 	else
 	{
-		if(Util::ends_with(out_name, ".a"))
-		{
-			out_name[out_name.length()] = 's';
-			out_name += 'o';
-		}
+		Util::remove_extension(out_name);
+		out_name += ".so";
+		std::cout << "out = " << out_name << '\n';
 	}
+
+
+	needs_rebuild += !Util::file_exists(out_name.c_str());
+	std::cout << "needs rebuild = " << (int) needs_rebuild << '\n';
 }
 
 void Library::build() 

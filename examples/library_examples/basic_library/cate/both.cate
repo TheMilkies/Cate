@@ -7,5 +7,4 @@ Library greeter(static)
 
 //make dynamic now
 .type = dynamic
-.out = "out/libgreeter.so"
 .build()
