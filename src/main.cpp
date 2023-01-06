@@ -104,7 +104,6 @@ bool get_default_file_name()
 void parse_args(int argc, char *argv[], bool catel_exists)
 {
 	using namespace Util;
-	std::cout << "started" << std::endl;
 	for (int32_t i = ARGC_START; i < argc; ++i)
 	{
 		if (argv[i][0] != '-')
@@ -127,11 +126,13 @@ void parse_args(int argc, char *argv[], bool catel_exists)
 			else if(argv[i+1] != NULL)
 				num = argv[++i]; //skip next because it's an int
 			else
-				command_error("Missing argument \"-t\"");
+				command_error("Missing argument \"-t\".");
 
 			int32_t sub = atoi(num); //get everything after "-t"
 			if (sub > 0) //if 0 or invalid
 				thread_count = sub;
+			else
+				command_error("Can't set thread count to \"" + string(num) + "\".");
 
 			//cout << thread_count << '\n;//debug
 
@@ -187,7 +188,7 @@ void parse_args(int argc, char *argv[], bool catel_exists)
 		default: //unknown
 			command_error(
 				string("Unknown argument \"") + argv[i] + "\", "
-						"Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
+					   "Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
 			);
 			break;
 		}
