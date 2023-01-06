@@ -25,7 +25,11 @@ void Parser::object_method()
 void Class::clean() 
 {
 	if (object_dir.empty())
-		generate_object_dir_name();
+	{
+		if(global_values.object_dir.empty())
+			Util::generate_object_dir_name();
+		object_dir = global_values.object_dir;
+	}
 
 	string command =
 #ifdef __WIN32

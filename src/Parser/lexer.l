@@ -1,4 +1,4 @@
-%option c++ noinput nounput noyywrap
+%option c++ noinput nounput noyywrap full
 
 %{
 	#include <iostream>
@@ -51,7 +51,7 @@
 
 \"[^"]+\" {return STRING_LITERAL;}
 \"\" {Util::error(lexer_line, "Empty string literals are not allowed.");}
-\" {Util::error(lexer_line, "Missing ending quote.");}
+\"(?:[^"\\]|\\.)* {Util::error(lexer_line, "Missing ending quote.");}
 
 "Project" {return PROJECT;}
 "Library" {return LIBRARY;}

@@ -170,16 +170,11 @@ struct yy_buffer_state
 	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
-void *yyalloc ( yy_size_t  );
-void *yyrealloc ( void *, yy_size_t  );
-void yyfree ( void *  );
-
 /* Begin user sect3 */
 
 #define YY_SKIP_YYWRAP
 
 #define yytext_ptr yytext
-#define YY_INTERACTIVE
 
 #include <FlexLexer.h>
 
@@ -408,4 +403,7 @@ static int yy_flex_strlen ( const char * );
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */
 
-#line 76 "lexer.l"
+#line 76 "src/Parser/lexer.l"
+
+
+
