@@ -27,7 +27,7 @@ public:
 	robin_hood::unordered_set<string> loaded_library_paths;
 
 	bool is_static; //only in library
-	bool already_built = false, needs_rebuild = false;
+	bool already_built = false, needs_link = false;
 	bool link = true, threading = false, smol = false;
 	
 	Class();

@@ -70,7 +70,7 @@
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
 		"LICENSE.txt": true,
-		".gitignore": true,
+		".gitignore": true
 	},
 	"hide-files.files": [
 		"LICENSE.txt",

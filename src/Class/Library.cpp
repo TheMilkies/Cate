@@ -28,7 +28,7 @@ void Library::set_type(int32_t line, bool is_static)
 		out_name += ".so";
 	}
 
-	needs_rebuild += !Util::file_exists(out_name.c_str());
+	needs_link += !Util::file_exists(out_name.c_str());
 }
 
 void Library::build() 
@@ -45,7 +45,7 @@ void Library::build()
 
 	if(link)
 	{
-		if (!needs_rebuild) return;
+		if (!needs_link) return;
 		
 		string command;
 		command.reserve(512);

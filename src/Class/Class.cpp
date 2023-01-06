@@ -90,7 +90,7 @@ void Class::build_objects()
 				continue;
 
 			threads.emplace_back(&Class::build_object, this, current); //make thread build the object file
-			needs_rebuild = true;
+			needs_link = true;
 		}
 
 		for(auto &thread : threads)
@@ -102,8 +102,6 @@ void Class::build_objects()
 		threads.clear(); //clear them so we won't run them again.
 	}
 
-	//set by the threads, don't add libraries if you don't need to
-	if (!needs_rebuild) return;
 #ifdef DEBUG
 	else std::cout << "finished " << name << '\n';
 #endif // DEBUG
@@ -183,7 +181,7 @@ void Class::check()
 		generate_name();
 
 	if (!file_exists(out_name.c_str()))
-		needs_rebuild = true;
+		needs_link = true;
 
 	if (object_dir.empty())
 	{

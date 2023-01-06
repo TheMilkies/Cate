@@ -34,7 +34,7 @@ void Project::build()
 
 	if (link)
 	{
-		if (!needs_rebuild) return;
+		if (!needs_link) return;
 
 		Util::system(
 			//command = $CC -o$OUT_NAME $OBJ $FLAGS $LIB_PATHS $LIBS $INCS $FINAL_FLAGS
