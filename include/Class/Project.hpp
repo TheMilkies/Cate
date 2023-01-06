@@ -8,6 +8,7 @@ public:
 	void build() override;
 	void single_file_build();
 	void generate_name() override;
+	void set_type(int32_t line, bool is_static) override;
 
 	Project();
 	~Project();

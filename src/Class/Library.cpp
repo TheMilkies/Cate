@@ -10,6 +10,29 @@ void Library::generate_name()
 	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
 }
 
+void Library::set_type(int32_t line, bool is_static)
+{
+	if(this->is_static == is_static) return;
+	this->is_static = is_static;
+
+	if(is_static = true)
+	{
+		if(Util::ends_with(out_name, ".so"))
+		{
+			out_name.pop_back();
+			out_name[out_name.length()] = 'a';
+		}
+	}
+	else
+	{
+		if(Util::ends_with(out_name, ".a"))
+		{
+			out_name[out_name.length()] = 's';
+			out_name += 'o';
+		}
+	}
+}
+
 void Library::build() 
 {	
 	if (!already_built)

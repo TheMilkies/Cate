@@ -234,7 +234,7 @@ bool Parser::special_case()
 {
 	if (child == "type")
 	{
-		current_class->is_static = expect_type();
+		current_class->set_type(current.line, expect_type());
 		current_class->needs_rebuild += (!file_exists(current_class->out_name.c_str())); 
 		return true;
 	}
@@ -253,4 +253,4 @@ bool Parser::special_case()
 
 	return false;
 }
-#undef set_bool(x)
+#undef set_bool

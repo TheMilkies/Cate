@@ -35,6 +35,7 @@ public:
 	virtual ~Class() {};
 	virtual void build() = 0; //class defined
 	virtual void generate_name() = 0; //class defined
+	virtual void set_type(int32_t line, bool is_static) = 0; //class defined
 
 	void clean();
 	void setup(); // set up directories and object files

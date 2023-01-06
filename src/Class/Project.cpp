@@ -15,7 +15,12 @@ void Project::generate_name()
 	;
 }
 
-void Project::build() 
+void Project::set_type(int32_t line, bool is_static)
+{
+	Util::warn(line, "Projects don't have the `" hl_var("type") "`");
+}
+
+void Project::build()
 {
 	//one file
 	if(files.size() == 1) return single_file_build();
