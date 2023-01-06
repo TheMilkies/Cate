@@ -18,6 +18,7 @@ string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";
 
 void parse_catel(); // Catel.cpp
 bool get_default_file_name();
+void parse_args(int argc, char *argv[], bool catel_exists);
 
 #ifdef TRACK_ALLOCS
 int allocs_count = 0;
@@ -49,104 +50,17 @@ int main(int argc, char *argv[])
 		else
 		{
 		#ifdef CALL_COMPETITOR
-			if(call_competitor()) return 0;
+			if(call_competitor()) exit(0);
 		#endif // CALL_COMPETITOR
 			cout << "No catefiles detected, Have some help\n";
 			help();
-			return 1;
+			exit(1);
 		}
 	}
 	//get specified
 	else
 	{
-		for (int32_t i = ARGC_START; i < argc; ++i)
-		{
-			if (argv[i][0] == '-')
-			{
-			switch (argv[i][1]) //check the second character of the argument
-			{
-			//case 'j': //uncomment this if you want compatibility with make
-			case 't': {
-				char* num;
-
-				if(argv[i][2] != NULL)
-					num = argv[i]+2;
-				else if(argv[i+1] != NULL)
-					num = argv[++i]; //skip next because it's an int
-				else
-					command_error("Missing argument \"-t\"");
-
-				int32_t sub = atoi(num); //get everything after "-t"
-				if (sub > 0) //if 0 or invalid
-					thread_count = sub;
-
-				//cout << thread_count << '\n;//debug
-
-			}	break;
-
-			case 'v': //cate version
-				cout << CATE_VERSION "\n";
-				return 0; //exit after
-				break;
-
-			case 'l':{ //list directory
-				bool catefiles_found = false;
-
-				if(catel_exists) parse_catel();
-
-				string all; all.reserve(128);
-				for (const auto &p : fs::directory_iterator(dir)) //iterate over the files
-				{
-					if(catefiles_found) all += ", ";
-					if (p.path().extension() == ".cate")
-					{
-						all += p.path().stem().string();
-						catefiles_found = true;
-					}
-				}
-				if (catefiles_found)
-					cout << CYAN << all << COLOR_RESET "\n";
-				else
-					cout << BOLD RED "No catefiles_found found" COLOR_RESET "\n";
-
-				return 0;
-			} break;
-			
-			case 'h':
-			case '?': //shows help
-				help();
-				return 0; //exit after
-				break;
-			
-			case 'D': //disable system
-				system_allowed = false;
-				break;
-			
-			case 'S': //disable system
-				force_smol = true;
-				break;
-
-			//case 'B': //make compatibility
-			case 'f': //force rebuild
-				force_rebuild = true;
-				break;
-		
-			default: //unknown
-				command_error(
-					string("Unknown argument \"") + argv[i] + "\", "
-							"Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
-				);
-				break;
-			}
-			}
-			else //must be a filename now
-			{
-				if (file_name.empty())
-					file_name = argv[i];
-				else
-					command_error("Cannot build more than one catefile per command.");
-			}
-		}
+		parse_args(argc, argv, catel_exists);
 	}
 
 	add_cate_ending(file_name);
@@ -185,4 +99,97 @@ bool get_default_file_name()
 	else
 		return false;
 	return true;
+}
+
+void parse_args(int argc, char *argv[], bool catel_exists)
+{
+	using namespace Util;
+	std::cout << "started" << std::endl;
+	for (int32_t i = ARGC_START; i < argc; ++i)
+	{
+		if (argv[i][0] != '-')
+		{
+			if (file_name.empty())
+				file_name = argv[i];
+			else
+				command_error("Cannot build more than one catefile per command.");
+			continue;
+		}
+
+		switch (argv[i][1]) //check the second character of the argument
+		{
+		//case 'j': //uncomment this if you want compatibility with make
+		case 't': {
+			char* num;
+
+			if(argv[i][2] != NULL)
+				num = argv[i]+2;
+			else if(argv[i+1] != NULL)
+				num = argv[++i]; //skip next because it's an int
+			else
+				command_error("Missing argument \"-t\"");
+
+			int32_t sub = atoi(num); //get everything after "-t"
+			if (sub > 0) //if 0 or invalid
+				thread_count = sub;
+
+			//cout << thread_count << '\n;//debug
+
+		}	break;
+
+		case 'v': //cate version
+			cout << CATE_VERSION "\n";
+			exit(0); //exit after
+			break;
+
+		case 'l':{ //list directory
+			bool catefiles_found = false;
+
+			if(catel_exists) parse_catel();
+
+			string all; all.reserve(128);
+			for (const auto &p : fs::directory_iterator(dir)) //iterate over the files
+			{
+				if(catefiles_found) all += ", ";
+				if (p.path().extension() == ".cate")
+				{
+					all += p.path().stem().string();
+					catefiles_found = true;
+				}
+			}
+			if (catefiles_found)
+				cout << CYAN << all << COLOR_RESET "\n";
+			else
+				cout << BOLD RED "No catefiles_found found" COLOR_RESET "\n";
+
+			exit(0);
+		} break;
+		
+		case 'h':
+		case '?': //shows help
+			help();
+			exit(0); //exit after
+			break;
+		
+		case 'D': //disable system
+			system_allowed = false;
+			break;
+		
+		case 'S': //disable system
+			force_smol = true;
+			break;
+
+		//case 'B': //make compatibility
+		case 'f': //force rebuild
+			force_rebuild = true;
+			break;
+	
+		default: //unknown
+			command_error(
+				string("Unknown argument \"") + argv[i] + "\", "
+						"Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
+			);
+			break;
+		}
+	}
 }
