@@ -206,50 +206,39 @@ void Parser::parse()
 	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
 }
 
-#define set_string(x) expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.value; return true;
+#define set_string(x) {expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.value;}
 bool Parser::global()
 {
 	auto& property = current.value;
 
 	if (property == "compiler")
-	{
-		set_string(compiler);
-	}
+		set_string(compiler)
 	else if (property == "standard" || property == "std")
-	{
-		set_string(standard);
-	}
+		set_string(standard)
 	else if (property == "build_directory" ||
 			 property == "object_folder"   ||
 			 property == "obj_dir"		   ||
 			 property == "build_dir")
-	{
-		set_string(object_dir);
-	}
-	return false;
+		set_string(object_dir)
+	else return false;
+
+	return true;
 }
 
-#define set_bool(x) current_class->x = expect_bool(); return true;
+#define set_bool(x) current_class->x = expect_bool();
 bool Parser::special_case()
 {
 	if (child == "type")
-	{
 		current_class->set_type(current.line, expect_type()); 
-		return true;
-	}
 	else if (child == "threading")
-	{
-		set_bool(threading);
-	}
+		set_bool(threading)
 	else if (child == "smolize" || child == "smol")
-	{
-		set_bool(smol);
-	}
+		set_bool(smol)
 	else if (child == "link")
-	{
-		set_bool(link);
-	}
+		set_bool(link)
+		
+	else return false;
 
-	return false;
+	return true;
 }
 #undef set_bool
