@@ -1,8 +1,1 @@
-# Cate v2.8
-
-- added global
-- fixed clean bug
-- can now recurse with `{"this/*.c"}`
-- can now recurse over libraries
-- added autocratic file name change for library types
-- fixed relink bug
+# Cate v2.9

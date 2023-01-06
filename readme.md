@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.7/cate_2.7-0_amd64.deb
-sudo dpkg -i cate_2.7-0_amd64.deb
-rm cate_2.7-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.8/cate_2.8-0_amd64.deb
+sudo dpkg -i cate_2.8-0_amd64.deb
+rm cate_2.8-0_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.7/linux_cate_v2.7.0.zip
-unzip linux_cate_v2.7.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.8/linux_cate_v2.8.0.zip
+unzip linux_cate_v2.8.0.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -176,6 +176,32 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 - `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
+
+### Global (since 2.8)
+All classes use global values as default. There are only 3 global variables you can change, being:
+- `String compiler`
+- `String std|standard`
+- `String obj_dir|object_dir|build_dir|build_directory`
+
+Usage example:
+```r
+compiler = "g++"
+Project proj
+.flags = "-O3"
+.files = "src/main.cpp"
+.build()
+
+Project proj2
+.flags = "-O3"
+.files = "src2/main.cpp"
+.build()
+
+Project proj3
+.compiler = "cc"
+.flags = "-O3"
+.files = "src3/main.c"
+.build()
+```
 
 ### Catel
 A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.

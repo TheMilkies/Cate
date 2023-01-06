@@ -1,3 +1,4 @@
+compiler = "gcc"
 /*Library*/
 Library library(static);
 library.includes = {"include/libexample/"};
@@ -6,7 +7,7 @@ library.flags = "-O2";
 library.out = "out/libexample.a"; //can be generated automatically
 library.build();
 
-//alternative syntax since 2.6
+//alternative syntax
 /*Project*/
 Project project
 .files = recursive("src/*.c") //easy recursive syntax
