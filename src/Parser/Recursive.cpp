@@ -53,20 +53,12 @@ void Parser::recursive_setup()
 	}
 }
 
-void Parser::files_recursive()
+string Parser::extension_recursive()
 {
-	if(child == "incs" || child == "includes" || child == "include_paths")
-		return include_recursive();
-
-	if (child != "files")
-		fatal("only the " hl_var("files") " and " hl_var("includes")
-				" properties can be set to result of recursive search.");
-	
 	recursive_setup();
 
 	auto& path = rd.path;
 	auto& subrecursive = rd.subrecursive;
-
 	auto& files = current_class->files;
 
 	string extension = current.value.substr(rd.location_of_wildcard+1); //extract extension
@@ -85,6 +77,28 @@ void Parser::files_recursive()
 
 	if (string_find(path, '*') || string_find(extension, '*')) //if more than one found
 		fatal("Multiple wildcards are not allowed");
+	
+	return extension;
+}
+
+void Parser::files_recursive()
+{
+	if (child != "files")
+	{
+		if(child == "incs" || child == "includes" || child == "include_paths")
+			return include_recursive();
+		else if(child == "libs" || child == "libraries")
+			return library_recursive();
+
+		fatal("only the " hl_var("files") " and " hl_var("includes")
+				" properties can be set to result of recursive search.");
+	}
+	
+	string extension = extension_recursive();
+
+	auto& path = rd.path;
+	auto& subrecursive = rd.subrecursive;
+	auto& files = current_class->files;
 
 	if (subrecursive)
 	{
@@ -99,7 +113,7 @@ void Parser::files_recursive()
 	{
 		file_iterator(p)
 		{
-			//add to files only if the files have the extension
+			//same here
 			if (p.path().extension() == extension)
 				files.emplace_back(p.path().string());
 		}
@@ -132,6 +146,34 @@ void Parser::include_recursive()
 		{
 			if(fs::is_directory(p.path()))
 				current_class->add_include(p.path().string());
+		}
+	}
+}
+
+void Parser::library_recursive()
+{
+	string extension = extension_recursive();
+
+	auto& path = rd.path;
+	auto& subrecursive = rd.subrecursive;
+	auto& files = current_class->files;
+
+	if (subrecursive)
+	{
+		sub_file_iterator(p) //iterate over the files
+		{
+			//add to files only if the files have the extension
+			if (p.path().extension() == extension)
+				files.emplace_back(p.path().string());
+		}
+	}
+	else
+	{
+		file_iterator(p)
+		{
+			//add to files only if the files have the extension
+			if (p.path().extension() == extension)
+				files.emplace_back(p.path().string());
 		}
 	}
 }

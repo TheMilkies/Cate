@@ -25,17 +25,20 @@ private:
 	void definitions_array();
 	void expect_string_array();
 	void expect_string_recursive_array();
+	void expect_library_recursive_array();
 	
 	//void declare();
 	
-	void files_recursive();
-	void recursive_setup();
-	void include_recursive();
+	void   recursive_setup();
+	string extension_recursive();
+	void   files_recursive();
+	void   include_recursive();
+	void   library_recursive();
 
 	Class *current_class = nullptr;
 	ParserTokenKind temp_type;
 
-	void void_function(); //expects '(' ')' with nothing inside
+	void 		void_function(); //expects '(' ')' with nothing inside
 	ParserToken string_function(); //expects '(' STRING_LITERAL ')' and then returns the STRING_LITErAL token
 	
 	bool special_case(); //`type` and `link` 

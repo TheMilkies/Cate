@@ -93,6 +93,22 @@ void Parser::expect_string_recursive_array()
 	}
 }
 
+void Parser::expect_library_recursive_array()
+{
+	current = next();
+
+	if (match(END))
+		fatal_error(tokens[index-1].line, "Unexpected end of file");
+
+	if (!match(STRING_LITERAL) && !match(RECURSIVE) && !match(IDENTIFIER) && !match(COMMA) && !match(RCURLY))
+	{
+		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
+						 hl_func("recursive()") 
+						 "or an identifier"
+						 );
+	}
+}
+
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
 {
 	if (tokens[index-1].type == END)

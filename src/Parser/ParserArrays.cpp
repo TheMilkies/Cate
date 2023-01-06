@@ -68,7 +68,7 @@ void Parser::library_array()
 
 	while (!match(RCURLY))
 	{
-		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
+		expect_library_recursive_array();
 		auto& item = current.value;
 		if (match(STRING_LITERAL))
 		{
