@@ -70,7 +70,9 @@ void Parser::library_array()
 	{
 		expect_library_recursive_array();
 		auto& item = current.value;
-		if (match(STRING_LITERAL))
+		if (match(RECURSIVE) || string_find(current.value, '*'))
+			library_recursive();
+		else if (match(STRING_LITERAL))
 		{
 			current_class->add_library(item);
 		}

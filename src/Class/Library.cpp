@@ -26,7 +26,6 @@ void Library::set_type(int32_t line, bool is_static)
 	{
 		Util::remove_extension(out_name);
 		out_name += ".so";
-		std::cout << "out = " << out_name << '\n';
 	}
 
 	needs_rebuild += !Util::file_exists(out_name.c_str());

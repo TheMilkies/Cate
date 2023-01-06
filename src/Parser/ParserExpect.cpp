@@ -104,7 +104,7 @@ void Parser::expect_library_recursive_array()
 	{
 		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 hl_func("recursive()") 
-						 "or an identifier"
+						 " or an identifier"
 						 );
 	}
 }
