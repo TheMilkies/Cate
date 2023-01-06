@@ -1,7 +1,6 @@
 #include "Parser/Parser.hpp"
 
 using namespace Util;
-#define match(typ) (current.type == typ)
 
 void Parser::expect(ParserTokenKind type)
 {

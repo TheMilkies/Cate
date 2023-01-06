@@ -104,7 +104,7 @@ void Parser::parse()
 	current = next(); //gets the first token (0)
 	
 	child.reserve(16);
-	while (current.type != END) //END = end of file
+	while (!match(END)) //END = end of file
 	{
 		switch (current.type)
 		{
@@ -154,16 +154,16 @@ void Parser::parse()
 				{
 					expect(STRING_LITERAL, LCURLY, RECURSIVE);
 
-					if (current.type == STRING_LITERAL)
+					if (match(STRING_LITERAL))
 					{
 						//set current property to the string literal
 						current_class->set_property(current.line, child, current.value); 
 					}
 					else 
 					{
-						if (current.type == LCURLY)
+						if (match(LCURLY))
 							array(); //start the array
-						else if (current.type == RECURSIVE)
+						else if (match(RECURSIVE))
 							files_recursive();
 					}
 				}

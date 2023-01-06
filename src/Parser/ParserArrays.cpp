@@ -31,12 +31,12 @@ void Parser::array()
 void Parser::include_array()
 {
 	current_class->all_include_paths.clear();
-	while (current.type != RCURLY)
+	while (!match(RCURLY))
 	{
 		expect_string_recursive_array();
-		if (current.type == STRING_LITERAL)
+		if (match(STRING_LITERAL))
 			current_class->add_include(current.value);
-		else if (current.type == RECURSIVE)
+		else if (match(RECURSIVE))
 			include_recursive();
 	}
 }
@@ -45,10 +45,10 @@ void Parser::definitions_array()
 {
 	auto& definitions = current_class->all_definitions;
 	definitions.clear();
-	while (current.type != RCURLY)
+	while (!match(RCURLY))
 	{
 		expect_string_array();
-		if (current.type == STRING_LITERAL)
+		if (match(STRING_LITERAL))
 			definitions += "-D" + current.value + ' ';
 	}
 }
@@ -66,15 +66,15 @@ void Parser::library_array()
 		first = false;
 	}
 
-	while (current.type != RCURLY)
+	while (!match(RCURLY))
 	{
 		expect(STRING_LITERAL, IDENTIFIER, COMMA, RCURLY);
 		auto& item = current.value;
-		if (current.type == STRING_LITERAL)
+		if (match(STRING_LITERAL))
 		{
 			current_class->add_library(item);
 		}
-		else if(current.type == IDENTIFIER)
+		else if(match(IDENTIFIER))
 		{
 			if (is_defined(item))
 				current_class->add_library(classes[item]->out_name);
@@ -101,12 +101,12 @@ void Parser::files_array()
 	}
 	
 	//this is an expr, continuing '{' expr '} but doesn't allow nested arrays.
-	while (current.type != RCURLY)
+	while (!match(RCURLY))
 	{
 		expect_string_recursive_array();
-		if (current.type == RECURSIVE || string_find(current.value, '*'))
+		if (match(RECURSIVE) || string_find(current.value, '*'))
 			files_recursive();
-		else if (current.type == STRING_LITERAL)
+		else if (match(STRING_LITERAL))
 			current_property.emplace_back(current.value);
 	}
 }

@@ -14,7 +14,7 @@ static struct
 
 void Parser::recursive_setup()
 {
-	if(current.type != STRING_LITERAL)
+	if(!match(STRING_LITERAL))
 		current = string_function(); 
 
 	auto& path = rd.path;

@@ -81,4 +81,5 @@ namespace Util
 #define newer_than(a, b) (Util::get_modified_time(a.c_str()) < Util::get_modified_time(b.c_str()))
 #define string_find(x, text) (x.find(text) != string::npos)
 
+#define match(typ) (current.type == typ)
 #endif
