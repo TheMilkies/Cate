@@ -14,7 +14,7 @@ void Library::set_type(int32_t line, bool is_static)
 {
 	if(this->is_static == is_static) return;
 	this->is_static = is_static;
-	
+
 	if(out_name.empty()) return;
 
 	if(is_static)
@@ -29,9 +29,7 @@ void Library::set_type(int32_t line, bool is_static)
 		std::cout << "out = " << out_name << '\n';
 	}
 
-
 	needs_rebuild += !Util::file_exists(out_name.c_str());
-	std::cout << "needs rebuild = " << (int) needs_rebuild << '\n';
 }
 
 void Library::build() 
