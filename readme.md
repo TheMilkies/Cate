@@ -170,7 +170,7 @@ Both classes have these properties, even if they don't make sense for the class
 - `void clean()`: Deletes project/library's build directory.
 
 ### General functions
-- `Array<String> recursive(String path)`: Get all files (or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
+- `Array<String> recursive(String path)`: Get all files (or libraries, or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
 - - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
 - - `recursive()` is also called `iterate()`.
 
@@ -184,8 +184,9 @@ All classes use global values as default. There are only 3 global variables you 
 - `String obj_dir|object_dir|build_dir|build_directory`
 
 Usage example:
-```r
-compiler = "g++"
+```c
+compiler = "g++" //global
+
 Project proj
 .flags = "-O3"
 .files = "src/main.cpp"
