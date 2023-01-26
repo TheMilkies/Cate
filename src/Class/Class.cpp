@@ -55,7 +55,6 @@ void Class::setup_objects()
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
-		//Util::replace_all(file, "./", ""); // "./" -> ""
 		Util::replace_all(file, "/", "_"); // "/" -> "_"
 		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
 		file = object_dir + "/" + file; // folder/object.o
@@ -103,7 +102,7 @@ void Class::build_objects()
 	}
 
 #ifdef DEBUG
-	else std::cout << "finished " << name << '\n';
+	std::cout << "finished " << name << '\n';
 #endif // DEBUG
 
 	already_built = true;

@@ -19,7 +19,7 @@ Do note:
 - We know the source code isn't great, it was our first project.
 - Cate uses Catel, a messy file type that allows default files.
 - Cate uses [robin_hood hashing](https://github.com/martinus/robin-hood-hashing), since it's 20% more efficient (on average)
-- Cate **does not** support `\"` characters in string literals, nor string splitting.
+- Cate **does not** support string splitting.
 
 ## Advantages of Cate over other build systems
 You may be wondering what issues Cate solves, let us clear it up for you!

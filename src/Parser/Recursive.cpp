@@ -47,10 +47,11 @@ void Parser::recursive_setup()
 	
 	replace_all(path, " ", "\\ "); //for when your path has spaces, WINDOWS (mostly)
 
+	if (path.empty())
+		path = "./";
+
 	if (!fs::is_directory(path)) //check if directory exists
-	{
 		fatal("Directory \"" + path + "\" doesn't exist");
-	}
 }
 
 string Parser::extension_recursive()
