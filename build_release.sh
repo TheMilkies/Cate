@@ -5,10 +5,8 @@ if [ $# -eq 0 ]; then
 	exit
 fi
 
-sed -i 's/(Development)/(Release)/g' include/Util.hpp #change Development to Release
 touch src/Help.cpp # to make sure it changes
 if cate release_smol -t16 -f; then
-	sed -i 's/(Release)/(Development)/g' include/Util.hpp #change it back
 	cd release
 	echo "cp -f cate /usr/bin/cate" >> install.sh #generate the install file
 	echo "cp docs/manpages/cate.1 /usr/local/share/man/man1/" >> install.sh #generate the install file
@@ -18,6 +16,5 @@ if cate release_smol -t16 -f; then
 	rm install.sh #clean
 	cd ..
 else
-	sed -i 's/(Release)/(Development)/g' src/Util.hpp #change it back
 	echo "Build error, bye bye"
 fi

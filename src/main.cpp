@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	if (argc < 2 && !catel_exists)
 	{
 		if (get_default_file_name());
-		else if (fs::is_directory(dir.c_str()))
+		else if (dir != "./" && fs::is_directory(dir.c_str()))
 		{
 			if(catel_exists) command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe update your .catel file?");
 			else command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe create a .catel file?");
