@@ -6,19 +6,25 @@
 
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
-bool parser_exit = false, system_allowed = true,
-	 force_rebuild = false, force_smol = false;
-Global global_values;
-
+bool parser_exit   = false, system_allowed = true,
+	 force_rebuild = false, force_smol     = false;
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
 
+string default_file, default_directory = "cate";
+void parse_catel();
+Global global_values;
+
 void help();
+inline const char* shift_arg(int &argc, char** &argv) {
+	argc--; *argv++;
+	
+	if (argc <= 0 || argv[0] == NULL)
+		return "";
 
-string file_name, dir = (fs::is_directory("cate") == true) ? "cate" : "./";
+	return argv[0];
+}
 
-void parse_catel(); // Catel.cpp
-bool get_default_file_name();
-void parse_args(int argc, char *argv[], bool catel_exists);
+#define shift_args() shift_arg(argc, argv)
 
 #ifdef TRACK_ALLOCS
 int allocs_count = 0;
@@ -33,114 +39,59 @@ int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
 	using namespace Util;
-
-	file_name.reserve(64);
-
 	bool catel_exists = file_exists(".catel");
 
-	//get default file
-	if (argc < 2 && !catel_exists)
+	if(catel_exists)
+		parse_catel();
+
+	if(argc < (ARGC_START+1) && default_file.empty())
 	{
-		if (get_default_file_name());
-		else if (dir != "./" && fs::is_directory(dir.c_str()))
-		{
-			if(catel_exists) command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe update your .catel file?");
-			else command_error("Found catefiles directory, but default catefile doesn't exist.\nMaybe create a .catel file?");
-		}
-		else
-		{
-		#ifdef CALL_COMPETITOR
-			if(call_competitor()) exit(0);
-		#endif // CALL_COMPETITOR
-			cout << "No catefiles detected, Have some help\n";
-			help();
-			exit(1);
-		}
-	}
-	//get specified
-	else
-	{
-		parse_args(argc, argv, catel_exists);
+		help(); exit(1);
 	}
 
-	add_cate_ending(file_name);
-
-	if(catel_exists) parse_catel();
-
-	if(file_name.empty())
-	{
-		if (!get_default_file_name() || file_name.empty())
-			command_error("No input file");
-	#ifdef CALL_COMPETITOR
-		else if(call_competitor()) return 0; 
-	#endif
-	}
-
-	//cout << file_name << '\n; //debug
-
-	Parser* parser = new Parser(file_name);
-
-	delete parser; //yay
-
-#ifdef TRACK_ALLOCS
-	cout << "Total allocs: " << allocs_count << "\n";
-#endif // TRACK_ALLOCS
-
-	return 0;
-}
-
-bool get_default_file_name()
-{
-	using namespace Util;
-	if (file_exists("build.cate"))
-		file_name = "build.cate";
-	else if(file_exists("cate/build.cate"))
-		file_name = "cate/build.cate";
-	else
-		return false;
-	return true;
-}
-
-void parse_args(int argc, char *argv[], bool catel_exists)
-{
-	using namespace Util;
-	for (int32_t i = ARGC_START; i < argc; ++i)
-	{
-		if (argv[i][0] != '-')
+	const char* arg = shift_args();
+	std::vector<string> file_names;
+	while (argc > 0){
+		if(arg[0] != '-')
 		{
-			if (file_name.empty())
-				file_name = argv[i];
+			string file_in_folder = default_directory + "/" + arg;
+			add_cate_ending(file_in_folder);
+
+			if(file_exists(file_in_folder.c_str()))
+				file_names.emplace_back(file_in_folder);
 			else
-				command_error("Cannot build more than one catefile per command.");
+			{
+				string file = argv[0];
+				add_cate_ending(file);
+				file_names.emplace_back(file);
+			}
+			arg = shift_args();
 			continue;
 		}
 
-		switch (argv[i][1]) //check the second character of the argument
+		switch (argv[0][1]) //check the second character of the argument
 		{
 		//case 'j': //uncomment this if you want compatibility with make
 		case 't': {
 			char* num;
 
-			if(argv[i][2] != NULL)
-				num = argv[i]+2;
-			else if(argv[i+1] != NULL)
-				num = argv[++i]; //skip next because it's an int
+			if(argv[0][2])
+				num = argv[0]+2;
+			else if(argv[1] != NULL)
+				num = (char*)shift_args(); //skip next because it's an int
 			else
 				command_error("Missing argument \"-t\".");
-
+			
 			int32_t sub = atoi(num); //get everything after "-t"
 			if (sub > 0) //if 0 or invalid
 				thread_count = sub;
 			else
 				command_error("Can't set thread count to \"" + string(num) + "\".");
-
-			//cout << thread_count << '\n;//debug
-
 		}	break;
 
 		case 'v': //cate version
-			cout << CATE_VERSION "\n";
-			exit(0); //exit after
+			cout << CATE_VERSION << '\n';
+			return 0; //exit after
 			break;
 
 		case 'l':{ //list directory
@@ -149,7 +100,7 @@ void parse_args(int argc, char *argv[], bool catel_exists)
 			if(catel_exists) parse_catel();
 
 			string all; all.reserve(128);
-			for (const auto &p : fs::directory_iterator(dir)) //iterate over the files
+			for (const auto &p : fs::directory_iterator(default_directory)) //iterate over the files
 			{
 				if(catefiles_found) all += ", ";
 				if (p.path().extension() == ".cate")
@@ -161,7 +112,7 @@ void parse_args(int argc, char *argv[], bool catel_exists)
 			if (catefiles_found)
 				cout << CYAN << all << COLOR_RESET "\n";
 			else
-				cout << BOLD RED "No catefiles_found found" COLOR_RESET "\n";
+				cerr << BOLD RED "No catefiles_found found" COLOR_RESET "\n";
 
 			exit(0);
 		} break;
@@ -186,11 +137,18 @@ void parse_args(int argc, char *argv[], bool catel_exists)
 			break;
 	
 		default: //unknown
-			command_error(
-				string("Unknown argument \"") + argv[i] + "\", "
-					   "Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments"
-			);
+			cerr << "Unknown argument \"" << argv[0] << "\", "
+				"Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments\n"
+				;
 			break;
 		}
+
+		arg = shift_args();
 	}
+	
+	if(file_names.empty()) file_names.emplace_back(default_file);
+	for(auto& name : file_names)
+		Parser p(name);	
+		
+	return 0;
 }

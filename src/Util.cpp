@@ -4,44 +4,38 @@
 extern bool parser_exit;
 
 #ifdef __WIN32
-	#include<windows.h>
+	#include <windows.h>
+	#define WIFEXITED(status) ((status) & 0x7f)
+	#define WEXITSTATUS(status) (((status) & 0xff00) >> 8)
 #endif // __WIN32
 
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
 
-#ifdef __WIN32
-	#define WIFEXITED(status) ((status) & 0x7f)
-	#define WEXITSTATUS(status) (((status) & 0xff00) >> 8)
-#endif // __WIN32
-
-
-using std::cout;
-
 namespace Util
 {
 	void error(string_view problem)
 	{
-		cout << ERROR ": " << problem << "\n";
+		cerr << ERROR ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void error(int32_t line, string_view problem)
 	{
-		cout << ERROR " in line " << line << ": " << problem << "\n";
+		cerr << ERROR " in line " << line << ": " << problem << "\n";
 		parser_exit = true;
 	}
 
 	void fatal_error(int32_t line, string_view problem)
 	{
-		cout << ERROR " in line " << line << ": " << problem << "\nTerminating.\n";
+		cerr << ERROR " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);
 	}
 
 	void command_error(string_view problem)
 	{
-		cout << ERROR " in command: " << problem << "\n";
+		cerr << ERROR " in command: " << problem << "\n";
 		exit(1);
 	}
 
@@ -106,7 +100,7 @@ namespace Util
 
 		if (WIFEXITED(ret) && exit_status != 0)
 		{
-			cout << ERROR " in " hl_func("system") " call ran by line " << line << ".\n"
+			cerr << ERROR " in " hl_func("system") " call ran by line " << line << ".\n"
 			"Ran \"" << command << "\"\nExited with code " << exit_status << '\n';
 		}
 
