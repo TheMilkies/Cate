@@ -31,8 +31,6 @@ void parse_catel()
 	if (!def.empty() && default_file.empty())
 		default_file = def;
 
-	if (default_directory.empty() || default_file.empty()) return;
-
 	Util::add_cate_ending(default_file);
 
 	string file_name_with_dir = default_directory + "/" + default_file;

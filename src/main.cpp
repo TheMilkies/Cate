@@ -41,7 +41,13 @@ int main(int argc, char *argv[])
 
 	if(argc < (ARGC_START+1) && default_file.empty())
 	{
-		help(); exit(1);
+		if(file_exists("cate/build.cate")) default_file = "cate/build.cate";
+		else if(file_exists("build.cate")) default_file = "build.cate";
+		else
+		{
+			help();
+			return 1;
+		}
 	}
 
 	const char* arg = shift_args();
