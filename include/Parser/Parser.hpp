@@ -53,8 +53,8 @@ private:
 	std::unordered_map<string, Class*> classes;
 
 	int32_t index = -1; //will be incremented to 0
-	inline const ParserToken next() {
-		return tokens[++index];
+	inline void next() {
+		current = tokens[++index];
 	}
 
 	//there are MANY better ways of doing this... but i'm lazy

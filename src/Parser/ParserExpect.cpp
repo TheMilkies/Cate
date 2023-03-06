@@ -4,7 +4,7 @@ using namespace Util;
 
 void Parser::expect(ParserTokenKind type)
 {
-	current = next(); 
+	next(); 
 
 	if (!match(type))
 	{
@@ -15,7 +15,7 @@ void Parser::expect(ParserTokenKind type)
 
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 {
-	current = next();
+	next();
 
 	if (!match(type) && !match(type2))
 	{
@@ -26,7 +26,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
 
 bool Parser::expect_bool()
 {
-	current = next();
+	next();
 
 	if (!match(B_TRUE) && !match(B_FALSE))
 		fatal("Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
@@ -36,7 +36,7 @@ bool Parser::expect_bool()
 
 bool Parser::expect_type()
 {
-	current = next();
+	next();
 
 	if (!match(STATIC) && !match(DYNAMIC))
 		error(current.line, "Expected a LibraryType (static | dynamic) value");
@@ -46,17 +46,17 @@ bool Parser::expect_type()
 
 void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 {
-	current = next();
+	next();
 
 	if (!match(type) && peek().type != type2)
 		error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
 	
-	current = next();
+	next();
 }
 
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3)
 {
-	current = next();
+	next();
 
 	if (match(END))
 		fatal("Unexpected end of file");
@@ -70,7 +70,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 
 void Parser::expect_string_array()
 {
-	current = next();
+	next();
 
 	if (match(END))
 		fatal("Unexpected end of file");
@@ -81,7 +81,7 @@ void Parser::expect_string_array()
 
 void Parser::expect_string_recursive_array()
 {
-	current = next();
+	next();
 
 	if (match(END))
 		fatal_error(tokens[index-1].line, "Unexpected end of file");
@@ -95,7 +95,7 @@ void Parser::expect_string_recursive_array()
 
 void Parser::expect_library_recursive_array()
 {
-	current = next();
+	next();
 
 	if (match(END))
 		fatal_error(tokens[index-1].line, "Unexpected end of file");
@@ -113,7 +113,7 @@ void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind
 	if (peek().type == END)
 		fatal_error(current.line, "Unexpected end of file");
 
-	current = next();
+	next();
 
 	if (!match(type) && !match(type2) && !match(type3) && !match(type4))
 	{
@@ -141,13 +141,13 @@ void Parser::void_function()
 //expects '(' string_literal ')' and then returns the string_literal token
 ParserToken Parser::string_function()
 {
-	current = next();
+	next();
 	if(!match(LPAREN) || peek().type != STRING_LITERAL)
 		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")"));
 
-	ParserToken to_return = next();
+	ParserToken to_return = tokens[++index];
 
-	current = next();
+	next();
 	optional_rparen();
 
 	return to_return;

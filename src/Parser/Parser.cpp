@@ -99,7 +99,7 @@ void Parser::define()
 
 void Parser::parse()
 {
-	current = next(); //gets the first token (0)
+	next(); //gets the first token (0)
 	
 	child.reserve(16);
 	while (!match(END)) //END = end of file
@@ -202,7 +202,7 @@ void Parser::parse()
 			break;
 		}
 
-		current = next(); // get next token
+		next(); // get next token
 	}
 
 	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
