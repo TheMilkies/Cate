@@ -30,7 +30,7 @@ public:
 	bool already_built = false, needs_link = false;
 	bool link = true, threading = false, smol = false;
 	
-	Class();
+	Class(std::string_view ident);
 	
 	virtual ~Class() {};
 	virtual void build() = 0; //class defined
@@ -68,7 +68,7 @@ private:
 
 	void setup_objects(); //set up files and object files.
 
-	string get_stripped_name();
+	// string get_stripped_name();
 };
 
 #endif

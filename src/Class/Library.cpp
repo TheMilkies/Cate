@@ -1,6 +1,6 @@
 #include "Class/Library.hpp"
 
-Library::Library() {}
+Library::Library(string_view ident): Class(ident) {}
 
 Library::~Library() {}
 

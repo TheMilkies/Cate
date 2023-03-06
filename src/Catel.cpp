@@ -7,8 +7,11 @@ extern string default_file, default_directory;
 void parse_catel()
 {
 	using namespace Util;
+	const char* catel_to_use = ".catel";
+	if(file_exists(PLATFORM_CATEL))
+		catel_to_use = PLATFORM_CATEL;
 
-	std::ifstream file(".catel");
+	std::ifstream file(catel_to_use);
 	if (file.fail()) return;
 
 	string s1, s2, def = "build.cate";

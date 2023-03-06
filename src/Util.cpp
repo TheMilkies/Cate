@@ -86,7 +86,7 @@ namespace Util
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
-			cout << ERROR ": Error in build command.\n";
+			cerr << ERROR ": Error in build command.\n";
 			exit(1);
 		}
 	}

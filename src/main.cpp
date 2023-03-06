@@ -35,9 +35,8 @@ int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
 	using namespace Util;
-	bool catel_exists = file_exists(".catel");
 
-	if(catel_exists)
+	if(file_exists(".catel") || file_exists(PLATFORM_CATEL))
 		parse_catel();
 
 	if(argc < (ARGC_START+1) && default_file.empty())
@@ -92,8 +91,6 @@ int main(int argc, char *argv[])
 
 		case 'l':{ //list directory
 			bool catefiles_found = false;
-
-			if(catel_exists) parse_catel();
 
 			string all; all.reserve(128);
 			for (const auto &p : fs::directory_iterator(default_directory)) //iterate over the files

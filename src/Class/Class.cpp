@@ -6,10 +6,9 @@ extern int32_t thread_count;
 
 extern bool force_rebuild, force_smol;
 
-Class::Class()
+Class::Class(std::string_view ident): name(ident)
 {
 	//these should be enough for most small/medium-sized projects
-	name.reserve(32);
 	files.reserve(32);
 	object_files.reserve(32);
 	loaded_library_paths.reserve(32);
@@ -30,7 +29,6 @@ Class::Class()
 
 void Class::setup()
 {
-	//if (already_built) return; //i don't think this is needed
 	check();
 
 	static bool bypass_force = false; //for when making static and dynamic
@@ -158,7 +156,7 @@ void Class::set_property(int32_t line, string& property, string& value)
 
 void Class::build_error(string_view problem)
 {
-	cout << ERROR ": Cannot build \"" << name
+	cerr << ERROR ": Cannot build \"" << name
 		<< "\" because " << problem << "\nTerminating.\n";
 	exit(1);
 }

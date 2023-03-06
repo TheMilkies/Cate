@@ -90,13 +90,11 @@ void Parser::define()
 	
 	//this is technically a factory... oh well
 	if (temp_type == PROJECT)
-		classes[identifier] = new Project;
+		classes[identifier] = new Project(identifier);
 	else //library
-		classes[identifier] = new Library;
+		classes[identifier] = new Library(identifier);
 
 	current_class = classes[identifier]; //set the pointer to the current class
-
-	current_class->name = identifier; //set its name to the identifier
 }
 
 void Parser::parse()

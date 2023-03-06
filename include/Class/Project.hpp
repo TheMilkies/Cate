@@ -10,7 +10,7 @@ public:
 	void generate_name() override;
 	void set_type(int32_t line, bool is_static) override;
 
-	Project();
+	Project(string_view ident);
 	~Project();
 	/// @brief Generate the long command with `objects` as the objects
 	/// @param objects 

@@ -2,7 +2,7 @@
 
 extern bool force_rebuild;
 
-Project::Project() {}
+Project::Project(string_view ident): Class(ident) {}
 
 Project::~Project() {}
 
