@@ -125,7 +125,7 @@ void Class::add_library(string& lib)
 	{
 		Util::remove_extension(lib);
 		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
-		Util::replace_all(lib, "lib", ""); //remove the lib part.
+		lib = lib.substr(lib.find_first_not_of("lib"), lib.length());
 		all_libraries += "-l";
 	}
 
