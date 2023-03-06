@@ -17,21 +17,15 @@ void Library::set_type(int32_t line, bool is_static)
 
 	if(out_name.empty()) return;
 
-	if(is_static)
-	{
-		Util::remove_extension(out_name);
-		out_name += ".a";
-	}
-	else
-	{
-		Util::remove_extension(out_name);
-		out_name += DYNAMIC_EXTENSION;
-	}
+	//add extension
+	Util::remove_extension(out_name);
+	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
 
-	needs_link += !Util::file_exists(out_name.c_str());
+	if(!Util::file_exists(out_name.c_str()))
+		needs_link = true;
 }
 
-void Library::build() 
+void Library::build()
 {	
 	if (!already_built)
 	{

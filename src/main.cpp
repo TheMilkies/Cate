@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
 				file_names.emplace_back(file_in_folder);
 			else
 			{
-				string file = argv[0];
+				// This might look weird, but it saves one alloc.
+				auto& file = file_names.emplace_back(argv[0]);
 				add_cate_ending(file);
-				file_names.emplace_back(file);
 			}
 			arg = shift_args();
 			continue;
