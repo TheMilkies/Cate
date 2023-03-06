@@ -1,9 +1,5 @@
 #include "Parser/Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
 
-#ifdef MODS
-#include "Mods/mods.h"
-#endif // MODS
-
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
 bool parser_exit   = false, system_allowed = true,

@@ -8,7 +8,7 @@
 
 using namespace Util;
 
-extern string dir;
+extern string default_directory;
 static robin_hood::unordered_set<string> opened_files;
 
 /*
@@ -179,19 +179,17 @@ void Parser::parse()
 
 		case SUBCATE: {
 			string name = string_function().value;
-		
 			add_cate_ending(name);
 
 			if(!file_exists(name.c_str()))
 			{
-				name = dir + '/' + name;
+				name = default_directory + '/' + name;
 				if(!file_exists(name.c_str()))
 					fatal("File \"" + name + "\" not found.");
 			}
 			
 			//start the subcate instance
-			Parser* sub = new Parser(name);
-			delete sub;
+			Parser sub(name);
 
 		}	break;
 
