@@ -7,7 +7,7 @@
 </p>
 
 ## Introduction
-Cate is a simple and fast build system for C/C++, its syntax is much simpler than the other build systems. While Cate is slower than Make, it's is much easier to set up and create projects and libraries with.
+Cate is a simple and fast build system for C/C++, its syntax is much simpler than the other build systems. While Cate is slower than Make, it's much easier to set up and create projects and libraries with.
 
 **Cate does not have a Windows release as of yet because of our laziness**
 
@@ -17,7 +17,7 @@ Cate is not written in Rust and never will be; Cate has 0 memory leaks thanks to
 
 Do note:
 - We know the source code isn't great, it was our first project.
-- Cate uses Catel, a messy file type that allows default files.
+- Cate uses Catel, a messy file that allows us to set a default file.
 - Cate uses [robin_hood hashing](https://github.com/martinus/robin-hood-hashing), since it's 20% more efficient (on average)
 - Cate **does not** support string splitting.
 
@@ -102,7 +102,7 @@ You've come this far! Good Job!
 Cate breaks most known build-system conventions by forcing you to use multiple files for different targets, and having a file extension (unlike CMake, Make, Autotools, and many more). For a debug build you'll have a `debug.cate`, for a cross-platform build you'll have a `platformname.cate`. 
 
 ### Syntax
-Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int-literals (0123456789) as of yet (and hopefully forever). Cate supports `#comments` in addition to C-comments.
+Cate uses C-like syntax with the exception of it being a "state-machine" rather than a language. It does not support int-literals (0123456789) as of yet (and hopefully forever). Cate supports `#comments` in addition to C-comments. 
 
 **Cate does not support** `a.property = b.property;` **syntax**
 
@@ -147,12 +147,12 @@ Project proj;
 Both classes have these properties, even if they don't make sense for the class
 
 - `Array<String> files`: Files of the project/library. No default.
-- `Array<String> incs|includes|include_paths`: Include paths of the project/library. Defaults to `"include/"` if present.
+- `Array<String> incs|includes|include_paths`: Include paths of the project/library. Defaults to `"include/"` or `"inc/"` if present.
 - `Array<String> defs|defines|definitions`: Definitions. Default is set by the compiler. 
 
 - `String out`: The output file name. 
 - - In projects: Defaults to the identifier.
-- - In libraries: Defaults to "lib" + the identifier + the extension for the library type..
+- - In libraries: Defaults to "lib" + the identifier + the extension for the library type.
 - `String compiler`: The compiler to use. Default is `cc`.
 - `String std|standard`: The C/C++ standard to use. Default is set by the compiler.
 - `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in. Defaults to `"build"` (or `cate/build` if catedir is present), unless a directory named `"obj"` is present; where it'd use it.
@@ -161,7 +161,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `bool link`: Whether to run the linking step or not. Default is `true`.
 - `bool threading`: Whether to add `-pthread` to build command. Default is `false`. (Just syntactical sugar.)
-- `bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`. Do not use with libraries.
+- `bool smol|smolize`: Whether to attempt to reduce output-file's size with minimal to no performance loss. Default is `false`. Do **NOT** use with libraries.
 
 - `LibraryType type`: Type of library, `static` or `dynamic`. Gets from library "constructor".
 
@@ -173,6 +173,7 @@ Both classes have these properties, even if they don't make sense for the class
 - `Array<String> recursive(String path)`: Get all files (or libraries, or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
 - - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
 - - `recursive()` is also called `iterate()`.
+- - If for some reason you don't have enough disk space to type `recursive`, you can do `files = {"src/*.c"}`
 
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 - `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
@@ -220,7 +221,7 @@ dir cate
 ## Special thanks
 Special thanks to
 - **Make** for being hard to work with, and extremely ugly.
-- **CMake** for failing to be an an improvement over make, and still suffer from the same issues.
+- **CMake** for failing to be an an improvement over make, and becoming so complicated over the years that you need a **CMake debugger** to use it.
 - **Autotools** for being the worst build system to ever exist. 
 
 Without these crimes against humanity, Cate would not have existed.

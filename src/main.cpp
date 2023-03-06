@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 			if (catefiles_found)
 				cout << CYAN << all << COLOR_RESET "\n";
 			else
-				cerr << BOLD RED "No catefiles_found found" COLOR_RESET "\n";
+				cerr << BOLD RED "No catefiles were found" COLOR_RESET "\n";
 
 			exit(0);
 		} break;
