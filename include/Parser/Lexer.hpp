@@ -95,7 +95,6 @@ typedef unsigned long int flex_uint32_t;
 # endif
 #endif /* YYFLEX_INTTYPES_DEFINED */
 
-/* TODO: this is always defined, so inline it */
 #define yyconst const
 
 #if defined(__GNUC__) && __GNUC__ >= 3
@@ -407,7 +406,7 @@ static int yy_flex_strlen ( const char * );
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */
 
-#line 49 "src/Parser/lexer.l"
+#line 48 "src/Parser/lexer.l"
 
 
 

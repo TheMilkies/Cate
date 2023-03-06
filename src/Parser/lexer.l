@@ -10,12 +10,12 @@
 
 %%
 
+"//".*		{/*a C comment*/}
+\#.*		{/*a script comment*/}
+"/*"(.|\n)*"*/"		{/*a C comment*/}
+
 [ \r\t] {}
 \n {++lexer_line;}
-
-"/*"(.|\n)*"*/"		{/*a C comment*/}
-\/\/(.*)\n		{/*a C comment*/}
-\#(.*)\n		{/*a script comment*/}
 
 \. {return DOT;}
 \, {return COMMA;}
