@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
 		switch (argv[0][1]) //check the second character of the argument
 		{
-		//case 'j': //uncomment this if you want compatibility with make
+		case 'j':
 		case 't': {
 			char* num;
 
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 			force_smol = true;
 			break;
 
-		//case 'B': //make compatibility
+		case 'B':
 		case 'f': //force rebuild
 			force_rebuild = true;
 			break;
