@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.8/cate_2.8-0_amd64.deb
-sudo dpkg -i cate_2.8-0_amd64.deb
-rm cate_2.8-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.8.1/cate_2.8-1_amd64.deb
+sudo dpkg -i cate_2.8-1_amd64.deb
+rm cate_2.8-1_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.8/linux_cate_v2.8.0.zip
-unzip linux_cate_v2.8.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.8.1/linux_cate_v2.8.1.zip
+unzip linux_cate_v2.8.1.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -189,6 +189,7 @@ All classes use global values as default. There are only 5 global variables you 
 Usage example:
 ```c
 compiler = "g++" //global
+smolize  = true
 
 Project proj
 .flags = "-O3"
@@ -210,10 +211,29 @@ Project proj3
 ### Catel
 A Catel file (`.catel`) is a dumb file made to point cate at the right directory, and use a default file.
 
+Since 2.8.1; you can create Catel files named:
+- `.linux.catel`
+- `.mac.catel`
+- `.windows.catel`
+for those targets.
+
 Here's an example Catel file:
 ```py
 def smol.cate
 dir cate
+```
+
+Here's an example of Catel for different platforms:
+
+`.windows.catel`
+```py
+dir cate/windows
+def smol
+```
+`.linux.catel`
+```py
+dir cate/linux
+def smol
 ```
 
 ## Credits
