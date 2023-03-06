@@ -178,11 +178,13 @@ Both classes have these properties, even if they don't make sense for the class
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 - `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
 
-### Global (since 2.8)
-All classes use global values as default. There are only 3 global variables you can change, being:
+### Global (since 2.8.1)
+All classes use global values as default. There are only 5 global variables you can change, being:
 - `String compiler`
 - `String std|standard`
 - `String obj_dir|object_dir|build_dir|build_directory`
+- `bool smol|smolize`
+- `bool threading`
 
 Usage example:
 ```c

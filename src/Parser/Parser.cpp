@@ -222,8 +222,14 @@ bool Parser::global()
 			 property == "obj_dir"		   ||
 			 property == "build_dir")
 		set_string(object_dir)
-	else return false;
+#define set_bool(x) global_values.x = expect_bool();
+	else if (child == "threading")
+		set_bool(threading)
+	else if (child == "smolize" || child == "smol")
+		set_bool(smol)
 
+	else return false;
+#undef set_bool
 	return true;
 }
 

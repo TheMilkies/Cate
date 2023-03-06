@@ -25,6 +25,9 @@ Class::Class(std::string_view ident): name(ident)
 	out_name.reserve(32);
 	flags.reserve(256);
 	object_dir.reserve(64);
+
+	threading = global_values.threading;
+	smol 	  = global_values.smol;
 }
 
 void Class::setup()

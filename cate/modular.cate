@@ -1,10 +1,11 @@
+threading = true
 compiler = "g++"
+
 Library CateParser(dynamic)
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .out = "out/libcateparser.so"
 .files = recursive("src/Parser/*.cpp")
 .libs = {"stdc++fs"}
-.threading = true
 .build()
 
 Library CateClass(dynamic)
@@ -12,7 +13,6 @@ Library CateClass(dynamic)
 .out = "out/libcateclass.so"
 .files = recursive("src/Class/*.cpp")
 .libs = {"stdc++fs"}
-.threading = true
 .build()
 
 Project cate
@@ -20,7 +20,6 @@ Project cate
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
 .out = "out/cate"
 .libs = {CateParser, CateClass, "stdc++fs"}
-.threading = true
 .smolize = true
 .build()
 
