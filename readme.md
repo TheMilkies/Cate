@@ -55,6 +55,7 @@ rm -rf catering
 Make sure you have these installed:
 - A Unix-like operating system
 - A C++17 compiler (`g++` or `clang++`)
+
 *optional*
 - GNU Flex 2.6.4 or greater ([setup here](github_stuff/flex_setup.md))
 
@@ -67,7 +68,7 @@ Run `cate`, Unlike Make; It'll automatically detect the thread count.
 Use `sudo cate install` to install
 
 ## Using Cate
-Cate's CLI is intuitive, but doesn't offer much. You can **not** set `cflags` with a command (unlike Autotools), but you get the minimum required to work with Cate.
+Cate's CLI is intuitive, but doesn't offer much more than necesery.
 
 ### Flags (Options)
 - `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
