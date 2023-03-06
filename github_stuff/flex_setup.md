@@ -17,4 +17,5 @@ Run these commands one after the other and check errors for missing packages:
 ./autogen.sh
 ./configure
 make -j`nproc`
-sudo make install```
+sudo make install
+```

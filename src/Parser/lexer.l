@@ -1,4 +1,4 @@
-%option c++ noinput nounput noyywrap full
+%option c++ noinput noyywrap full
 
 %{
 	#include <iostream>
@@ -10,40 +10,12 @@
 
 %%
 
-[ \t] {;}
-\r\n {++lexer_line;}
+[ \r\t] {}
 \n {++lexer_line;}
 
-"/*" {
-	int c;
-
-	while((c = yyinput()) != 0)
-	{
-		lexer_line += (c == '\n');
-
-		if(c == '*')
-		{
-			if((c = yyinput()) == '/')
-				break;
-			else
-				unput(c);
-		}
-	}
-}
-
-"//" {
-	int c;
-	while((c = yyinput()) != 0 && c != '\n');
-
-	++lexer_line;
-}
-
-"#" {
-	int c;
-	while((c = yyinput()) != 0 && c != '\n');
-
-	++lexer_line;
-}
+"/*"(.|\n)*"*/"		{/*a C comment*/}
+\/\/(.*)\n		{/*a C comment*/}
+\#(.*)\n		{/*a script comment*/}
 
 \. {return DOT;}
 \, {return COMMA;}
