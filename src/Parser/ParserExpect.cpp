@@ -108,22 +108,9 @@ void Parser::expect_library_recursive_array()
 	}
 }
 
-void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4)
-{
-	if (peek().type == END)
-		fatal_error(current.line, "Unexpected end of file");
-
-	next();
-
-	if (!match(type) && !match(type2) && !match(type3) && !match(type4))
-	{
-		error(current.line, "Expected " + token_names[type] + " or " + token_names[type2] + " or " + token_names[type3] +
-					" or " + token_names[type4] + " but got " + token_names[current.type]);
-	}
-}
-
 void Parser::optional_rparen()
 {
+	next();
 	if (!match(RPAREN))
 	{
 		current = tokens[index -= 1]; //go back one
@@ -134,7 +121,7 @@ void Parser::optional_rparen()
 void Parser::void_function()
 {
 	//it already checks if the next is '(', so we can just skip 2
-	skip(2);
+	skip();
 	optional_rparen();
 }
 
@@ -147,7 +134,6 @@ ParserToken Parser::string_function()
 
 	ParserToken to_return = tokens[++index];
 
-	next();
 	optional_rparen();
 
 	return to_return;

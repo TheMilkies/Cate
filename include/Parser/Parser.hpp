@@ -65,7 +65,6 @@ private:
 	void expect(ParserTokenKind type, ParserTokenKind type2);
 	void expect_and_then(ParserTokenKind type, ParserTokenKind type2);
 	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3);
-	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3, ParserTokenKind type4);
 
 	void optional_rparen();
 
