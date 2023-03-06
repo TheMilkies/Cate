@@ -151,7 +151,6 @@ void Parser::parse()
 				else
 				{
 					expect(STRING_LITERAL, LCURLY, RECURSIVE);
-
 					if (match(STRING_LITERAL))
 					{
 						//set current property to the string literal
@@ -173,6 +172,13 @@ void Parser::parse()
 			if (system_allowed)
 				user_system(current.line, string_function().value);
 			else skip(3);
+			break;
+
+		case RECURSIVE:
+			warn(current.line, 
+			hl_func("recursive()")
+			" is outside of an assignment.");
+			string_function();
 			break;
 
 		case SUBCATE: {
@@ -232,7 +238,6 @@ bool Parser::special_case()
 		set_bool(smol)
 	else if (child == "link")
 		set_bool(link)
-		
 	else return false;
 
 	return true;
