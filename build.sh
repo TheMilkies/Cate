@@ -70,16 +70,18 @@ if command -v strip &> /dev/null; then
     strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate
 fi
 
-install_command="cp ./out/cate /usr/bin/cate"
+install_command="cp ./out/cate /usr/local/bin/cate"
 
 read -r -p "Done. Would you like to install Cate? [Y/n]: " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
         if command -v doas &> /dev/null; then
             sudo $install_command
+            sudo rm -f /usr/bin/cate
             sudo cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
         elif command -v sudo &> /dev/null; then
             doas $install_command
+            doas rm -f /usr/bin/cate
             doas cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
         elif [ "$EUID" -e 0]; then
             $install_command

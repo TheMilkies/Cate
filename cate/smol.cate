@@ -7,3 +7,5 @@ Project cate
 .threading = true
 .smol = true
 .build()
+
+.install()
