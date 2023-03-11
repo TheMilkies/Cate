@@ -145,13 +145,12 @@ void Class::set_property(int32_t line, string& property, string& value)
 		compiler = value;
 	else if (property == "final_flags" || property == "end_flags")
 		final_flags = value;
-	else if (property == "build_directory" ||
+	else if (property == "obj_dir"		   ||
+			 property == "build_dir" 	   ||
 			 property == "object_folder"   ||
-			 property == "obj_dir"		   ||
-			 property == "build_dir")
+			 property == "build_directory")
 		object_dir = value;
-	else if (property == "standard" ||
-			 property == "std")
+	else if (property == "smol" || property == "smolize")
 		standard = value;
 	else
 		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to a string or is not a valid property name");

@@ -215,17 +215,17 @@ bool Parser::global()
 
 	if (property == "compiler")
 		set_string(compiler)
-	else if (property == "standard" || property == "std")
+	else if (property == "std" || property == "standard")
 		set_string(standard)
-	else if (property == "build_directory" ||
+	else if (property == "obj_dir"		   ||
+			 property == "build_dir" 	   ||
 			 property == "object_folder"   ||
-			 property == "obj_dir"		   ||
-			 property == "build_dir")
+			 property == "build_directory")
 		set_string(object_dir)
 #define set_bool(x) global_values.x = expect_bool();
-	else if (child == "threading")
+	else if (property == "threading")
 		set_bool(threading)
-	else if (child == "smolize" || child == "smol")
+	else if (property == "smol" || property == "smolize")
 		set_bool(smol)
 
 	else return false;
