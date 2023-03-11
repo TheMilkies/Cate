@@ -212,6 +212,7 @@ void Parser::parse()
 bool Parser::global()
 {
 	auto& property = current.value;
+	child = property;
 
 	if (property == "compiler")
 		set_string(compiler)
@@ -222,7 +223,7 @@ bool Parser::global()
 			 property == "object_folder"   ||
 			 property == "build_directory")
 		set_string(object_dir)
-#define set_bool(x) global_values.x = expect_bool();
+#define set_bool(x) {expect(ASSIGN); global_values.x = expect_bool();}
 	else if (property == "threading")
 		set_bool(threading)
 	else if (property == "smol" || property == "smolize")
