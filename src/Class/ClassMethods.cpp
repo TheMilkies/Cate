@@ -25,6 +25,7 @@ void Parser::object_method()
 	 	"\tAvilable are:\n"
 		"\t* " hl_func("build()") "\n"
 		"\t* " hl_func("clean()") "\n"
+		"\t* " hl_func("install()") "\n"
 		);
 	}
 }
