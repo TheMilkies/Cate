@@ -64,9 +64,7 @@ Run `./build.sh`, It'll ask you if you'd like to install at the end.
 
 ### Using Cate
 Run `cate`, it'll ask you if to install after building.
-Unlike Make; It'll automatically detect the thread count.
-
-Use `sudo cate install` to install cate with docs.
+Unlike Make and other build systems; it'll automatically detect the thread count.
 
 ## Using Cate
 Cate's CLI is intuitive, but doesn't offer much more than necesery.
@@ -74,7 +72,7 @@ Cate's CLI is intuitive, but doesn't offer much more than necesery.
 ### Flags (Options)
 - `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
-- `-y`: Install without asking
+- `-y`: Install without asking.
 - `-D`: Disable all user-defined `system()` calls in script.
 - `-S`: Smolize even if not set in script.
 - `-f` (and `-B`): Forcefully rebuild project, by deleting its object files.
