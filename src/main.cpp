@@ -31,6 +31,18 @@ void* operator new(size_t size)
 }
 #endif // TRACK_ALLOCS
 
+bool default_file_exists()
+{
+	using Util::file_exists;
+	if(file_exists("cate/build.cate"))
+		default_file = "cate/build.cate";
+	else if(file_exists("build.cate"))
+		default_file = "build.cate";
+	else return false;
+
+	return true;
+}
+
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
@@ -41,9 +53,7 @@ int main(int argc, char *argv[])
 
 	if(argc < (ARGC_START+1) && default_file.empty())
 	{
-		if(file_exists("cate/build.cate")) default_file = "cate/build.cate";
-		else if(file_exists("build.cate")) default_file = "build.cate";
-		else
+		if(!default_file_exists())
 		{
 			help();
 			return 1;
@@ -143,6 +153,11 @@ int main(int argc, char *argv[])
 		}
 
 		arg = shift_args();
+	}
+
+	if(default_file.empty() && !default_file_exists())
+	{
+		command_error("No default file found.");
 	}
 	
 	if(file_names.empty()) file_names.emplace_back(default_file);
