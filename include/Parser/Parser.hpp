@@ -36,7 +36,6 @@ private:
 	void   library_recursive();
 
 	Class *current_class = nullptr;
-	ParserTokenKind temp_type;
 
 	void 		void_function(); //expects '(' ')' with nothing inside
 	ParserToken string_function(); //expects '(' STRING_LITERAL ')' and then returns the STRING_LITErAL token

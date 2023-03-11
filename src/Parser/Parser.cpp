@@ -80,7 +80,7 @@ Parser::~Parser()
 
 void Parser::define()
 {
-	temp_type = current.type; //library or project
+	bool is_project = current.type == PROJECT; //library or project
 
 	expect(IDENTIFIER);
 	string &identifier = current.value;
@@ -89,7 +89,7 @@ void Parser::define()
 		fatal("\"" + identifier + "\" was already defined");
 	
 	//this is technically a factory... oh well
-	if (temp_type == PROJECT)
+	if (is_project)
 		classes[identifier] = new Project(identifier);
 	else //library
 		classes[identifier] = new Library(identifier);

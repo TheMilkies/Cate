@@ -1,7 +1,8 @@
 #ifndef PARSER_TOKENS
 #define PARSER_TOKENS
-#include "inc.hpp"
 #include "colors.hpp"
+#include <iostream>
+using std::string;
 
 /*
 	why hello there!
