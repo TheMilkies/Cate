@@ -4,7 +4,6 @@ Library library(static);
 library.includes = {"include/libexample/"};
 library.files = {"libs/lib_example.c"};
 library.flags = "-O2";
-library.out = "out/libexample.a"; //can be generated automatically
 library.build();
 
 //alternative syntax
@@ -14,8 +13,9 @@ Project project
 .includes = {"include/libexample/"}
 .libraries = {library, "GL"}
 .flags = "-O2"
-.out = "outs/program"
-.threading = true 
+.out = "out/program"
+.threading = true
 .smol = true /*smaller executable,
 			   minimal to no performance loss!*/
 .build()
+.install()

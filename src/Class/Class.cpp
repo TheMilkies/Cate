@@ -72,6 +72,8 @@ void Class::install()
 #endif // __WIN32
 
 	if(out_name.empty()) generate_name();
+	if(!Util::file_exists(out_name.c_str())) return;
+
 	string install_path_name = get_install_path();
 	if(!newer_than(install_path_name, out_name)) return;
 
@@ -258,15 +260,12 @@ bool Class::ask_to_install()
 #endif // __WIN32
 	if(dont_ask_install) return true;
 
-	fflush(stdin); std::flush(std::cout);
-	std::ios_base::sync_with_stdio(true); 
-
 	char answer;
 	cout << BLUE "Install \"" << name << "\"? " COLOR_RESET "("
 		GREEN "Y" YELLOW "\\" RED "n" COLOR_RESET"): ";
 	std::cin >> answer;
+	fflush(stdin); std::flush(std::cout);
 
-	std::ios_base::sync_with_stdio(false); 
 	return answer == 'Y' || answer == 'y';
 }
 

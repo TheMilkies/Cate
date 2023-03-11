@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.8.1/cate_2.8-1_amd64.deb
-sudo dpkg -i cate_2.8-1_amd64.deb
-rm cate_2.8-1_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9/cate_2.9-0_amd64.deb
+sudo dpkg -i cate_2.9-0_amd64.deb
+rm cate_2.9-0_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.8.1/linux_cate_v2.8.1.zip
-unzip linux_cate_v2.8.1.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9/linux_cate_v2.9.0.zip
+unzip linux_cate_v2.9.0.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -63,9 +63,10 @@ Make sure you have these installed:
 Run `./build.sh`, It'll ask you if you'd like to install at the end.
 
 ### Using Cate
-Run `cate`, Unlike Make; It'll automatically detect the thread count.
+Run `cate`, it'll ask you if to install after building.
+Unlike Make; It'll automatically detect the thread count.
 
-Use `sudo cate install` to install
+Use `sudo cate install` to install cate with docs.
 
 ## Using Cate
 Cate's CLI is intuitive, but doesn't offer much more than necesery.
@@ -73,6 +74,7 @@ Cate's CLI is intuitive, but doesn't offer much more than necesery.
 ### Flags (Options)
 - `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
+- `-y`: Install without asking
 - `-D`: Disable all user-defined `system()` calls in script.
 - `-S`: Smolize even if not set in script.
 - `-f` (and `-B`): Forcefully rebuild project, by deleting its object files.
@@ -169,6 +171,7 @@ Both classes have these properties, even if they don't make sense for the class
 ### Class methods
 - `void build()`: Builds project/library.
 - `void clean()`: Deletes project/library's build directory.
+- `void install()`: Install projects to `/usr/local/bin` and libraries to `/usr/local/lib`.
 
 ### General functions
 - `Array<String> recursive(String path)`: Get all files (or libraries, or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
