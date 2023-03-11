@@ -63,7 +63,27 @@ void Class::setup_objects()
 		object_files.emplace_back(file); //for build
 	}
 }
-//this is for threads.
+
+void Class::install(int32_t line)
+{
+	if(out_name.empty()) generate_name();
+	string install_path_name = get_install_path();
+	if(!newer_than(out_name, install_path_name)) return;
+
+	if(!ask_to_install()) return;
+
+	Util::check_root();
+	string command = "cp -f " + out_name + " " + install_path_name;
+	Util::user_system(line, command.c_str());
+}
+
+string Class::get_stripped_name()
+{
+	string temp = out_name.substr(out_name.find_last_of('/'), out_name.length());
+	return temp;
+}
+
+// this is for threads.
 void Class::build_object(int32_t i)
 {
 	Util::system(
@@ -222,6 +242,22 @@ void Class::smolize()
 	Util::system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version "
 			"--remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
 			+ out_name);
+}
+
+bool Class::ask_to_install()
+{
+#ifdef __WIN32
+	return false;
+#endif // __WIN32
+	fflush(stdin); std::flush(std::cout);
+	std::ios_base::sync_with_stdio(true); 
+
+	char answer;
+	cout << "Would you like to install \"" << name << "\"? (y\\n): ";
+	std::cin >> answer;
+
+	std::ios_base::sync_with_stdio(false); 
+	return answer == 'Y' || answer == 'y';
 }
 
 void Class::create_directories()

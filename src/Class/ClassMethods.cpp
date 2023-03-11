@@ -5,20 +5,23 @@
 //add them here first with `else if (child == "THING")`
 void Parser::object_method()
 {
+	void_function(); 
 	if (child == "build") //void Class.build(void);
 	{
-		void_function(); 
 		current_class->build();	//in Project.cpp/Library.cpp			
 	}
 	else if (child == "clean") //void Class.build(void);
 	{
-		void_function(); 
 		current_class->clean();				
 	}
 	else
 	{
 		fatal(string("\"" YELLOW) +
-		child.c_str() + "()" COLOR_RESET "\" is not a valid member function");
+		child.c_str() + "()" COLOR_RESET "\" is not a valid member function\n"
+	 	"\tAvilable are:\n"
+		"\t* " hl_func("build()") "\n"
+		"\t* " hl_func("clean()") "\n"
+		);
 	}
 }
 

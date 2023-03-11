@@ -50,6 +50,7 @@ public:
 
 	//other
 	void smolize();
+	bool ask_to_install();
 
 	inline void add_include(const string& path) {
 		all_include_paths += "-I" + path + ' ';
@@ -58,6 +59,11 @@ public:
 	inline void print_done_message_with(string_view name) {
 		cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 	}
+
+	void install(int32_t line);
+	string get_stripped_name();
+	virtual string get_install_path() = 0;
+
 private:
 	//threading
 	void build_object(int32_t i); 
@@ -67,8 +73,6 @@ private:
 	void build_error(string_view problem);
 
 	void setup_objects(); //set up files and object files.
-
-	// string get_stripped_name();
 };
 
 #endif

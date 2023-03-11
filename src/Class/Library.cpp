@@ -52,5 +52,11 @@ void Library::build()
 	}
 	
 	smolize();
+
 	print_done_message_with(name + build_type);
+}
+
+string Library::get_install_path()
+{
+	return "/usr/local/lib/" + get_stripped_name();
 }

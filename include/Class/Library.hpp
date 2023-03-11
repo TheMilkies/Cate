@@ -6,6 +6,8 @@ class Library : public Class
 {
 public:
 	void build() override;
+	string get_install_path() override;
+
 	void generate_name() override;
 	void set_type(int32_t line, bool is_static) override;
 

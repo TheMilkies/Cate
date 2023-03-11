@@ -172,12 +172,14 @@ namespace Util
 	}
 
 	//coming maybe soon
-	/*void check_root()
+	void check_root()
 	{
 		if (getuid() != 0)
 		{
-			Util::error("Catefile wants to install but user is not root.");
+			Util::error("You must be root to perform this action\n"
+			"Maybe add " hl_func("sudo") "before `cate`?\n"
+			hl_func("sudo") " cate");
 			exit(2);
 		}
-	}*/
+	}
 } // namespace Util
