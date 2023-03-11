@@ -1,8 +1,9 @@
-#include "Util.hpp"
+#include "colors.hpp"
+#include <iostream>
 
 void help()
 {
-	cout << BLUE BOLD "Cate " CATE_VERSION "\n"
+	std::cout << BLUE BOLD "Cate " CATE_VERSION "\n"
 	"usage: " COLOR_RESET "\tcate " BOLD GREEN " [FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n"
 	"\t-l" COLOR_RESET ":  list all catefiles in default directory\n"

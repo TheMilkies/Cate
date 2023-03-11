@@ -140,30 +140,30 @@ void Parser::parse()
 
 			//object_method: property function_parens
 			//this is a dumb and smart optimisation
-			if (peek().type == LPAREN) object_method();
-			else
+			if (peek() == LPAREN)
 			{
-				//assignment: property '=' expr
-				expect(ASSIGN);
+				object_method();
+				break;
+			}
 
-				//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
-				if(special_case()); // handled there
-				else
-				{
-					expect(STRING_LITERAL, LCURLY, RECURSIVE);
-					if (match(STRING_LITERAL))
-					{
-						//set current property to the string literal
-						current_class->set_property(current.line, child, current.value); 
-					}
-					else 
-					{
-						if (match(LCURLY))
-							array(); //start the array
-						else if (match(RECURSIVE))
-							files_recursive();
-					}
-				}
+			//assignment: property '=' expr
+			expect(ASSIGN);
+
+			//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
+			if(special_case()) break; // handled there
+
+			expect(STRING_LITERAL, LCURLY, RECURSIVE);
+			if (match(STRING_LITERAL))
+			{
+				//set current property to the string literal
+				current_class->set_property(current.line, child, current.value); 
+			}
+			else 
+			{
+				if (match(LCURLY))
+					array(); //start the array
+				else if (match(RECURSIVE))
+					files_recursive();
 			}
 			
 			break;

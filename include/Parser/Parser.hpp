@@ -27,8 +27,6 @@ private:
 	void expect_string_recursive_array();
 	void expect_library_recursive_array();
 	
-	//void declare();
-	
 	void   recursive_setup();
 	string extension_recursive();
 	void   files_recursive();
@@ -67,7 +65,7 @@ private:
 
 	void optional_rparen();
 
-	inline ParserToken peek(int32_t how_much = 1) {return tokens[index + how_much];}
+	inline ParserTokenKind peek(int32_t how_much = 1) {return tokens[index + how_much].type;}
 	inline void skip(int32_t how_much = 1) {current = tokens[index += how_much];}
 
 	void parse(); //called from constructor, should be rewritten to not do that

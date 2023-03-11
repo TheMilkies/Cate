@@ -48,7 +48,7 @@ void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
 {
 	next();
 
-	if (!match(type) && peek().type != type2)
+	if (!match(type) && peek() != type2)
 		error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
 	
 	next();
@@ -129,7 +129,7 @@ void Parser::void_function()
 ParserToken Parser::string_function()
 {
 	next();
-	if(!match(LPAREN) || peek().type != STRING_LITERAL)
+	if(!match(LPAREN) || peek() != STRING_LITERAL)
 		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")"));
 
 	ParserToken to_return = tokens[++index];

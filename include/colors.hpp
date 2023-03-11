@@ -9,6 +9,7 @@
 #define BLUE "\033[34m"
 #define PURPLE "\033[35m"
 #define CYAN "\033[36m"
+#define CATE_VERSION "v2.8.2"
 
 #define hl_func(x) YELLOW x COLOR_RESET
 #define hl_var(x) PURPLE x COLOR_RESET
