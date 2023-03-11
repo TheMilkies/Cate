@@ -16,7 +16,7 @@ void Parser::object_method()
 	}
 	else if (child == "install") 
 	{
-		current_class->install(current.line);				
+		current_class->install();				
 	}
 	else
 	{

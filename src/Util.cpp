@@ -176,7 +176,7 @@ namespace Util
 	{
 		if (getuid() != 0)
 		{
-			Util::error("You must be root to perform this action\n\n"
+			Util::error("You must be root to install\n\n"
 			"Suggestion: try addding `" BOLD hl_func("sudo")
 			"` before `cate`, like `"
 			BOLD YELLOW "sudo" BLUE " cate" COLOR_RESET " ...`");

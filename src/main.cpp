@@ -3,7 +3,8 @@
 //parser_exit is needed to show all errors and exit afterwards
 //system_allowed is the -D option, only affects `system(String)` in parser
 bool parser_exit   = false, system_allowed = true,
-	 force_rebuild = false, force_smol     = false;
+	 force_rebuild = false, force_smol     = false,
+	 dont_ask_install = false;
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
@@ -143,6 +144,10 @@ int main(int argc, char *argv[])
 		case 'B':
 		case 'f': //force rebuild
 			force_rebuild = true;
+			break;
+		
+		case 'y':
+			dont_ask_install = true;
 			break;
 	
 		default: //unknown

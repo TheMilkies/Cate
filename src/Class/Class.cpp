@@ -4,7 +4,7 @@
 
 extern int32_t thread_count;
 
-extern bool force_rebuild, force_smol;
+extern bool force_rebuild, force_smol, dont_ask_install;
 
 Class::Class(std::string_view ident): name(ident)
 {
@@ -64,7 +64,7 @@ void Class::setup_objects()
 	}
 }
 
-void Class::install(int32_t line)
+void Class::install()
 {
 #ifdef __WIN32
 	Util::warn(0, "Installing is not supported in Windows Cate.");
@@ -79,7 +79,9 @@ void Class::install(int32_t line)
 
 	Util::check_root();
 	string command = "cp -f " + out_name + " " + install_path_name;
-	Util::user_system(line, command.c_str());
+	Util::system(command);
+	
+	cout << GREEN "Installed \"" << name << "\"" COLOR_RESET "\n";
 }
 
 string Class::get_stripped_name()
@@ -254,11 +256,14 @@ bool Class::ask_to_install()
 #ifdef __WIN32
 	return false;
 #endif // __WIN32
+	if(dont_ask_install) return true;
+
 	fflush(stdin); std::flush(std::cout);
 	std::ios_base::sync_with_stdio(true); 
 
 	char answer;
-	cout << "Would you like to install \"" << name << "\"? (y\\n): ";
+	cout << BLUE "Install \"" << name << "\"? " COLOR_RESET "("
+		GREEN "Y" YELLOW "\\" RED "n" COLOR_RESET"): ";
 	std::cin >> answer;
 
 	std::ios_base::sync_with_stdio(false); 

@@ -60,7 +60,7 @@ public:
 		cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 	}
 
-	void install(int32_t line);
+	void install();
 	string get_stripped_name();
 	virtual string get_install_path() = 0;
 
