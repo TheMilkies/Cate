@@ -66,9 +66,14 @@ void Class::setup_objects()
 
 void Class::install(int32_t line)
 {
+#ifdef __WIN32
+	Util::warn(0, "Installing is not supported in Windows Cate.");
+	return;
+#endif // __WIN32
+
 	if(out_name.empty()) generate_name();
 	string install_path_name = get_install_path();
-	if(!newer_than(out_name, install_path_name)) return;
+	if(!newer_than(install_path_name, out_name)) return;
 
 	if(!ask_to_install()) return;
 

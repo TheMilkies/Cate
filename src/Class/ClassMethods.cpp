@@ -14,6 +14,10 @@ void Parser::object_method()
 	{
 		current_class->clean();				
 	}
+	else if (child == "install") 
+	{
+		current_class->install(current.line);				
+	}
 	else
 	{
 		fatal(string("\"" YELLOW) +

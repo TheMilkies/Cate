@@ -75,10 +75,6 @@ namespace Util
 	void add_cate_ending(std::string& s);
 } // namespace Util
 
-#define hl_func(x) YELLOW x COLOR_RESET
-#define hl_var(x) PURPLE x COLOR_RESET
-#define hl_flag(x) "\e[1;32m" "\t" x ": " COLOR_RESET
-
 #define ERROR RED BOLD "Error" COLOR_RESET
 
 /// @brief Returns if a file is a newer than another 
