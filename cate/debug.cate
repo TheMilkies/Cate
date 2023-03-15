@@ -1,9 +1,10 @@
 Project cate
 .compiler = "g++"
 .files = recursive("src/**.cpp")
-.flags = "-fpermissive -g -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast "
+.flags = "-fpermissive -g -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast"
 .libs = {"stdc++fs"}
 .defs = {"TRACK_ALLOCS", "DEBUG"}
+.std = "c++17"
 .threading = true
 .out = "out/cate"
 .build()

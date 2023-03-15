@@ -6,10 +6,11 @@ Project cate
 
 //the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
 
-.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17  -Wall -Ofast -static"
+.flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast -static"
 .libs = {"stdc++fs"} //use the static library because i hate windows dlls
 
 .threading = true
+.std = "c++17"
 .smolize = true //save a few hundred kilobytes
 .out = "out/cate.exe"
 

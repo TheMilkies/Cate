@@ -1,9 +1,10 @@
 Project cate
 .compiler = "g++"
 .files = recursive("src/**.cpp")
-.flags = "-fno-exceptions -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
+.flags = "-fno-exceptions -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast"
 .libs = {"stdc++fs"}
 .out = "release/cate"
+.std = "c++17"
 .smolize = true
 .threading = true
 .build()
