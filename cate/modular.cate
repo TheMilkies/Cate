@@ -3,7 +3,7 @@ compiler = "g++"
 std = "c++17"
 
 Library CateParser(dynamic)
-.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only-Ofast"
+.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast"
 .out = "out/libcateparser.so"
 .files = recursive("src/Parser/*.cpp")
 .libs = {"stdc++fs"}
