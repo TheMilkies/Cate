@@ -1,11 +1,11 @@
 Project cate
 .compiler = "g++"
 .files = {"src/**.cpp"}
-.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -Wall -Ofast"
+.flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast"
 .out = "out/cate"
 .libs = {"stdc++fs"}
+.std = "c++17"
 .threading = true
 .smol = true
 .build()
-
 .install()

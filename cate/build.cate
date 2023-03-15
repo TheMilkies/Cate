@@ -6,3 +6,4 @@ Project cate
 .threading = true
 .out = "out/cate"
 .build()
+.install()

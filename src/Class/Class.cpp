@@ -179,7 +179,7 @@ void Class::set_property(int32_t line, string& property, string& value)
 			 property == "object_folder"   ||
 			 property == "build_directory")
 		object_dir = value;
-	else if (property == "smol" || property == "smolize")
+	else if (property == "std" || property == "standard")
 		standard = value;
 	else
 		Util::error(line, "\"" PURPLE + property + COLOR_RESET "\" cannot be set to a string or is not a valid property name");

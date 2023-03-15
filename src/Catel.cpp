@@ -21,10 +21,12 @@ void parse_catel()
 		if (s1.empty() || s2.empty())
 			error("Catel file error. one feild is empty");
 		
-		if (s1 == "dir" || s1 == "directory")
-			default_directory = s2;
-		else if (s1 == "def" || s1 == "default")
+		if (s1 == "def" || s1 == "default")
 			default_file = s2;
+		else if (s1 == "dir" || s1 == "directory")
+			default_directory = s2;
+		else
+			error("Unknown command in catel \"" + s1 + "\"");
 	}
 
 	//do file_name stuff
