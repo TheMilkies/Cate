@@ -88,8 +88,12 @@ void Class::install()
 
 string Class::get_stripped_name()
 {
-	string temp = out_name.substr(out_name.find_last_of('/'), out_name.length());
-	return temp;
+	if(out_name.empty()) generate_name();
+
+	int32_t position_of_slash = out_name.find_last_of('/');
+	if(position_of_slash == string::npos) return out_name;
+
+	return out_name.substr(position_of_slash, out_name.length());
 }
 
 // this is for threads.
@@ -259,12 +263,12 @@ bool Class::ask_to_install()
 	return false;
 #endif // __WIN32
 	if(dont_ask_install) return true;
+	fflush(stdin); std::flush(std::cout);
 
 	char answer;
 	cout << BLUE "Install \"" << name << "\"? " COLOR_RESET "("
 		GREEN "Y" YELLOW "\\" RED "n" COLOR_RESET"): ";
 	std::cin >> answer;
-	fflush(stdin); std::flush(std::cout);
 
 	return answer == 'Y' || answer == 'y';
 }
