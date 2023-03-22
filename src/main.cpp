@@ -61,20 +61,24 @@ int main(int argc, char *argv[])
 		}
 	}
 
+#ifdef __WIN32
+	const char* arg = argv[0];
+#else
 	const char* arg = shift_args();
+#endif // __WIN32
 	std::vector<string> file_names;
 	while (argc > 0){
 		if(arg[0] != '-')
 		{
-			string file_in_folder = default_directory + "/" + arg;
-			add_cate_ending(file_in_folder);
+			string file = arg;
+			add_cate_ending(file);
+			string file_in_folder = default_directory + "/" + file;
 
 			if(file_exists(file_in_folder.c_str()))
 				file_names.emplace_back(file_in_folder);
 			else
 			{
-				// This might look weird, but it saves one alloc.
-				auto& file = file_names.emplace_back(argv[0]);
+				file_names.emplace_back(file);
 				add_cate_ending(file);
 			}
 			arg = shift_args();
@@ -92,13 +96,13 @@ int main(int argc, char *argv[])
 			else if(argv[1] != NULL)
 				num = (char*)shift_args(); //skip next because it's an int
 			else
-				command_error("Missing argument \"-t\".");
+				command_error("Missing argument after \"-t\".");
 			
-			int32_t sub = atoi(num); //get everything after "-t"
-			if (sub > 0) //if 0 or invalid
-				thread_count = sub;
-			else
+			int32_t new_count = atoi(num);
+			if (new_count <= 0)
 				command_error("Can't set thread count to \"" + string(num) + "\".");
+			
+			thread_count = new_count;
 		}	break;
 
 		case 'v': //cate version
@@ -161,9 +165,7 @@ int main(int argc, char *argv[])
 	}
 
 	if(default_file.empty() && !default_file_exists())
-	{
 		command_error("No default file found.");
-	}
 	
 	if(file_names.empty()) file_names.emplace_back(default_file);
 	for(auto& name : file_names)
