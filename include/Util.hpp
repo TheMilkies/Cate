@@ -15,6 +15,8 @@
 		#include <TargetConditionals.h>
 		#if TARGET_OS_MAC
 			#define PLATFORM_CATEL ".mac.catel"
+		#else
+			#error Cate can not run on this platform.
 		#endif
 	#else
 		#define PLATFORM_CATEL ".linux.catel"

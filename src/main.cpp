@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
 				num = (char*)shift_args(); //skip next because it's an int
 			else
 				command_error("Missing argument after \"-t\".");
-			
+
 			int32_t new_count = atoi(num);
 			if (new_count <= 0)
 				command_error("Can't set thread count to \"" + string(num) + "\".");
-			
+
 			thread_count = new_count;
 		}	break;
 
@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
 					catefiles_found = true;
 				}
 			}
+
 			if (catefiles_found)
 				cout << CYAN << all << COLOR_RESET "\n";
 			else
@@ -130,7 +131,7 @@ int main(int argc, char *argv[])
 
 			exit(0);
 		} break;
-		
+
 		case 'h':
 		case '?': //shows help
 			help();
@@ -166,8 +167,11 @@ int main(int argc, char *argv[])
 
 	if(default_file.empty() && !default_file_exists())
 		command_error("No default file found.");
-	
-	if(file_names.empty()) file_names.emplace_back(default_file);
+
+	if(file_names.empty())
+		file_names.emplace_back(default_file);
+
+	//start building yay
 	for(auto& name : file_names)
 		Parser p(name);	
 		

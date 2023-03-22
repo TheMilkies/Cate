@@ -174,6 +174,7 @@ namespace Util
 	//coming maybe soon
 	void check_root()
 	{
+	#ifndef __WIN32
 		if (getuid() != 0)
 		{
 			Util::error("You must be root to install\n\n"
@@ -182,5 +183,6 @@ namespace Util
 			BOLD YELLOW "sudo" BLUE " cate" COLOR_RESET " ...`");
 			exit(2);
 		}
+	#endif //__WIN32
 	}
 } // namespace Util
