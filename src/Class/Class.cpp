@@ -138,7 +138,7 @@ void Class::build_objects()
 	}
 
 #ifdef DEBUG
-	std::cout << "finished " << name << '\n';
+	cout << "finished " << name << '\n';
 #endif // DEBUG
 
 	already_built = true;

@@ -77,7 +77,7 @@ namespace Util
 	void add_cate_ending(std::string& s);
 } // namespace Util
 
-#define ERROR RED BOLD "Error" COLOR_RESET
+#define ERROR "\e[1;31mError\e[0m"
 
 /// @brief Returns if a file is a newer than another 
 /// @param a Path to check

@@ -158,7 +158,7 @@ void Parser::parse()
 				//set current property to the string literal
 				current_class->set_property(current.line, child, current.value); 
 			}
-			else 
+			else
 			{
 				if (match(LCURLY))
 					array(); //start the array

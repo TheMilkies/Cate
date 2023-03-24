@@ -1,5 +1,5 @@
 #pragma once
-#define CATE_VERSION "v2.9"
+#define CATE_VERSION "v2.9.1"
 
 #define BOLD "\033[1m" 
 #define COLOR_RESET "\e[0m"
