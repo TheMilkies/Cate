@@ -39,12 +39,20 @@ void Class::clean()
 		object_dir = global_values.object_dir;
 	}
 
+	if(object_files.empty())
+		setup_objects();
+	if(object_files.empty()) return; //in case there are none
+
 	string command =
 #ifdef __WIN32
 	"del -f -q "	
 #else
 	"rm -f " 
 #endif // OS Check
-	+ object_dir + "/*" OBJ_EXTENSION;
+	+ all_object_files;
 	Util::system(command);
+
+	object_files.clear();
+	all_object_files.clear();
+	already_built = false;
 }
