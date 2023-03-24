@@ -76,18 +76,18 @@ read -r -p "Done. Would you like to install Cate? [Y/n]: " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
         if command -v doas &> /dev/null; then
-            sudo $install_command
-            sudo rm -f /usr/bin/cate
-            sudo cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
+            rootc='doas'
         elif command -v sudo &> /dev/null; then
-            doas $install_command
-            doas rm -f /usr/bin/cate
-            doas cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
+            rootc='sudo'
         elif [ "$EUID" -e 0]; then
-            $install_command
+            rootc=''
         else
             echo "No way to run as root found, sorry"
+            exit 1
         fi
+        $rootc $install_command
+        $rootc rm -f /usr/bin/cate
+        $rootc cp -f docs/manpages/cate.1 /usr/local/share/man/man1/
         ;;
     *)
         exit
