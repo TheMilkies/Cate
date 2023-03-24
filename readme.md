@@ -34,9 +34,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9/cate_2.9-0_amd64.deb
-sudo dpkg -i cate_2.9-0_amd64.deb
-rm cate_2.9-0_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.1/cate_2.9-1_amd64.deb
+sudo dpkg -i cate_2.9-1_amd64.deb
+rm cate_2.9-1_amd64.deb
 ```
 
 ### Other distributions
@@ -44,8 +44,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9/linux_cate_v2.9.0.zip
-unzip linux_cate_v2.9.0.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.1/linux_cate_v2.9.1.zip
+unzip linux_cate_v2.9.1.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -75,7 +75,7 @@ Cate's CLI is intuitive, but doesn't offer much more than necesery.
 - `-y`: Install without asking.
 - `-D`: Disable all user-defined `system()` calls in script.
 - `-S`: Smolize even if not set in script.
-- `-f` (and `-B`): Forcefully rebuild project, by deleting its object files.
+- `-f` (and `-B`): Forcefully rebuild project.
 - `-v`: Shows the installed Cate version. 
 - `-h`: Shows help and Cate version. 
 
@@ -154,7 +154,7 @@ Both classes have these properties, even if they don't make sense for the class
 - `String out`: The output file name. 
 - - In projects: Defaults to the identifier.
 - - In libraries: Defaults to "lib" + the identifier + the extension for the library type.
-- `String compiler`: The compiler to use. Default is `cc`.
+- `String cc|compiler`: The compiler to use. Default is `cc`.
 - `String std|standard`: The C/C++ standard to use. Default is set by the compiler.
 - `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in. Defaults to `"build"` (or `cate/build` if catedir is present), unless a directory named `"obj"` is present; where it'd use it.
 - `String flags`: The cflags of the project/library, All object files are compiled with them. Default is empty.
@@ -168,7 +168,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 ### Class methods
 - `void build()`: Builds project/library.
-- `void clean()`: Deletes project/library's build directory.
+- `void clean()`: Deletes project/library's object files, doesn't affect other projects/libraries!
 - `void install()`: Install projects to `/usr/local/bin` and libraries to `/usr/local/lib`.
 
 ### General functions
