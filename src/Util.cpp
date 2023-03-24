@@ -39,6 +39,12 @@ namespace Util
 		exit(1);
 	}
 
+	void add_cate_ending(std::string& s)
+	{
+		if (!s.empty() && !ends_with(s, ".cate"))
+			s += ".cate";
+	}
+
 	void replace_all( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
 		string& s,
 		string_view toReplace,
@@ -155,12 +161,6 @@ namespace Util
 			);
 	}
 
-	void add_cate_ending(std::string& s)
-	{
-		if (!s.empty() && !ends_with(s, ".cate"))
-			s += ".cate";
-	}
-
 	void generate_object_dir_name()
 	{
 		if (fs::is_directory("cate"))
@@ -169,13 +169,5 @@ namespace Util
 			global_values.object_dir = "obj";
 		else
 			global_values.object_dir = "build";
-	}
-
-	//coming maybe soon
-	bool is_root()
-	{
-	#ifndef __WIN32
-		return (getuid() == 0);
-	#endif //__WIN32
 	}
 } // namespace Util

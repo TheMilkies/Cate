@@ -44,6 +44,7 @@ namespace Util
 	}
 
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of('.'));}
+	void add_cate_ending(std::string& s);
 
 	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
@@ -72,9 +73,8 @@ namespace Util
 
 	void generate_object_dir_name();
 
-	bool is_root();
+	inline bool is_root() {return (getuid() == 0);}
 
-	void add_cate_ending(std::string& s);
 } // namespace Util
 
 #define ERROR "\e[1;31mError\e[0m"

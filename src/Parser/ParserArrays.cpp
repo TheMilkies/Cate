@@ -96,6 +96,10 @@ void Parser::files_array()
 		if (match(RECURSIVE) || string_find(current.value, '*'))
 			files_recursive();
 		else if (match(STRING_LITERAL))
+		{
+			if(!file_exists(current.value.c_str()))
+				warn(current.line, "File \"" + current.value + "\" was not found.");
 			files.emplace_back(current.value);
+		}
 	}
 }
