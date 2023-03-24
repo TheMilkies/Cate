@@ -6,7 +6,9 @@ extern int32_t thread_count;
 
 extern bool force_rebuild, force_smol, dont_ask_install;
 
-Class::Class(std::string_view ident): name(ident),
+Class::Class(std::string_view ident):
+	name(ident),
+	out_name(ident),
 	object_dir(global_values.object_dir),
 	threading (global_values.threading),
 	smol 	  (global_values.smol),

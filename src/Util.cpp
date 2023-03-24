@@ -175,7 +175,7 @@ namespace Util
 	bool is_root()
 	{
 	#ifndef __WIN32
-		return (getuid() != 0)
+		return (getuid() == 0);
 	#endif //__WIN32
 	}
 } // namespace Util

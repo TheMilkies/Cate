@@ -75,8 +75,3 @@ inline string Project::generate_command_for(string& objects)
 		   all_library_paths + all_libraries + " " +
 		   all_include_paths + final_flags;
 }
-
-string Project::get_install_path()
-{
-	return "/usr/local/bin/" + get_stripped_name();
-}
