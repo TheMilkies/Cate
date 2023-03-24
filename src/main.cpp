@@ -171,6 +171,7 @@ int main(int argc, char *argv[])
 	if(file_names.empty())
 		file_names.emplace_back(default_file);
 
+	Util::generate_object_dir_name(); //save some time
 	//start building yay
 	for(auto& name : file_names)
 		Parser p(name);	

@@ -6,7 +6,12 @@ extern int32_t thread_count;
 
 extern bool force_rebuild, force_smol, dont_ask_install;
 
-Class::Class(std::string_view ident): name(ident)
+Class::Class(std::string_view ident): name(ident),
+	object_dir(global_values.object_dir),
+	threading (global_values.threading),
+	smol 	  (global_values.smol),
+	compiler  (global_values.compiler),
+	standard  (global_values.standard)
 {
 	//these should be enough for most small/medium-sized projects
 	files.reserve(32);
@@ -25,9 +30,6 @@ Class::Class(std::string_view ident): name(ident)
 	out_name.reserve(32);
 	flags.reserve(256);
 	object_dir.reserve(64);
-
-	threading = global_values.threading;
-	smol 	  = global_values.smol;
 }
 
 void Class::setup()
@@ -206,21 +208,11 @@ void Class::check()
 	if (files.empty())
 		build_error("it has no files");
 
-	if (compiler.empty())
-		compiler = global_values.compiler;
-
 	if (out_name.empty())
 		generate_name();
 
 	if (!file_exists(out_name.c_str()))
 		needs_link = true;
-
-	if (object_dir.empty())
-	{
-		if(global_values.object_dir.empty())
-			Util::generate_object_dir_name();
-		object_dir = global_values.object_dir;
-	}
 
 	if (threading)
 		flags += " -pthread ";
@@ -229,15 +221,8 @@ void Class::check()
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 
-	if (standard.empty())
-	{
-		if(!global_values.standard.empty())
-		{
-			standard = global_values.standard;
-			flags += " -std=" + standard + " ";
-		}
-	}
-	else flags += " -std=" + standard + " ";
+	if (!standard.empty())
+		flags += " -std=" + standard + " ";
 	
 	//automation
 	if (all_include_paths.empty())
