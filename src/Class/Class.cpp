@@ -81,7 +81,15 @@ void Class::install()
 
 	if(!ask_to_install()) return;
 
-	Util::check_root();
+	if (!Util::is_root())
+	{
+		Util::error("You must be root to install\n"
+		"Suggestion: try adding `" BOLD hl_func("sudo")
+		"` before `cate`, like `"
+		BOLD YELLOW "sudo" BLUE " cate" COLOR_RESET " ...`");
+		exit(2);
+	}
+
 	string command = "cp -f " + out_name + " " + install_path_name;
 	Util::system(command);
 	
@@ -200,7 +208,7 @@ void Class::build_error(string_view problem)
 
 void Class::check()
 {
-	using Util::file_exists;
+	using Util::file_exists, fs::is_directory;
 
 	if (errors_exist)
 		build_error("of previous errors");
@@ -227,9 +235,9 @@ void Class::check()
 	//automation
 	if (all_include_paths.empty())
 	{
-		if (fs::is_directory("include"))
+		if (is_directory("include"))
 			all_include_paths = " -Iinclude ";
-		else if (fs::is_directory("inc"))
+		else if (is_directory("inc"))
 			all_include_paths = " -Iinc ";
 	}
 }

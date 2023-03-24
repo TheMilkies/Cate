@@ -72,7 +72,7 @@ namespace Util
 
 	void generate_object_dir_name();
 
-	void check_root();
+	bool is_root();
 
 	void add_cate_ending(std::string& s);
 } // namespace Util

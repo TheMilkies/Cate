@@ -172,17 +172,10 @@ namespace Util
 	}
 
 	//coming maybe soon
-	void check_root()
+	bool is_root()
 	{
 	#ifndef __WIN32
-		if (getuid() != 0)
-		{
-			Util::error("You must be root to install\n\n"
-			"Suggestion: try adding `" BOLD hl_func("sudo")
-			"` before `cate`, like `"
-			BOLD YELLOW "sudo" BLUE " cate" COLOR_RESET " ...`");
-			exit(2);
-		}
+		return (getuid() != 0)
 	#endif //__WIN32
 	}
 } // namespace Util
