@@ -172,12 +172,12 @@ void Class::add_library(string& lib)
 
 void Class::set_property(int32_t line, string& property, string& value)
 {
-	if (property == "out")
-		out_name = value;
+	if (property == "cc" || property == "compiler")
+		compiler = value;
 	else if (property == "flags")
 		flags = value;
-	else if (property == "compiler")
-		compiler = value;
+	else if (property == "out")
+		out_name = value;
 	else if (property == "final_flags" || property == "end_flags")
 		final_flags = value;
 	else if (property == "obj_dir"		   ||

@@ -214,14 +214,13 @@ bool Parser::global()
 {
 	auto& property = current.value;
 	child = property;
-	switch (property[0])
+	switch (property[0]) //fast tm
 	{
-	case 'b':case 'c':case 't':case 's':case 'o':break;
-	
-	default: return false;break;
+	case 'b':case 'c':case 't':case 's':case 'o': break;
+	default: return false; break;
 	}
 
-	if (property == "compiler")
+	if (property == "cc" || property == "compiler")
 		set_string(compiler)
 	else if (property == "std" || property == "standard")
 		set_string(standard)
@@ -244,13 +243,17 @@ bool Parser::global()
 #define set_bool(x) current_class->x = expect_bool();
 bool Parser::special_case()
 {
-	if(child[0] != 't' && child[0] != 's' && child[0] != 'l') return false;
-
+	switch (child[0]) //fast tm
+	{
+	case 'l':case 't':case 's': break;
+	default: return false; break;
+	}
+	
 	if (child == "type")
 		current_class->set_type(current.line, expect_type()); 
 	else if (child == "threading")
 		set_bool(threading)
-	else if (child == "smolize" || child == "smol")
+	else if (child == "smol" || child == "smolize")
 		set_bool(smol)
 	else if (child == "link")
 		set_bool(link)
