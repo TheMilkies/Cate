@@ -1,7 +1,7 @@
 #include "Util.hpp"
 #include "Class/Global.hpp"
 
-extern bool parser_exit;
+extern bool errors_exist;
 
 #ifdef __WIN32
 	#include <windows.h>
@@ -18,13 +18,13 @@ namespace Util
 	void error(string_view problem)
 	{
 		cerr << ERROR ": " << problem << "\n";
-		parser_exit = true;
+		errors_exist = true;
 	}
 
 	void error(int32_t line, string_view problem)
 	{
 		cerr << ERROR " in line " << line << ": " << problem << "\n";
-		parser_exit = true;
+		errors_exist = true;
 	}
 
 	void fatal_error(int32_t line, string_view problem)

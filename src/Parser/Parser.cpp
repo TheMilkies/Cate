@@ -66,7 +66,7 @@ Parser::Parser(const string& file_name)
 	delete lexer; //delete the monstrosity and free its memory
 	file.close();
 
-	if(parser_exit) exit(1);
+	if(errors_exist) exit(1);
 
 	parse(); //start parsing
 }
@@ -206,7 +206,7 @@ void Parser::parse()
 		next(); // get next token
 	}
 
-	if (parser_exit) exit(1); //if there was a non-fatal error, exit. 
+	if (errors_exist) exit(1); //if there was a non-fatal error, exit. 
 }
 
 #define set_string(x) {expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.value;}

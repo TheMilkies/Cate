@@ -202,7 +202,7 @@ void Class::check()
 {
 	using Util::file_exists;
 
-	if (parser_exit)
+	if (errors_exist)
 		build_error("of previous errors");
 
 	if (files.empty())

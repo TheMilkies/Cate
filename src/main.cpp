@@ -1,8 +1,8 @@
 #include "Parser/Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
 
-//parser_exit is needed to show all errors and exit afterwards
+//errors_exist is needed to show all errors and exit afterwards
 //system_blocked is the -D option, only affects `system(String)` in parser
-bool parser_exit   = false, system_blocked = false,
+bool errors_exist   = false, system_blocked = false,
 	 force_rebuild = false, force_smol     = false,
 	 dont_ask_install = false;
 int32_t thread_count = std::thread::hardware_concurrency() * 2;

@@ -7,7 +7,7 @@
 #define fatal(text) Util::fatal_error(current.line, text)
 
 //from main.cpp
-extern bool parser_exit;
+extern bool errors_exist;
 extern bool system_blocked;
 
 //most comments in Parser.cpp

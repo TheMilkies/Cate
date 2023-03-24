@@ -8,7 +8,7 @@
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
 */
 
-extern bool parser_exit;
+extern bool errors_exist;
 extern int32_t thread_count;
 
 class Class
