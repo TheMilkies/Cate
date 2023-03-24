@@ -214,6 +214,12 @@ bool Parser::global()
 {
 	auto& property = current.value;
 	child = property;
+	switch (property[0])
+	{
+	case 'b':case 'c':case 't':case 's':case 'o':break;
+	
+	default: return false;break;
+	}
 
 	if (property == "compiler")
 		set_string(compiler)
@@ -238,6 +244,8 @@ bool Parser::global()
 #define set_bool(x) current_class->x = expect_bool();
 bool Parser::special_case()
 {
+	if(child[0] != 't' && child[0] != 's' && child[0] != 'l') return false;
+
 	if (child == "type")
 		current_class->set_type(current.line, expect_type()); 
 	else if (child == "threading")
