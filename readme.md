@@ -63,6 +63,8 @@ Make sure you have these installed:
 Run `./build.sh`, It'll ask you if you'd like to install at the end.
 
 ### Using Cate
+**If you're using cate <= 1.3, run** `sudo cate legacy`.
+
 Run `cate`, it'll ask you if to install after building.
 Unlike Make and other build systems; it'll automatically detect the thread count.
 

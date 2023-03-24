@@ -39,7 +39,7 @@ namespace Util
 
 	inline void warn(int32_t line, string_view problem)
 	{
-		cout << BOLD YELLOW "Warning " COLOR_RESET "in line " << line << 
+		cerr << BOLD YELLOW "Warning " COLOR_RESET "in line " << line << 
 		": " << problem << "\n";
 	}
 
