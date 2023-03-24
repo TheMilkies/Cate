@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 			break;
 	
 		default: //unknown
-			cerr << "Unknown argument \"" << argv[0] << "\", "
+			cerr << "Unknown argument \"" << argv[0] << "\"\n"
 				"Use " BOLD BLUE "cate " GREEN "-h " COLOR_RESET "to see valid arguments\n"
 				;
 			break;

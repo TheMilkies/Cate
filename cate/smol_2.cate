@@ -7,6 +7,7 @@ Project cate
 .files = {
 	"src/main.cpp"
 	"src/Help.cpp"
+	"src/Catel.cpp"
 	"src/Util.cpp"
 	"src/Class/Class.cpp"
 	"src/Class/Project.cpp"
