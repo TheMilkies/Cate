@@ -1,8 +1,8 @@
 #include "Parser/Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
 
 //parser_exit is needed to show all errors and exit afterwards
-//system_allowed is the -D option, only affects `system(String)` in parser
-bool parser_exit   = false, system_allowed = true,
+//system_blocked is the -D option, only affects `system(String)` in parser
+bool parser_exit   = false, system_blocked = false,
 	 force_rebuild = false, force_smol     = false,
 	 dont_ask_install = false;
 int32_t thread_count = std::thread::hardware_concurrency() * 2;
@@ -138,8 +138,8 @@ int main(int argc, char *argv[])
 			exit(0); //exit after
 			break;
 		
-		case 'D': //disable system
-			system_allowed = false;
+		case 'D': //disable system()
+			system_blocked = true;
 			break;
 		
 		case 'S': //disable system

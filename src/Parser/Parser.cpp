@@ -169,9 +169,10 @@ void Parser::parse()
 			break;
 		
 		case SYSTEM:
-			if (system_allowed)
+			if (system_blocked)
+				skip(3);
+			else
 				user_system(current.line, string_function().value);
-			else skip(3);
 			break;
 
 		case RECURSIVE:

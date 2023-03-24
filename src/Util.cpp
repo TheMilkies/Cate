@@ -77,7 +77,7 @@ namespace Util
 	#endif // OS check tm
 	}
 
-	//no system_allowed check here because it's ran by build threads
+	//no system_blocked check here because it's ran by build threads
 	void system(string_view command)
 	{
 		if (command.empty()) return;

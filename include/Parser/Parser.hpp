@@ -8,7 +8,7 @@
 
 //from main.cpp
 extern bool parser_exit;
-extern bool system_allowed;
+extern bool system_blocked;
 
 //most comments in Parser.cpp
 
