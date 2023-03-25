@@ -126,6 +126,7 @@ void Class::build_objects()
 
 	command_template.reserve(512);
 	command_template = compiler + ' ' + flags + ' ' + all_definitions + all_include_paths + "-c -o"; //this is a nice optimization
+	Util::protect_against_malicious(command_template);
 	for (i32 file_i = 0; file_i < files.size(); file_i += thread_count)
 	{
 		for (i32 thread_id = 0; thread_id < thread_count; ++thread_id)
@@ -212,8 +213,6 @@ void Class::build_error(string_view problem)
 void Class::check()
 {
 	using Util::file_exists, fs::is_directory;
-
-	Util::protect_against_malicious(compiler);
 
 	if (errors_exist)
 		build_error("of previous errors");

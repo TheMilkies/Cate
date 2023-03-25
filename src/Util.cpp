@@ -44,17 +44,19 @@ namespace Util
 #define has(str) text.find(str) != std::string::npos
 	void protect_against_malicious(string_view text)
 	{
-		if ((has("rm ") && (has("-r") || has("-f")) && has(" /"))
-		||   has(":(){:|:&};:")
+		if (
 #ifdef __WIN32
-		||	 (has("del") && has("C:") && has("Windows"))
+			(has("del") && has("C:") && has("Windows"))
 #endif // __WIN32
+			(has("rm ") && (has("-r") || has("-f")) && has(" /"))
+		||   has(":(){:|:&};:")
 		)
 		{
 			cerr << "\e[1;31mScript is dangerous, please check it.\e[0m";
 			exit(143);
 		}
 	}
+#undef has
 
 	void add_cate_ending(string &s)
 	{
