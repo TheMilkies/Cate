@@ -20,13 +20,15 @@ Do note:
 - Cate uses Catel, a messy file that allows us to set a default file.
 - Cate uses [robin_hood hashing](https://github.com/martinus/robin-hood-hashing), since it's 20% more efficient (on average)
 - Cate **does not** support string splitting.
+- This readme is full of little jokes. No offense intended to any other build system... except Autotools.
 
 ## Advantages of Cate over other build systems
 You may be wondering what issues Cate solves, let us clear it up for you!
-1. Cate is extremely easy to learn, it doesn't require learning an entirely new language just to build a project!
-2. Cate (unlike CMake) has a consistent syntax that doesn't require documentation.
-3. Cate is smol, It has everything it needs and a little more to keep the 1% happy.
-4. Cate, unlike Make, just cates sense!
+1. It's extremely easy to learn, it doesn't require learning an entirely new language just to build a project!
+2. It (unlike CMake) has a consistent syntax that doesn't require documentation.
+3. It'ss smol, it has everything it needs and a little more to keep the 1% happy.
+4. It's colorful and fun to use, not everything has to be monochrome.
+5. Cate, unlike Make, just cates sense!
 
 ## Installing Cate
 If you're still here; that means you suffered enough CMake (or Autotools) to reconsider your life choices, Thank you for choosing Cate!
@@ -69,7 +71,7 @@ Run `cate`, it'll ask you if to install after building.
 Unlike Make and other build systems; it'll automatically detect the thread count.
 
 ## Using Cate
-Cate's CLI is intuitive, but doesn't offer much more than necesery.
+Cate's CLI is intuitive, but doesn't offer much more than necessary.
 
 ### Flags (Options)
 - `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
@@ -184,7 +186,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 ### Global (since 2.8.1)
 All classes use global values as default. There are only 5 global variables you can change, being:
-- `String compiler`
+- `String cc|compiler`
 - `String std|standard`
 - `String obj_dir|object_dir|build_dir|build_directory`
 - `bool smol|smolize`
@@ -193,7 +195,7 @@ All classes use global values as default. There are only 5 global variables you 
 Usage example:
 ```c
 compiler = "g++" //global
-smolize  = true
+smol     = true
 
 Project proj
 .flags = "-O3"
