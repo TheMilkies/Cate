@@ -26,7 +26,7 @@ Do note:
 You may be wondering what issues Cate solves, let us clear it up for you!
 1. It's extremely easy to learn, it doesn't require learning an entirely new language just to build a project!
 2. It (unlike CMake) has a consistent syntax that doesn't require documentation.
-3. It'ss smol, it has everything it needs and a little more to keep the 1% happy.
+3. It's smol, it has everything it needs and a little more to keep the 1% happy.
 4. It's colorful and fun to use, not everything has to be monochrome.
 5. Cate, unlike Make, just cates sense!
 
@@ -212,6 +212,7 @@ Project proj3
 .flags = "-O3"
 .files = "src3/main.c"
 .build()
+.install()
 ```
 
 ### Catel

@@ -46,8 +46,8 @@ void Class::clean()
 	{
 		if(remove(obj.c_str()) == -1)
 			Util::error("Can not delete \"" + obj + "\".\n"
-			"Suggestion: try running `" BLUE
-			"rm "
+			"Suggestion: try running `"
+			BOLD YELLOW "sudo" BLUE "rm " COLOR_RESET
 			PURPLE + obj + COLOR_RESET);
 	}
 
