@@ -8,7 +8,10 @@ extern bool force_rebuild, force_smol, dont_ask_install;
 
 Class::Class(std::string_view ident):
 	name(ident),
-	out_name(ident),
+#ifndef __WIN32 
+	out_name(ident), //linux has it so easy, just the name.
+#endif //__WIN32
+
 	object_dir(global_values.object_dir),
 	threading (global_values.threading),
 	smol 	  (global_values.smol),
@@ -60,7 +63,11 @@ void Class::setup_objects()
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
-		Util::replace_all(file, "/", "_"); // "/" -> "_"
+		
+		// Util::replace_all(file, "/", "_"); // "/" -> "_"
+		for (int32_t i = 0; i < file.length(); ++i)
+			if(file[i] == '/') file[i] = '_';
+
 		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
 		file = object_dir + "/" + file; // folder/object.o
 		all_object_files += file + " "; //used in final build process, all are linked
@@ -125,11 +132,11 @@ void Class::build_objects()
 
 	command_template.reserve(512);
 	command_template = compiler + ' ' + flags + ' ' + all_definitions + all_include_paths + "-c -o"; //this is a nice optimization
-	for (int32_t i = 0; i < files.size(); i+=thread_count)
+	for (int32_t file_i = 0; file_i < files.size(); file_i += thread_count)
 	{
-		for (int32_t j = 0; j < thread_count; ++j)
+		for (int32_t thread_id = 0; thread_id < thread_count; ++thread_id)
 		{
-			int32_t current = i+j;
+			int32_t current = file_i + thread_id;
 			if (current > files.size()) break; //current file index check
 			if (files[current].empty() || newer_than(files[current], object_files[current])) //if doesn't need recompilation
 				continue;
