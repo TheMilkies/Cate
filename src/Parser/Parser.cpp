@@ -45,19 +45,19 @@ Parser::Parser(const string& file_name)
 	//Flex doesn't work in a way you might expect, so we make it easier to work with
 	while (temp.type = (ParserTokenKind)lexer->yylex()) 
 	{
-		temp.value.clear(); //reset to save some memory
+		temp.text.clear(); //reset to save some memory
 		temp.line = lexer_line; //defined in lexer.l
 		
 		if (temp.type == STRING_LITERAL)
 		{
 			//string literals have the quotes (example: "string") so we need to remove them
-			temp.value = lexer->YYText()+1;
-			temp.value.pop_back();
+			temp.text = lexer->YYText()+1;
+			temp.text.pop_back();
 		}
 		else if (temp.type == IDENTIFIER)
 		{
 			//identifiers are just kept as themselves
-			temp.value = lexer->YYText();
+			temp.text = lexer->YYText();
 		}
 
 		tokens.push_back(temp); //add the token
@@ -83,7 +83,7 @@ void Parser::define()
 	bool is_project = current.type == PROJECT; //library or project
 
 	expect(IDENTIFIER);
-	string &identifier = current.value;
+	string &identifier = current.text;
 
 	if (is_defined(identifier))
 		fatal("\"" + identifier + "\" was already defined");
@@ -120,7 +120,7 @@ void Parser::parse()
 		case IDENTIFIER: {
 			if(global()) break;
 			/*property: string_literal '.' string_literal*/
-			auto& parent = current.value;
+			auto& parent = current.text;
 
 			if (!is_defined(parent))
 				fatal("\"" + parent + "\" is not defined.");
@@ -133,10 +133,11 @@ void Parser::parse()
 
 		case DOT:
 			if(current_class == nullptr)
-				fatal("No object was selected.");
+				fatal("No object was selected.\n"
+				"if you're trying to use a global variable, it's without the dot.");
 
 			expect(IDENTIFIER);
-			child = current.value;
+			child = current.text;
 
 			//object_method: property function_parens
 			//this is a dumb and smart optimisation
@@ -156,7 +157,7 @@ void Parser::parse()
 			if (match(STRING_LITERAL))
 			{
 				//set current property to the string literal
-				current_class->set_property(current.line, child, current.value); 
+				current_class->set_property(current.line, child, current.text); 
 			}
 			else
 			{
@@ -172,7 +173,7 @@ void Parser::parse()
 			if (system_blocked)
 				skip(3);
 			else
-				user_system(current.line, string_function().value);
+				user_system(current.line, string_function().text);
 			break;
 
 		case RECURSIVE:
@@ -183,7 +184,7 @@ void Parser::parse()
 			break;
 
 		case SUBCATE: {
-			string name = string_function().value;
+			string name = string_function().text;
 			add_cate_ending(name);
 
 			if(!file_exists(name.c_str()))
@@ -209,10 +210,10 @@ void Parser::parse()
 	if (errors_exist) exit(1); //if there was a non-fatal error, exit. 
 }
 
-#define set_string(x) {expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.value;}
+#define set_string(x) {expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.text;}
 bool Parser::global()
 {
-	auto& property = current.value;
+	auto& property = current.text;
 	child = property;
 	switch (property[0]) //fast tm
 	{

@@ -31,10 +31,10 @@ Class::Class(std::string_view ident):
 	all_definitions.reserve(256);
 
 	compiler.reserve(16);
-	final_flags.reserve(64);
+	final_flags.reserve(32);
 	out_name.reserve(32);
 	flags.reserve(256);
-	object_dir.reserve(64);
+	object_dir.reserve(32);
 }
 
 void Class::setup()

@@ -21,7 +21,7 @@ void Parser::recursive_setup()
 	auto& subrecursive = rd.subrecursive;
 	auto& location_of_wildcard = rd.location_of_wildcard;
 
-	string& argument = current.value;
+	string& argument = current.text;
 
 	if (argument.empty()) //should NEVER happen
 		fatal(hl_func("recursive()")
@@ -62,7 +62,7 @@ string Parser::extension_recursive()
 	auto& subrecursive = rd.subrecursive;
 	auto& files = current_class->files;
 
-	string extension = current.value.substr(rd.location_of_wildcard+1); //extract extension
+	string extension = current.text.substr(rd.location_of_wildcard+1); //extract extension
 	
 	if (extension.empty())
 	{

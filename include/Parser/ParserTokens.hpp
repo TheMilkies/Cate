@@ -57,7 +57,7 @@ enum ParserTokenKind: uint8_t
 struct ParserToken
 {
 	ParserTokenKind type;
-	std::string value;
+	std::string text;
 	int32_t line;
 };
 

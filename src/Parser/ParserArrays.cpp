@@ -27,7 +27,7 @@ void Parser::include_array()
 	{
 		expect_string_recursive_array();
 		if (match(STRING_LITERAL))
-			current_class->add_include(current.value);
+			current_class->add_include(current.text);
 		else if (match(RECURSIVE))
 			include_recursive();
 	}
@@ -41,7 +41,7 @@ void Parser::definitions_array()
 	{
 		expect_string_array();
 		if (match(STRING_LITERAL))
-			definitions += "-D" + current.value + ' ';
+			definitions += "-D" + current.text + ' ';
 	}
 }
 
@@ -61,8 +61,8 @@ void Parser::library_array()
 	while (!match(RCURLY))
 	{
 		expect_library_recursive_array();
-		auto& item = current.value;
-		if (match(RECURSIVE) || string_find(current.value, '*'))
+		auto& item = current.text;
+		if (match(RECURSIVE) || string_find(current.text, '*'))
 			library_recursive();
 		else if (match(STRING_LITERAL))
 			current_class->add_library(item);
@@ -93,13 +93,13 @@ void Parser::files_array()
 	while (!match(RCURLY))
 	{
 		expect_string_recursive_array();
-		if (match(RECURSIVE) || string_find(current.value, '*'))
+		if (match(RECURSIVE) || string_find(current.text, '*'))
 			files_recursive();
 		else if (match(STRING_LITERAL))
 		{
-			if(!file_exists(current.value.c_str()))
-				warn(current.line, "File \"" + current.value + "\" was not found.");
-			files.emplace_back(current.value);
+			if(!file_exists(current.text.c_str()))
+				warn(current.line, "File \"" + current.text + "\" was not found.");
+			files.emplace_back(current.text);
 		}
 	}
 }
