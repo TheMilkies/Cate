@@ -269,7 +269,7 @@ bool Class::ask_to_install()
 
 	char answer;
 	cout << BLUE "Install \"" << name << "\"? " COLOR_RESET "("
-		GREEN "Y" YELLOW "\\" RED "n" COLOR_RESET"): ";
+		traffic_light("Y", "/", "n") "): ";
 	std::cin >> answer;
 
 	return answer == 'Y' || answer == 'y';

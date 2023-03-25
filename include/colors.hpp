@@ -14,3 +14,5 @@
 #define hl_func(x) YELLOW x COLOR_RESET
 #define hl_var(x) PURPLE x COLOR_RESET
 #define hl_flag(x) "\e[1;32m\t" x COLOR_RESET
+#define traffic_light(good, sep, bad) GREEN good YELLOW sep RED bad COLOR_RESET
+#define choose_light(good, sep, bad) BLUE good RED sep PURPLE bad COLOR_RESET

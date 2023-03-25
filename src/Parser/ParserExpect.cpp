@@ -29,7 +29,9 @@ bool Parser::expect_bool()
 	next();
 
 	if (!match(B_TRUE) && !match(B_FALSE))
-		fatal("Expected a boolean (true | false) value for " PURPLE + child + COLOR_RESET);
+		fatal("Expected a boolean ("
+			traffic_light("true ", "|", " false")
+			") value for " PURPLE + child + COLOR_RESET);
 
 	return match(B_TRUE);
 }
@@ -39,7 +41,9 @@ bool Parser::expect_type()
 	next();
 
 	if (!match(STATIC) && !match(DYNAMIC))
-		error(current.line, "Expected a LibraryType (static | dynamic) value");
+		error(current.line, "Expected a LibraryType ("
+			choose_light("static ", "|", " dynamic")
+			") value");
 
 	return match(STATIC);
 }
