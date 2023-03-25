@@ -78,8 +78,8 @@ int main(int argc, char *argv[])
 				file_names.emplace_back(file_in_folder);
 			else
 			{
+				// add_cate_ending(file);
 				file_names.emplace_back(file);
-				add_cate_ending(file);
 			}
 			arg = shift_args();
 			continue;
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 			else
 				cerr << BOLD RED "No catefiles were found" COLOR_RESET "\n";
 
-			exit(0);
+			return !catefiles_found; //lazy error
 		} break;
 
 		case 'h':

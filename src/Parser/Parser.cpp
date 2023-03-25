@@ -27,7 +27,7 @@ Parser::Parser(const string& file_name)
 		fatal("Already built \"" + file_name + "\"");
 
 #ifdef DEBUG
-	cout << "compiling " << file_name << '\n';
+	cout << "parsing " << file_name << '\n';
 #endif // DEBUG
 
 	opened_files.insert(file_name);

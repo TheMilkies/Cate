@@ -41,16 +41,15 @@ void Class::clean()
 
 	if(object_files.empty())
 		setup_objects();
-	if(object_files.empty()) return; //in case there are none
-
-	string command =
-#ifdef __WIN32
-	"del -f -q "	
-#else
-	"rm -f " 
-#endif // OS Check
-	+ all_object_files;
-	Util::system(command);
+	
+	for(auto& obj : object_files)
+	{
+		if(remove(obj.c_str()) == -1)
+			Util::error("Can not delete \"" + obj + "\".\n"
+			"Suggestion: try running `" BLUE
+			"rm "
+			PURPLE + obj + COLOR_RESET);
+	}
 
 	object_files.clear();
 	all_object_files.clear();
