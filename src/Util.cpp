@@ -16,6 +16,7 @@ extern bool errors_exist;
 
 namespace Util
 {
+	#define ERROR "\e[1;31mError\e[0m" //redefinition because windows sucks
 	void error(string_view problem)
 	{
 		cerr << ERROR ": " << problem << "\n";

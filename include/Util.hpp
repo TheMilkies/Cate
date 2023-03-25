@@ -73,7 +73,13 @@ namespace Util
 
 	void generate_object_dir_name();
 
-	inline bool is_root() {return (getuid() == 0);}
+	inline bool is_root() {
+	#ifdef __WIN32
+		return false;
+	#else
+		return (getuid() == 0);
+	#endif // __WIN32
+	}
 
 } // namespace Util
 

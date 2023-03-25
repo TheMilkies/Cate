@@ -41,12 +41,7 @@ void Class::setup()
 {
 	check();
 
-	static bool bypass_force = false; //for when making static and dynamic
-	if(force_rebuild && !bypass_force)
-	{
-		clean();
-		bypass_force = true;
-	}
+	if(force_rebuild) clean();
 
 	//calling setup_objects() on another thread is a bit faster
 	std::thread object_thread(&Class::setup_objects, this);
@@ -99,8 +94,7 @@ void Class::install()
 		exit(2);
 	}
 
-	string command = "cp -f " + out_name + " " + install_path_name;
-	Util::system(command);
+	Util::system("cp -f " + out_name + " " + install_path_name);
 	
 	cout << GREEN "Installed \"" << name << "\"" COLOR_RESET "\n";
 }
