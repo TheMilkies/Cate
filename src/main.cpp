@@ -5,7 +5,7 @@
 bool errors_exist   = false, system_blocked = false,
 	 force_rebuild = false, force_smol     = false,
 	 dont_ask_install = false;
-int32_t thread_count = std::thread::hardware_concurrency() * 2;
+i32 thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
 void parse_catel();
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			else
 				command_error("Missing argument after \"-t\".");
 
-			int32_t new_count = atoi(num);
+			i32 new_count = atoi(num);
 			if (new_count <= 0)
 				command_error("Can't set thread count to \"" + string(num) + "\".");
 

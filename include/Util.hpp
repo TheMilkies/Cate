@@ -24,7 +24,7 @@
 
 #endif // OS check
 
-extern int32_t lexer_line;
+extern i32 lexer_line;
 
 #include "colors.hpp"
 
@@ -33,18 +33,18 @@ extern int32_t lexer_line;
 namespace Util
 {
 	void error(string_view problem);
-	void error(int32_t line, string_view problem);
+	void error(i32 line, string_view problem);
 	void command_error(string_view problem);
-	void fatal_error(int32_t line, string_view problem);
+	void fatal_error(i32 line, string_view problem);
 
-	inline void warn(int32_t line, string_view problem)
+	inline void warn(i32 line, string_view problem)
 	{
 		cerr << BOLD YELLOW "Warning " COLOR_RESET "in line " << line << 
 		": " << problem << "\n";
 	}
 
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of('.'));}
-	void add_cate_ending(std::string& s);
+	void add_cate_ending(string& s);
 
 	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
@@ -67,7 +67,7 @@ namespace Util
 	/// @brief The system() command the user can execute
 	/// @param line The line it's in
 	/// @param command The command to execute.
-	void user_system(int32_t line, string_view command);
+	void user_system(i32 line, string_view command);
 
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 

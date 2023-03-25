@@ -8,7 +8,7 @@ using namespace Util;
 static struct
 {
 	string path;
-	int32_t location_of_wildcard = 0;
+	i32 location_of_wildcard = 0;
 	bool subrecursive;
 } rd; //recursive data
 

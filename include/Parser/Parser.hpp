@@ -49,7 +49,7 @@ private:
 	vector<ParserToken> tokens;
 	std::unordered_map<string, Class*> classes;
 
-	int32_t index = -1; //will be incremented to 0
+	i32 index = -1; //will be incremented to 0
 	inline void next() {
 		current = tokens[++index];
 	}
@@ -65,8 +65,8 @@ private:
 
 	void optional_rparen();
 
-	inline ParserTokenKind peek(int32_t how_much = 1) {return tokens[index + how_much].type;}
-	inline void skip(int32_t how_much = 1) {current = tokens[index += how_much];}
+	inline ParserTokenKind peek(i32 how_much = 1) {return tokens[index + how_much].type;}
+	inline void skip(i32 how_much = 1) {current = tokens[index += how_much];}
 
 	void parse(); //called from constructor, should be rewritten to not do that
 public:

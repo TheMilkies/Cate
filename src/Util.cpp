@@ -12,6 +12,7 @@ extern bool errors_exist;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#include <sstream>
 
 namespace Util
 {
@@ -21,13 +22,13 @@ namespace Util
 		errors_exist = true;
 	}
 
-	void error(int32_t line, string_view problem)
+	void error(i32 line, string_view problem)
 	{
 		cerr << ERROR " in line " << line << ": " << problem << "\n";
 		errors_exist = true;
 	}
 
-	void fatal_error(int32_t line, string_view problem)
+	void fatal_error(i32 line, string_view problem)
 	{
 		cerr << ERROR " in line " << line << ": " << problem << "\nTerminating.\n";
 		exit(1);
@@ -39,7 +40,7 @@ namespace Util
 		exit(1);
 	}
 
-	void add_cate_ending(std::string& s)
+	void add_cate_ending(string& s)
 	{
 		if (!s.empty() && !ends_with(s, ".cate"))
 			s += ".cate";
@@ -88,7 +89,7 @@ namespace Util
 	{
 		if (command.empty()) return;
 
-		int32_t ret = std::system(command.data());
+		i32 ret = std::system(command.data());
 
 		if (WIFEXITED(ret) && WEXITSTATUS(ret) != 0)
 		{
@@ -97,12 +98,12 @@ namespace Util
 		}
 	}
 
-	void user_system(int32_t line, string_view command)
+	void user_system(i32 line, string_view command)
 	{
 		if (command.empty()) return;
 	
-		int32_t ret = std::system(command.data());
-		int32_t exit_status = WEXITSTATUS(ret);
+		i32 ret = std::system(command.data());
+		i32 exit_status = WEXITSTATUS(ret);
 
 		if (WIFEXITED(ret) && exit_status != 0)
 		{

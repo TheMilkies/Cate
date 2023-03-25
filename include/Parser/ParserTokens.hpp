@@ -3,6 +3,8 @@
 #include "colors.hpp"
 #include <iostream>
 using std::string;
+typedef int32_t i32;
+typedef uint8_t u8;
 
 /*
 	why hello there!
@@ -31,7 +33,7 @@ static string token_names[] = {
 	hl_func("subcate"),
 };
 
-enum ParserTokenKind: uint8_t
+enum ParserTokenKind: u8
 {
 	END,
 	DOT,
@@ -57,8 +59,8 @@ enum ParserTokenKind: uint8_t
 struct ParserToken
 {
 	ParserTokenKind type;
-	std::string text;
-	int32_t line;
+	string text;
+	i32 line;
 };
 
 #endif //PARSER_TOKENS

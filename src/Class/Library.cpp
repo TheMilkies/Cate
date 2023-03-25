@@ -10,7 +10,7 @@ void Library::generate_name()
 	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
 }
 
-void Library::set_type(int32_t line, bool is_static)
+void Library::set_type(i32 line, bool is_static)
 {
 	if(this->is_static == is_static) return;
 	this->is_static = is_static;

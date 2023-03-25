@@ -4,8 +4,6 @@
 
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <sstream>
 
 #if __has_include(<experimental/filesystem>)
     #include <experimental/filesystem>
@@ -38,5 +36,6 @@ using std::string_view;
 using std::vector;
 using std::cout;
 using std::cerr;
+typedef int32_t i32;
 
 #endif

@@ -15,7 +15,7 @@ void Project::generate_name()
 	;
 }
 
-void Project::set_type(int32_t line, bool is_static)
+void Project::set_type(i32 line, bool is_static)
 {
 	Util::warn(line, "Projects don't have the " hl_var("type") " property.");
 }

@@ -9,7 +9,7 @@
 */
 
 extern bool errors_exist;
-extern int32_t thread_count;
+extern i32 thread_count;
 
 class Class
 {
@@ -30,12 +30,12 @@ public:
 	bool already_built = false, needs_link = false;
 	bool link = true, threading = false, smol = false;
 	
-	Class(std::string_view ident);
+	Class(string_view ident);
 	
 	virtual ~Class() {};
 	virtual void build() = 0; //class defined
 	virtual void generate_name() = 0; //class defined
-	virtual void set_type(int32_t line, bool is_static) = 0; //class defined
+	virtual void set_type(i32 line, bool is_static) = 0; //class defined
 
 	void clean();
 	void setup(); // set up directories and object files
@@ -46,7 +46,7 @@ public:
 	//general and self-explanitory
 	void create_directories();
 	void add_library(string& value);
-	void set_property(int32_t line, string& property, string& value);
+	void set_property(i32 line, string& property, string& value);
 
 	//other
 	void smolize();
@@ -66,7 +66,7 @@ public:
 
 private:
 	//threading
-	void build_object(int32_t i); 
+	void build_object(i32 i); 
 	vector<std::thread> threads;
 	string command_template;
 

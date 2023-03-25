@@ -2,11 +2,11 @@
 #include "Util.hpp"
 #include "Class/Global.hpp"
 
-extern int32_t thread_count;
+extern i32 thread_count;
 
 extern bool force_rebuild, force_smol, dont_ask_install;
 
-Class::Class(std::string_view ident):
+Class::Class(string_view ident):
 	name(ident),
 #ifndef __WIN32 
 	out_name(ident), //linux has it so easy, just the name.
@@ -65,7 +65,7 @@ void Class::setup_objects()
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
 		
 		// Util::replace_all(file, "/", "_"); // "/" -> "_"
-		for (int32_t i = 0; i < file.length(); ++i)
+		for (i32 i = 0; i < file.length(); ++i)
 			if(file[i] == '/') file[i] = '_';
 
 		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
@@ -109,14 +109,14 @@ string Class::get_stripped_name()
 {
 	if(out_name.empty()) generate_name();
 
-	int32_t position_of_slash = out_name.find_last_of('/');
+	i32 position_of_slash = out_name.find_last_of('/');
 	if(position_of_slash == string::npos) return out_name;
 
 	return out_name.substr(position_of_slash, out_name.length());
 }
 
 // this is for threads.
-void Class::build_object(int32_t i)
+void Class::build_object(i32 i)
 {
 	Util::system(
 		command_template + object_files[i] + " " + files[i]
@@ -132,11 +132,11 @@ void Class::build_objects()
 
 	command_template.reserve(512);
 	command_template = compiler + ' ' + flags + ' ' + all_definitions + all_include_paths + "-c -o"; //this is a nice optimization
-	for (int32_t file_i = 0; file_i < files.size(); file_i += thread_count)
+	for (i32 file_i = 0; file_i < files.size(); file_i += thread_count)
 	{
-		for (int32_t thread_id = 0; thread_id < thread_count; ++thread_id)
+		for (i32 thread_id = 0; thread_id < thread_count; ++thread_id)
 		{
-			int32_t current = file_i + thread_id;
+			i32 current = file_i + thread_id;
 			if (current > files.size()) break; //current file index check
 			if (files[current].empty() || newer_than(files[current], object_files[current])) //if doesn't need recompilation
 				continue;
@@ -164,7 +164,7 @@ void Class::build_objects()
 void Class::add_library(string& lib)
 {
 	//path check
-	int32_t position_of_last_slash = lib.find_last_of('/'); 
+	i32 position_of_last_slash = lib.find_last_of('/'); 
 	string path = lib.substr(0, position_of_last_slash+1);
 
 	if (!path.empty() && loaded_library_paths.find(path) == loaded_library_paths.end()) //if not in library paths, add it
@@ -187,7 +187,7 @@ void Class::add_library(string& lib)
 
 //self explanitories, i cry every time C++ doesn't have switch for strings
 
-void Class::set_property(int32_t line, string& property, string& value)
+void Class::set_property(i32 line, string& property, string& value)
 {
 	if (property == "cc" || property == "compiler")
 		compiler = value;
