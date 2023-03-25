@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	if(file_exists(".catel") || file_exists(PLATFORM_CATEL))
 		parse_catel();
 
-	if(argc < (ARGC_START+1) && default_file.empty())
+	if(argc < 2 && default_file.empty())
 	{
 		if(!default_file_exists())
 		{
@@ -61,11 +61,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-#ifdef __WIN32
-	const char* arg = argv[0];
-#else
 	const char* arg = shift_args();
-#endif // __WIN32
+	
 	std::vector<string> file_names;
 	while (argc > 0){
 		if(arg[0] != '-')
