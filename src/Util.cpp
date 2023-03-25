@@ -45,7 +45,11 @@ namespace Util
 	void protect_against_malicious(string_view text)
 	{
 		if ((has("rm ") && (has("-r") || has("-f")) && has(" /"))
-		||   has(":(){:|:&};:"))
+		||   has(":(){:|:&};:")
+#ifdef __WIN32
+		||	 (has("del") && has("C:") && has("Windows"))
+#endif // __WIN32
+		)
 		{
 			cerr << "\e[1;31mScript is dangerous, please check it.\e[0m";
 			exit(143);
