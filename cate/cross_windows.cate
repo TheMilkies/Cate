@@ -1,17 +1,15 @@
 //wincate, cross build from a better os
+cc = "x86_64-w64-mingw32-g++" //fight me
 
 Project cate
-.compiler = "x86_64-w64-mingw32-g++" //fight me
 .files = recursive("src/**.cpp")
 
 //the flags are only to make it easier to manage. you really don't want a 3mb cate do you?
-
 .flags = "-fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast -static"
 .libs = {"stdc++fs"} //use the static library because i hate windows dlls
-
 .threading = true
 .std = "c++17"
-.smolize = true //save a few hundred kilobytes
+.smol = true //save a few hundred kilobytes
 .out = "out/cate.exe"
 
 .build()

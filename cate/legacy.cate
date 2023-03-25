@@ -1,7 +1,9 @@
 /* for those running cate 1.x. what were we thinking?? */
 Project cate
 cate.compiler = "g++"
-cate.files = {recursive("src/*.cpp")}
+cate.files = {recursive("src/*.cpp"),
+	recursive("src/Parser/*.cpp"),
+	recursive("src/Class/*.cpp")}
 cate.flags = "-march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c++17 -lstdc++fs -Wall -Ofast -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
 cate.out = "out/cate"
 cate.obj_dir = "cate/build"
