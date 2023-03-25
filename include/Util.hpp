@@ -40,6 +40,8 @@ namespace Util
 		": " << problem << "\n";
 	}
 
+	void protect_against_malicious(string_view text);
+
 	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of('.'));}
 	void add_cate_ending(string& s);
 

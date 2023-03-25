@@ -41,7 +41,18 @@ namespace Util
 		exit(1);
 	}
 
-	void add_cate_ending(string& s)
+#define has(str) text.find(str) != std::string::npos
+	void protect_against_malicious(string_view text)
+	{
+		if ((has("rm ") && (has("-r") || has("-f")) && has(" /"))
+		||   has(":(){:|:&};:"))
+		{
+			cerr << "\e[1;31mScript is dangerous, please check it.\e[0m";
+			exit(143);
+		}
+	}
+
+	void add_cate_ending(string &s)
 	{
 		if (!s.empty() && !ends_with(s, ".cate"))
 			s += ".cate";
@@ -99,16 +110,13 @@ namespace Util
 		}
 	}
 
-#define has(str) command.find(str) != std::string::npos
 	void user_system(i32 line, string_view command)
 	{
 		if (command.empty()) return;
-		if ((has("rm ") && (has("-rf") || has("-fr")) && has(" /"))
-		||   has(":(){:|:&};:"))
-			fatal_error(line, 
-			"\e[1;31mScript is dangerous, please check it.\e[0m");
+		protect_against_malicious(command);
 
 		cout << "Running `" << command << "`...\n";
+
 		i32 ret = std::system(command.data());
 		i32 exit_status = WEXITSTATUS(ret);
 

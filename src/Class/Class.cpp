@@ -213,8 +213,7 @@ void Class::check()
 {
 	using Util::file_exists, fs::is_directory;
 
-	if(compiler == "rm")
-		build_error("its compiler is dangerous.");
+	Util::protect_against_malicious(compiler);
 
 	if (errors_exist)
 		build_error("of previous errors");
