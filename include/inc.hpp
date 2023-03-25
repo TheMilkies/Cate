@@ -31,11 +31,9 @@
     #error "no threading support"
 #endif
 
-using std::string;
-using std::string_view;
+using std::string, std::string_view;
 using std::vector;
-using std::cout;
-using std::cerr;
+using std::cout, std::cerr;
 typedef int32_t i32;
 
 #endif

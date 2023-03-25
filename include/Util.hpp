@@ -2,12 +2,11 @@
 #define Util_HPP
 #include "inc.hpp"
 
+#define OBJ_EXTENSION ".o"
 #ifdef __WIN32
-	#define OBJ_EXTENSION ".obj" //windows, why?
 	#define DYNAMIC_EXTENSION ".dll"
 	#define PLATFORM_CATEL ".windows.catel"
 #else
-	#define OBJ_EXTENSION ".o"
 	#define DYNAMIC_EXTENSION ".so"
 	#ifdef __APPLE__
 		#include <TargetConditionals.h>
