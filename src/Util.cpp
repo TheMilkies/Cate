@@ -152,7 +152,8 @@ namespace Util
 	#else
 		if (mkdir(path, 0700) && errno != EEXIST)
 	#endif // OSCheck2
-			fatal_error(0, string("Could not create folder \"") + path + "\"\n"
+			fatal_error(0, string("Could not create folder \"") + path + "\" "
+			"because: " + strerror(errno) + "\n"
 			"Suggestion: try running `" BOLD BLUE
 			"mkdir "
 #ifndef __WIN32

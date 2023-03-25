@@ -44,8 +44,8 @@ void Class::clean()
 	
 	for(auto& obj : object_files)
 	{
-		if(remove(obj.c_str()) == -1)
-			Util::error("Can not delete \"" + obj + "\".\n"
+		if(remove(obj.c_str()) != 0)
+			Util::error("Can not delete \"" + obj + "\" because: " + strerror(errno) +
 			"Suggestion: try running `"
 			BOLD YELLOW "sudo" BLUE "rm " COLOR_RESET
 			PURPLE + obj + COLOR_RESET);
