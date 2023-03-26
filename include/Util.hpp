@@ -36,7 +36,7 @@ namespace Util
 
 	inline void warn(i32 line, string_view problem)
 	{
-		cerr << BOLD YELLOW "Warning " COLOR_RESET "in line " << line << 
+		cerr << "\e[1;33mWarning " COLOR_RESET "in line " << line << 
 		": " << problem << "\n";
 	}
 

@@ -90,7 +90,7 @@ void Class::install()
 		Util::error("You must be root to install\n"
 		"Suggestion: try adding `" BOLD hl_func("sudo")
 		"` before `cate`, like `"
-		BOLD YELLOW "sudo" BLUE " cate" COLOR_RESET " ...`");
+		SUDO "cate" COLOR_RESET " ...`");
 		exit(2);
 	}
 
