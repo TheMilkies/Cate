@@ -157,7 +157,6 @@ void Parser::library_recursive()
 
 	auto& path = rd.path;
 	auto& subrecursive = rd.subrecursive;
-	auto& files = current_class->files;
 
 	if (subrecursive)
 	{
@@ -165,7 +164,7 @@ void Parser::library_recursive()
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)
-				files.emplace_back(p.path().string());
+				current_class->add_library(p.path().string());
 		}
 	}
 	else
@@ -174,7 +173,7 @@ void Parser::library_recursive()
 		{
 			//add to files only if the files have the extension
 			if (p.path().extension() == extension)
-				files.emplace_back(p.path().string());
+				current_class->add_library(p.path().string());
 		}
 	}
 }

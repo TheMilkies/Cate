@@ -15,10 +15,10 @@ void Parser::object_method()
 	else
 	{
 		fatal("\"" YELLOW + child + "()" COLOR_RESET "\" is not a valid member function\n"
-	 	"\tAvilable are:\n"
-		"\t* " hl_func("build()") 	"\n"
-		"\t* " hl_func("install()") "\n"
-		"\t* " hl_func("clean()")   "\n"
+	 	"Avilable are:\n"
+		"  * " hl_func("build()") 	"\n"
+		"  * " hl_func("install()") "\n"
+		"  * " hl_func("clean()")
 		);
 	}
 }

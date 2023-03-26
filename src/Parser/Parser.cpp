@@ -151,9 +151,9 @@ void Parser::parse()
 			//assignment: property '=' expr
 			expect(ASSIGN);
 
-			//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
 			if(special_case()) break; // handled there
 
+			//expr: string_literal | recursive string_function | '{' expr '} | lib_type'
 			expect(STRING_LITERAL, LCURLY, RECURSIVE);
 			if (match(STRING_LITERAL))
 			{
@@ -211,30 +211,30 @@ void Parser::parse()
 	if (errors_exist) exit(1); //if there was a non-fatal error, exit. 
 }
 
-#define set_string(x) {expect_and_then(ASSIGN, STRING_LITERAL); global_values.x = current.text;}
+#define set_string(x) {expect(STRING_LITERAL); global_values.x = current.text;}
 bool Parser::global()
 {
-	auto& property = current.text;
-	child = property;
-	switch (property[0]) //fast tm
+	child = current.text;
+	switch (current.text[0]) //fast tm
 	{
 	case 'b':case 'c':case 't':case 's':case 'o': break;
 	default: return false; break;
 	}
+	expect(ASSIGN);
 
-	if (property == "cc" || property == "compiler")
+	if (child == "cc" || child == "compiler")
 		set_string(compiler)
-	else if (property == "std" || property == "standard")
+	else if (child == "std" || child == "standard")
 		set_string(standard)
-	else if (property == "obj_dir"		   ||
-			 property == "build_dir" 	   ||
-			 property == "object_folder"   ||
-			 property == "build_directory")
+	else if (child == "obj_dir"		   ||
+			 child == "build_dir" 	   ||
+			 child == "object_folder"   ||
+			 child == "build_directory")
 		set_string(object_dir)
-#define set_bool(x) {expect(ASSIGN); global_values.x = expect_bool();}
-	else if (property == "threading")
+#define set_bool(x) {global_values.x = expect_bool();}
+	else if (child == "threading")
 		set_bool(threading)
-	else if (property == "smol" || property == "smolize")
+	else if (child == "smol" || child == "smolize")
 		set_bool(smol)
 
 	else return false;

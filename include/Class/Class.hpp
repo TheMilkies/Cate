@@ -44,7 +44,7 @@ public:
 
 	//general and self-explanitory
 	void create_directories();
-	void add_library(string& value);
+	void add_library(string value);
 	void set_property(i32 line, string& property, string& value);
 
 	//other

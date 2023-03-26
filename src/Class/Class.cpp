@@ -155,7 +155,7 @@ void Class::build_objects()
 	already_built = true;
 }
 
-void Class::add_library(string& lib)
+void Class::add_library(string lib)
 {
 	//path check
 	i32 position_of_last_slash = lib.find_last_of('/'); 

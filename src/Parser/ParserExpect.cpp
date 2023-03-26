@@ -48,16 +48,6 @@ bool Parser::expect_type()
 	return match(STATIC);
 }
 
-void Parser::expect_and_then(ParserTokenKind type, ParserTokenKind type2)
-{
-	next();
-
-	if (!match(type) && peek() != type2)
-		error(current.line, "Expected " + token_names[type] + " and then " + token_names[type2]);
-	
-	next();
-}
-
 void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3)
 {
 	next();
