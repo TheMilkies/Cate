@@ -87,7 +87,7 @@ void Parser::expect_string_recursive_array()
 		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 hl_func("recursive()") "\n"
 			  "Example: project." hl_var("files") " = {"
-			  hl_func("recursive(\"src/*.c\")")", \"a/a.c\")}\n");
+			  hl_func("recursive(\"src/*.c\")")", " hl_var("\"a/a.c\"") "}\n");
 	}
 }
 
@@ -105,7 +105,7 @@ void Parser::expect_library_recursive_array()
 						 " or an identifier\n"
 			  "Example: project." hl_var("files") " = {"
 			  hl_func("recursive(\"libs/lib**.a\")")
-			  ", \"GL\")}\n");
+			  ", " hl_var("\"GL\"") "}\n");
 	}
 }
 
