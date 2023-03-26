@@ -26,7 +26,6 @@ Class::Class(string_view ident):
 	threads.reserve(thread_count * 4);
 
 	all_include_paths.reserve(256);
-	all_library_paths.reserve(128);
 	all_object_files.reserve(512);
 	all_definitions.reserve(256);
 

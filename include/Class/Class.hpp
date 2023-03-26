@@ -16,8 +16,7 @@ class Class
 public:
 	//filled by setup() and build()
 	string all_object_files, all_libraries,
-		   all_library_paths, all_include_paths,
-		   all_definitions;
+		   all_include_paths, all_definitions;
 
 	//user defined in .cate file
 	string name, flags, out_name, object_dir, compiler, final_flags, standard;
