@@ -7,25 +7,18 @@ void Parser::object_method()
 {
 	void_function(); 
 	if (child == "build") //void Class.build(void);
-	{
 		current_class->build();	//in Project.cpp/Library.cpp			
-	}
 	else if (child == "install") 
-	{
 		current_class->install();				
-	}
 	else if (child == "clean") //void Class.build(void);
-	{
 		current_class->clean();				
-	}
 	else
 	{
-		fatal(string("\"" YELLOW) +
-		child.c_str() + "()" COLOR_RESET "\" is not a valid member function\n"
+		fatal("\"" YELLOW + child + "()" COLOR_RESET "\" is not a valid member function\n"
 	 	"\tAvilable are:\n"
-		"\t* " hl_func("build()") "\n"
+		"\t* " hl_func("build()") 	"\n"
 		"\t* " hl_func("install()") "\n"
-		"\t* " hl_func("clean()") "\n"
+		"\t* " hl_func("clean()")   "\n"
 		);
 	}
 }

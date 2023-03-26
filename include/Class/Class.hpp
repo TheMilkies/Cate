@@ -27,7 +27,7 @@ public:
 
 	bool is_static; //only in library
 	bool already_built = false, needs_link = false;
-	bool link = true, threading , smol;
+	bool link = true, threading, smol;
 	
 	Class(string_view ident);
 	
