@@ -186,7 +186,7 @@ void Parser::parse()
 
 		case SUBCATE: {
 			string name = string_function().text;
-			add_cate_ending(name);
+			add_cate_ending_to(name);
 
 			if(!file_exists(name.c_str()))
 			{

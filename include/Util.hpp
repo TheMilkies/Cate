@@ -42,12 +42,10 @@ namespace Util
 
 	void protect_against_malicious(string_view text);
 
-	inline string remove_extension(string& s) {return s = s.substr(0, s.find_last_of('.'));}
-	void add_cate_ending(string& s);
+	inline void remove_extension(string& s) {s = s.substr(0, s.find_last_of('.'));}
+	void add_cate_ending_to(string& s);
 
-	//there are two of these because i'm lazy.
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);
-	//string replace_all_safe(string_view s, string_view toReplace, string_view replaceWith);
 
 	/// @brief Returns the modified time of the given path 
 	/// @param path Path to check

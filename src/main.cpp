@@ -68,14 +68,14 @@ int main(int argc, char *argv[])
 		if(arg[0] != '-')
 		{
 			string file = arg;
-			add_cate_ending(file);
+			add_cate_ending_to(file);
 			string file_in_folder = default_directory + "/" + file;
 
 			if(file_exists(file_in_folder.c_str()))
 				file_names.emplace_back(file_in_folder);
 			else
 			{
-				// add_cate_ending(file);
+				// add_cate_ending_to(file);
 				file_names.emplace_back(file);
 			}
 			arg = shift_args();

@@ -63,7 +63,7 @@ void Class::setup_objects()
 		for (i32 i = 0; i < file.length(); ++i)
 			if(file[i] == '/') file[i] = '_';
 
-		file = (Util::remove_extension(file)) + OBJ_EXTENSION; //replace the extension with .o
+		Util::remove_extension(file); file += OBJ_EXTENSION; //replace the extension with .o
 		file = object_dir + "/" + file; // folder/object.o
 		all_object_files += file + " "; //used in final build process, all are linked
 		object_files.emplace_back(file); //for build

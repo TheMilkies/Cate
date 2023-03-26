@@ -58,34 +58,34 @@ namespace Util
 	}
 #undef has
 
-	void add_cate_ending(string &s)
+	void add_cate_ending_to(string &s)
 	{
 		if (!s.empty() && !ends_with(s, ".cate"))
 			s += ".cate";
 	}
 
 	void replace_all( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
-		string& s,
-		string_view toReplace,
-		string_view replaceWith
+		string& original,
+		string_view to_replace,
+		string_view replace_with
 	) {
 		std::ostringstream oss;
-		oss.str().reserve(s.length());
+		oss.str().reserve(original.length());
 		std::size_t pos = 0;
 		std::size_t prevPos = pos;
 
 		while (true) {
 			prevPos = pos;
-			pos = s.find(toReplace, pos);
+			pos = original.find(to_replace, pos);
 			if (pos == string::npos)
 				break;
-			oss << s.substr(prevPos, pos - prevPos);
-			oss << replaceWith;
-			pos += toReplace.size();
+			oss << original.substr(prevPos, pos - prevPos);
+			oss << replace_with;
+			pos += to_replace.size();
 		}
 
-		oss << s.substr(prevPos);
-		s = oss.str();
+		oss << original.substr(prevPos);
+		original = oss.str();
 	}
 
 	long long get_modified_time(const char *path)
