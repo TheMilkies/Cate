@@ -71,7 +71,8 @@ void Parser::expect_string_array()
 
 	if (!match(STRING_LITERAL) && !match(COMMA) && !match(RCURLY))
 		fatal("Expected a string array ( `{\"like\", \"this\"}` )\n"
-		"example: project.definitions = {\"DEBUG\", \"FISH\"}");
+		"Example: project."
+		hl_var("definitions")" = " hl_var("{\"DEBUG\", \"FISH\"}\n"));
 }
 
 void Parser::expect_string_recursive_array()
@@ -85,7 +86,8 @@ void Parser::expect_string_recursive_array()
 	{
 		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 hl_func("recursive()") "\n"
-			  "example: project.files = {recursive(\"src/*.c\"), \"a/a.c\")}");
+			  "Example: project." hl_var("files") " = {"
+			  hl_func("recursive(\"src/*.c\")")", \"a/a.c\")}\n");
 	}
 }
 
@@ -101,7 +103,9 @@ void Parser::expect_library_recursive_array()
 		fatal("Expected a string array ( `{\"like\", \"this\"}` ) or "
 						 hl_func("recursive()") 
 						 " or an identifier\n"
-			  "example: project.libraries = {recursive(\"libs/lib**.a\", \"GL\")}");
+			  "Example: project." hl_var("files") " = {"
+			  hl_func("recursive(\"libs/lib**.a\")")
+			  ", \"GL\")}\n");
 	}
 }
 
@@ -128,7 +132,7 @@ ParserToken Parser::string_function()
 	next();
 	if(!match(LPAREN) || peek() != STRING_LITERAL)
 		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")") "\n"
-			  "example: func(\"something\")");
+			  "Example: " hl_func("func(\"something\")")"\n");
 
 	ParserToken to_return = tokens[++index];
 	optional_rparen();
