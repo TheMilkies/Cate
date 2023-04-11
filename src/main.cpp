@@ -113,16 +113,19 @@ int main(int argc, char *argv[])
 			string all; all.reserve(128);
 			for (const auto &p : fs::directory_iterator(default_directory)) //iterate over the files
 			{
-				if(catefiles_found) all += ", ";
 				if (p.path().extension() == ".cate")
 				{
-					all += p.path().stem().string();
+					if(catefiles_found) all += ", ";
+					if(p.path() == default_file)
+						all += BOLD PURPLE + p.path().stem().string() + list_color;
+					else
+						all += p.path().stem().string();
 					catefiles_found = true;
 				}
 			}
 
 			if (catefiles_found)
-				cout << CYAN << all << COLOR_RESET "\n";
+				cout << list_color << all << COLOR_RESET "\n";
 			else
 				cerr << BOLD RED "No catefiles were found" COLOR_RESET "\n";
 

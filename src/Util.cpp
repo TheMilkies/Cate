@@ -165,7 +165,7 @@ namespace Util
 	void create_folder(const char* path)
 	{
 		struct stat st {0};
-		if (stat(path, &st) != -1) return; //if folder does not exist.
+		if (stat(path, &st) != -1) return; //if folder does exist.
 		
 	#ifdef __WIN32
 		if (!CreateDirectory(path, NULL))
