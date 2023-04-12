@@ -78,6 +78,7 @@ Cate's CLI is intuitive, but doesn't offer much more than necessary.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
 - `-y`: Install without asking.
 - `-D`: Disable all user-defined `system()` calls in script.
+- `-d`: Print all commands in script without running them. (dry run)
 - `-S`: Smolize even if not set in script.
 - `-f` (and `-B`): Forcefully rebuild project.
 - `-v`: Shows the installed Cate version. 

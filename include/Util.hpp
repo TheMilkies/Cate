@@ -24,7 +24,6 @@
 extern i32 lexer_line;
 
 #include "colors.hpp"
-
 #include <unistd.h>
 
 namespace Util

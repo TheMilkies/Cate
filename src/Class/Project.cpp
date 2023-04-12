@@ -1,9 +1,8 @@
 #include "Class/Project.hpp"
 
-extern bool force_rebuild;
+extern bool force_rebuild, dry_run;
 
 Project::Project(string_view ident): Class(ident) {}
-
 Project::~Project() {}
 
 void Project::generate_name()

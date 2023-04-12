@@ -2,9 +2,9 @@
 
 //errors_exist is needed to show all errors and exit afterwards
 //system_blocked is the -D option, only affects `system(String)` in parser
-bool errors_exist   = false, system_blocked = false,
-	 force_rebuild = false, force_smol     = false,
-	 dont_ask_install = false;
+bool errors_exist     = false, system_blocked = false,
+	 force_rebuild	  = false, force_smol     = false,
+	 dont_ask_install = false, dry_run 		  = false;
 i32 thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
@@ -140,6 +140,10 @@ int main(int argc, char *argv[])
 		
 		case 'D': //disable system()
 			system_blocked = true;
+			break;
+
+		case 'd': //all system calls are No.
+			dry_run = true;
 			break;
 		
 		case 'S': //disable system

@@ -8,7 +8,7 @@
 	i know most of this is bad, i honestly don't care too much because it's my first project. -yogurt
 */
 
-extern bool errors_exist;
+extern bool errors_exist, dry_run;
 extern i32 thread_count;
 
 class Class
@@ -56,6 +56,7 @@ public:
 	}
 
 	inline void print_done_message_with(string_view name) {
+		if(dry_run) return;
 		cout << GREEN "Done building \"" << name << "\"" COLOR_RESET "\n";
 	}
 

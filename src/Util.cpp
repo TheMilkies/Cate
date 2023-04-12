@@ -1,7 +1,7 @@
 #include "Util.hpp"
 #include "Class/Global.hpp"
 
-extern bool errors_exist;
+extern bool errors_exist, dry_run;
 
 #ifdef __WIN32
 	#include <windows.h>
@@ -106,6 +106,10 @@ namespace Util
 	void system(string_view command)
 	{
 		if (command.empty()) return;
+		if(dry_run) {
+			cout << command << '\n';
+			return;
+		}
 
 		i32 ret = std::system(command.data());
 
@@ -122,6 +126,10 @@ namespace Util
 		protect_against_malicious(command);
 
 		cout << "Running `" << command << "`...\n";
+		if(dry_run) {
+			cout << command << '\n';
+			return;
+		}
 
 		i32 ret = std::system(command.data());
 		i32 exit_status = WEXITSTATUS(ret);

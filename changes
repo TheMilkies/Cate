@@ -1,3 +1,5 @@
 # Cate v2.9.2
 Use remove function instead of system()
 Safety against rm -rf attacks.
+Default catefile is highlighted in list
+Dry run (`-d` flag)

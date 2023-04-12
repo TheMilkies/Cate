@@ -1,13 +1,13 @@
 #include "Class/Library.hpp"
 
+extern bool force_rebuild, dry_run;
 Library::Library(string_view ident): Class(ident) {}
-
 Library::~Library() {}
 
 void Library::generate_name()
 {
 	out_name = "out/lib" + name;
-	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
+	out_name += get_build_extension();
 }
 
 void Library::set_type(i32 line, bool is_static)
@@ -19,7 +19,7 @@ void Library::set_type(i32 line, bool is_static)
 
 	//add extension
 	Util::remove_extension(out_name);
-	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
+	out_name += get_build_extension();
 
 	if(!Util::file_exists(out_name.c_str()))
 		needs_link = true;
@@ -35,12 +35,12 @@ void Library::build()
 		build_objects();
 	}
 
-	const char* build_type = (is_static) ? " (static)" : " (dynamic)";
+	const char* build_type = get_build_extension();
 
 	if(link)
 	{
-		if (!needs_link) return;
-		
+		if (!needs_link && !force_rebuild) return;
+
 		string command;
 		command.reserve(512);
 		if (is_static)
