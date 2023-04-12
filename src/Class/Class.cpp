@@ -75,6 +75,7 @@ void Class::install()
 	Util::warn(0, "Installing is not supported in Windows Cate.");
 	return;
 #endif // __WIN32
+	if(dry_run) return;
 
 	if(out_name.empty()) generate_name();
 	if(!Util::file_exists(out_name.c_str())) return;
