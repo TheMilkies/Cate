@@ -17,13 +17,9 @@ flag
 .SH Example
 .B
 cate
-build -f -t8
+static -f
 
 .SH Flags (or options)
-.TP
-.BR \-f
-Forcefully rebuilds.
-
 .TP
 .BR \-tN
 Sets thread-count to 
@@ -31,11 +27,27 @@ Sets thread-count to
 N
 
 .TP
+.BR \-l
+Lists Catefiles in Catefiles directory (set by Catel).
+
+.TP
+.BR \-y
+Install without asking.
+
+.TP
+.BR \-f
+Forcefully rebuilds.
+
+.TP
 .BR \-D
 Disables all script-defined 
 .B
 system()
 calls in script
+
+.TP
+.BR \-d
+Print all commands in script without running them. (dry run)
 
 .TP
 .BR \-S

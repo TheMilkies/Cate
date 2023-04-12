@@ -20,7 +20,7 @@ Do note:
 - Cate uses Catel, a messy file that allows us to set a default file.
 - Cate uses [robin_hood hashing](https://github.com/martinus/robin-hood-hashing), since it's 20% more efficient (on average)
 - Cate **does not** support string splitting.
-- This readme is full of little jokes. No offense intended to any other build system... except Autotools.
+- This readme is full of little jokes. No offense intended to any other build system... *except Autotools*.
 
 ## Advantages of Cate over other build systems
 You may be wondering what issues Cate solves, let us clear it up for you!
@@ -200,18 +200,18 @@ smol     = true
 
 Project proj
 .flags = "-O3"
-.files = "src/main.cpp"
+.files = {"src/main.cpp"}
 .build()
 
 Project proj2
 .flags = "-O3"
-.files = "src2/main.cpp"
+.files = {"src2/main.cpp"}
 .build()
 
 Project proj3
 .compiler = "cc"
 .flags = "-O3"
-.files = "src3/main.c"
+.files = {"src3/main.c"}
 .build()
 .install()
 ```
@@ -223,6 +223,7 @@ Since 2.8.1; you can create Catel files named:
 - `.linux.catel`
 - `.mac.catel`
 - `.windows.catel`
+
 for those targets.
 
 Here's an example Catel file:
@@ -245,7 +246,8 @@ def smol
 ```
 
 ## Credits
-- Yogurt (Main Maintainer)
+- Yogurt (Creator and Main Maintainer)
+- Lemon (Creator)
 - Latte (Bug fixer)
 
 ## Special thanks
