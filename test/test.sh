@@ -4,11 +4,11 @@ test_count=1
 failed=""
 
 print_error() {
-	echo "Test $test_count failed: ">&2
+	echo -e "\e[1;31mTest $test_count failed: ">&2
 	for var in "$@"; do
 		echo -n "$var" >&2
 	done
-	echo >&2
+	echo -e "\e[0m" >&2
 	failed="1"
 }
 
@@ -57,8 +57,8 @@ check_cate_command_for smol "-ffunction-sections" "strip -S --strip-unneeded" "-
 
 #finally end
 if [ ! -z $failed ]; then
-	echo "some tests failed" >&2
+	echo "\e[1;31mSome tests failed\e[0m" >&2
 	exit 1
 fi
 
-echo "All tests passed!"
+echo -e "\e[1;32mAll tests passed!\e[0m"
