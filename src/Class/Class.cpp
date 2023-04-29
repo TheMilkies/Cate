@@ -159,8 +159,9 @@ void Class::build_objects()
 void Class::add_library(string lib)
 {
 	//path check
-	i32 position_of_last_slash = lib.find_last_of('/'); 
+	auto position_of_last_slash = lib.find_last_of('/'); 
 	string path = lib.substr(0, position_of_last_slash+1);
+	bool local = position_of_last_slash != string::npos;
 
 	if (!path.empty() && loaded_library_paths.find(path) == loaded_library_paths.end()) //if not in library paths, add it
 	{
@@ -169,11 +170,19 @@ void Class::add_library(string lib)
 	}
 
 	//check if not static/local
-	if (!Util::ends_with(lib, ".a") && !Util::ends_with(lib, ".lib"))
+	if (!local)
 	{
-		Util::remove_extension(lib);
-		lib = lib.substr(position_of_last_slash+1 , lib.length()); //remove path from lib
-		lib = lib.substr(lib.find_first_not_of("lib"), lib.length());
+		if(Util::ends_with(lib, DYNAMIC_EXTENSION))
+		{
+			Util::remove_extension(lib);
+			lib = lib.substr(position_of_last_slash+1, lib.length()); //remove path from lib
+			
+			auto index_of_lib = lib.find_first_of("lib");
+			if(index_of_lib != string::npos) index_of_lib += 3;
+
+			lib = lib.substr(index_of_lib, lib.length());
+			std::cout << GREEN << lib << '\n';
+		}
 		all_libraries += "-l";
 	}
 

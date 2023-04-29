@@ -36,7 +36,7 @@ void Library::build()
 		build_objects();
 	}
 
-	const char* build_type = (is_static) ? " static" : " dynamic";
+	const char* build_type = (is_static) ? " (static)" : " (dynamic)";
 
 	if(link)
 	{
