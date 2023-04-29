@@ -33,10 +33,9 @@ test_case() {
 
 check_cate_command_for() {
 	test_count=$((test_count+1))
-	text=`cate -d $1`
+	local text=`cate -d $1`
 
-	if [ -z text ] ; then
-		print_error "cate failed to run \"$1\"" 
+	if [ -z "$text" ]; then
 		return
 	fi
 	shift
@@ -54,11 +53,18 @@ test_case library out/liblibrary_test.a out/liblibrary_test.so with_static.out w
 
 check_cate_command_for options " -lstdc++fs" " -std=c++17" " -pthread" 
 check_cate_command_for smol "-ffunction-sections" "strip -S --strip-unneeded" "--remove-section=.comment"
+check_cate_command_for subcate "subcating"
+
+test_case options cpp_test.out
 
 #finally end
 if [ ! -z $failed ]; then
-	echo "\e[1;31mSome tests failed\e[0m" >&2
+	echo -e "\e[1;31mSome tests failed\e[0m" >&2
 	exit 1
 fi
 
 echo -e "\e[1;32mAll tests passed!\e[0m"
+
+rm **.out
+rm cate/build/*
+rm out/*

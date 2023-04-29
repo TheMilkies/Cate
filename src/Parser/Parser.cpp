@@ -193,6 +193,9 @@ void Parser::parse()
 				if(!file_exists(name.c_str()))
 					fatal("File \"" + name + "\" not found.");
 			}
+
+			if(dry_run)
+				cout << "cate " << name << std::endl;
 			
 			//start the subcate instance
 			Parser sub(name);
