@@ -130,6 +130,7 @@ namespace Util
 			cout << command << '\n';
 			return;
 		}
+		cout.flush();
 
 		i32 ret = std::system(command.data());
 		i32 exit_status = WEXITSTATUS(ret);

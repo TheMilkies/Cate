@@ -62,7 +62,7 @@ void Class::setup_objects()
 		for (i32 i = 0; i < file.length(); ++i)
 			if(file[i] == '/') file[i] = '_';
 
-		Util::remove_extension(file); file += OBJ_EXTENSION; //replace the extension with .o
+		Util::remove_extension_from(file); file += OBJ_EXTENSION; //replace the extension with .o
 		file = object_dir + "/" + file; // folder/object.o
 		all_object_files += file + " "; //used in final build process, all are linked
 		object_files.emplace_back(file); //for build
@@ -174,7 +174,7 @@ void Class::add_library(string lib)
 	{
 		if(Util::ends_with(lib, DYNAMIC_EXTENSION))
 		{
-			Util::remove_extension(lib);
+			Util::remove_extension_from(lib);
 			lib = lib.substr(position_of_last_slash+1, lib.length()); //remove path from lib
 			
 			auto index_of_lib = lib.find_first_of("lib");

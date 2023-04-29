@@ -41,7 +41,7 @@ namespace Util
 
 	void protect_against_malicious(string_view text);
 
-	inline void remove_extension(string& s) {s = s.substr(0, s.find_last_of('.'));}
+	inline void remove_extension_from(string& s) {s = s.substr(0, s.find_last_of('.'));}
 	void add_cate_ending_to(string& s);
 
 	void replace_all(string& s, string_view toReplace, string_view replaceWith);

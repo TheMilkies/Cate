@@ -18,7 +18,7 @@ void Library::set_type(i32 line, bool is_static)
 	if(out_name.empty()) generate_name();
 
 	//add extension
-	Util::remove_extension(out_name);
+	Util::remove_extension_from(out_name);
 	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
 
 	if(!Util::file_exists(out_name.c_str()))
