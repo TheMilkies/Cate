@@ -7,7 +7,7 @@ Library::~Library() {}
 void Library::generate_name()
 {
 	out_name = "out/lib" + name;
-	out_name += get_build_extension();
+	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
 }
 
 void Library::set_type(i32 line, bool is_static)
@@ -15,11 +15,11 @@ void Library::set_type(i32 line, bool is_static)
 	if(this->is_static == is_static) return;
 	this->is_static = is_static;
 
-	if(out_name.empty()) return;
+	if(out_name.empty()) generate_name();
 
 	//add extension
 	Util::remove_extension(out_name);
-	out_name += get_build_extension();
+	out_name += (is_static) ? ".a" : DYNAMIC_EXTENSION;
 
 	if(!Util::file_exists(out_name.c_str()))
 		needs_link = true;
@@ -29,13 +29,14 @@ void Library::build()
 {	
 	if (!already_built)
 	{
+		generate_name();
 		if(!string_find(flags, "-fPIC"))
 			flags += " -fPIC "; //make library basically
 		setup();
 		build_objects();
 	}
 
-	const char* build_type = get_build_extension();
+	const char* build_type = (is_static) ? " static" : " dynamic";
 
 	if(link)
 	{
@@ -52,6 +53,5 @@ void Library::build()
 	}
 	
 	smolize();
-
 	print_done_message_with(name + build_type);
 }

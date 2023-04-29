@@ -6,7 +6,6 @@
 #include "Class/Global.hpp"
 #include <fstream>
 
-
 using namespace Util;
 
 extern string default_directory;

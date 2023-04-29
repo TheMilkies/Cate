@@ -11,7 +11,7 @@ public:
 	}
 	
 	inline const char* get_build_extension() {
-		return (is_static) ? ".a" : DYNAMIC_EXTENSION;;
+		return (is_static) ? ".a" : DYNAMIC_EXTENSION;
 	}
 
 	void generate_name() override;
