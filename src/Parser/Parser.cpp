@@ -214,11 +214,6 @@ void Parser::parse()
 bool Parser::global()
 {
 	child = current.text;
-	switch (current.text[0]) //fast tm
-	{
-	case 'b':case 'c':case 't':case 's':case 'o': break;
-	default: return false; break;
-	}
 	expect(ASSIGN);
 
 	if (child == "cc" || child == "compiler")
@@ -244,15 +239,9 @@ bool Parser::global()
 #define set_bool(x) current_class->x = expect_bool();
 bool Parser::special_case()
 {
-	switch (child[0]) //fast tm
-	{
-	case 'l':case 't':case 's': break;
-	default: return false; break;
-	}
-	
 	if (child == "type")
 		current_class->set_type(current.line, expect_type()); 
-	else if (child == "threading")
+	else if (child == "threading" || child == "thread")
 		set_bool(threading)
 	else if (child == "smol" || child == "smolize")
 		set_bool(smol)

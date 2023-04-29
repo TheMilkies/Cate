@@ -181,7 +181,6 @@ void Class::add_library(string lib)
 			if(index_of_lib != string::npos) index_of_lib += 3;
 
 			lib = lib.substr(index_of_lib, lib.length());
-			std::cout << GREEN << lib << '\n';
 		}
 		all_libraries += "-l";
 	}
