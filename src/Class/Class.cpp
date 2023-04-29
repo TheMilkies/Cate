@@ -237,7 +237,7 @@ void Class::check()
 	if (threading)
 		flags += " -pthread ";
 
-	if (smol)
+	if (smol || force_smol)
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 

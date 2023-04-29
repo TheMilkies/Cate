@@ -1,0 +1,8 @@
+Project cpp_test
+.files = {"library/main.c"}
+.out = "smol.out"
+.libs = {"stdc++fs"}
+.std = "c++17"
+.threading = true
+.smol = true
+.build()
