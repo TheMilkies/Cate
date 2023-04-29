@@ -4,7 +4,8 @@
 //system_blocked is the -D option, only affects `system(String)` in parser
 bool errors_exist     = false, system_blocked = false,
 	 force_rebuild	  = false, force_smol     = false,
-	 dont_ask_install = false, dry_run 		  = false;
+	 dont_ask_install = false, dry_run 		  = false,
+	 deny_install = false;
 i32 thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
@@ -158,6 +159,10 @@ int main(int argc, char *argv[])
 		case 'y':
 			dont_ask_install = true;
 			break;
+
+		case 'n':
+			deny_install = true;
+			break;
 	
 		default: //unknown
 			cerr << "Unknown argument \"" << argv[0] << "\"\n"
@@ -171,6 +176,12 @@ int main(int argc, char *argv[])
 
 	if(default_file.empty() && !default_file_exists())
 		command_error("No default file found.");
+
+	if(deny_install && dont_ask_install) {
+		command_error("Usage of `-n` and `-y` at the same time is impossible.\n"
+					  "Will ask if to install or not.");
+		deny_install = dont_ask_install = false;
+	}
 
 	if(file_names.empty())
 		file_names.emplace_back(default_file);

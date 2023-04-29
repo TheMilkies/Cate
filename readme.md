@@ -36,9 +36,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9.2/cate_2.9-2_amd64.deb
-sudo dpkg -i cate_2.9-2_amd64.deb
-rm cate_2.9-2_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.3/cate_2.9-3_amd64.deb
+sudo dpkg -i cate_2.9-3_amd64.deb
+rm cate_2.9-3_amd64.deb
 ```
 
 ### Other distributions
@@ -46,8 +46,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9.2/linux_cate_v2.9.2.zip
-unzip linux_cate_v2.9.2.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.3/linux_cate_v2.9.3.zip
+unzip linux_cate_v2.9.3.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -76,7 +76,8 @@ Cate's CLI is intuitive, but doesn't offer much more than necessary.
 ### Flags (Options)
 - `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
-- `-y`: Install without asking.
+- `-y`: Install without asking (always answer 'y').
+- `-n`: Don't install (always answer 'n').
 - `-D`: Disable all user-defined `system()` calls in script.
 - `-d`: Print all commands in script without running them. (dry run)
 - `-S`: Smolize even if not set in script.

@@ -1,5 +1,4 @@
-# Cate v2.9.2
-Use remove function instead of system()
-Safety against rm -rf attacks.
-Default catefile is highlighted in list
-Dry run (`-d` flag)
+# Cate v2.9.3
+- Finally fixed the library name bug.
+- Fixed the bug where it prints after running the command.
+- Added the `-n` flag for "always deny install"
