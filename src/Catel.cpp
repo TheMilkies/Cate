@@ -14,7 +14,7 @@ void parse_catel()
 	std::ifstream file(catel_to_use);
 	if (file.fail()) return;
 
-	string s1, s2, def = "build.cate";
+	string s1, s2;
 
 	while (file >> s1 >> s2)
 	{
@@ -29,14 +29,12 @@ void parse_catel()
 			error("Unknown command in catel \"" + s1 + "\"");
 	}
 
-	//do file_name stuff
-	if (!def.empty() && default_file.empty())
-		default_file = def;
+	if (default_file.empty())
+		default_file = "build.cate";
 
 	Util::add_cate_ending_to(default_file);
 
 	string file_name_with_dir = default_directory + "/" + default_file;
-	
 	if (file_exists(file_name_with_dir.c_str()))
 		default_file = file_name_with_dir;
 }

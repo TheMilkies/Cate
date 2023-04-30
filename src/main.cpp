@@ -9,8 +9,8 @@ bool errors_exist     = false, system_blocked = false,
 i32 thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
-void parse_catel();
 Global global_values;
+void parse_catel();
 
 void help();
 inline const char* shift_arg(int &argc, char** &argv) {
@@ -23,15 +23,6 @@ inline const char* shift_arg(int &argc, char** &argv) {
 }
 
 #define shift_args() shift_arg(argc, argv)
-
-#ifdef TRACK_ALLOCS
-int allocs_count = 0;
-void* operator new(size_t size)
-{
-	++allocs_count;
-	return malloc(size);
-}
-#endif // TRACK_ALLOCS
 
 bool default_file_exists()
 {
@@ -63,7 +54,7 @@ int main(int argc, char *argv[])
 	}
 
 	const char* arg = shift_args();
-	
+
 	std::vector<string> file_names;
 	while (argc > 0){
 		if(arg[0] != '-')
@@ -75,10 +66,8 @@ int main(int argc, char *argv[])
 			if(file_exists(file_in_folder.c_str()))
 				file_names.emplace_back(file_in_folder);
 			else
-			{
-				// add_cate_ending_to(file);
 				file_names.emplace_back(file);
-			}
+
 			arg = shift_args();
 			continue;
 		}
@@ -128,7 +117,7 @@ int main(int argc, char *argv[])
 			if (catefiles_found)
 				cout << list_color << all << COLOR_RESET "\n";
 			else
-				cerr << BOLD RED "No catefiles were found" COLOR_RESET "\n";
+				cerr << BOLD_RED "No catefiles were found" COLOR_RESET "\n";
 
 			return !catefiles_found; //lazy error
 		} break;

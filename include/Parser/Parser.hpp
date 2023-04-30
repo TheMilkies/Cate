@@ -66,6 +66,7 @@ private:
 
 	inline ParserTokenKind peek(i32 how_much = 1) {return tokens[index + how_much].type;}
 	inline void skip(i32 how_much = 1) {current = tokens[index += how_much];}
+	inline void prev() {current = tokens[index -= 1];}
 
 	void parse(); //called from constructor, should be rewritten to not do that
 public:

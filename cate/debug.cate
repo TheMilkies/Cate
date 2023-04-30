@@ -3,7 +3,7 @@ Project cate
 .files = recursive("src/**.cpp")
 .flags = "-fpermissive -g -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast"
 .libs = {"stdc++fs"}
-.defs = {"TRACK_ALLOCS", "DEBUG"}
+.defs = {"DEBUG"}
 .std = "c++17"
 .threading = true
 .out = "out/cate"

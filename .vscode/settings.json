@@ -17,5 +17,8 @@
 		"deque": "cpp",
 		"vector": "cpp",
 		"ostream": "cpp"
-	}
+	},
+	"cSpell.words": [
+		"subrecursion"
+	]
 }

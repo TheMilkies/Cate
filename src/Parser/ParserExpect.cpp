@@ -114,7 +114,7 @@ void Parser::optional_rparen()
 	next();
 	if (!match(RPAREN))
 	{
-		current = tokens[index -= 1]; //go back one
+		prev();
 		warn(current.line, "Missing ')'");
 	}
 }
