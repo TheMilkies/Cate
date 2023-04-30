@@ -4,7 +4,7 @@
 
 extern i32 thread_count;
 
-extern bool force_rebuild, force_smol, dont_ask_install, deny_install;
+extern bool force_rebuild, force_smol, always_allow_install, always_deny_install;
 
 Class::Class(string_view ident):
 	name(ident),
@@ -75,7 +75,7 @@ void Class::install()
 	Util::warn(0, "Installing is not supported in Windows Cate.");
 	return;
 #endif // __WIN32
-	if(dry_run || deny_install) return;
+	if(dry_run || always_deny_install) return;
 
 	if(out_name.empty()) generate_name();
 	if(!Util::file_exists(out_name.c_str())) return;
@@ -267,7 +267,7 @@ bool Class::ask_to_install()
 #ifdef __WIN32
 	return false;
 #endif // __WIN32
-	if(dont_ask_install) return true;
+	if(always_allow_install) return true;
 	fflush(stdin); std::flush(std::cout);
 
 	char answer;
