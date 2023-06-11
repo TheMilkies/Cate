@@ -1,7 +1,6 @@
 #if !defined(Class_HPP)
 #define Class_HPP
 #include "Util.hpp"
-#include "nonstd/robin_hood.hpp"
 
 /*
 	why hello there!
@@ -23,7 +22,8 @@ public:
 	vector<string> files, object_files;
 
 	//filled from build();
-	robin_hood::unordered_set<string> loaded_library_paths;
+	vector<string> loaded_library_paths;
+	bool is_library_defined(string_view name);
 
 	bool is_static; //only in library
 	bool already_built = false, needs_link = false;

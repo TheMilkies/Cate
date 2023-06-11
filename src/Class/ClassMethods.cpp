@@ -1,4 +1,5 @@
 #include "Parser/Parser.hpp"
+#include <string.h>
 
 //add new methods in include/Class.hpp, then implement them here
 

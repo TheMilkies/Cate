@@ -62,8 +62,9 @@ void Parser::library_array()
 			current_class->add_library(item);
 		else if(match(IDENTIFIER))
 		{
-			if (is_defined(item))
-				current_class->add_library(classes[item]->out_name);
+			auto other_class = get_class(item);
+			if (other_class)
+				current_class->add_library(other_class->out_name);
 			else
 				fatal("\"" + item + "\" is not defined");
 		}

@@ -9,7 +9,15 @@
 using namespace Util;
 
 extern string default_directory;
-static robin_hood::unordered_set<string> opened_files;
+static vector<string> opened_files;
+bool was_file_opened(string_view file_name) {
+	for (auto &name : opened_files)
+	{
+		if(name == file_name)
+			return true;
+	}
+	return false;
+}
 
 /*
 	why hello there!
@@ -23,14 +31,15 @@ static robin_hood::unordered_set<string> opened_files;
 
 Parser::Parser(const string& file_name)
 {
-	if (opened_files.find(file_name) != opened_files.end())
+	opened_files.reserve(8);
+	if (was_file_opened(file_name))
 		fatal("Already built \"" + file_name + "\"");
 
 #ifdef DEBUG
 	cout << "parsing " << file_name << '\n';
 #endif // DEBUG
 
-	opened_files.insert(file_name);
+	opened_files.emplace_back(file_name);
 	
 	std::ifstream file(file_name);
 	if (file.fail())
@@ -75,7 +84,7 @@ __attribute__((optimize("unroll-loops")))
 Parser::~Parser()
 {
 	for(auto &c : classes)
-		delete c.second; //free the pointers
+		delete c; //free the pointers
 }
 
 void Parser::define()
@@ -85,16 +94,14 @@ void Parser::define()
 	expect(IDENTIFIER);
 	string &identifier = current.text;
 
-	if (is_defined(identifier))
+	if (get_class(identifier))
 		fatal("\"" + identifier + "\" was already defined");
 	
 	//this is technically a factory... oh well
 	if (is_project)
-		classes[identifier] = new Project(identifier);
+		current_class = classes.emplace_back(new Project(identifier));
 	else //library
-		classes[identifier] = new Library(identifier);
-
-	current_class = classes[identifier]; //set the pointer to the current class
+		current_class = classes.emplace_back(new Library(identifier));
 }
 
 void Parser::parse()
@@ -121,12 +128,13 @@ void Parser::parse()
 			if(global()) break;
 			/*property: string_literal '.' string_literal*/
 			auto& parent = current.text;
+			auto other_class = get_class(parent);
 
-			if (!is_defined(parent))
+			if (!other_class)
 				fatal("\"" + parent + "\" is not defined.");
 
 			if (current_class->name != parent)
-				current_class = classes[parent];
+				current_class = other_class;
 
 			expect(DOT); //will go automatically to DOT, no goto needed
 		}
@@ -237,6 +245,17 @@ bool Parser::global()
 	else return false;
 #undef set_bool
 	return true;
+}
+
+Class *Parser::get_class(std::string_view name)
+{
+	for (auto &c : classes)
+	{
+		if(c->name == name)
+			return c;
+	}
+	
+	return NULL;
 }
 
 #define set_bool(x) current_class->x = expect_bool();

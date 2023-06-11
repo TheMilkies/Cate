@@ -16,7 +16,6 @@ class Parser
 {
 private:
 	void define();
-	inline bool is_defined(const string& identifier) {return (classes.find(identifier) != classes.end());}
 	void array();
 
 	void include_array();
@@ -47,7 +46,8 @@ private:
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;
-	std::unordered_map<string, Class*> classes;
+	std::vector<Class*> classes;
+	Class* get_class(std::string_view name);
 
 	i32 index = -1; //will be incremented to 0
 	inline void next() {

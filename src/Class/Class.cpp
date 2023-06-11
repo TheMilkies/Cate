@@ -6,17 +6,26 @@ extern i32 thread_count;
 
 extern bool force_rebuild, force_smol, always_allow_install, always_deny_install;
 
-Class::Class(string_view ident):
-	name(ident),
-#ifndef __WIN32 
-	out_name(ident), //linux has it so easy, just the name.
-#endif //__WIN32
+bool Class::is_library_defined(string_view name)
+{
+	for (auto &lib : loaded_library_paths)
+	{
+		if(lib == name)
+			return true;
+	}
 
+	return false;
+}
+
+Class::Class(string_view ident) : name(ident),
+#ifndef __WIN32
+	out_name(ident), // linux has it so easy, just the name.
+#endif //__WIN32
 	object_dir(global_values.object_dir),
-	threading (global_values.threading),
-	smol 	  (global_values.smol),
-	compiler  (global_values.compiler),
-	standard  (global_values.standard)
+	threading(global_values.threading),
+	smol(global_values.smol),
+	compiler(global_values.compiler),
+	standard(global_values.standard)
 {
 	//these should be enough for most small/medium-sized projects
 	files.reserve(32);
@@ -39,8 +48,13 @@ Class::Class(string_view ident):
 void Class::setup()
 {
 	check();
+	std::thread clean_thread;
 
-	if(force_rebuild) clean();
+	//this just makes it faster.
+	if(force_rebuild) {
+		clean_thread = std::thread(&Class::clean, this);
+		clean_thread.join();
+	}
 
 	//calling setup_objects() on another thread is a bit faster
 	std::thread object_thread(&Class::setup_objects, this);
@@ -119,8 +133,6 @@ void Class::build_object(i32 i)
 
 void Class::build_objects()
 {
-	//if (already_built) return; //i don't think this is needed
-
 	if (thread_count >= files.size()) //this is very important.
 		thread_count  = files.size();
 
@@ -163,9 +175,9 @@ void Class::add_library(string lib)
 	string path = lib.substr(0, position_of_last_slash+1);
 	bool local = position_of_last_slash != string::npos;
 
-	if (!path.empty() && loaded_library_paths.find(path) == loaded_library_paths.end()) //if not in library paths, add it
+	if (!path.empty() && is_library_defined(path)) //if not in library paths, add it
 	{
-		loaded_library_paths.insert(path);
+		loaded_library_paths.emplace_back(path);
 		all_libraries += "-L" + path + ' ';
 	}
 
