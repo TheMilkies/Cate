@@ -120,7 +120,7 @@ string Class::get_stripped_name()
 	i32 position_of_slash = out_name.find_last_of('/');
 	if(position_of_slash == string::npos) return out_name;
 
-	return out_name.substr(position_of_slash, out_name.length());
+	return out_name.c_str() + position_of_slash + 1;
 }
 
 // this is for threads.
