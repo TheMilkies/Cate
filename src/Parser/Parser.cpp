@@ -125,9 +125,11 @@ void Parser::parse()
 			break;
 
 		case IDENTIFIER: {
-			if(global()) break;
+			auto parent = current.text;
+			if(global()) {
+				break;
+			}
 			/*property: string_literal '.' string_literal*/
-			auto& parent = current.text;
 			auto other_class = get_class(parent);
 
 			if (!other_class)
@@ -140,7 +142,7 @@ void Parser::parse()
 		}
 
 		case DOT:
-			if(current_class == nullptr)
+			if(!current_class)
 				fatal("No object was selected.\n"
 				"if you're trying to use a global variable, it's without the dot.");
 
@@ -221,11 +223,11 @@ void Parser::parse()
 	if (errors_exist) exit(1); //if there was a non-fatal error, exit. 
 }
 
-#define set_string(x) {expect(STRING_LITERAL); global_values.x = current.text;}
+#define set_string(x) {expect(ASSIGN); expect(STRING_LITERAL);\
+						global_values.x = current.text; return true;}
 bool Parser::global()
 {
 	child = current.text;
-	expect(ASSIGN);
 
 	if (child == "cc" || child == "compiler")
 		set_string(compiler)
@@ -236,15 +238,14 @@ bool Parser::global()
 			 child == "object_folder"   ||
 			 child == "build_directory")
 		set_string(object_dir)
-#define set_bool(x) {global_values.x = expect_bool();}
+#define set_bool(x) {expect(ASSIGN); global_values.x = expect_bool(); return true;}
 	else if (child == "threading")
 		set_bool(threading)
 	else if (child == "smol" || child == "smolize")
 		set_bool(smol)
 
-	else return false;
+	return false;
 #undef set_bool
-	return true;
 }
 
 Class *Parser::get_class(std::string_view name)
