@@ -5,7 +5,7 @@ using namespace Util;
 #define sub_file_iterator(p) for (const auto& p : fs::recursive_directory_iterator(path))
 #define file_iterator(p) for (const auto& p : fs::directory_iterator(path))
 
-static struct
+inline struct
 {
 	string path;
 	i32 location_of_wildcard = 0;

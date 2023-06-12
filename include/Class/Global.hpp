@@ -7,4 +7,4 @@ struct Global
 	bool smol = false, threading = false;
 };
 
-extern Global global_values;
+inline Global global_values;

@@ -9,7 +9,6 @@ bool errors_exist     = false, system_blocked = false,
 i32 thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
-Global global_values;
 void parse_catel();
 
 void help();
