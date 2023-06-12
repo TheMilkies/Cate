@@ -46,7 +46,6 @@ private:
 private:
 	ParserToken current;
 	vector<ParserToken> tokens;
-	std::vector<Class*> classes;
 	Class* get_class(std::string_view name);
 
 	i32 index = -1; //will be incremented to 0

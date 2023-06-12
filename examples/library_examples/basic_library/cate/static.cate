@@ -1,5 +1,5 @@
-Library greeter(static);
-.flags = "-O3";
-.files = {"src/libgreeter/greeter.c"};
-.includes = {"include"};
-.build();
+Library greeter(static)
+.flags = "-O3"
+.files = {"src/libgreeter/greeter.c"}
+.includes = {"include"}
+.build()

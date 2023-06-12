@@ -1,7 +1,9 @@
-Project test;
-.files = {"test/test.c"};
-.libs = {"SDL2", "out/libsdlw.a"};
-.includes = {"include"};
-.out = "a_test";
-.smol = true;
-.build();
+subcate("static.cate")
+
+Project test
+.files = {"test/test.c"}
+.libs = {"SDL2", sdlw}
+.includes = {"include"}
+.out = "a_test"
+.smol = true
+.build()

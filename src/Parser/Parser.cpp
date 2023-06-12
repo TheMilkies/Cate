@@ -5,11 +5,13 @@
 #include "Class/Library.hpp"
 #include "Class/Global.hpp"
 #include <fstream>
+#include <memory>
 
 using namespace Util;
-
 extern string default_directory;
 static vector<string> opened_files;
+std::vector<std::unique_ptr<Class>> classes;
+
 bool was_file_opened(string_view file_name) {
 	for (auto &name : opened_files)
 	{
@@ -50,7 +52,6 @@ Parser::Parser(const string& file_name)
 	classes.reserve(8);
 
 	ParserToken temp;
-	
 	//Flex doesn't work in a way you might expect, so we make it easier to work with
 	while (temp.type = (ParserTokenKind)lexer->yylex()) 
 	{
@@ -83,8 +84,6 @@ Parser::Parser(const string& file_name)
 __attribute__((optimize("unroll-loops")))
 Parser::~Parser()
 {
-	for(auto &c : classes)
-		delete c; //free the pointers
 }
 
 void Parser::define()
@@ -99,9 +98,9 @@ void Parser::define()
 	
 	//this is technically a factory... oh well
 	if (is_project)
-		current_class = classes.emplace_back(new Project(identifier));
+		current_class = classes.emplace_back(new Project(identifier)).get();
 	else //library
-		current_class = classes.emplace_back(new Library(identifier));
+		current_class = classes.emplace_back(new Library(identifier)).get();
 }
 
 void Parser::parse()
@@ -125,9 +124,8 @@ void Parser::parse()
 			break;
 
 		case IDENTIFIER: {
-			if(global()) {
+			if(global())
 				break;
-			}
 
 			/*property: parent=string_literal '.' child=string_literal*/
 			auto parent = current.text;
@@ -176,7 +174,6 @@ void Parser::parse()
 				else if (match(RECURSIVE))
 					files_recursive();
 			}
-			
 			break;
 		
 		case SYSTEM:
@@ -188,8 +185,8 @@ void Parser::parse()
 
 		case RECURSIVE:
 			warn(current.line, 
-			hl_func("recursive()")
-			" is outside of an assignment.");
+				hl_func("recursive()")
+				" is outside of an assignment.");
 			string_function();
 			break;
 
@@ -209,7 +206,6 @@ void Parser::parse()
 			
 			//start the subcate instance
 			Parser sub(name);
-
 		}	break;
 
 		default:
@@ -258,7 +254,7 @@ Class *Parser::get_class(std::string_view name)
 	for (auto &c : classes)
 	{
 		if(c->name == name)
-			return c;
+			return c.get();
 	}
 	
 	return NULL;
