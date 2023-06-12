@@ -33,7 +33,7 @@ Parser::Parser(const string& file_name)
 {
 	opened_files.reserve(8);
 	if (was_file_opened(file_name))
-		fatal("Already built \"" + file_name + "\"");
+		fatal("Already opened \"" + file_name + "\"");
 
 #ifdef DEBUG
 	cout << "parsing " << file_name << '\n';
@@ -125,11 +125,12 @@ void Parser::parse()
 			break;
 
 		case IDENTIFIER: {
-			auto parent = current.text;
 			if(global()) {
 				break;
 			}
-			/*property: string_literal '.' string_literal*/
+
+			/*property: parent=string_literal '.' child=string_literal*/
+			auto parent = current.text;
 			auto other_class = get_class(parent);
 
 			if (!other_class)
@@ -159,7 +160,6 @@ void Parser::parse()
 
 			//assignment: property '=' expr
 			expect(ASSIGN);
-
 			if(special_case()) break; // handled there
 
 			//expr: string_literal | recursive string_function | '{' expr '} | lib_type'

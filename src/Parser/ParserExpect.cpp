@@ -104,19 +104,17 @@ void Parser::expect_library_recursive_array()
 						 hl_func("recursive()") 
 						 " or an identifier\n"
 			  "Example: project." hl_var("files") " = {"
-			  hl_func("recursive(\"libs/lib**.a\")")
+			  hl_func("recursive(\"libs/**.a\")")
 			  ", " hl_var("\"GL\"") "}\n");
 	}
 }
 
 void Parser::optional_rparen()
 {
-	next();
-	if (!match(RPAREN))
-	{
-		prev();
-		warn(current.line, "Missing ')'");
+	if (peek() == RPAREN) {
+		next(); return;
 	}
+	warn(current.line, "Missing ')'");
 }
 
 void Parser::void_function()
