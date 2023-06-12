@@ -223,11 +223,14 @@ void Parser::parse()
 	if (errors_exist) exit(1); //if there was a non-fatal error, exit. 
 }
 
-#define set_string(x) {expect(ASSIGN); expect(STRING_LITERAL);\
-						global_values.x = current.text; return true;}
+#define set_string(x) {expect(STRING_LITERAL);\
+						global_values.x = current.text;}
 bool Parser::global()
 {
+	if(peek() != ASSIGN)
+		return false;
 	child = current.text;
+	expect(ASSIGN);
 
 	if (child == "cc" || child == "compiler")
 		set_string(compiler)
@@ -238,13 +241,15 @@ bool Parser::global()
 			 child == "object_folder"   ||
 			 child == "build_directory")
 		set_string(object_dir)
-#define set_bool(x) {expect(ASSIGN); global_values.x = expect_bool(); return true;}
+#define set_bool(x) {global_values.x = expect_bool();}
 	else if (child == "threading")
 		set_bool(threading)
 	else if (child == "smol" || child == "smolize")
 		set_bool(smol)
+	else
+		fatal("unknown global variable \"" + child + "\"");
 
-	return false;
+	return true;
 #undef set_bool
 }
 
