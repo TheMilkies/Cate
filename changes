@@ -1,4 +1,1 @@
-# Cate v2.9.3
-- Finally fixed the library name bug.
-- Fixed the bug where it prints after running the command.
-- Added the `-n` flag for "always deny install"
+# Cate v2.9.5

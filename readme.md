@@ -35,9 +35,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9.4/cate_2.9-4_amd64.deb
-sudo dpkg -i cate_2.9-4_amd64.deb
-rm cate_2.9-4_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.5/cate_2.9-5_amd64.deb
+sudo dpkg -i cate_2.9-5_amd64.deb
+rm cate_2.9-5_amd64.deb
 ```
 
 ### Other distributions
@@ -45,8 +45,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9.4/linux_cate_v2.9.4.zip
-unzip linux_cate_v2.9.4.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.5/linux_cate_v2.9.5.zip
+unzip linux_cate_v2.9.5.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
@@ -57,9 +57,6 @@ Make sure you have these installed:
 - A Unix-like operating system
 - A C++17 compiler (`g++` or `clang++`)
 
-*optional*
-- GNU Flex 2.6.4 or greater ([setup here](github_stuff/flex_setup.md))
-
 ### Using build.sh
 Run `./build.sh`, It'll ask you if you'd like to install at the end.
 
@@ -67,7 +64,7 @@ Run `./build.sh`, It'll ask you if you'd like to install at the end.
 **If you're using cate <= 1.3, run** `sudo cate legacy`.
 
 Run `cate`, it'll ask you if to install after building.
-Unlike Make and other build systems; it'll automatically detect the thread count.
+Unlike Make and other build systems; **it'll automatically detect the thread count.**
 
 ## Using Cate
 Cate's CLI is intuitive, but doesn't offer much more than necessary.
@@ -184,6 +181,25 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 - `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
+
+### Subcate (fully functional since 2.9.5)
+Cate allows you to run another catefile from the current one and use libraries that you built in the other.
+
+`static.cate`
+```java
+Library example_lib(static)
+.files = recursive("src/lib/*.c")
+.build() //will be named "out/libexample_lib.a" automatically
+```
+
+`test.cate`
+```java
+subcate("static.cate") //include it here
+Project Test
+.libs = {example_lib} //we can use it here
+.files = recursive("src/test.c")
+.build()
+```
 
 ### Global (since 2.8.1)
 All classes use global values as default. There are only 5 global variables you can change, being:

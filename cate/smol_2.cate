@@ -19,6 +19,7 @@ Project cate
 	"src/Parser/ParserExpect.cpp"
 	"src/Parser/Recursive.cpp"
 }
+
 .flags = "-fno-exceptions -march=native -fpermissive -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -Ofast"
 .out = "out/cate"
 .libs = {"stdc++fs"}
