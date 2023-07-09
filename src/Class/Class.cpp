@@ -29,7 +29,6 @@ Class::Class(string_view ident) : name(ident),
 {
 	//these should be enough for most small/medium-sized projects
 	files.reserve(32);
-	object_files.reserve(32);
 	loaded_library_paths.reserve(32);
 	all_libraries.reserve(128);
 	threads.reserve(thread_count * 4);
@@ -68,6 +67,7 @@ void Class::setup()
 
 void Class::setup_objects()
 {
+	object_files.reserve(files.size());
 	for(auto file : files)
 	{
 		Util::replace_all(file, "../", "back_"); //  "../" -> "back_"
@@ -282,7 +282,7 @@ bool Class::ask_to_install()
 	if(always_allow_install) return true;
 	fflush(stdin); std::flush(std::cout);
 
-	char answer;
+	char answer = 0;
 	cout << BLUE "Install \"" << name << "\"? " COLOR_RESET "("
 		traffic_light("Y", "/", "n") "): ";
 	std::cin >> answer;
@@ -293,7 +293,7 @@ bool Class::ask_to_install()
 void Class::create_directories()
 {
 	Util::create_folder(object_dir.c_str());
-	
+
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	
 	if (!path.empty() && path != "./")

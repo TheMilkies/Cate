@@ -35,6 +35,9 @@ bool default_file_exists()
 	return true;
 }
 
+extern vector<string> opened_files;
+extern std::vector<std::unique_ptr<Class>> classes;
+
 int main(int argc, char *argv[])
 {
 	std::ios_base::sync_with_stdio(false); //this is a massive speed boost in some cases.
@@ -177,8 +180,13 @@ int main(int argc, char *argv[])
 
 	Util::generate_object_dir_name(); //save some time
 	//start building yay
-	for(auto& name : file_names)
+	for(auto& name : file_names) {
 		Parser p(name);	
+
+		//clear for next run
+		opened_files.clear();
+		classes.clear();
+	}
 		
 	return 0;
 }

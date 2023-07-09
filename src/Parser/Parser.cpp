@@ -9,8 +9,8 @@
 
 using namespace Util;
 extern string default_directory;
-static vector<string> opened_files;
-std::vector<std::unique_ptr<Class>> classes;
+inline vector<string> opened_files;
+inline std::vector<std::unique_ptr<Class>> classes;
 
 bool was_file_opened(string_view file_name) {
 	for (auto &name : opened_files)

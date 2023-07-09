@@ -12,7 +12,6 @@ extern bool errors_exist, dry_run;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
-#include <sstream>
 
 namespace Util
 {
