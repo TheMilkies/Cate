@@ -4,8 +4,6 @@
 
 extern i32 thread_count;
 
-extern bool force_rebuild, force_smol, always_allow_install, always_deny_install;
-
 bool Class::is_library_defined(string_view name)
 {
 	for (auto &lib : loaded_library_paths)
@@ -50,7 +48,7 @@ void Class::setup()
 	std::thread clean_thread;
 
 	//this just makes it faster.
-	if(force_rebuild) {
+	if(flag(force_rebuild)) {
 		clean_thread = std::thread(&Class::clean, this);
 		clean_thread.join();
 	}
@@ -89,7 +87,7 @@ void Class::install()
 	Util::warn(0, "Installing is not supported in Windows Cate.");
 	return;
 #endif // __WIN32
-	if(dry_run || always_deny_install) return;
+	if(flag(dry_run) || flag(always_deny_install)) return;
 
 	if(out_name.empty()) generate_name();
 	if(!Util::file_exists(out_name.c_str())) return;
@@ -249,7 +247,7 @@ void Class::check()
 	if (threading)
 		flags += " -pthread ";
 
-	if (smol || force_smol)
+	if (smol || flag(force_smol))
 		flags += " -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-ident -fomit-frame-pointer"
 				 " -fmerge-all-constants -Wl,--build-id=none ";
 
@@ -268,7 +266,7 @@ void Class::check()
 
 void Class::smolize()
 {
-	if(!smol && !force_smol) return;
+	if(!smol && !flag(force_smol)) return;
 	Util::system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version "
 			"--remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
 			+ out_name);
@@ -279,7 +277,7 @@ bool Class::ask_to_install()
 #ifdef __WIN32
 	return false;
 #endif // __WIN32
-	if(always_allow_install) return true;
+	if(flag(always_allow_install)) return true;
 	fflush(stdin); std::flush(std::cout);
 
 	char answer = 0;

@@ -177,7 +177,7 @@ void Parser::parse()
 			break;
 		
 		case SYSTEM:
-			if (system_blocked)
+			if (flag(system_blocked))
 				skip(3);
 			else
 				user_system(current.line, string_function().text);
@@ -201,7 +201,7 @@ void Parser::parse()
 					fatal("File \"" + name + "\" not found.");
 			}
 
-			if(dry_run)
+			if(flag(dry_run))
 				cout << "cate " << name << std::endl;
 			
 			//start the subcate instance

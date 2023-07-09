@@ -1,6 +1,5 @@
 #include "Class/Library.hpp"
 
-extern bool force_rebuild, dry_run;
 Library::Library(string_view ident): Class(ident) {}
 Library::~Library() {}
 
@@ -40,7 +39,7 @@ void Library::build()
 
 	if(link)
 	{
-		if (!needs_link && !force_rebuild) return;
+		if (!needs_link && !flag(force_rebuild)) return;
 
 		string command;
 		command.reserve(512);

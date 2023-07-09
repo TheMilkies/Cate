@@ -2,10 +2,7 @@
 
 //errors_exist is needed to show all errors and exit afterwards
 //system_blocked is the -D option, only affects `system(String)` in parser
-bool errors_exist     = false, system_blocked = false,
-	 force_rebuild	  = false, force_smol     = false,
-	 always_allow_install = false, dry_run 		  = false,
-	 always_deny_install = false;
+bool errors_exist     = false;
 i32 thread_count = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
@@ -131,28 +128,28 @@ int main(int argc, char *argv[])
 			break;
 		
 		case 'D': //disable system()
-			system_blocked = true;
+			global_values.options |= system_blocked;
 			break;
 
 		case 'd': //all system calls are No.
-			dry_run = true;
+			global_values.options |= dry_run;
 			break;
 		
 		case 'S': //disable system
-			force_smol = true;
+			global_values.options |= force_smol;
 			break;
 
 		case 'B':
 		case 'f': //force rebuild
-			force_rebuild = true;
+			global_values.options |= force_rebuild;
 			break;
 		
 		case 'y':
-			always_allow_install = true;
+			global_values.options |= always_allow_install;
 			break;
 
 		case 'n':
-			always_deny_install = true;
+			global_values.options |=  always_deny_install;
 			break;
 	
 		default: //unknown
@@ -168,11 +165,12 @@ int main(int argc, char *argv[])
 	if(default_file.empty() && !default_file_exists())
 		command_error("No default file found.");
 
-	if(always_deny_install && always_allow_install) {
+	if(flag(always_deny_install) && flag(always_allow_install)) {
 		command_error("Usage of `-n` and `-y` at the same time is impossible.\n"
 					  "Will ask if to install or not.");
-		always_deny_install = false;
-		always_allow_install = false;
+		//disable the flags
+		global_values.options &= (Flags)
+		 (~(always_deny_install | always_allow_install));
 	}
 
 	if(file_names.empty())

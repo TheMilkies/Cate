@@ -8,7 +8,6 @@
 
 //from main.cpp
 extern bool errors_exist;
-extern bool system_blocked;
 
 //most comments in Parser.cpp
 
