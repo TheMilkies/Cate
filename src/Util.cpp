@@ -64,28 +64,13 @@ namespace Util
 			s += ".cate";
 	}
 
-	void replace_all( //thank you for the code @Mateen Ulhaq from stackoverflow! i was too lazy to write it myself
-		string& original,
-		string_view to_replace,
-		string_view replace_with
-	) {
-		std::ostringstream oss;
-		oss.str().reserve(original.length());
-		std::size_t pos = 0;
-		std::size_t prevPos = pos;
-
-		while (true) {
-			prevPos = pos;
-			pos = original.find(to_replace, pos);
-			if (pos == string::npos)
-				break;
-			oss << original.substr(prevPos, pos - prevPos);
-			oss << replace_with;
-			pos += to_replace.size();
+	void replace_all( string& original, string_view to_replace, string_view replace_with) {
+		std::string::size_type loc = 0;
+		while ((loc = original.find( to_replace, loc)) != std::string::npos)
+		{
+			original.replace(loc, to_replace.size(), replace_with);
+			loc += replace_with.size();
 		}
-
-		oss << original.substr(prevPos);
-		original = oss.str();
 	}
 
 	long long get_modified_time(const char *path)
