@@ -51,7 +51,7 @@ Parser::Parser(const string& file_name)
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
-	ParserToken temp;
+	ParserToken temp(END);
 	//Flex doesn't work in a way you might expect, so we make it easier to work with
 	while (temp.type = (ParserTokenKind)lexer->yylex()) 
 	{
@@ -78,6 +78,7 @@ Parser::Parser(const string& file_name)
 
 	if(errors_exist) exit(1);
 
+	next(); //gets the first token (0)
 	parse(); //start parsing
 }
 
@@ -104,9 +105,7 @@ void Parser::define()
 }
 
 void Parser::parse()
-{
-	next(); //gets the first token (0)
-	
+{	
 	child.reserve(16);
 	while (!match(END)) //END = end of file
 	{

@@ -43,13 +43,15 @@ private:
 
 	string child;
 private:
-	ParserToken current;
+	ParserToken current = END;
 	vector<ParserToken> tokens;
 	Class* get_class(std::string_view name);
 
 	i32 index = -1; //will be incremented to 0
 	inline void next() {
-		current = tokens[++index];
+		if(tokens[++index].type != END)
+			current = tokens[index];
+		else current.type = END;
 	}
 
 	//there are MANY better ways of doing this... but i'm lazy

@@ -61,6 +61,8 @@ struct ParserToken
 	ParserTokenKind type;
 	string text;
 	i32 line;
+
+	ParserToken(ParserTokenKind kind): type(kind){}
 };
 
 #endif //PARSER_TOKENS
