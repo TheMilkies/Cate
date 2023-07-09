@@ -5,3 +5,4 @@ release/
 a_test
 **/out/lib*.a
 **/out/lib*.so
+benchmark.cpp
