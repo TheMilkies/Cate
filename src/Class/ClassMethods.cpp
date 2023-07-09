@@ -28,9 +28,8 @@ void Class::clean()
 {
 	if (object_dir.empty())
 	{
-		if(global_values.object_dir.empty())
-			Util::generate_object_dir_name();
-		object_dir = global_values.object_dir;
+		if(!global_values.object_dir.empty())
+			object_dir = global_values.object_dir;
 	}
 
 	if(object_files.empty())

@@ -292,8 +292,9 @@ void Class::create_directories()
 {
 	Util::create_folder(object_dir.c_str());
 
+	//this looks weird, but saves one alloc...
 	string path = out_name.substr(0, out_name.find_last_of('/')+1);
 	
 	if (!path.empty() && path != "./")
-		Util::recursively_create_folder(path.c_str());
+		Util::recursively_create_folder(path.data());
 }

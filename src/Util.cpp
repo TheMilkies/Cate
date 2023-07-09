@@ -137,6 +137,11 @@ namespace Util
 	{
 		struct stat st {0};
 		if (stat(path, &st) != -1) return;
+		
+		if(flag(dry_run)) {
+			cout << "mkdir -p " << path << "\n";
+			return;
+		}
 
 		char tmp[512];
 		char *p = NULL;
@@ -159,6 +164,11 @@ namespace Util
 	{
 		struct stat st {0};
 		if (stat(path, &st) != -1) return; //if folder does exist.
+
+		if(flag(dry_run)) {
+			cout << "mkdir " << path << "\n";
+			return;
+		}
 		
 	#ifdef __WIN32
 		if (!CreateDirectory(path, NULL))

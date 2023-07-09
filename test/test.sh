@@ -47,6 +47,16 @@ check_cate_command_for() {
 	done
 }
 
+systext=`cate -D system`
+if [ ! -z $systext]; then
+	echo -e "\e[1;31mSystem block failed">&2
+fi
+
+systext=`cate system`
+if [[ "$systext" =~ $'Running \`echo test\`...\ntest\n' ]]; then
+	echo -e "\e[1;31mSystem failed">&2
+fi
+
 test_case "" catel.out
 test_case recursive recursive.out subrecursive.out
 test_case library out/liblibrary_test.a out/liblibrary_test.so with_static.out with_dynamic.out with_ident.out
