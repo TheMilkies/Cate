@@ -183,9 +183,8 @@ void Parser::parse()
 			break;
 
 		case RECURSIVE:
-			warn(current.line, 
-				hl_func("recursive()")
-				" is outside of an assignment.");
+			warn(hl_func("recursive()")
+				" is outside of an assignment.", current.line);
 			string_function();
 			break;
 

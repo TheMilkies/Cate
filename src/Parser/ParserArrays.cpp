@@ -93,7 +93,7 @@ void Parser::files_array()
 		else if (match(STRING_LITERAL))
 		{
 			if(!file_exists(current.text.c_str()))
-				warn(current.line, "File \"" + current.text + "\" was not found.");
+				warn("File \"" + current.text + "\" was not found.", current.line);
 			files.emplace_back(current.text);
 		}
 	}

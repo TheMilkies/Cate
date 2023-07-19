@@ -2,8 +2,9 @@
 
 //errors_exist is needed to show all errors and exit afterwards
 //system_blocked is the -D option, only affects `system(String)` in parser
-bool errors_exist     = false;
-i32 thread_count = std::thread::hardware_concurrency() * 2;
+bool errors_exist = false,
+	 is_root	  = getuid() == 0;
+i32 thread_count  = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
 void parse_catel();
@@ -146,6 +147,10 @@ int main(int argc, char *argv[])
 		
 		case 'y':
 			global_values.options |= always_allow_install;
+			if(!is_root) {
+				Util::warn("You're using the `" BOLD_GREEN "-d" COLOR_RESET
+				"` flag without being root.");
+			}
 			break;
 
 		case 'n':

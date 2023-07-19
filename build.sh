@@ -58,7 +58,6 @@ _build Help &
 
 wait < <(jobs -p)
 
-#$CC $build_folder/*.o externals/linux_amd64_libfl.a $cflags -o$out_exec 
 $CC $build_folder/*.o $cflags -o$out_exec 
 
 if ! test -f "./out/cate"; then

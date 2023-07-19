@@ -11,6 +11,7 @@
 #define PURPLE "\033[35m"
 #define CYAN "\033[36m"
 #define BOLD_RED "\e[1;31m"
+#define BOLD_GREEN "\e[1;32m"
 
 #define list_color "\e[0;36m"
 #define hl_func(x) YELLOW x COLOR_RESET

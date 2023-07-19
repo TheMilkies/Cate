@@ -3,6 +3,7 @@
 #include "Class/Global.hpp"
 
 extern i32 thread_count;
+extern bool is_root;
 
 bool Class::is_library_defined(string_view name)
 {
@@ -84,27 +85,26 @@ void Class::setup_objects()
 void Class::install()
 {
 #ifdef __WIN32
-	Util::warn(0, "Installing is not supported in Windows Cate.");
+	Util::warn("Installing is not supported in Windows Cate.");
 	return;
 #endif // __WIN32
 	if(flag(dry_run) || flag(always_deny_install)) return;
 
 	if(out_name.empty()) generate_name();
 	if(!Util::file_exists(out_name.c_str())) return;
+	if (!is_root && needs_link)
+	{
+		cout << BOLD CYAN "Note: " COLOR_RESET
+		"Script wants to install \"" << out_name << "\" but you're not root.\n"
+		"Suggestion: try adding `" BOLD hl_func("sudo") "` before `cate`, like so:\n`"
+		SUDO "cate" COLOR_RESET " ...`\n";
+		return;
+	}
 
 	string install_path_name = get_install_path();
 	if(!newer_than(install_path_name, out_name)) return;
 
 	if(!ask_to_install()) return;
-
-	if (!Util::is_root())
-	{
-		Util::error("You must be root to install\n"
-		"Suggestion: try adding `" BOLD hl_func("sudo")
-		"` before `cate`, like `"
-		SUDO "cate" COLOR_RESET " ...`");
-		exit(2);
-	}
 
 	Util::system("cp -f " + out_name + " " + install_path_name);
 	

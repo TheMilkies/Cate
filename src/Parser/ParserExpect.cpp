@@ -114,7 +114,7 @@ void Parser::optional_rparen()
 	if (peek() == RPAREN) {
 		next(); return;
 	}
-	warn(current.line, "Missing ')'");
+	warn("Missing ')'", current.line);
 }
 
 void Parser::void_function()

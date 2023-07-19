@@ -33,10 +33,12 @@ namespace Util
 	void command_error(string_view problem);
 	void fatal_error(i32 line, string_view problem);
 
-	inline void warn(i32 line, string_view problem)
+	inline void warn(string_view problem, i32 line = -1)
 	{
-		cerr << "\e[1;33mWarning " COLOR_RESET "in line " << line << 
-		": " << problem << "\n";
+		cerr << "\e[1;33mWarning" COLOR_RESET;
+		if(line != -1)
+			cerr << " in line " << line;
+		cerr << ": " << problem << "\n";
 	}
 
 	void protect_against_malicious(string_view text);
@@ -68,14 +70,6 @@ namespace Util
 	bool ends_with(string_view value, string_view ending); //written by tshepang from stackoverflow
 
 	void generate_object_dir_name();
-
-	inline bool is_root() {
-	#ifdef __WIN32
-		return false;
-	#else
-		return (getuid() == 0);
-	#endif // __WIN32
-	}
 
 } // namespace Util
 
