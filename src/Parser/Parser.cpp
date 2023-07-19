@@ -51,9 +51,9 @@ Parser::Parser(const string& file_name)
 	tokens.reserve(128); //optimization
 	classes.reserve(8);
 
-	ParserToken temp(END);
+	Token temp(END);
 	//Flex doesn't work in a way you might expect, so we make it easier to work with
-	while (temp.type = (ParserTokenKind)lexer->yylex()) 
+	while (temp.type = (TokenKind)lexer->yylex()) 
 	{
 		temp.text.clear(); //reset to save some memory
 		temp.line = lexer_line; //defined in lexer.l
@@ -204,6 +204,11 @@ void Parser::parse()
 			
 			//start the subcate instance
 			Parser sub(name);
+		}	break;
+
+		case MKDIR: {
+			std::string name = string_function().text;
+			Util::recursively_create_folder(name.c_str());
 		}	break;
 
 		default:

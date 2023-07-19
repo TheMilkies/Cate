@@ -2,7 +2,7 @@
 
 using namespace Util;
 
-void Parser::expect(ParserTokenKind type)
+void Parser::expect(TokenKind type)
 {
 	next(); 
 
@@ -13,7 +13,7 @@ void Parser::expect(ParserTokenKind type)
 	}
 }
 
-void Parser::expect(ParserTokenKind type, ParserTokenKind type2)
+void Parser::expect(TokenKind type, TokenKind type2)
 {
 	next();
 
@@ -48,7 +48,7 @@ bool Parser::expect_type()
 	return match(STATIC);
 }
 
-void Parser::expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3)
+void Parser::expect(TokenKind type, TokenKind type2, TokenKind type3)
 {
 	next();
 
@@ -125,14 +125,14 @@ void Parser::void_function()
 }
 
 //expects '(' string_literal ')' and then returns the string_literal token
-ParserToken Parser::string_function()
+Token Parser::string_function()
 {
 	next();
 	if(!match(LPAREN) || peek() != STRING_LITERAL)
 		fatal("Expected a string inside parenthesis " hl_func("like(\"this\")") "\n"
 			  "Example: " hl_func("func(\"something\")")"\n");
 
-	ParserToken to_return = tokens[++index];
+	Token to_return = tokens[++index];
 	optional_rparen();
 
 	return to_return;

@@ -30,6 +30,7 @@
 "dynamic" {return DYNAMIC;}
 "static" {return STATIC;}
 "system" {return SYSTEM;}
+"mkdir" {return MKDIR;}
 "recursive" {return RECURSIVE;}
 "iterate" {return RECURSIVE;}
 "true" {return B_TRUE;}

@@ -67,6 +67,12 @@ check_cate_command_for subcate "subcating"
 
 test_case options cpp_test.out
 
+cate mkdir
+if [ ! -d dirc/dirc ]; then
+	echo -e "mkdir failed"
+	exit 2
+fi
+
 #finally end
 if [ ! -z $failed ]; then
 	echo -e "\e[1;31mSome tests failed\e[0m" >&2
@@ -78,3 +84,4 @@ echo -e "\e[1;32mAll tests passed!\e[0m"
 rm **.out
 rm cate/build/*
 rm out/*
+rm -rf dirc

@@ -1,7 +1,7 @@
 #if !defined(Parser_HPP)
 #define Parser_HPP
 #include "Util.hpp"
-#include "Parser/ParserTokens.hpp"
+#include "Parser/Tokens.hpp"
 #include "Class/Class.hpp"
 #include "Class/Global.hpp"
 #define fatal(text) Util::fatal_error(current.line, text)
@@ -34,7 +34,7 @@ private:
 	Class *current_class = nullptr;
 
 	void 		void_function(); //expects '(' ')' with nothing inside
-	ParserToken string_function(); //expects '(' STRING_LITERAL ')' and then returns the STRING_LITErAL token
+	Token string_function(); //expects '(' STRING_LITERAL ')' and then returns the STRING_LITErAL token
 	
 	bool special_case(); //`type` and `link` 
 	void object_method(); //all object methods
@@ -43,8 +43,8 @@ private:
 
 	string child;
 private:
-	ParserToken current = END;
-	vector<ParserToken> tokens;
+	Token current = END;
+	vector<Token> tokens;
 	Class* get_class(std::string_view name);
 
 	i32 index = -1; //will be incremented to 0
@@ -58,13 +58,13 @@ private:
 	bool expect_bool();
 	bool expect_type();
 
-	void expect(ParserTokenKind type);
-	void expect(ParserTokenKind type, ParserTokenKind type2);
-	void expect(ParserTokenKind type, ParserTokenKind type2, ParserTokenKind type3);
+	void expect(TokenKind type);
+	void expect(TokenKind type, TokenKind type2);
+	void expect(TokenKind type, TokenKind type2, TokenKind type3);
 
 	void optional_rparen();
 
-	inline ParserTokenKind peek(i32 how_much = 1) {return tokens[index + how_much].type;}
+	inline TokenKind peek(i32 how_much = 1) {return tokens[index + how_much].type;}
 	inline void skip(i32 how_much = 1) {current = tokens[index += how_much];}
 	inline void prev() {current = tokens[index -= 1];}
 

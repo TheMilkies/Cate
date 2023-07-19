@@ -28,12 +28,13 @@ static string token_names[] = {
 	"a string literal",
 	"an identifier",
 	hl_func("system"),
+	hl_func("mkdir"),
 	"\"true\"",
 	"\"false\"",
 	hl_func("subcate"),
 };
 
-enum ParserTokenKind: u8
+enum TokenKind: u8
 {
 	END,
 	DOT,
@@ -51,18 +52,19 @@ enum ParserTokenKind: u8
 	STRING_LITERAL,
 	IDENTIFIER,
 	SYSTEM,
+	MKDIR,
 	B_TRUE,
 	B_FALSE,
 	SUBCATE,
 };
 	
-struct ParserToken
+struct Token
 {
-	ParserTokenKind type;
+	TokenKind type;
 	string text;
 	i32 line;
 
-	ParserToken(ParserTokenKind kind): type(kind){}
+	Token(TokenKind kind): type(kind){}
 };
 
 #endif //PARSER_TOKENS

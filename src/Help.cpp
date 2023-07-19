@@ -7,6 +7,7 @@ void help()
 	"usage: " COLOR_RESET "\tcate " BOLD GREEN "[FLAGS] " PURPLE "[FILENAME]\n\n" COLOR_RESET
 	BOLD GREEN "flags:\n"
 	hl_flag("-l") ":  list all catefiles in default directory\n"
+	"\t" BOLD GREEN "-i" hl_var("V") ": init a project with the name " PURPLE BOLD "V\n"
 	hl_flag("-y") ":  install without asking (always answer 'y')\n"
 	hl_flag("-n") ":  don't install (always answer 'n')\n"
 	hl_flag("-D") ":  disable all " hl_func("system()") " calls in script\n"

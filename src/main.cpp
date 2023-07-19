@@ -1,13 +1,16 @@
 #include "Parser/Parser.hpp" //Parser.hpp includes everything we need, including Util.hpp
+#include <fstream>
+#include <string.h>
 
 //errors_exist is needed to show all errors and exit afterwards
 //system_blocked is the -D option, only affects `system(String)` in parser
-bool errors_exist = false,
-	 is_root	  = getuid() == 0;
+bool errors_exist = false, is_root = false;
 i32 thread_count  = std::thread::hardware_concurrency() * 2;
 
 string default_file, default_directory = "cate";
 void parse_catel();
+
+void init_project(string name);
 
 void help();
 inline const char* shift_arg(int &argc, char** &argv) {
@@ -53,6 +56,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	is_root = getuid() == 0;
 	const char* arg = shift_args();
 
 	std::vector<string> file_names;
@@ -156,6 +160,20 @@ int main(int argc, char *argv[])
 		case 'n':
 			global_values.options |=  always_deny_install;
 			break;
+
+		case 'i':
+			char* name;
+
+			if(argv[0][2])
+				name = argv[0]+2;
+			else if(argv[1] != NULL)
+				name = (char*)shift_args(); //skip next because it's an int
+			else
+				command_error("Missing argument after \"-i\".");
+			
+			init_project(name);
+			return 0;
+			break;
 	
 		default: //unknown
 			cerr << "Unknown argument \"" << argv[0] << "\"\n"
@@ -192,4 +210,39 @@ int main(int argc, char *argv[])
 	}
 		
 	return 0;
+}
+
+static void create_file(string file_name, string_view text) {
+	std::ofstream f(file_name);
+	if(f.fail()) {
+		Util::error("Failed to create file \"" + file_name + "\" because: " + 
+		strerror(errno));
+	}
+}
+
+void init_project(string name) {
+	if(Util::file_exists(".catel") && Util::file_exists("src/main.cpp"))
+		Util::command_error("Project already inited.");
+
+	Util::create_folder("src");
+	Util::create_folder("include");
+	Util::create_folder("cate");
+
+	create_file("src/main.cpp",
+	"#include <iostream>\n\n"
+	"int main(int argc, const char* argv[])\n"
+	"{\n\t\n"
+	"}");
+
+	create_file(".catel","def debug");
+
+	string basic_catefile = 
+	"cc = \"g++\"\n"
+	"Project " + name + "\n"
+	".files = {recursive(\"src/*.cpp\")}\n"
+	".flags = \"-g\"\n"
+	".build()";
+
+	create_file("cate/debug.cate", basic_catefile);
+	create_file("cate/release.cate", "smol = true\n" + basic_catefile);
 }
