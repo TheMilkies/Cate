@@ -35,9 +35,9 @@ If you're still here; that means you suffered enough CMake (or Autotools) to rec
 ### Debian/Ubuntu
 Run the following commands:
 ```sh
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9.5/cate_2.9-5_amd64.deb
-sudo dpkg -i cate_2.9-5_amd64.deb
-rm cate_2.9-5_amd64.deb
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.6/cate_2.9-6_amd64.deb
+sudo dpkg -i cate_2.9-6_amd64.deb
+rm cate_2.9-6_amd64.deb
 ```
 
 ### Other distributions
@@ -45,8 +45,8 @@ Run the following commands:
 ```sh
 mkdir catering
 cd catering
-wget https://github.com/TheMilkies/Cate/releases/download/v2.9.5/linux_cate_v2.9.5.zip
-unzip linux_cate_v2.9.5.zip
+wget https://github.com/TheMilkies/Cate/releases/download/v2.9.6/linux_cate_v2.9.6.zip
+unzip linux_cate_v2.9.6.zip
 sudo ./install.sh
 cd ..
 rm -rf catering
