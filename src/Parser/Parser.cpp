@@ -13,7 +13,7 @@ inline vector<string> opened_files;
 inline std::vector<std::unique_ptr<Class>> classes;
 
 bool was_file_opened(string_view file_name) {
-	for (auto &name : opened_files)
+	for (const auto &name : opened_files)
 	{
 		if(name == file_name)
 			return true;
@@ -49,7 +49,6 @@ Parser::Parser(const string& file_name)
 	
 	yyFlexLexer* lexer = new yyFlexLexer(file, cout); //create the lexer
 	tokens.reserve(128); //optimization
-	classes.reserve(8);
 
 	Token temp(END);
 	//Flex doesn't work in a way you might expect, so we make it easier to work with

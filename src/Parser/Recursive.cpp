@@ -63,7 +63,7 @@ string Parser::extension_recursive()
 	auto& files = current_class->files;
 
 	string extension = current.text.substr(rd.location_of_wildcard+1); //extract extension
-	
+
 	if (extension.empty())
 	{
 		fatal(hl_func("recursive()")

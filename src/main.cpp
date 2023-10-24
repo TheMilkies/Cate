@@ -199,16 +199,18 @@ int main(int argc, char *argv[])
 	if(file_names.empty())
 		file_names.emplace_back(default_file);
 
+
 	Util::generate_object_dir_name(); //save some time
 	//start building yay
-	for(auto& name : file_names) {
+	classes.reserve(file_names.size()*4);
+	for(const auto& name : file_names) {
 		Parser p(name);	
 
 		//clear for next run
 		opened_files.clear();
 		classes.clear();
 	}
-		
+
 	return 0;
 }
 
@@ -218,6 +220,7 @@ static void create_file(string file_name, string_view text) {
 		Util::error("Failed to create file \"" + file_name + "\" because: " + 
 		strerror(errno));
 	}
+	f << text;
 }
 
 void init_project(string name) {
@@ -239,10 +242,13 @@ void init_project(string name) {
 	string basic_catefile = 
 	"cc = \"g++\"\n"
 	"Project " + name + "\n"
-	".files = {recursive(\"src/*.cpp\")}\n"
-	".flags = \"-g\"\n"
-	".build()";
+	".files = {recursive(\"src/*.cpp\")}\n";
 
-	create_file("cate/debug.cate", basic_catefile);
-	create_file("cate/release.cate", "smol = true\n" + basic_catefile);
+	create_file("cate/debug.cate", basic_catefile +
+									".flags = \"-g\"\n"
+									".build()");
+	create_file("cate/release.cate", "smol = true\n" +
+									basic_catefile +
+									".flags = \"-O2\"\n"
+									".build()");
 }
