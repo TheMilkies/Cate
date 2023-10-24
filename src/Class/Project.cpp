@@ -20,7 +20,7 @@ void Project::set_type(i32 line, bool is_static)
 void Project::build()
 {
 	//one file
-	if(files.size() == 1) return single_file_build();
+	if(files.size() == 1 && link) return single_file_build();
 
 	//multi file
 	if (!already_built)
