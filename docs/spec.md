@@ -91,3 +91,11 @@ It must not allow `"dir/*/*.EXTENSION"` , but allow `"dir/**.EXTENSION"` subrecu
 Add size optimization flags automatically if set true, then a strip command.
 
 The performance of the output **must not be impacted**. 
+
+## Initing
+The `-i` flag takes a name argument and creates:
+- 3 folders: `src cate include`
+- 4 files: `src/main.cpp cate/debug.cate cate/release.cate .catel`
+Notes:
+- The cate files shall build a simple C++ project
+- The catel file shall point at the `cate` directory and the debug file.

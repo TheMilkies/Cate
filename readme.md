@@ -70,8 +70,9 @@ Unlike Make and other build systems; **it'll automatically detect the thread cou
 Cate's CLI is intuitive, but doesn't offer much more than necessary.
 
 ### Flags (Options)
-- `-tN` (and `-jN`): Set thread count to N. Cate automatically detects thread count so this isn't required.
 - `-l`: Lists Catefiles in Catefiles directory (set by Catel).
+- `-iV`: Init a project with the name **V**.
+- `-tN` (and `-jN`): Set thread count to **N**. Cate automatically detects thread count so this isn't required.
 - `-y`: Install without asking (always answer 'y').
 - `-n`: Don't install (always answer 'n').
 - `-D`: Disable all user-defined `system()` calls in script.
@@ -154,8 +155,8 @@ Both classes have these properties, even if they don't make sense for the class
 - `Array<String> defs|defines|definitions`: Definitions. Default is set by the compiler. 
 
 - `String out`: The output file name. 
-- - In projects: Defaults to the identifier.
-- - In libraries: Defaults to "lib" + the identifier + the extension for the library type.
+  - In projects: Defaults to the identifier.
+  - In libraries: Defaults to "lib" + the identifier + the extension for the library type.
 - `String cc|compiler`: The compiler to use. Default is `cc`.
 - `String std|standard`: The C/C++ standard to use. Default is set by the compiler.
 - `String obj_dir|object_dir|build_dir|build_directory`: The folder it'd store object files in. Defaults to `"build"` (or `cate/build` if catedir is present), unless a directory named `"obj"` is present; where it'd use it.
@@ -175,9 +176,9 @@ Both classes have these properties, even if they don't make sense for the class
 
 ### General functions
 - `Array<String> recursive(String path)`: Get all files (or libraries, or include paths) in path ending with an extension. Example: `project.files = recursive("src/*.c");`. 
-- - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
-- - `recursive()` is also called `iterate()`.
-- - If for some reason you don't have enough disk space to type `recursive`, you can do `files = {"src/*.c"}`
+  - `recursive()` Allows subdirectory recursion, Example: `recursive("src/**.c")`;
+  - `recursive()` is also called `iterate()`.
+  - If for some reason you don't have enough disk space to type `recursive`, you can do `files = {"src/*.c"}`
 
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 - `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
