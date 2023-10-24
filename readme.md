@@ -182,6 +182,7 @@ Both classes have these properties, even if they don't make sense for the class
 
 - `void system(String command)`: Run command. Will be skipped if user runs Cate with the `-D` flag.
 - `void subcate(String file_name)`: Starts a new Cate "instance" with the passed file name. (since 2.7)
+- `void mkdir(String)`: Create a new directory at the specified path. (since 2.9.6)
 
 ### Subcate (fully functional since 2.9.5)
 Cate allows you to run another catefile from the current one and use libraries that you built in the other.
