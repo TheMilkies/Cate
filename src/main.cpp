@@ -152,13 +152,17 @@ int main(int argc, char *argv[])
 		case 'y':
 			global_values.options |= always_allow_install;
 			if(!is_root) {
-				Util::warn("You're using the `" BOLD_GREEN "-d" COLOR_RESET
+				Util::warn("You're using the `" BOLD_GREEN "-y" COLOR_RESET
 				"` flag without being root.");
 			}
 			break;
 
 		case 'n':
-			global_values.options |=  always_deny_install;
+			global_values.options |= always_deny_install;
+			break;
+
+		case 'A':
+			global_values.options |= allow_dangerous;
 			break;
 
 		case 'i':
@@ -198,7 +202,6 @@ int main(int argc, char *argv[])
 
 	if(file_names.empty())
 		file_names.emplace_back(default_file);
-
 
 	Util::generate_object_dir_name(); //save some time
 	//start building yay

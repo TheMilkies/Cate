@@ -17,5 +17,6 @@ void help()
 	hl_flag("-f") ":  rebuild class's object files; force rebuild\n"
 	hl_flag("-v") ":  shows version\n"
 	hl_flag("-h") ":  shows help (this)\n"
+	hl_flag("-A") ":  " BOLD_RED "PLEASE DO NOT USE THIS. " COLOR_RESET "disables the security measure\n"
 	;
 }

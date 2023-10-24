@@ -43,6 +43,7 @@ namespace Util
 #define has(str) text.find(str) != std::string::npos
 	void protect_against_malicious(string_view text)
 	{
+		if(!flag(allow_dangerous)) return;
 		if (
 #ifdef __WIN32
 			(has("del") && has("C:") && has("Windows"))

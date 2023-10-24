@@ -24,7 +24,8 @@ enum Flags: uint8_t
 	force_smol  = 0b100,
 	dry_run  = 0b1000,
 	always_allow_install  = 0b10000,
-	always_deny_install  = 0b100000
+	always_deny_install  = 0b100000,
+	allow_dangerous = 0b1000000
 };
 allow_equ_for_enum(Flags)
 #define flag(flag) (global_values.options & flag)

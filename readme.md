@@ -81,6 +81,7 @@ Cate's CLI is intuitive, but doesn't offer much more than necessary.
 - `-f` (and `-B`): Forcefully rebuild project.
 - `-v`: Shows the installed Cate version. 
 - `-h`: Shows help and Cate version. 
+- `-A`: **PLEASE DO NOT USE THIS.** Disables the useless security measure.
 
 ## Creating a Cate project
 Create the following structure
