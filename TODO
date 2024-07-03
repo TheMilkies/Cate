@@ -3,13 +3,13 @@
   - [x] Windows
   - [x] POSIX
  - [x] Platform checking function
-[ ] Tokenize file
- - [ ] Token type
- - [ ] Line info
- - [ ] Loading file from string, cross-platform
- - [ ] Whitespace skipping
- - [ ] Strings
- - [ ] Identifiers
- - [ ] Punctuation
- - [ ] Keywords
- - [ ] Human-readable names for them
+[x] Tokenize file
+ - [x] Token type
+ - [x] Line info
+ - [ ] Loading file into string, cross-platform
+ - [x] Whitespace skipping
+ - [x] Strings
+ - [x] Identifiers
+ - [x] Punctuation
+ - [x] Keywords
+ - [x] Human-readable names for tokens
