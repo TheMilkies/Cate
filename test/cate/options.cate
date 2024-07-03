@@ -1,8 +1,0 @@
-Project cpp_test
-.compiler = "g++"
-.files = {"fs_test.cpp"}
-.out = "cpp_test.out"
-.libs = {"stdc++fs"}
-.std = "c++17"
-.threading = true
-.build()

@@ -1,7 +1,0 @@
-subcate("static")
-
-Project test
-.libs = {greeter}
-.files = {"src/test/test.c"}
-.out = "a_test"
-.build()

@@ -1,6 +1,0 @@
-Project example;
-.files = {"src/main.c", "src/mmath.c"};
-.includes = {"include"};
-.flags = "-O3";
-.out = "project_example";
-.build();

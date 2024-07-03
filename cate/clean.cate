@@ -1,3 +1,0 @@
-Project a
-.files = {"src/**.cpp"}
-.clean()

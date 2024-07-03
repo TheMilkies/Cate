@@ -1,5 +1,0 @@
-Project cpp_test
-.files = {"library/main.c"}
-.out = "smol.out"
-.smol = true
-.build()

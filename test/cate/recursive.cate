@@ -1,9 +1,0 @@
-Project recursive_test
-.files = {recursive("recursive/*.c"), "recursive/subdir/*.c"}
-.out = "recursive.out"
-.build()
-
-Project subrecursive_test
-.files = {recursive("recursive/**.c")}
-.out = "subrecursive.out"
-.build()

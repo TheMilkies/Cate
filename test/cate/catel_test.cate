@@ -1,4 +1,0 @@
-Project catel_test
-.files = {"catel_test.c"}
-.out = "catel.out"
-.build()

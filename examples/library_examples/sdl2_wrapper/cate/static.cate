@@ -1,6 +1,0 @@
-Library sdlw(static);
-.flags = "-O3";
-.files = recursive("src/*.c");
-.includes = {"include"};
-.smol = true;
-.build();
