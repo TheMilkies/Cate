@@ -1,0 +1,15 @@
+[x] Target system
+ - [x] Target type
+  - [x] Windows
+  - [x] POSIX
+ - [x] Platform checking function
+[ ] Tokenize file
+ - [ ] Token type
+ - [ ] Line info
+ - [ ] Loading file from string, cross-platform
+ - [ ] Whitespace skipping
+ - [ ] Strings
+ - [ ] Identifiers
+ - [ ] Punctuation
+ - [ ] Keywords
+ - [ ] Human-readable names for them
