@@ -10,10 +10,13 @@
 	"hide-files.files": [],
 	"files.associations": {
 		"sysinfo.h": "c",
-		"system_functions.h": "c"
+		"system_functions.h": "c",
+		"cmd_args.h": "c",
+		"target.h": "c",
+		"dynamic_array.h": "c",
+		"error.h": "c"
 	},
 	"cSpell.words": [
 		"subrecursion"
-	],
-	"editor.fontSize": 18
+	]
 }

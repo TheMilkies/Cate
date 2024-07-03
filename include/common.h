@@ -11,4 +11,9 @@
     };
 #endif
 
+#define todo(text) {\
+    fputs(text " is not implemented\n", stderr);\
+    exit(1);\
+}
+
 #endif // CATE_COMMON_H
