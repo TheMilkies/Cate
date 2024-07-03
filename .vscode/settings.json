@@ -68,9 +68,13 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
 		"map": "cpp",
-		"set": "cpp"
+		"set": "cpp",
+		"error.h": "c",
+		"stdio.h": "c",
+		"tokenizer.h": "c"
 	},
 	"cSpell.words": [
 		"subrecursion"
-	]
+	],
+	"editor.fontSize": 18
 }
