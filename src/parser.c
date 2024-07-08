@@ -240,8 +240,8 @@ void parse(Parser* p) {
             break;
         }
     }
-
-    puts(p->cur_class->flags.text);
+    if(opened_blocks)
+        error("unclosed if statements", 0);
 }
 
 static uint8_t parse_if_part(Parser* p) {
