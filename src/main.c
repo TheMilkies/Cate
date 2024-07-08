@@ -1,5 +1,5 @@
 #include "cmd_args.h"
-#include "target.h"
+#include "parser.h"
 #include "error.h"
 #include "common.h"
 #include "catel.h"
@@ -8,6 +8,7 @@
 
 #define CATE_VERSION "3.0"
 CmdArgs cmd_args = {0};
+CateContext ctx = {0};
 
 static char *shift_args(int *argc, char ***argv) {
     if(*argc <= 0) return 0;
@@ -38,7 +39,9 @@ int main(int argc, char *argv[]) {
 
     //handle catel (god damn it milkies!)
     static CatelValues defaults = {0};
-    catel_init(&defaults);
+    // catel_init(&defaults);
+
+    static CateContext ctx = {0};
 
     da_type(char*) files = {0};
     while (argc > 0) {
@@ -118,14 +121,18 @@ int main(int argc, char *argv[]) {
     }
 
     if(files.size == 0) {
-        puts(defaults.file);
-        puts(defaults.dir);
+        puts(defaults.file_path);
         cate_error("no file given and catel is not implemented yet");
         return 1;
     }
 
-    todo("the rest of the main function");
+    for (size_t i = 0; i < files.size; ++i) {
+        cate_open(files.data[i]);
+        context_reset();
+    }
+
     da_free(files);
+    context_free();
     return 0;
 }
 
