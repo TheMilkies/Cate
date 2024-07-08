@@ -3,6 +3,7 @@
 #include "error.h"
 #include "common.h"
 #include "catel.h"
+#include "system_functions.h"
 #include <vendor/dynamic_array.h>
 #include <ctype.h>
 
@@ -140,7 +141,60 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+static FILE* create_file(const char* name) {
+    FILE* f = fopen(name, "wb");
+    if(!f) {
+        cate_error("can't create file \"%s\"", name);
+        exit(1);
+    }
+    return f;
+}
+
 static int init_project(const char* const name) {
-    todo("init_project()");
+    if(cate_sys_file_exists("src/main.c") && cate_sys_file_exists(".catel")) {
+        cate_error("project already inited");
+        return 1;
+    }
+
+    cate_sys_mkdir("cate");
+    cate_sys_mkdir("src");
+    cate_sys_mkdir("include");
+    FILE* src = create_file("src/main.c");
+    FILE* build = create_file("cate/build.cate");
+    FILE* debug = create_file("cate/debug.cate");
+    FILE* catel = create_file(".catel");
+
+    fprintf(src,
+        "#include <stdio.h>" NL
+        "#include <stdlib.h>" NL
+        NL
+        "int main(int argc, char* argv[]) {" NL
+            "\tputs(\"Hello, World!\");" NL
+            "\treturn 0;" NL
+        "}"
+    );
+    fclose(src);
+
+    fprintf(catel, "def debug.cate");
+    fclose(catel);
+
+    fprintf(debug, 
+        "Project %s" NL
+        ".flags = \"-ggdb3\"" NL , name);
+    fprintf(build,
+        "smol = true" NL
+        "Project %s" NL
+        ".flags = \"-O3\"" NL, name);
+
+    static const char* shared =
+        ".files = {recursive(\"src/*.c\")}" NL
+        ".includes = {\"include\"}" NL
+        ".build()";
+    fputs(shared, debug);
+    fputs(shared, build);
+
+    fclose(debug);
+    fclose(build);
+
     return 0;
 }
