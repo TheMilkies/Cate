@@ -74,6 +74,10 @@ int main(int argc, char *argv[]) {
         flag('y', ALWAYS_INSTALL)
         flag('n', NEVER_INSTALL)
 
+        case 'A':
+            cate_warn("the -A flag is deprecated.");
+            break;
+
     #define get_val(kind)\
         if(arg[2]) val = &arg[2];\
         else if(argc != 0) val = shift_args();\
