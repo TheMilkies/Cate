@@ -32,7 +32,7 @@ void cate_help(int exit_code) {
     hl_flag("-y") ":  install without asking (always answer 'y')" NL
     hl_flag("-d") ":  print all commands in script without running them. (dry run)" NL
 	hl_flag("-n") ":  don't install (always answer 'n')" NL
-	hl_flag("-D") ":  disable all " hl_func("system()") " calls in script" NL
+	hl_flag("-D") ":  disable all " hl_func("system") " calls in script" NL
 	hl_flag("-S") ":  smolize even if not set in script" NL
     "\t" BOLD GREEN "-t" hl_var("N") ": set thread count to " PURPLE BOLD "N" NL
 	hl_flag("-f") ":  rebuild class's object files; force rebuild" NL
