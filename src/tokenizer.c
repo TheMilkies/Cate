@@ -63,7 +63,6 @@ uint8_t cate_tokenize(string_view *line, TokensArray *tokens) {
 
                 if(i >= line->length) {
                     cate_error("unterminated comment");
-                    exit(1);
                 }
             }
             else goto bad;

@@ -9,8 +9,6 @@ static void error(Parser* p, const char* fmt, ...) {
     cate_error_line_va(p->cur->line, fmt, args);
     if(p->cur_class)
         p->cur_class->bools |= CLASS_BOOL_HAS_ISSUE;
-    //yea we should honestly just exit.
-    exit(-1);
 }
 #define error(fmt, ...) error(p, fmt, __VA_ARGS__)
 
@@ -31,10 +29,8 @@ void cate_open(const char* path) {
     Parser p = {0};
     string_view file = {0};
     int err = sv_load_file(&file, path);
-    if(err) {
+    if(err)
         cate_error("can not open file %s", path);
-        exit(1);
-    }
     err = cate_tokenize(&file, &p.tokens);
     if(err) exit(1);
 

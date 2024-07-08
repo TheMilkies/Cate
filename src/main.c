@@ -170,7 +170,6 @@ static FILE* create_file(const char* name) {
     FILE* f = fopen(name, "wb");
     if(!f) {
         cate_error("can't create file \"%s\"", name);
-        exit(1);
     }
     return f;
 }

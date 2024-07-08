@@ -85,7 +85,6 @@ static int _open(const char *path, int flags) {
     int f = open(path, flags);
     if(f < 0) {
         cate_error("failed to open file \"%s\"");
-        exit(-1);
     }
     return f;
 }
@@ -108,7 +107,6 @@ int cate_sys_copy(char* path1, char* path2) {
     int result = sendfile(out, in, &written, length);
     if(result == -1 || written != length) {
         cate_error("failed to copy \"%s\" to \"%s\"", path1, path2);
-        exit(-2);
     }
     close(in);
     close(out);
@@ -174,7 +172,6 @@ restart:
 int cate_sys_remove(const char* path) {
     if(strncmp(path, "/", 2) == 0 || strncmp(path, "/home", 6) == 0) {
         cate_error("script tried to remove system directories.");
-        exit(-1);
     }
 
     //TODO: implement remove()
@@ -185,7 +182,6 @@ static __pid_t _fork(const char* for_what) {
     __pid_t pid = fork();
     if(pid == -1) {
         cate_error("failed to create new process for %s", for_what);
-        exit(1);
     }
     return pid;
 }
@@ -203,7 +199,6 @@ struct CateSysProcess cate_sys_process_create(char* const* args) {
     if(proc.id == 0) {
         execvp(args[0], &args[0]);
         cate_error("program \"%s\" is not installed", args[0]);
-        exit(1);
     }
     return proc;
 }

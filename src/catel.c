@@ -100,5 +100,4 @@ static void error(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     cate_error_va(fmt, args);
-    exit(-1);
 }
