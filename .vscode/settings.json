@@ -15,7 +15,13 @@
 		"target.h": "c",
 		"dynamic_array.h": "c",
 		"error.h": "c",
-		"errno.h": "c"
+		"errno.h": "c",
+		"string_view.h": "c",
+		"parser.h": "c",
+		"class.h": "c",
+		"string_table.h": "c",
+		"tokenizer.h": "c",
+		"stdarg.h": "c"
 	},
 	"cSpell.words": [
 		"subrecursion"

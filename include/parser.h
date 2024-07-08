@@ -4,7 +4,7 @@
 #include "tokenizer.h"
 
 struct Globals {
-    string_view compiler, std;
+    string_view compiler, standard;
     ClassBools bools;
 };
 

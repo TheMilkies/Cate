@@ -39,6 +39,12 @@ typedef struct {
     string_view name, out_name, compiler, build_dir, standard,
                 flags, final_flags;
 
+    struct {
+        union {
+            LibraryKind kind;
+        } lib;
+    } as;
+    
     ClassBools bools;
     ClassKind kind;
 } CateClass;
