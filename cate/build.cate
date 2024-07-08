@@ -5,5 +5,6 @@ Project cate
 .std = "c99"
 .incs = {"." "include"}
 .threading = true
+.defs = {"_DEFAULT_SOURCE"}
 .build()
 //.install()

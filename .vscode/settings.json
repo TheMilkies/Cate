@@ -21,7 +21,8 @@
 		"class.h": "c",
 		"string_table.h": "c",
 		"tokenizer.h": "c",
-		"stdarg.h": "c"
+		"stdarg.h": "c",
+		"stat.h": "c"
 	},
 	"cSpell.words": [
 		"subrecursion"
