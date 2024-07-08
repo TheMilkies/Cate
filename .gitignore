@@ -2,7 +2,4 @@ cate/build/*.o
 *.o
 out/*
 release/
-a_test
-**/out/lib*.a
-**/out/lib*.so
-benchmark.cpp
+test.cate
