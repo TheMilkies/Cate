@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     //handle catel (god damn it milkies!)
     static CatelValues defaults = {0};
-    // catel_init(&defaults);
+    catel_init(&defaults);
 
     static CateContext ctx = {0};
 
@@ -122,7 +122,24 @@ int main(int argc, char *argv[]) {
         } break;
 
         case 'l': {
-            todo("the -l flag");
+            struct CateSysDirectory* d = cate_sys_open_dir(defaults.dir);
+            if(!d) {
+                cate_error("can't open default directory!");
+                return 1;
+            }
+
+            //TODO: highlight default file
+            struct CateSysDirEntry ent = {0};
+            printf(list_color);
+            while (cate_sys_dir_get(d, &ent)) {
+                string_view name = sv_from_cstr(ent.name);
+                if(sv_ends_with(&name, ".cate", 5)) {
+                    printf(sv_fmt" ", name.length-5, name.text);
+                }
+            }
+            printf(COLOR_RESET);
+            cate_sys_dir_close(d);
+            return 0;
         } break;
         
         default:
@@ -135,7 +152,6 @@ int main(int argc, char *argv[]) {
     }
 
     if(files.size == 0) {
-        puts(defaults.file_path);
         cate_error("no file given and catel is not implemented yet");
         return 1;
     }

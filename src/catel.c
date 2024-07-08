@@ -26,12 +26,9 @@ void catel_init(CatelValues* c) {
         strncpy(c->dir, "./", 3);
     }
 
-    if(!cate_sys_file_exists(".catel") && !c->file_path[0]) {
-        cate_error("no catefile provided, have some help");
-        cate_help(1);
+    if(!cate_sys_file_exists(".catel")) {
+        return;
     }
-
-    return;
 
     // string_view file = {0};
     // int err = sv_load_file(&file, ".catel");
