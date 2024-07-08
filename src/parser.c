@@ -95,6 +95,9 @@ static void optional_rparen(Parser* p) {
 static void set_class_bool(Parser* p, ClassBools* original, ClassBools bit);
 static LibraryKind expect_library_kind(Parser* p);
 static ClassBools get_bool_property(Parser* p, string_view* v);
+static string_view* get_string_property(Parser* p,
+                                        CateClass* c, string_view* v);
+static void set_class_string(Parser* p, string_view* v);
 static uint8_t parse_if_part(Parser* p);
 #define cur p->cur
 
@@ -160,6 +163,16 @@ void parse(Parser* p) {
             ClassBools bp = get_bool_property(p, &child->text);
             if(bp) {
                 set_class_bool(p, &p->cur_class->bools, bp);
+                continue;
+            }
+            }
+
+            //string properties
+            {
+            string_view* sp =
+                get_string_property(p, p->cur_class, &child->text);
+            if(sp) {
+                set_class_string(p, sp);
                 continue;
             }
             }
