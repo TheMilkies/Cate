@@ -14,7 +14,8 @@
 		"cmd_args.h": "c",
 		"target.h": "c",
 		"dynamic_array.h": "c",
-		"error.h": "c"
+		"error.h": "c",
+		"errno.h": "c"
 	},
 	"cSpell.words": [
 		"subrecursion"

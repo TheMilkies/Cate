@@ -2,6 +2,9 @@
 #define CATE_TARGET_H
 #include <vendor/string_view.h>
 #include <stdint.h>
+#ifndef PATH_MAX
+#define PATH_MAX 2048
+#endif
 
 typedef struct CateOSTarget {
     string_view dynamic_ending;

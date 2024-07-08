@@ -2,6 +2,7 @@
 #include "target.h"
 #include "error.h"
 #include "common.h"
+#include "catel.h"
 #include <vendor/dynamic_array.h>
 #include <ctype.h>
 
@@ -18,12 +19,12 @@ static char *shift_args(int *argc, char ***argv) {
 #define shift_args() shift_args(&argc, &argv)
 
 static int init_project(const char* const name);
-static void cate_help(int exit_code) {
+void cate_help(int exit_code) {
     puts(BOLD CYAN
         "Cate v" CATE_VERSION " by TheMilkies and Ayinsonu." NL
         "usage: "COLOR_RESET"cate " BOLD GREEN "[flags] " "[filename]" NL
         NL
-        "flags:\n"
+        "flags:" NL
         ""
         //TODO: Add flags here
     );
@@ -34,6 +35,11 @@ int main(int argc, char *argv[]) {
     shift_args(); //skip the program name
     //preallocate 128kb so malloc won't call sbrk constantly
     free(malloc(128*1024));
+
+    //handle catel (god damn it milkies!)
+    static CatelValues defaults = {0};
+    catel_init(&defaults);
+
     da_type(char*) files = {0};
     while (argc > 0) {
         char* arg  = shift_args();
@@ -112,10 +118,14 @@ int main(int argc, char *argv[]) {
     }
 
     if(files.size == 0) {
+        puts(defaults.file);
+        puts(defaults.dir);
         cate_error("no file given and catel is not implemented yet");
         return 1;
     }
 
+    todo("the rest of the main function");
+    da_free(files);
     return 0;
 }
 
