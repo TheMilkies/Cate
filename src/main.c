@@ -7,7 +7,7 @@
 #include <vendor/dynamic_array.h>
 #include <ctype.h>
 
-#define CATE_VERSION "3.0"
+#define CATE_VERSION "3.0.0"
 CmdArgs cmd_args = {0};
 CateContext ctx = {0};
 
@@ -23,8 +23,8 @@ static char *shift_args(int *argc, char ***argv) {
 static int init_project(const char* const name);
 void cate_help(int exit_code) {
     puts(BOLD CYAN
-    "Cate v" CATE_VERSION " by TheMilkies and Ayinsonu." NL
-    "usage: "COLOR_RESET"cate " BOLD GREEN "[flags] " PURPLE "[filename]" NL
+    "Cate v" CATE_VERSION " by TheMilkies and " PURPLE"Ayin" YELLOW"Sonu." NL
+    CYAN "usage: "COLOR_RESET"cate " BOLD GREEN "[flags] " PURPLE "[filename]" NL
     NL
     BOLD GREEN "flags:" NL
     hl_flag("-l") ":  list all catefiles in default directory" NL
@@ -50,8 +50,6 @@ int main(int argc, char *argv[]) {
     //handle catel (god damn it milkies!)
     static CatelValues defaults = {0};
     catel_init(&defaults);
-
-    static CateContext ctx = {0};
 
     da_type(char*) files = {0};
     while (argc > 0) {
