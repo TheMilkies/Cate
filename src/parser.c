@@ -253,7 +253,9 @@ static uint8_t parse_if_part(Parser* p) {
 }
 
 static void skip_block(Parser* p, int32_t* opened_blocks) {
-    while(!match(TOK_RCURLY)) {next();}
+    while(p->i <= p->tokens.size && cur->kind != TOK_RCURLY) {
+        next();
+    }
     expect(TOK_RCURLY);
     --*opened_blocks;
 }
