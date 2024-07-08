@@ -14,11 +14,12 @@
  - [x] Keywords
  - [x] Human-readable names for tokens
 
-[?] CLI
- - [?] Help command
+[x] CLI
+ - [x] Help command
  - [x] Command line arguments
- - [ ] List command
- - [ ] Project initialization
+ - [?] List command
+  - [ ] Highlight the main file
+ - [x] Project initialization
 
 [ ] Catel
  - [ ] 

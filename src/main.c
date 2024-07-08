@@ -168,9 +168,8 @@ int main(int argc, char *argv[]) {
 
 static FILE* create_file(const char* name) {
     FILE* f = fopen(name, "wb");
-    if(!f) {
+    if(!f)
         cate_error("can't create file \"%s\"", name);
-    }
     return f;
 }
 
