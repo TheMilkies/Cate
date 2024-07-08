@@ -92,7 +92,10 @@ static void optional_rparen(Parser* p) {
         warn(p, "expected a ')' but i guess i don't need it");
 }
 
+static void set_class_bool(Parser* p, ClassBools* original, ClassBools bit);
 static LibraryKind expect_library_kind(Parser* p);
+static ClassBools get_bool_property(Parser* p, string_view* v);
+static uint8_t parse_if_part(Parser* p);
 #define cur p->cur
 
 static CateClass* new_class(Parser* p, ClassKind kind) {
@@ -141,6 +144,28 @@ void parse(Parser* p) {
                 error(sv_fmt" was not defined", sv_p(cur->text));
             }
             next();
+            goto parse_dot;
+        }   break;
+
+        case TOK_DOT: {
+        parse_dot:
+            expect(TOK_DOT);
+            if(!p->cur_class)
+                error("no object selected.", 0);
+
+            Token* child = expect(TOK_IDENTIFIER);
+
+            //bool property
+            {
+            ClassBools bp = get_bool_property(p, &child->text);
+            if(bp) {
+                set_class_bool(p, &p->cur_class->bools, bp);
+                continue;
+            }
+            }
+
+            error(
+                "property \""sv_fmt"\" doesn't exist", sv_p(child->text));
         }   break;
         
         default:
@@ -238,7 +263,7 @@ static SavedStringIndexes* get_array_property(Parser* p,
     return 0;
 }
 
-static void set_class_flag(Parser* p, ClassBools* original,
+static void set_class_bool(Parser* p, ClassBools* original,
                             ClassBools bit) {
     expect(TOK_ASSIGN);
     uint8_t v = expect_bool(p);
@@ -260,7 +285,7 @@ static uint8_t is_global(Parser* p) {
     ClassBools flags = get_bool_property(p, v);
     if(flags) {
         next();
-        set_class_flag(p, &g->bools, flags);
+        set_class_bool(p, &g->bools, flags);
         return 1;
     }
 
