@@ -34,7 +34,7 @@ typedef uint8_t ClassBools;
 typedef struct {
     CStringArray command_template;
 
-    SavedStringIndexes includes, defines, files, objects;
+    SavedStringIndexes includes, defines, files, libraries, objects;
 
     string_view name, out_name, compiler, build_dir, standard,
                 flags, final_flags;

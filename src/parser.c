@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "error.h"
+#include "common.h"
 #include <stdarg.h>
 
 static void error(Parser* p, const char* fmt, ...) {
@@ -112,6 +113,7 @@ static CateClass* new_class(Parser* p, ClassKind kind) {
     return &da_top(ctx.classes);
 }
 
+static uint8_t is_global(Parser* p);
 void parse(Parser* p) {
     globals_init(&p->globals);
     next();
@@ -130,6 +132,16 @@ void parse(Parser* p) {
             p->cur_class->as.lib.kind = expect_library_kind(p);
             optional_rparen(p);
             break;
+
+        case TOK_IDENTIFIER: {
+            if(is_global(p)) continue;
+
+            p->cur_class = find_class(&cur->text);
+            if(!p->cur_class) {
+                error(sv_fmt" was not defined", sv_p(cur->text));
+            }
+            next();
+        }   break;
         
         default:
             error("%s is not allowed", tok_as_text(cur->kind));
@@ -149,4 +161,119 @@ static LibraryKind expect_library_kind(Parser* p) {
         : LIBRARY_STATIC;
     next();
     return k;
+}
+
+static uint8_t expect_bool(Parser* p) {
+    if(cur->kind != TOK_TRUE && cur->kind != TOK_FALSE) {
+        error("expected a boolean value ("
+        traffic_light("true", " | ", "false")")", 0);
+    }
+    uint8_t v = cur->kind == TOK_TRUE;
+    next();
+    return v;
+}
+
+static string_view expect_string(Parser* p) {
+    if(cur->kind != TOK_STRING_LITERAL) {
+        error("expected a string literal (\"text\")",0);
+    }
+    string_view v = cur->text;
+    next();
+    return v;
+}
+
+static ClassBools get_bool_property(Parser* p, string_view* v) {
+    static_assert(CLASS_BOOL_END == 33, "added a flag? add it here.");
+    if (sv_equalc(v, "smol", 4)) {
+        return CLASS_BOOL_SMOL;
+    } else if (sv_equalc(v, "link", 4)) {
+        return CLASS_BOOL_LINK;
+    } else if (sv_equalc(v, "thread", 6)) {
+        return CLASS_BOOL_THREAD;
+    } else if (sv_equalc(v, "auto", 4)) {
+        return CLASS_BOOL_AUTO;
+    } else if (sv_equalc(v, "built", 5)) {
+        return CLASS_BOOL_BUILT;
+    }
+    return CLASS_BOOL_NONE;
+}
+
+static string_view* get_string_property(Parser* p,
+                                        CateClass* c, string_view* v) {
+    if(sv_equalc(v, "out", 3)) {
+        return &c->out_name;
+    } else if(sv_equalc(v, "cc", 2) || sv_equalc(v, "compiler", 8)) {
+        return &c->compiler;
+    } else if(sv_equalc(v, "std", 3) || sv_equalc(v, "standard", 8)) {
+        return &c->standard;
+    } else if(sv_equalc(v, "flags", 5)) {
+        return &c->flags;
+    } else if(sv_equalc(v, "final_flags", 11)) {
+        return &c->final_flags;
+    }
+    else if(sv_equalc(v, "obj_dir", 7)
+        ||  sv_equalc(v, "object_dir", 10)
+        ||  sv_equalc(v, "build_dir", 9)
+        ||  sv_equalc(v, "build_directory", 15)
+    ) {
+        return &c->build_dir;
+    }
+
+    return 0;
+}
+
+static SavedStringIndexes* get_array_property(Parser* p,
+                                        CateClass* c, string_view* v) {
+    if(sv_equalc(v, "files", 5)) {
+        return &c->files;
+    } else if(sv_equalc(v, "incs", 4) || sv_equalc(v, "includes", 8)
+    || sv_equalc(v, "include_paths", 13)) {
+        return &c->includes;
+    } else if(sv_equalc(v, "libs", 4) || sv_equalc(v, "libraries", 9)) {
+        return &c->libraries;
+    } else if(sv_equalc(v, "defs", 4) || sv_equalc(v, "definitions", 11)) {
+        return &c->defines;
+    }
+
+    return 0;
+}
+
+static void set_class_flag(Parser* p, ClassBools* original,
+                            ClassBools bit) {
+    expect(TOK_ASSIGN);
+    uint8_t v = expect_bool(p);
+    if(v)
+        *original |= bit;
+    else
+        *original &= ~bit;
+}
+
+static void set_class_string(Parser* p, string_view* v) {
+    expect(TOK_ASSIGN);
+    *v = expect_string(p);
+}
+
+static uint8_t is_global(Parser* p) {
+    struct Globals* const g = &p->globals;
+    string_view* const v = &cur->text;
+
+    ClassBools flags = get_bool_property(p, v);
+    if(flags) {
+        next();
+        set_class_flag(p, &g->bools, flags);
+        return 1;
+    }
+
+    //alright, maybe it's a string property?
+    if(sv_equalc(v, "cc", 2) || sv_equalc(v, "compiler", 8)) {
+        next();
+        set_class_string(p, &g->compiler);
+        return 1;
+    } else if(sv_equalc(v, "standard", 8) || sv_equalc(v, "std", 3)) {
+        next();
+        set_class_string(p, &g->standard);
+        return 1;
+    }
+
+    return 0;
 }
