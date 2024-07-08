@@ -22,3 +22,21 @@
 
 [ ] Catel
  - [ ] 
+
+[ ] Parser
+ - [x] Project
+ - [x] Library
+ - [x] Globals
+ - [x] Bool properties
+ - [x] String properties
+ - [ ] Array properties
+ - [x] If statements
+ - [ ] Recursive
+ - [ ] Functions
+ - [ ] Subcate
+ - [ ] Functions
+   - [ ] mkdir
+   - [ ] copy
+   - [ ] remove
+   - [ ] smolize
+   - [ ] print

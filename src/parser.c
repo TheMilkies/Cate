@@ -12,7 +12,7 @@ static void error(Parser* p, const char* fmt, ...) {
     //yea we should honestly just exit.
     exit(-1);
 }
-#define error(fmt, ...) error(p, fmt, __VA_ARGS__);
+#define error(fmt, ...) error(p, fmt, __VA_ARGS__)
 
 void cate_open(const char* path) {
     //struct CateFullPath open_path = {0};
@@ -61,7 +61,6 @@ static CateClass* find_class(string_view* name) {
     return 0;
 }
 
-#define match(k) (p->i <= p->tokens.size && p->cur->kind == k)
 static inline void next(Parser* p) {
     p->cur = &p->tokens.data[p->i++];
 }
@@ -84,6 +83,8 @@ static Token* expect(Parser* p, TokenKind k) {
     return backup;
 }
 #define expect(k) expect(p, k)
+#define cur p->cur
+#define match(k) (p->i <= p->tokens.size && cur->kind == k)
 
 static void optional_rparen(Parser* p) {
     if(match(TOK_RPAREN))
@@ -99,7 +100,8 @@ static string_view* get_string_property(Parser* p,
                                         CateClass* c, string_view* v);
 static void set_class_string(Parser* p, string_view* v);
 static uint8_t parse_if_part(Parser* p);
-#define cur p->cur
+static uint8_t parse_cond(Parser* p);
+static void skip_block(Parser* p, int32_t* opened_blocks);
 
 static CateClass* new_class(Parser* p, ClassKind kind) {
     string_view name = expect(TOK_IDENTIFIER)->text;
@@ -123,6 +125,7 @@ static uint8_t is_global(Parser* p);
 void parse(Parser* p) {
     globals_init(&p->globals);
     next();
+    int32_t opened_blocks = 0;
 
     while (p->i <= p->tokens.size) {
         switch (cur->kind) {
@@ -180,12 +183,141 @@ void parse(Parser* p) {
             error(
                 "property \""sv_fmt"\" doesn't exist", sv_p(child->text));
         }   break;
+
+        case TOK_IF: {
+            if(opened_blocks)
+                error("nested ifs are not supported",0);
+            uint8_t found_true = 0;
+            uint8_t cond = 0;
+            /* this is very dumb!
+            it tries to find one true thing, then just skips the rest */
+
+        restart_if:
+            cond = parse_if_part(p);
+
+            expect(TOK_LCURLY);
+            ++opened_blocks;
+            
+            if(found_true) continue;
+            if(cond)
+                found_true = 1;
+            else
+                skip_block(p, &opened_blocks);
+
+            if(match(TOK_ELSE)) {
+                next();
+                if(match(TOK_IF))
+                    goto restart_if;
+                
+                expect(TOK_LCURLY);
+                ++opened_blocks;
+                if(found_true)
+                    skip_block(p, &opened_blocks);
+            }
+
+        } break;
+
+        case TOK_ELSE: {
+            //dangling else, has to be false.
+            next();
+            if(match(TOK_IF))
+                parse_if_part(p);
+            expect(TOK_LCURLY);
+            ++opened_blocks;
+            skip_block(p, &opened_blocks);
+        }	break;
+
+        case TOK_RCURLY: {
+            --opened_blocks;
+            if(opened_blocks < 0) {
+                error("too many '}'",0);
+            }
+            next();
+        }	break;
         
         default:
             error("%s is not allowed", tok_as_text(cur->kind));
             break;
         }
     }
+
+    puts(p->cur_class->flags.text);
+}
+
+static uint8_t parse_if_part(Parser* p) {
+    expect(TOK_IF);
+    expect(TOK_LPAREN);
+    uint8_t cond = parse_cond(p);
+    optional_rparen(p);
+    return cond;
+}
+
+static void skip_block(Parser* p, int32_t* opened_blocks) {
+    while(!match(TOK_RCURLY)) {next();}
+    expect(TOK_RCURLY);
+    --*opened_blocks;
+}
+
+static uint8_t parse_cond(Parser* p) {
+    //invert count is just so we won't need recursion
+    uint8_t result = 0, invert_count = 0;
+restart:
+    switch (cur->kind) {
+    case TOK_EXCLAMATION_MARK:
+        next();
+        ++invert_count;
+        goto restart;
+        break;
+    
+    case TOK_TRUE: next(); result = 1; break;
+    case TOK_FALSE:next(); result = 0; break;
+
+    case TOK_IDENTIFIER: {
+        Token* name = expect(TOK_IDENTIFIER);
+        if(cate_platform_check(&name->text)) {
+            result = 1;
+            goto done;
+        }
+
+        ClassBools fg = get_bool_property(p, &name->text);
+        if(fg)
+            result = (p->globals.bools & fg) != 0;
+
+        if(match(TOK_DOT)) {
+            CateClass* c = find_class(&name->text);
+            if(!c) {
+                error("undefined class \""sv_fmt"\" in if",
+                        sv_p(name->text));
+                result = 0;
+            }
+            next();
+
+            Token* child = expect(TOK_IDENTIFIER);
+            fg = get_bool_property(p, &child->text);
+            if(!fg) {
+                error("invalid property in 'if'",0);
+                result = 0;
+            }
+            result = (c->bools & fg) != 0;
+        }
+    }	break;
+
+    case TOK_RPAREN:
+        error("expected a condition",0);
+        return 0;
+        break;
+
+    default: {
+        error("invalid condition",0);
+        return 0;
+    }   break;
+    }
+
+done:
+    if(invert_count && invert_count % 2 != 0)
+        result = !result;
+    
+    return result;
 }
 
 static LibraryKind expect_library_kind(Parser* p) {
