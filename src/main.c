@@ -149,6 +149,14 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    //both -y and -n can't be active at the same time
+    if(cmd_args.flags & CMD_ALWAYS_INSTALL
+    && cmd_args.flags & CMD_NEVER_INSTALL) {
+        cate_warn("both -y and -n are used, will ask");
+        //disable both
+        cmd_args.flags &= ~(CMD_ALWAYS_INSTALL | CMD_NEVER_INSTALL);
+    }
+
     if(files.size == 0) {
         cate_error("no file given and catel is not implemented yet");
         return 1;
