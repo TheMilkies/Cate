@@ -29,15 +29,15 @@ void cate_help(int exit_code) {
     BOLD GREEN "flags:" NL
     hl_flag("-l") ":  list all catefiles in default directory" NL
     "\t" BOLD GREEN "-i" hl_var("V") ": init a project with the name " PURPLE BOLD "V" NL
-	hl_flag("-f") ":  rebuild class's object files; force rebuild" NL
+	hl_flag("-f") ":  force rebuild" NL
     hl_flag("-d") ":  print all commands in script without running them. (dry run)" NL
     hl_flag("-y") ":  install without asking (always answer 'y')" NL
-	hl_flag("-n") ":  don't install (always answer 'n')" NL
+	hl_flag("-n") ":  never install (always answer 'n')" NL
 	hl_flag("-D") ":  disable all " hl_func("system") " calls in script" NL
     "\t" BOLD GREEN "-t" hl_var("N") ": set thread count to " BOLD_PURPLE "N" NL
 	hl_flag("-S") ":  smolize even if not set in script" NL
-	hl_flag("-v") ":  shows version" NL
-	hl_flag("-h") ":  shows help (this)"
+	hl_flag("-v") ":  show version" NL
+	hl_flag("-h") ":  show help (this)"
     );
     exit(exit_code);
 }
