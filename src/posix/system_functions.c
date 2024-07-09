@@ -80,8 +80,8 @@ static ssize_t sendfile(int out, int in, off_t* offset, size_t size) {
 }
 #endif
 
-static int _open(const char *path, int flags) {
-    int f = open(path, flags);
+static int _open(const char *path, int flags, int opt) {
+    int f = open(path, flags, opt);
     if(f < 0) {
         cate_error("failed to open file \"%s\"");
     }
@@ -89,28 +89,26 @@ static int _open(const char *path, int flags) {
 }
 
 int cate_sys_copy(char* path1, char* path2) {
-    int in =  _open(path1, O_RDONLY);
-    int out = _open(path1, O_WRONLY | O_CREAT);
+    int result = 1;
+    int in =  _open(path1, O_RDONLY, 0);
+    int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
-    //get size
-    size_t length = 0;
-    //save some stack space, sendfile will need 4k of it
-    {
-        struct stat st;
-        stat(path1, &st);
-        length = st.st_size;
+    struct stat st;
+    if(fstat(in, &st) == -1) {
+        result = 0;
+        goto bad;
     }
 
     //i ported sendfile because it's the easiest API... here
-    off_t written = 0;
-    int result = sendfile(out, in, &written, length);
-    int exit = 1;
-    if(result == -1 || written != length) {
-        exit = 0;
-    }
+    off_t offset = 0;
+    int sent = sendfile(out, in, &offset, st.st_size);
+    if(sent == -1)
+        result = 0;
+
+bad:
     close(in);
     close(out);
-    return exit;
+    return result;
 }
 
 int cate_sys_move(char* path1, char* path2) {

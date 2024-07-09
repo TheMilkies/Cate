@@ -36,7 +36,7 @@
  - [ ] Subcate
  - [?] Functions
    - [x] mkdir
-   - [ ] copy
+   - [x] copy
    - [ ] remove
    - [x] move
    - [ ] smolize
