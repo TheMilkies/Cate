@@ -1,0 +1,11 @@
+smol = true
+Project cate
+.files = {"src/*.c" "src/posix/*.c"}
+.flags = "-O3 -march=native"
+.out = "out/cate"
+.std = "c99"
+.incs = {"." "include"}
+.threading = true
+.defs = {"_DEFAULT_SOURCE"}
+.build()
+//.install()

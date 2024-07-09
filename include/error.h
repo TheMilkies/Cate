@@ -26,6 +26,7 @@ void cate_warn_line(size_t line, const char* text);
 
 #define list_color CYAN
 #define hl_func(x) YELLOW x "()" COLOR_RESET
+#define hl_func_params(x,...) YELLOW x "(" PURPLE __VA_ARGS__ YELLOW ")" COLOR_RESET
 #define hl_var(x) PURPLE x COLOR_RESET
 #define hl_flag(x) "\033[1;32m\t" x COLOR_RESET
 #define traffic_light(good, sep, bad) GREEN good YELLOW sep RED bad COLOR_RESET

@@ -105,12 +105,13 @@ int cate_sys_copy(char* path1, char* path2) {
     //i ported sendfile because it's the easiest API... here
     off_t written = 0;
     int result = sendfile(out, in, &written, length);
+    int exit = 1;
     if(result == -1 || written != length) {
-        cate_error("failed to copy \"%s\" to \"%s\"", path1, path2);
+        exit = 0;
     }
     close(in);
     close(out);
-    return 1;
+    return exit;
 }
 
 int cate_sys_move(char* path1, char* path2) {

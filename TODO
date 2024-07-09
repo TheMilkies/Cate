@@ -35,9 +35,10 @@
  - [ ] Recursive
  - [ ] Functions
  - [ ] Subcate
- - [ ] Functions
-   - [ ] mkdir
+ - [?] Functions
+   - [x] mkdir
    - [ ] copy
    - [ ] remove
    - [ ] smolize
-   - [ ] print
+   - [x] print
+   - [x] error

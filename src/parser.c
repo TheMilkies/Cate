@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "error.h"
 #include "common.h"
+#include "system_functions.h"
 #include <stdarg.h>
 
 static void error(Parser* p, const char* fmt, ...) {
@@ -98,6 +99,8 @@ static void set_class_string(Parser* p, string_view* v);
 static uint8_t parse_if_part(Parser* p);
 static uint8_t parse_cond(Parser* p);
 static void skip_block(Parser* p, int32_t* opened_blocks);
+static string_view expect_string(Parser* p);
+static void run_function(Parser* p);
 
 static CateClass* new_class(Parser* p, ClassKind kind) {
     string_view name = expect(TOK_IDENTIFIER)->text;
@@ -140,6 +143,10 @@ void parse(Parser* p) {
 
         case TOK_IDENTIFIER: {
             if(is_global(p)) continue;
+            if(peek(p, 0) == TOK_LPAREN) {
+                run_function(p);
+                continue;
+            }
 
             p->cur_class = find_class(&cur->text);
             if(!p->cur_class) {
@@ -256,6 +263,14 @@ static void skip_block(Parser* p, int32_t* opened_blocks) {
     --*opened_blocks;
 }
 
+static CateClass* find_class_or_exit(Parser* p, string_view* name) {
+    CateClass* c = find_class(name);
+    if(!c) {
+        error("undefined class \""sv_fmt"\"", svptr_p(name));
+    }
+    return c;
+}
+
 static uint8_t parse_cond(Parser* p) {
     //invert count is just so we won't need recursion
     uint8_t result = 0, invert_count = 0;
@@ -282,12 +297,7 @@ restart:
             result = (p->globals.bools & fg) != 0;
 
         if(match(TOK_DOT)) {
-            CateClass* c = find_class(&name->text);
-            if(!c) {
-                error("undefined class \""sv_fmt"\" in if",
-                        sv_p(name->text));
-                result = 0;
-            }
+            CateClass* c = find_class_or_exit(p, &name->text);
             next();
 
             Token* child = expect(TOK_IDENTIFIER);
@@ -316,6 +326,78 @@ done:
         result = !result;
     
     return result;
+}
+
+static string_view string_or_out_file(Parser* p) {
+    if(match(TOK_STRING_LITERAL)) {
+        return expect_string(p);
+    }
+
+    if(!match(TOK_IDENTIFIER)) {
+        error("expected a string or class name, which'd be treated as outfile."
+        NL BOLD_CYAN "example: " COLOR_RESET
+        hl_func_params("print", "\"Hello!\"") " => \"Hello!\""
+        NL BOLD_CYAN "example: " COLOR_RESET
+        hl_func_params("print", "slib") " => \"libslib.a\""
+        ,0);
+    }
+
+    CateClass* c = find_class_or_exit(p, &cur->text);
+    if(!c->bools & CLASS_BOOL_BUILT) {
+        error("can't use \""sv_fmt"\"'s outfile "
+        "because it wasn't build", sv_p(c->name));
+    }
+    next();
+    return c->out_name;
+}
+
+static void run_function(Parser* p) {
+    string_view fn = expect(TOK_IDENTIFIER)->text;
+    expect(TOK_LPAREN);
+
+    if (sv_equalc(&fn, "mkdir", 5) || sv_equalc(&fn, "create_directory", 16)) {
+        string_view dir = expect_string(p);
+        if(!cate_sys_mkdir(dir.text)) {
+            error("failed to create directory \""sv_fmt"\"",
+                sv_p(dir));
+        }
+    }
+
+    else if (sv_equalc(&fn, "print", 5) || sv_equalc(&fn, "error", 5)) {
+        uint8_t is_err = fn.text[0] == 'e';
+        FILE* out = stdout;
+        if(is_err) {
+            out = stderr;
+            fprintf(out, BOLD_RED "Script error: " COLOR_RESET);
+        }
+
+        while (!match(TOK_RPAREN)) {
+            if(!match(TOK_STRING_LITERAL) && !match(TOK_RPAREN)) {
+                error("only strings are allowed in "hl_func(sv_fmt), sv_p(fn));
+                next();
+                break;
+            }
+            fprintf(out, sv_fmt" ", sv_p(cur->text));
+            next();
+        }
+        fprintf(out, "\n");
+        if(is_err) exit(4);
+    }
+
+    else if (sv_equalc(&fn, "copy", 4)) {
+        string_view f1 = string_or_out_file(p);
+        string_view f2 = string_or_out_file(p);
+        if(!cate_sys_copy(f1.text, f2.text))
+            cate_error("failed to copy \"%s\" to \"%s\"",
+                f1.text, f2.text);
+    }
+    
+    else {
+        error("invalid function \""hl_func(sv_fmt)"()\"", sv_p(fn));
+        while(!match(TOK_RPAREN)) next();
+    }
+
+    optional_rparen(p);
 }
 
 static LibraryKind expect_library_kind(Parser* p) {
