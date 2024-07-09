@@ -391,6 +391,14 @@ static void run_function(Parser* p) {
             cate_error("failed to copy \"%s\" to \"%s\"",
                 f1.text, f2.text);
     }
+
+    else if (sv_equalc(&fn, "move", 4)) {
+        string_view f1 = string_or_out_file(p);
+        string_view f2 = string_or_out_file(p);
+        if(!cate_sys_move(f1.text, f2.text))
+            cate_error("failed to move \"%s\" to \"%s\"",
+                f1.text, f2.text);
+    }
     
     else {
         error("invalid function \""hl_func(sv_fmt)"()\"", sv_p(fn));

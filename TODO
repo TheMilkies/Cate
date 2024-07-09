@@ -38,6 +38,7 @@
    - [x] mkdir
    - [ ] copy
    - [ ] remove
+   - [x] move
    - [ ] smolize
    - [x] print
    - [x] error
