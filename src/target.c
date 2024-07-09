@@ -1,10 +1,10 @@
 #include "target.h"
 
 CateOSTarget* cate_target = 
-#ifdef __linux__
-&cate_target_posix
-#elif __WIN32__
+#ifdef __WIN32
 &cate_target_windows
+#else
+&cate_target_posix
 #endif // OS check
 ;
 

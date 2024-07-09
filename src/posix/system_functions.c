@@ -1,7 +1,6 @@
 #include "system_functions.h"
 #include "error.h"
 #include "target.h"
-#include <sys/sysinfo.h> //get_nprocs()
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -14,7 +13,7 @@
 static inline int get_exit_code(int status);
 
 size_t cate_sys_get_core_count() {
-    return get_nprocs();
+    return sysconf(_SC_NPROCESSORS_ONLN)*2;
 }
 
 int cate_sys_file_exists(const char* path) {
