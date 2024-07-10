@@ -95,7 +95,10 @@ static LibraryKind expect_library_kind(Parser* p);
 static ClassBools get_bool_property(Parser* p, string_view* v);
 static string_view* get_string_property(Parser* p,
                                         CateClass* c, string_view* v);
+static SavedStringIndexes* get_array_property(Parser* p,
+                                        CateClass* c, string_view* v);
 static void set_class_string(Parser* p, string_view* v);
+static void set_class_array(Parser* p, SavedStringIndexes* arr);
 static uint8_t parse_if_part(Parser* p);
 static uint8_t parse_cond(Parser* p);
 static void skip_block(Parser* p, int32_t* opened_blocks);
@@ -179,6 +182,16 @@ void parse(Parser* p) {
                 get_string_property(p, p->cur_class, &child->text);
             if(sp) {
                 set_class_string(p, sp);
+                continue;
+            }
+            }
+
+            //array properties
+            {
+            SavedStringIndexes* arr =
+                get_array_property(p, p->cur_class, &child->text);
+            if(arr) {
+                set_class_array(p, arr);
                 continue;
             }
             }
@@ -509,6 +522,71 @@ static void set_class_bool(Parser* p, ClassBools* original,
 static void set_class_string(Parser* p, string_view* v) {
     expect(TOK_ASSIGN);
     *v = expect_string(p);
+}
+
+static void save_string(string_view* s, SavedStringIndexes* arr) {
+    size_t index = st_save_sv(&ctx.st, s);
+    da_append((*arr), index);
+}
+
+static inline void definitions(Parser* p) {
+    char buf[512] = {0};
+    string_view buf_as_sv = {.text = buf};
+
+    expect(TOK_LCURLY);
+    while (!match(TOK_RCURLY)) {
+        string_view def = expect_string(p);
+        if(def.length >= 512-3) //-3 for "-D" and null terminator
+            error("definition \""sv_fmt"\" is too long", sv_p(def));
+        if(def.length == 0) continue;
+        
+        //"def" -> "-Ddef" (save a step in the build)
+        strncat(buf, "-D", 3);
+        //since the '"' character is turned into a null,
+        //we add it to save a step (+1)
+        strncat(buf, def.text, def.length+1); 
+
+        //save it in the table
+        buf_as_sv.length = def.length+3;
+        save_string(&buf_as_sv, &p->cur_class->defines);
+
+        //clear the buffer
+        memset(buf, 0, buf_as_sv.length);
+    }
+    
+    expect(TOK_RCURLY);
+}
+
+static void set_class_array(Parser* p, SavedStringIndexes* arr) {
+    expect(TOK_ASSIGN);
+
+    if(arr == &p->cur_class->defines)
+        return definitions(p);
+    
+    if(match(TOK_RECURSIVE))
+        todo("direct item = recursive()");
+
+    expect(TOK_LCURLY);
+    while (!match(TOK_RCURLY)) {
+        switch (cur->kind) {
+        case TOK_RECURSIVE:
+            todo("recursive() in {}");
+            break;
+        
+        case TOK_IDENTIFIER:
+        case TOK_STRING_LITERAL: {
+            string_view item = string_or_out_file(p);
+            save_string(&item, arr);
+        }   break;
+        
+        default:
+            error("can't add %s to an array of strings",
+                tok_as_text(cur->kind));
+            break;
+        }
+    }
+    
+    expect(TOK_RCURLY);
 }
 
 static uint8_t is_global(Parser* p) {
