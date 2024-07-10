@@ -1,4 +1,5 @@
 #include "system_functions.h"
+#include "cmd_args.h"
 #include "error.h"
 #include "target.h"
 #include <unistd.h>
@@ -43,6 +44,10 @@ static inline int _recursive_mkdir(const char *dir) {
 }
 
 int cate_sys_mkdir(char* path) {
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        printf("mkdir -p %s\n", path);
+        return 1;
+    }
     return _recursive_mkdir(path);
 }
 
@@ -89,7 +94,12 @@ static int _open(const char *path, int flags, int opt) {
 }
 
 int cate_sys_copy(char* path1, char* path2) {
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        printf("cp %s %s\n", path1, path2);
+        return 1;
+    }
     int result = 1;
+
     int in =  _open(path1, O_RDONLY, 0);
     int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
@@ -112,10 +122,18 @@ bad:
 }
 
 int cate_sys_move(char* path1, char* path2) {
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        printf("mv %s %s\n", path1, path2);
+        return 1;
+    }
     return rename(path1, path2) == 0;
 }
 
 int cate_sys_system(const char* cmd) {
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        printf("sh \"%s\"\n", cmd);
+        return 0;
+    }
     int status = system(cmd);
     return get_exit_code(status);
 }
@@ -168,6 +186,10 @@ restart:
 }
 
 int cate_sys_remove(const char* path) {
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        printf("rm %s\n", path);
+        return 1;
+    }
     if(strncmp(path, "/", 2) == 0 || strncmp(path, "/home", 6) == 0) {
         cate_error("script tried to remove system directories.");
     }
