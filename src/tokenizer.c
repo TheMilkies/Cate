@@ -5,7 +5,7 @@
 #include "error.h"
 
 static void maybe_keyword(Token* t) {
-    static_assert(TOK_COUNT_SIZE == 21,
+    static_assert(TOK_COUNT_SIZE == 19,
         "added token types? if they are keywords; add them here");
     string_view *v = &t->text;
     if(sv_equalc(v, "Project", 7)) {
@@ -23,10 +23,6 @@ static void maybe_keyword(Token* t) {
         t->kind = TOK_TRUE;
     } else if(sv_equalc(v, "false", 5)) {
         t->kind = TOK_FALSE;
-    } else if(sv_equalc(v, "subcate", 7)) {
-        t->kind = TOK_SUBCATE;
-    } else if(sv_equalc(v, "system", 6)) {
-        t->kind = TOK_SYSTEM;
     } else if(sv_equalc(v, "if", 2)) {
         t->kind = TOK_IF;
     } else if(sv_equalc(v, "else", 4)) {
@@ -35,7 +31,7 @@ static void maybe_keyword(Token* t) {
 }
 
 uint8_t cate_tokenize(string_view *line, TokensArray *tokens) {
-    static_assert(TOK_COUNT_SIZE == 21,
+    static_assert(TOK_COUNT_SIZE == 20,
         "added token types? if they are not keywords; add them here");
     size_t i = 0, line_num = 1;
     uint8_t has_error = 0;
@@ -140,7 +136,7 @@ uint8_t cate_tokenize(string_view *line, TokensArray *tokens) {
 }
 
 const char* tok_as_text(TokenKind k) {
-    static_assert(TOK_COUNT_SIZE == 21,
+    static_assert(TOK_COUNT_SIZE == 19,
         "added token types? add their names here");
     static const char* const names[TOK_COUNT_SIZE] = {
         [TOK_NONE] = "end of file",
@@ -157,10 +153,8 @@ const char* tok_as_text(TokenKind k) {
         [TOK_RECURSIVE] = "'recursive'",
         [TOK_STRING_LITERAL] = "a string",
         [TOK_IDENTIFIER] = "an identifier",
-        [TOK_SYSTEM] = "'system'",
         [TOK_TRUE] = "'true'",
         [TOK_FALSE] = "'false'",
-        [TOK_SUBCATE] = "'subcate'",
         [TOK_IF] = "'if'",
         [TOK_ELSE] = "'else'",
         [TOK_EXCLAMATION_MARK] = "an '!'",

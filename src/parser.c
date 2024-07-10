@@ -252,20 +252,6 @@ void parse(Parser* p) {
             }
             next();
         }	break;
-
-        case TOK_SYSTEM: {
-            next();
-            expect(TOK_LPAREN);
-            string_view cmd = string_or_out_file(p);
-            optional_rparen(p);
-            if(cmd_args.flags & CMD_DISABLE_SYSTEM)
-                continue;
-
-            int status = cate_sys_system(cmd.text);
-            if(status != 0)
-                cate_error("command \"%s\" exited with code %i",
-                    cmd.text, status);
-        } break;
         
         default:
             error("%s is not allowed here", tok_as_text(cur->kind));
@@ -390,6 +376,18 @@ static void run_function(Parser* p) {
             error("failed to create directory \""sv_fmt"\"",
                 sv_p(dir));
         }
+    }
+
+    else if (sv_equalc(&fn, "system", 6)) {
+        string_view cmd = string_or_out_file(p);
+        optional_rparen(p);
+        if(cmd_args.flags & CMD_DISABLE_SYSTEM)
+            return;
+
+        int status = cate_sys_system(cmd.text);
+        if(status != 0)
+            cate_error("command \"%s\" exited with code %i",
+                cmd.text, status);
     }
 
     else if (sv_equalc(&fn, "print", 5) || sv_equalc(&fn, "error", 5)) {
