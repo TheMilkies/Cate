@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "error.h"
 #include "common.h"
+#include "cmd_args.h"
 #include "system_functions.h"
 #include <stdarg.h>
 
@@ -90,6 +91,7 @@ static void optional_rparen(Parser* p) {
         warn(p, "expected a ')' but i guess i don't need it");
 }
 
+static string_view string_or_out_file(Parser* p);
 static void set_class_bool(Parser* p, ClassBools* original, ClassBools bit);
 static LibraryKind expect_library_kind(Parser* p);
 static ClassBools get_bool_property(Parser* p, string_view* v);
@@ -250,9 +252,23 @@ void parse(Parser* p) {
             }
             next();
         }	break;
+
+        case TOK_SYSTEM: {
+            next();
+            expect(TOK_LPAREN);
+            string_view cmd = string_or_out_file(p);
+            optional_rparen(p);
+            if(cmd_args.flags & CMD_DISABLE_SYSTEM)
+                continue;
+
+            int status = cate_sys_system(cmd.text);
+            if(status != 0)
+                cate_error("command \"%s\" exited with code %i",
+                    cmd.text, status);
+        } break;
         
         default:
-            error("%s is not allowed", tok_as_text(cur->kind));
+            error("%s is not allowed here", tok_as_text(cur->kind));
             break;
         }
     }
