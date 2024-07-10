@@ -49,6 +49,10 @@ typedef struct {
     ClassKind kind;
 } CateClass;
 
+void class_build(CateClass* c);
+void class_clean(CateClass* c);
+void class_install(CateClass* c);
+
 struct CateFullPath {
     char x[PATH_MAX];
 };
@@ -63,5 +67,7 @@ extern CateContext ctx;
 
 void context_free();
 void context_reset();
+
+void save_string(string_view* s, SavedStringIndexes* arr);
 
 #endif // CATE_CLASS_H

@@ -106,6 +106,7 @@ static uint8_t parse_cond(Parser* p);
 static void skip_block(Parser* p, int32_t* opened_blocks);
 static string_view expect_string(Parser* p);
 static void run_function(Parser* p);
+static void class_method(Parser* p);
 
 static CateClass* new_class(Parser* p, ClassKind kind) {
     string_view name = expect(TOK_IDENTIFIER)->text;
@@ -167,6 +168,10 @@ void parse(Parser* p) {
             if(!p->cur_class)
                 error("no object selected.", 0);
 
+            if(peek(p, 0) == TOK_LPAREN) {
+                class_method(p);
+                continue;
+            }
             Token* child = expect(TOK_IDENTIFIER);
 
             //bool property
@@ -366,6 +371,23 @@ static string_view string_or_out_file(Parser* p) {
     return c->out_name;
 }
 
+static void class_method(Parser* p) {
+    string_view fn = expect(TOK_IDENTIFIER)->text;
+    expect(TOK_LPAREN);
+
+    #define method(name)\
+    if(sv_equalc(&fn, #name, sizeof(#name)/sizeof(#name[0])-1)) {\
+        class_ ## name (p->cur_class);\
+    }
+
+    method(build)
+    method(clean)
+    method(install)
+
+    #undef method
+    optional_rparen(p);
+}
+
 static void run_function(Parser* p) {
     string_view fn = expect(TOK_IDENTIFIER)->text;
     expect(TOK_LPAREN);
@@ -540,11 +562,6 @@ static void set_class_bool(Parser* p, ClassBools* original,
 static void set_class_string(Parser* p, string_view* v) {
     expect(TOK_ASSIGN);
     *v = expect_string(p);
-}
-
-static void save_string(string_view* s, SavedStringIndexes* arr) {
-    size_t index = st_save_sv(&ctx.st, s);
-    da_append((*arr), index);
 }
 
 static inline void definitions(Parser* p) {
