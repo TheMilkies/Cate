@@ -378,6 +378,7 @@ static void class_method(Parser* p) {
     #define method(name)\
     if(sv_equalc(&fn, #name, sizeof(#name)/sizeof(#name[0])-1)) {\
         class_ ## name (p->cur_class);\
+        goto done;\
     }
 
     method(build)
@@ -385,6 +386,7 @@ static void class_method(Parser* p) {
     method(install)
 
     #undef method
+done:
     optional_rparen(p);
 }
 

@@ -10,6 +10,16 @@ static size_t round_to_pow2(size_t n) {
     return n;
 }
 
+void st_init(StringTable* st, size_t size) {
+    st->buf = calloc(size, sizeof(char));
+    if(!st->buf) {
+        fprintf(stderr, "\ncate can't allocate enough memory.\n");
+        exit(-2);
+    }
+    st->capacity = size;
+    st->length = 0;
+}
+
 void st_free(StringTable* st) {
     free(st->buf);
     memset(st, 0, sizeof(*st));

@@ -44,8 +44,10 @@ void cate_help(int exit_code) {
 
 int main(int argc, char *argv[]) {
     shift_args(); //skip the program name
-    //preallocate 128kb so malloc won't call sbrk constantly
-    free(malloc(128*1024));
+    //128KB is overkill for most catefiles but it speeds up everything
+    st_init(&ctx.st, 128*1024);
+    //avoid calling sbrk() a lot
+    free(malloc(sizeof(STIndex)*10*10));
 
     //handle catel (god damn it milkies!)
     static CatelValues defaults = {0};
