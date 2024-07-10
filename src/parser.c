@@ -426,6 +426,10 @@ static void run_function(Parser* p) {
             cate_error("failed to move \"%s\" to \"%s\"",
                 f1.text, f2.text);
     }
+
+    else if (sv_equalc(&fn, "subcate", 7)) {
+        todo("subcate()");
+    }
     
     else {
         error("invalid function \""hl_func(sv_fmt)"()\"", sv_p(fn));

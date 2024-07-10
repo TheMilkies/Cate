@@ -31,7 +31,7 @@ static void maybe_keyword(Token* t) {
 }
 
 uint8_t cate_tokenize(string_view *line, TokensArray *tokens) {
-    static_assert(TOK_COUNT_SIZE == 20,
+    static_assert(TOK_COUNT_SIZE == 19,
         "added token types? if they are not keywords; add them here");
     size_t i = 0, line_num = 1;
     uint8_t has_error = 0;
