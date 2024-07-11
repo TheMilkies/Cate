@@ -14,6 +14,11 @@ static void error(Parser* p, const char* fmt, ...) {
 }
 #define error(fmt, ...) error(p, fmt, __VA_ARGS__)
 
+//only use this with constant preprocessor strings
+//sv_ccmp(v, str): BAD
+//sv_ccmp(v, "str"): GOOD
+#define sv_ccmp(sv, text) (sv_equalc(sv, text, sizeof(text)/sizeof(text[0])-1))
+
 void cate_open(const char* path) {
     //struct CateFullPath open_path = {0};
     /*
@@ -376,7 +381,7 @@ static void class_method(Parser* p) {
     expect(TOK_LPAREN);
 
     #define method(name)\
-    if(sv_equalc(&fn, #name, sizeof(#name)/sizeof(#name[0])-1)) {\
+    if(sv_ccmp(&fn, #name)) {\
         class_ ## name (p->cur_class);\
         goto done;\
     }
@@ -394,7 +399,9 @@ static void run_function(Parser* p) {
     string_view fn = expect(TOK_IDENTIFIER)->text;
     expect(TOK_LPAREN);
 
-    if (sv_equalc(&fn, "mkdir", 5) || sv_equalc(&fn, "create_directory", 16)) {
+    #define is_fn(name) sv_ccmp(&fn, name)
+
+    if (is_fn("mkdir") || is_fn("create_directory")) {
         string_view dir = expect_string(p);
         if(!cate_sys_mkdir(dir.text)) {
             error("failed to create directory \""sv_fmt"\"",
@@ -402,7 +409,7 @@ static void run_function(Parser* p) {
         }
     }
 
-    else if (sv_equalc(&fn, "system", 6)) {
+    else if (is_fn("system")) {
         string_view cmd = string_or_out_file(p);
         optional_rparen(p);
         if(cmd_args.flags & CMD_DISABLE_SYSTEM)
@@ -414,7 +421,7 @@ static void run_function(Parser* p) {
                 cmd.text, status);
     }
 
-    else if (sv_equalc(&fn, "print", 5) || sv_equalc(&fn, "error", 5)) {
+    else if (is_fn("print") || is_fn("error")) {
         uint8_t is_err = fn.text[0] == 'e';
         FILE* out = stdout;
         if(is_err) {
@@ -435,30 +442,30 @@ static void run_function(Parser* p) {
         if(is_err) exit(4);
     }
 
-    else if (sv_equalc(&fn, "copy", 4)) {
-        string_view f1 = string_or_out_file(p);
-        string_view f2 = string_or_out_file(p);
-        if(!cate_sys_copy(f1.text, f2.text))
-            cate_error("failed to copy \"%s\" to \"%s\"",
-                f1.text, f2.text);
+    #define two_str_fn(name) \
+    (is_fn(#name)) {\
+        string_view f1 = string_or_out_file(p);\
+        string_view f2 = string_or_out_file(p);\
+        if(!cate_sys_##name(f1.text, f2.text))\
+            cate_error("failed to "#name" \"%s\" to \"%s\"",\
+                f1.text, f2.text);\
     }
 
-    else if (sv_equalc(&fn, "move", 4)) {
-        string_view f1 = string_or_out_file(p);
-        string_view f2 = string_or_out_file(p);
-        if(!cate_sys_move(f1.text, f2.text))
-            cate_error("failed to move \"%s\" to \"%s\"",
-                f1.text, f2.text);
-    }
+    else if two_str_fn(copy)
+    else if two_str_fn(move)
 
-    else if (sv_equalc(&fn, "subcate", 7)) {
+    else if (is_fn("subcate")) {
         todo("subcate()");
     }
     
     else {
         error("invalid function \""hl_func(sv_fmt)"()\"", sv_p(fn));
         while(!match(TOK_RPAREN)) next();
+        expect(TOK_RPAREN);
     }
+
+    #undef is_fn
+    #undef two_str_fn
 
     optional_rparen(p);
 }
@@ -497,15 +504,16 @@ static string_view expect_string(Parser* p) {
 
 static ClassBools get_bool_property(Parser* p, string_view* v) {
     static_assert(CLASS_BOOL_END == 33, "added a flag? add it here.");
-    if (sv_equalc(v, "smol", 4)) {
+
+    if (sv_ccmp(v, "smol")) {
         return CLASS_BOOL_SMOL;
-    } else if (sv_equalc(v, "link", 4)) {
+    } else if (sv_ccmp(v, "link")) {
         return CLASS_BOOL_LINK;
-    } else if (sv_equalc(v, "thread", 6)) {
+    } else if (sv_ccmp(v, "thread")) {
         return CLASS_BOOL_THREAD;
-    } else if (sv_equalc(v, "auto", 4)) {
+    } else if (sv_ccmp(v, "auto")) {
         return CLASS_BOOL_AUTO;
-    } else if (sv_equalc(v, "built", 5)) {
+    } else if (sv_ccmp(v, "built")) {
         return CLASS_BOOL_BUILT;
     }
     return CLASS_BOOL_NONE;
@@ -513,21 +521,21 @@ static ClassBools get_bool_property(Parser* p, string_view* v) {
 
 static string_view* get_string_property(Parser* p,
                                         CateClass* c, string_view* v) {
-    if(sv_equalc(v, "out", 3)) {
+    if(sv_ccmp(v, "out")) {
         return &c->out_name;
-    } else if(sv_equalc(v, "cc", 2) || sv_equalc(v, "compiler", 8)) {
+    } else if(sv_ccmp(v, "cc") || sv_ccmp(v, "compiler")) {
         return &c->compiler;
-    } else if(sv_equalc(v, "std", 3) || sv_equalc(v, "standard", 8)) {
+    } else if(sv_ccmp(v, "std") || sv_ccmp(v, "standard")) {
         return &c->standard;
-    } else if(sv_equalc(v, "flags", 5)) {
+    } else if(sv_ccmp(v, "flags")) {
         return &c->flags;
-    } else if(sv_equalc(v, "final_flags", 11)) {
+    } else if(sv_ccmp(v, "final_flags")) {
         return &c->final_flags;
     }
-    else if(sv_equalc(v, "obj_dir", 7)
-        ||  sv_equalc(v, "object_dir", 10)
-        ||  sv_equalc(v, "build_dir", 9)
-        ||  sv_equalc(v, "build_directory", 15)
+    else if(sv_ccmp(v, "obj_dir")
+        ||  sv_ccmp(v, "object_dir")
+        ||  sv_ccmp(v, "build_dir")
+        ||  sv_ccmp(v, "build_directory")
     ) {
         return &c->build_dir;
     }
@@ -537,14 +545,14 @@ static string_view* get_string_property(Parser* p,
 
 static SavedStringIndexes* get_array_property(Parser* p,
                                         CateClass* c, string_view* v) {
-    if(sv_equalc(v, "files", 5)) {
+    if(sv_ccmp(v, "files")) {
         return &c->files;
-    } else if(sv_equalc(v, "incs", 4) || sv_equalc(v, "includes", 8)
-    || sv_equalc(v, "include_paths", 13)) {
+    } else if(sv_ccmp(v, "incs") || sv_ccmp(v, "includes")
+    || sv_ccmp(v, "include_paths")) {
         return &c->includes;
-    } else if(sv_equalc(v, "libs", 4) || sv_equalc(v, "libraries", 9)) {
+    } else if(sv_ccmp(v, "libs") || sv_ccmp(v, "libraries")) {
         return &c->libraries;
-    } else if(sv_equalc(v, "defs", 4) || sv_equalc(v, "definitions", 11)) {
+    } else if(sv_ccmp(v, "defs") || sv_ccmp(v, "definitions")) {
         return &c->defines;
     }
 
@@ -637,16 +645,18 @@ static uint8_t is_global(Parser* p) {
         return 1;
     }
 
-    //alright, maybe it's a string property?
-    if(sv_equalc(v, "cc", 2) || sv_equalc(v, "compiler", 8)) {
-        next();
-        set_class_string(p, &g->compiler);
-        return 1;
-    } else if(sv_equalc(v, "standard", 8) || sv_equalc(v, "std", 3)) {
-        next();
-        set_class_string(p, &g->standard);
-        return 1;
+    #define str_prop(n1, n2) \
+    if(sv_ccmp(v, #n1) || sv_ccmp(v, #n2)) {\
+        next();\
+        set_class_string(p, &g->n2);\
+        return 1;\
     }
+
+    //alright, maybe it's a string property?
+    str_prop(cc, compiler)
+    str_prop(std, standard)
+
+    #undef str_prop
 
     return 0;
 }
