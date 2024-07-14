@@ -54,10 +54,10 @@ static void globals_init(struct Globals* g) {
     };
 
     if(cate_sys_file_exists("cate"))
-        def.build_dir = sv_from_const("cate/build");
+        def.build_dir = sv_from_const("cate/build/");
     else
-        def.build_dir = sv_from_const("build");
-        
+        def.build_dir = sv_from_const("build/");
+
     *g = def;
 }
 

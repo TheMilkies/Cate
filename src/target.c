@@ -11,6 +11,7 @@ CateOSTarget* cate_target =
 CateOSTarget cate_target_posix = {
     .dynamic_ending = sv_from_const(".so"),
     .static_ending = sv_from_const(".a"),
+    .object_ending = sv_from_const(".o"),
     .os_name_count = 3
     #ifdef __linux__
     +1
@@ -29,6 +30,7 @@ CateOSTarget cate_target_posix = {
 CateOSTarget cate_target_windows = {
     .dynamic_ending = sv_from_const(".dll"),
     .static_ending = sv_from_const(".lib"),
+    .object_ending = sv_from_const(".o"),
     .executable_ending = sv_from_const(".exe"),
     .os_name_count = 3,
     .os_names = {

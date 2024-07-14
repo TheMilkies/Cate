@@ -36,6 +36,7 @@ static void prepare_objects(CateClass* c) {
 }
 
 typedef struct {
+    SavedStringIndexes object_files;
     STIndex standard;
     STIndex out_name;
 } Prepared;
@@ -60,7 +61,7 @@ static STIndex prepare_out_name(CateClass* c) {
                 sv_p(c->out_name));
         }
         strncpy(f.x, c->name.text, c->name.length);
-        strncpy(f.x, ext->text, ext->length);
+        strncat(f.x, ext->text, ext->length);
     }   break;
 
     case CLASS_LIBRARY: {
@@ -75,8 +76,8 @@ static STIndex prepare_out_name(CateClass* c) {
         }
 
         strncpy(f.x, "out/lib", 8);
-        strncpy(f.x, c->name.text, c->name.length);
-        strncpy(f.x, ext->text, ext->length);
+        strncat(f.x, c->name.text, c->name.length);
+        strncat(f.x, ext->text, ext->length);
         //maybe null terminate?
     }   break;
     
@@ -93,7 +94,7 @@ static STIndex prepare_std(CateClass* c) {
         cate_error("standard is too long?");
 
     struct CateFullPath flag = {.x = "-std="};
-    strncpy(flag.x, c->standard.text, c->standard.length+1);
+    strncat(flag.x, c->standard.text, c->standard.length+1);
     return st_save_s(&ctx.st, flag.x);
 }
 
@@ -115,13 +116,81 @@ static void create_directories(CateClass* c) {
     }
 
     c->out_name.text[index] = backup;
+}
 
+static STIndex objectify_file(string_view* dir, string_view* file) {
+    struct CateFullPath path = {0};
+    if(dir->length + file->length >= PATH_MAX) {
+        cate_error("object file length will be too long for \""sv_fmt"\"",
+            svptr_p(file));
+    }
+
+    //add directory
+    size_t length = dir->length;
+    strncpy(path.x, dir->text, dir->length);
+    if(dir->text[dir->length-1] != '/')
+        path.x[length++] = '/';
+
+    size_t last_dot = 0;
+    for (size_t i = 0; i < file->length; ++i) {
+        switch (file->text[i]) {
+        case '/':
+        case '\\':
+            path.x[length++] = '_';
+            break;
+        
+        case '.':
+            if(file->text[i+1] != '.') {
+                last_dot = length;
+                goto oh_normal;
+            }
+            i += 2;
+
+            length += 5;
+            if(length >= PATH_MAX) {
+                cate_error("path too long to add \"back_\"");
+            }
+            strncat(path.x, "back_", 6);
+            break;
+        
+        default:
+        oh_normal:
+            path.x[length++] = file->text[i];
+            break;
+        }
+    }
+
+    //replace extension
+    length = last_dot + cate_target->object_ending.length+1;
+    if(length >= PATH_MAX) {
+        cate_error("path too long to add object extension");
+    }
+
+    path.x[last_dot] = 0;
+    strncat(path.x,
+        cate_target->object_ending.text, cate_target->object_ending.length+1);
+    
+    return st_save_s(&ctx.st, path.x);
+}
+
+static void prepare_obj_files(CateClass* c, SavedStringIndexes* a) {
+    a->size = 0;
+    for (size_t i = 0; i < c->files.size; ++i) {
+        string_view f = sv_from_cstr(
+            st_get_str(&ctx.st, c->files.data[i])
+        );
+
+        STIndex obj = objectify_file(&c->build_dir, &f);
+        da_append((*a), obj);
+    }
+    
 }
 
 static void prepare(CateClass* c, Prepared* p) {
     p->out_name = prepare_out_name(c);
     p->standard = prepare_std(c);
     create_directories(c);
+    prepare_obj_files(c, &p->object_files);
     todo("prepare");
 }
 
