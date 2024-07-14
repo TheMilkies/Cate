@@ -29,6 +29,7 @@ CateOSTarget cate_target_posix = {
 CateOSTarget cate_target_windows = {
     .dynamic_ending = sv_from_const(".dll"),
     .static_ending = sv_from_const(".lib"),
+    .executable_ending = sv_from_const(".exe"),
     .os_name_count = 3,
     .os_names = {
         sv_from_const("windows"),

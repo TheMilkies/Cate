@@ -9,6 +9,7 @@
 typedef struct CateOSTarget {
     string_view dynamic_ending;
     string_view static_ending;
+    string_view executable_ending;
     size_t os_name_count;
     string_view os_names[];
 } CateOSTarget;
