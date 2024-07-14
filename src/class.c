@@ -2,6 +2,7 @@
 #include "system_functions.h"
 #include "common.h"
 #include "error.h"
+#include <ctype.h>
 
 static void classes_free() {
     for (size_t i = 0; i < ctx.classes.size; i++) {
@@ -37,6 +38,7 @@ static void prepare_objects(CateClass* c) {
 
 typedef struct {
     SavedStringIndexes object_files;
+    SavedStringIndexes flags;
     STIndex standard;
     STIndex out_name;
 } Prepared;
@@ -173,6 +175,27 @@ static STIndex objectify_file(string_view* dir, string_view* file) {
     return st_save_s(&ctx.st, path.x);
 }
 
+static void save_separated(string_view* s, SavedStringIndexes* a) {
+    if(s->text[0] == 0) return;
+    char* tmp = s->text;
+    STIndex idx = 0;
+    for (size_t i = 0; i < s->length; ++i) {
+        if(isspace(s->text[i])) {
+            //skip whitespace
+            while(isspace(s->text[i])) {
+                s->text[i] = 0;
+                ++i;
+            }
+            idx = st_save_s(&ctx.st, tmp);
+            da_append((*a), idx);
+            tmp = &s->text[i];
+        }
+    }
+
+    idx = st_save_s(&ctx.st, tmp);
+    da_append((*a), idx);
+}
+
 static void prepare_obj_files(CateClass* c, SavedStringIndexes* a) {
     a->size = 0;
     for (size_t i = 0; i < c->files.size; ++i) {
@@ -183,7 +206,6 @@ static void prepare_obj_files(CateClass* c, SavedStringIndexes* a) {
         STIndex obj = objectify_file(&c->build_dir, &f);
         da_append((*a), obj);
     }
-    
 }
 
 static void prepare(CateClass* c, Prepared* p) {
@@ -191,6 +213,14 @@ static void prepare(CateClass* c, Prepared* p) {
     p->standard = prepare_std(c);
     create_directories(c);
     prepare_obj_files(c, &p->object_files);
+
+    if(c->kind == CLASS_LIBRARY) {
+        char flags[17] = "-g -shared -fPIC";
+        string_view lib_flags = {.length = 17, .text = flags};
+        save_separated(&lib_flags, &p->flags);
+    }
+    save_separated(&c->flags, &p->flags);
+
     todo("prepare");
 }
 
