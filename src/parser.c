@@ -52,6 +52,12 @@ static void globals_init(struct Globals* g) {
         .compiler = sv_from_const("cc"),
         .bools = CLASS_BOOLS_DEFAULT,
     };
+
+    if(cate_sys_file_exists("cate"))
+        def.build_dir = sv_from_const("cate/build");
+    else
+        def.build_dir = sv_from_const("build");
+        
     *g = def;
 }
 
@@ -124,6 +130,7 @@ static CateClass* new_class(Parser* p, ClassKind kind) {
         .name = name,
         .compiler = p->globals.compiler,
         .standard = p->globals.standard,
+        .build_dir = p->globals.build_dir,
         .bools = p->globals.bools,
     };
     da_append(ctx.classes, c);
@@ -654,7 +661,15 @@ static uint8_t is_global(Parser* p) {
 
     //alright, maybe it's a string property?
     str_prop(cc, compiler)
-    str_prop(std, standard)
+    else str_prop(std, standard)
+
+    if(sv_ccmp(v, "obj_dir")
+        ||  sv_ccmp(v, "object_dir")
+        ||  sv_ccmp(v, "build_dir")
+        ||  sv_ccmp(v, "build_directory")
+    ) {
+        set_class_string(p, &g->build_dir);
+    }
 
     #undef str_prop
 

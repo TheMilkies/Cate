@@ -5,6 +5,7 @@
 
 struct Globals {
     string_view compiler, standard;
+    string_view build_dir;
     ClassBools bools;
 };
 
