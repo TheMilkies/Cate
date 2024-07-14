@@ -84,11 +84,44 @@ static STIndex prepare_out_name(CateClass* c) {
         cate_error("not project or library, wtf");
         break;
     }
-    return st_save_s(&ctx.st, &f.x);
+    return st_save_s(&ctx.st, f.x);
+}
+
+static STIndex prepare_std(CateClass* c) {
+    if(!c->standard.length) return 0;
+    if(c->standard.length >= 64)
+        cate_error("standard is too long?");
+
+    struct CateFullPath flag = {.x = "-std="};
+    strncpy(flag.x, c->standard.text, c->standard.length+1);
+    return st_save_s(&ctx.st, flag.x);
+}
+
+static void create_directories(CateClass* c) {
+    if(!cate_sys_mkdir(c->build_dir.text)) {
+        cate_error("can't create build folder \"%s\"",
+            c->out_name.text);
+    }
+
+    size_t index = sv_find(&c->out_name, 0, '/');
+    if(index == SV_NOT_FOUND) return;
+
+    char backup = c->out_name.text[index];
+    c->out_name.text[index] = 0;
+
+    if(!cate_sys_mkdir(c->out_name.text)) {
+        cate_error("can't create build folder \"%s\"",
+            c->out_name.text);
+    }
+
+    c->out_name.text[index] = backup;
+
 }
 
 static void prepare(CateClass* c, Prepared* p) {
     p->out_name = prepare_out_name(c);
+    p->standard = prepare_std(c);
+    create_directories(c);
     todo("prepare");
 }
 
