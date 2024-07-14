@@ -54,11 +54,11 @@ STIndex st_save_sv(StringTable* st, string_view* sv) {
     }
 
     char* saved = st->buf+st->length;
-    const size_t to_append = st->length;
+    const STIndex to_return = st->length;
 
     memcpy(saved, sv->text, sv->length);
     st->length += sv->length+1;
     //null terminate to be sure
     saved[sv->length+1] = 0;
-    return (size_t)saved;
+    return to_return;
 }
