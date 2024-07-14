@@ -233,3 +233,8 @@ int cate_sys_has_process_exited(struct CateSysProcess* p) {
     }
     return 0;
 }
+
+void cate_sys_convert_path(char* posix, char* new) {
+    //POSIX paths stay the same.
+    return;
+}

@@ -56,6 +56,8 @@ void cate_sys_dir_close(struct CateSysDirectory* dir);
 char cate_sys_dir_get(struct CateSysDirectory* dir,
                         struct CateSysDirEntry* ent);
 
+void cate_sys_convert_path(char* posix, char* new);
+
 typedef size_t CateSysProcessID;
 struct CateSysProcess {
     CateSysProcessID id;

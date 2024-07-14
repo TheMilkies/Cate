@@ -40,14 +40,62 @@ typedef struct {
     STIndex out_name;
 } Prepared;
 
+static STIndex prepare_out_name(CateClass* c) {
+    if(c->out_name.length)
+        return st_save_sv(&ctx.st, &c->out_name);
+    
+    STIndex saved = 0;
+    if(c->name.length + 1 >= PATH_MAX) {
+        cate_error("object \""sv_fmt"\"'s name is too long!",
+            sv_p(c->out_name));
+    }
+
+    const string_view* ext = 0;
+    struct CateFullPath f = {0};
+    switch (c->kind) {
+    case CLASS_PROJECT: {
+        ext = &cate_target->executable_ending;
+        if(c->name.length + ext->length + 1 >= PATH_MAX) {
+            cate_error("object \""sv_fmt"\"'s out name is too long!",
+                sv_p(c->out_name));
+        }
+        strncpy(f.x, c->name.text, c->name.length);
+        strncpy(f.x, ext->text, ext->length);
+    }   break;
+
+    case CLASS_LIBRARY: {
+        ext = (c->as.lib.kind == LIBRARY_STATIC)
+            ? &cate_target->static_ending
+            : &cate_target->dynamic_ending;
+
+        //7 for "out/lib"
+        if(c->name.length+7+ext->length+1 >= PATH_MAX) {
+            cate_error("object \""sv_fmt"\"'s out path is too long!",
+            sv_p(c->out_name));
+        }
+
+        strncpy(f.x, "out/lib", 8);
+        strncpy(f.x, c->name.text, c->name.length);
+        strncpy(f.x, ext->text, ext->length);
+        //maybe null terminate?
+    }   break;
+    
+    default:
+        cate_error("not project or library, wtf");
+        break;
+    }
+    return st_save_s(&ctx.st, &f.x);
+}
+
 static void prepare(CateClass* c, Prepared* p) {
+    p->out_name = prepare_out_name(c);
     todo("prepare");
 }
 
 void class_build(CateClass* c) {
-    todo("building a class");
     Prepared p = {0};
     prepare(c, &p);
+    todo("building a class");
 }
 
 void class_clean(CateClass* c) {
