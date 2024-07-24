@@ -1,6 +1,7 @@
 #include "class.h"
 #include "system_functions.h"
 #include "common.h"
+#include "cmd_args.h"
 #include "error.h"
 #include <ctype.h>
 
@@ -11,6 +12,7 @@ static void classes_free() {
         free(c->defines.data);
         free(c->files.data);
         free(c->objects.data);
+        free(c->command_template.data);
     }
     da_free(ctx.classes);
 }
@@ -209,6 +211,7 @@ static void prepare_obj_files(CateClass* c, SavedStringIndexes* a) {
 }
 
 static void prepare(CateClass* c, Prepared* p) {
+    //TODO: make all of these pass-by-pointer
     p->out_name = prepare_out_name(c);
     p->standard = prepare_std(c);
     create_directories(c);
@@ -224,9 +227,83 @@ static void prepare(CateClass* c, Prepared* p) {
     todo("prepare");
 }
 
+struct FileBuilder {
+    struct CateSysProcess proc;
+    CStringArray command;
+};
+
+static void create_build_process(struct FileBuilder* b,
+            const char* f, const char* o, const CStringArray* t) {
+    //If the command array exists, we shouldn't free it until the end.
+    const char* null = 0;
+
+    if(!b->command.data) {
+        b->command.capacity = t->capacity;
+        b->command.size = t->size;
+        b->command.data = malloc(b->command.capacity);
+        memcpy(b->command.data, t->data, t->size*sizeof(t->data[0]));
+        da_append(b->command, null);
+    } else {
+        b->command.size -= 3;
+    }
+
+    da_pop(b->command);
+    da_append(b->command, f);
+    static const char* dash_o = "-o";
+    da_append(b->command, dash_o);
+    da_append(b->command, o);
+    da_append(b->command, null);
+    
+    if(cmd_args.flags & CMD_DRY_RUN) return;
+    b->proc = cate_sys_process_create(b->command.data);
+}
+
 void class_build(CateClass* c) {
     Prepared p = {0};
     prepare(c, &p);
+    c->command_template.size = 0;
+    
+    //prepare command
+    da_append(c->command_template, c->compiler);
+
+    size_t chunk_size = (c->files.size < cmd_args.thread_count)
+                        ? c->files.size
+                        : cmd_args.thread_count;
+
+    struct FileBuilder builders[chunk_size];
+    memset(&builders, 0, sizeof(struct FileBuilder)*chunk_size);
+
+    const STIndex* const files = c->files.data;
+    size_t temp = 0;
+    for (size_t i = 0; i < c->files.size; ++i) {
+        const char* file =
+            st_get_str(&ctx.st, files[i]);
+        const char* obj =
+            st_get_str(&ctx.st, p.object_files.data[i]);
+
+        if(!cate_is_file_newer(file, obj)) continue;
+
+        if(cmd_args.flags & CMD_DRY_RUN) {
+            //since it's a dry run and reused, no need to free it
+            static struct FileBuilder b = {0};
+            create_build_process(&b,
+                file, obj, &c->command_template);
+
+            //-1 for the last null
+            for (size_t i = 0; i < b.command.size-1; i++)
+                printf("%s ", b.command.data[i]);
+            printf("\n");
+            continue;
+        }
+    }
+    
+
+    for (size_t i = 0; i < chunk_size; ++i) {
+        free(builders[i].command.data);
+    }
+    free(p.object_files.data);
+    free(p.flags.data);
+    
     todo("building a class");
 }
 

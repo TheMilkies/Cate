@@ -145,6 +145,10 @@ size_t cate_get_modified_time(const char* path) {
     return attr.st_mtime;
 }
 
+int cate_is_file_newer(const char* path1, const char* path2) {
+    return cate_get_modified_time(path1) > cate_get_modified_time(path2);
+}
+
 //directory things
 struct CateSysDirectory {
     DIR* d;

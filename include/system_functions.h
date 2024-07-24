@@ -28,6 +28,7 @@ int cate_sys_system(const char* cmd);
 int cate_sys_remove(const char* path);
 int cate_sys_file_exists(const char* path);
 size_t cate_get_modified_time(const char* path);
+int cate_is_file_newer(const char* path1, const char* path2);
 size_t cate_sys_get_core_count();
 
 enum {
