@@ -17,14 +17,35 @@ static void classes_free() {
     da_free(ctx.classes);
 }
 
+struct FileBuilder {
+    struct CateSysProcess proc;
+    CStringArray command;
+};
+
+static void builders_reset() {
+    for (size_t i = 0; i < cmd_args.thread_count; ++i) {
+        ctx.builders[i].command.size = 0;
+        memset(&ctx.builders[i].proc, 0, sizeof(struct CateSysProcess));
+    }
+}
+
+static void builders_free() {
+    for (size_t i = 0; i < cmd_args.thread_count; ++i)
+        free(ctx.builders[i].command.data);
+    free(ctx.builders);
+    ctx.builders = 0;
+}
+
 void context_reset() {
     classes_free();
+    builders_reset();
     ctx.loaded_files.size = 0;
     st_reset(&ctx.st);
 }
 
 void context_free() {
     classes_free();
+    builders_free();
     da_free(ctx.loaded_files);
     st_free(&ctx.st);
 }
@@ -219,6 +240,11 @@ static void append_ssi_items(CStringArray* dest,
 }
 
 static void prepare(CateClass* c, Prepared* p) {
+    if(!ctx.builders) {
+        ctx.builders = calloc(cmd_args.thread_count,
+            sizeof(struct FileBuilder));
+    }
+    
     //TODO: make all of these pass-by-pointer
     p->out_name = prepare_out_name(c);
     p->standard = prepare_std(c);
@@ -235,15 +261,15 @@ static void prepare(CateClass* c, Prepared* p) {
     // todo("prepare");
 }
 
-struct FileBuilder {
-    struct CateSysProcess proc;
-    CStringArray command;
-};
-
 static void copy_cstring_array(CStringArray* dest, const CStringArray* src) {
+    if(dest->data && dest->capacity < src->capacity)
+        dest->data = realloc(dest->data, src->capacity);
+
     dest->capacity = src->capacity;
     dest->size = src->size;
-    dest->data = malloc(src->capacity);
+    if(!dest->data) 
+        dest->data = malloc(src->capacity);
+
     memcpy(dest->data, src->data, src->size*sizeof(src->data[0]));
 }
 
@@ -252,7 +278,7 @@ static void create_build_process(struct FileBuilder* b,
     //If the command array exists, we shouldn't free it until the end.
     const char* null = 0;
 
-    if(!b->command.data) {
+    if(!b->command.data || !b->command.size) {
         copy_cstring_array(&b->command, t);
         da_append(b->command, null);
     } else {
@@ -277,21 +303,26 @@ static void dry_run_print(CStringArray* cmd) {
 }
 
 void class_build(CateClass* c) {
+    if(c->bools & CLASS_BOOL_BUILT
+        && !(cmd_args.flags & CMD_FORCE_REBUILD))
+        return;
+    static char* dash_o = "-o", *dash_c = "-c", *null = 0;
     Prepared p = {0};
     prepare(c, &p);
-    c->command_template.size = 0;
     
     //prepare command
+    c->command_template.size = 0;
     da_append(c->command_template, c->compiler);
     append_ssi_items(&c->command_template, &p.flags);
-    append_ssi_items(&c->command_template, &c->includes);
+    //TODO: fix the includes
+    //append_ssi_items(&c->command_template, &c->includes);
+
+    //we remove the -c later by just popping
+    da_append(c->command_template, dash_c);
 
     size_t chunk_size = (c->files.size < cmd_args.thread_count)
                         ? c->files.size
                         : cmd_args.thread_count;
-
-    struct FileBuilder builders[chunk_size];
-    memset(builders, 0, sizeof(struct FileBuilder)*chunk_size);
 
     const STIndex* const files = c->files.data;
     size_t temp = 0;
@@ -302,19 +333,21 @@ void class_build(CateClass* c) {
             st_get_str(&ctx.st, p.object_files.data[i]);
 
         if(!cate_is_file_newer(file, obj)) continue;
+        //if we rebuild a single file, we need to link again
+        c->bools |= CLASS_BOOL_RELINK;
 
         if(cmd_args.flags & CMD_DRY_RUN) {
-            //since it's a dry run and reused, no need to free it
-            static struct FileBuilder b = {0};
-            create_build_process(&b,
+            create_build_process(&ctx.builders[0],
                 file, obj, &c->command_template);
 
-            dry_run_print(&b.command);
+            dry_run_print(&ctx.builders[0].command);
             continue;
         }
     }
     
     //build the final command
+    //pop the -c
+    da_pop(c->command_template);
     struct FileBuilder final = {0};
     copy_cstring_array(&final.command, &c->command_template);
     if(c->final_flags.length) {
@@ -323,31 +356,33 @@ void class_build(CateClass* c) {
     }
     append_ssi_items(&final.command, &p.object_files);
 
-    static char* dash_o = "-o", *null = 0;
     da_append(final.command, dash_o);
     char* out_name = st_get_str(&ctx.st, p.out_name);
     da_append(final.command, out_name);
     da_append(final.command, null);
 
     //final step
-    if(cmd_args.flags & CMD_DRY_RUN) {
-        dry_run_print(&final.command);
-    } else {
-        final.proc = cate_sys_process_create(final.command.data);
-        int err = cate_sys_process_wait(&final.proc);
-        if(err)
-            cate_error("build command exited with code %i", err);
+    if(c->bools & CLASS_BOOL_RELINK)  {
+        if(cmd_args.flags & CMD_DRY_RUN) {
+            dry_run_print(&final.command);
+        } else {
+            final.proc = cate_sys_process_create(final.command.data);
+            int err = cate_sys_process_wait(&final.proc);
+            if(err)
+                cate_error("build command exited with code %i", err);
+        }
     }
+    //finished building, let's mark it as built
+    c->bools |= CLASS_BOOL_BUILT;
 
     //free
     free(final.command.data);
-    for (size_t i = 0; i < chunk_size; ++i) {
-        free(builders[i].command.data);
-    }
     free(p.object_files.data);
     free(p.flags.data);
+    free(p.final_flags.data);
+    builders_reset();
 
-    todo("building a class");
+    // todo("building a class");
 }
 
 void class_clean(CateClass* c) {
