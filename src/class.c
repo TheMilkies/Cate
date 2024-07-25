@@ -40,7 +40,7 @@ static void prepare_objects(CateClass* c) {
 
 typedef struct {
     SavedStringIndexes object_files;
-    SavedStringIndexes flags;
+    SavedStringIndexes flags, final_flags;
     STIndex standard;
     STIndex out_name;
 } Prepared;
@@ -178,7 +178,7 @@ static STIndex objectify_file(string_view* dir, string_view* file) {
 }
 
 static void save_separated(string_view* s, SavedStringIndexes* a) {
-    if(s->text[0] == 0) return;
+    if(!a || !s || s->text[0] == 0) return;
     char* tmp = s->text;
     STIndex idx = 0;
     for (size_t i = 0; i < s->length; ++i) {
@@ -210,6 +210,14 @@ static void prepare_obj_files(CateClass* c, SavedStringIndexes* a) {
     }
 }
 
+static void append_ssi_items(CStringArray* dest,
+                            const SavedStringIndexes* src) {
+    for (size_t i = 0; i < src->size; ++i) {
+        char* s = st_get_str(&ctx.st, src->data[i]);
+        da_append((*dest), s);
+    }
+}
+
 static void prepare(CateClass* c, Prepared* p) {
     //TODO: make all of these pass-by-pointer
     p->out_name = prepare_out_name(c);
@@ -232,7 +240,7 @@ struct FileBuilder {
     CStringArray command;
 };
 
-static void copy_cstring_array(const CStringArray* src, CStringArray* dest) {
+static void copy_cstring_array(CStringArray* dest, const CStringArray* src) {
     dest->capacity = src->capacity;
     dest->size = src->size;
     dest->data = malloc(src->capacity);
@@ -245,7 +253,7 @@ static void create_build_process(struct FileBuilder* b,
     const char* null = 0;
 
     if(!b->command.data) {
-        copy_cstring_array(t, &b->command);
+        copy_cstring_array(&b->command, t);
         da_append(b->command, null);
     } else {
         b->command.size -= 3;
@@ -275,6 +283,8 @@ void class_build(CateClass* c) {
     
     //prepare command
     da_append(c->command_template, c->compiler);
+    append_ssi_items(&c->command_template, &p.flags);
+    append_ssi_items(&c->command_template, &c->includes);
 
     size_t chunk_size = (c->files.size < cmd_args.thread_count)
                         ? c->files.size
@@ -305,14 +315,32 @@ void class_build(CateClass* c) {
     }
     
     //build the final command
-    CStringArray final = {0};
-    copy_cstring_array(&c->command_template, &final);
+    struct FileBuilder final = {0};
+    copy_cstring_array(&final.command, &c->command_template);
+    if(c->final_flags.length) {
+        save_separated(&c->final_flags, &p.final_flags);
+        append_ssi_items(&final.command, &p.final_flags);
+    }
+    append_ssi_items(&final.command, &p.object_files);
+
+    static char* dash_o = "-o", *null = 0;
+    da_append(final.command, dash_o);
+    char* out_name = st_get_str(&ctx.st, p.out_name);
+    da_append(final.command, out_name);
+    da_append(final.command, null);
+
+    //final step
     if(cmd_args.flags & CMD_DRY_RUN) {
-        dry_run_print(&final);
+        dry_run_print(&final.command);
+    } else {
+        final.proc = cate_sys_process_create(final.command.data);
+        int err = cate_sys_process_wait(&final.proc);
+        if(err)
+            cate_error("build command exited with code %i", err);
     }
 
     //free
-    free(final.data);
+    free(final.command.data);
     for (size_t i = 0; i < chunk_size; ++i) {
         free(builders[i].command.data);
     }

@@ -74,5 +74,9 @@ struct CateSysProcess cate_sys_process_create(char* const* args);
 /// @param p The process
 /// @return 1 if true, 0 if false
 int cate_sys_has_process_exited(struct CateSysProcess* p);
+/// @brief Wait until the given process exits
+/// @param p The process
+/// @return exit code of the process
+int cate_sys_process_wait(struct CateSysProcess* p);
 
 #endif // CATE_SYSTEM_FUNCTIONS_H
