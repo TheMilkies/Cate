@@ -44,6 +44,7 @@ static inline int _recursive_mkdir(const char *dir) {
 }
 
 int cate_sys_mkdir(char* path) {
+    if(cate_sys_file_exists(path)) return 1;
     if(cmd_args.flags & CMD_DRY_RUN) {
         printf("mkdir -p %s\n", path);
         return 1;

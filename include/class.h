@@ -24,6 +24,7 @@ enum {
     CLASS_BOOL_LINK = 1 << 3,
     CLASS_BOOL_BUILT = 1 << 4,
     CLASS_BOOL_AUTO = 1 << 5,
+    CLASS_BOOL_RELINK = 1 << 6,
     CLASS_BOOL_END,
 
     CLASS_BOOLS_DEFAULT =
@@ -57,10 +58,13 @@ struct CateFullPath {
     char x[PATH_MAX];
 };
 
+
+struct FileBuilder;
 typedef struct {
     da_type(CateClass) classes;
     da_type(struct CateFullPath) loaded_files;
     StringTable st;
+    struct FileBuilder* builders;
 } CateContext;
 //The context is global so we could reuse the data everywhere.
 extern CateContext ctx;
