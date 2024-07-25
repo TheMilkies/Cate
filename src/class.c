@@ -224,7 +224,7 @@ static void prepare(CateClass* c, Prepared* p) {
     }
     save_separated(&c->flags, &p->flags);
 
-    todo("prepare");
+    // todo("prepare");
 }
 
 struct FileBuilder {
@@ -232,16 +232,20 @@ struct FileBuilder {
     CStringArray command;
 };
 
+static void copy_cstring_array(const CStringArray* src, CStringArray* dest) {
+    dest->capacity = src->capacity;
+    dest->size = src->size;
+    dest->data = malloc(src->capacity);
+    memcpy(dest->data, src->data, src->size*sizeof(src->data[0]));
+}
+
 static void create_build_process(struct FileBuilder* b,
             const char* f, const char* o, const CStringArray* t) {
     //If the command array exists, we shouldn't free it until the end.
     const char* null = 0;
 
     if(!b->command.data) {
-        b->command.capacity = t->capacity;
-        b->command.size = t->size;
-        b->command.data = malloc(b->command.capacity);
-        memcpy(b->command.data, t->data, t->size*sizeof(t->data[0]));
+        copy_cstring_array(t, &b->command);
         da_append(b->command, null);
     } else {
         b->command.size -= 3;
@@ -258,6 +262,12 @@ static void create_build_process(struct FileBuilder* b,
     b->proc = cate_sys_process_create(b->command.data);
 }
 
+static void dry_run_print(CStringArray* cmd) {
+    for (size_t i = 0; i < cmd->size-1; ++i)
+        printf("%s ", cmd->data[i]);
+    printf("\n");
+}
+
 void class_build(CateClass* c) {
     Prepared p = {0};
     prepare(c, &p);
@@ -271,7 +281,7 @@ void class_build(CateClass* c) {
                         : cmd_args.thread_count;
 
     struct FileBuilder builders[chunk_size];
-    memset(&builders, 0, sizeof(struct FileBuilder)*chunk_size);
+    memset(builders, 0, sizeof(struct FileBuilder)*chunk_size);
 
     const STIndex* const files = c->files.data;
     size_t temp = 0;
@@ -289,21 +299,26 @@ void class_build(CateClass* c) {
             create_build_process(&b,
                 file, obj, &c->command_template);
 
-            //-1 for the last null
-            for (size_t i = 0; i < b.command.size-1; i++)
-                printf("%s ", b.command.data[i]);
-            printf("\n");
+            dry_run_print(&b.command);
             continue;
         }
     }
     
+    //build the final command
+    CStringArray final = {0};
+    copy_cstring_array(&c->command_template, &final);
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        dry_run_print(&final);
+    }
 
+    //free
+    free(final.data);
     for (size_t i = 0; i < chunk_size; ++i) {
         free(builders[i].command.data);
     }
     free(p.object_files.data);
     free(p.flags.data);
-    
+
     todo("building a class");
 }
 
