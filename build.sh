@@ -58,6 +58,7 @@ build_files() {
             obj_name="$build_folder/$obj_name.o"
             object_files="$object_files $obj_name"
             build_file $file $obj_name &
+            j=$((j+1))
         else
             j=0
             wait
