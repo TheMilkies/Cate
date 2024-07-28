@@ -375,7 +375,7 @@ static string_view string_or_out_file(Parser* p) {
     }
 
     CateClass* c = find_class_or_exit(p, &cur->text);
-    if(!c->bools & CLASS_BOOL_BUILT) {
+    if(!(c->bools & CLASS_BOOL_BUILT)) {
         error("can't use \""sv_fmt"\"'s outfile "
         "because it wasn't build", sv_p(c->name));
     }

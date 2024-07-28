@@ -1,3 +1,4 @@
+cc = "clang"
 Project cate
 .files = {"src/*.c" "src/posix/*.c"}
 .flags = "-ggdb3 -march=native"

@@ -74,7 +74,7 @@ int sv_load_file(string_view* s,const char *file_name) {
 
 	return 0;
 
-bad:
+bad:;
 	int err = errno;
 	free(s->text);
 	s->text = 0;

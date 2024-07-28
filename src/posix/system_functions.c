@@ -171,7 +171,7 @@ void cate_sys_dir_close(struct CateSysDirectory* dir) {
 
 char cate_sys_dir_get(struct CateSysDirectory* dir,
                             struct CateSysDirEntry* ent) {
-restart:
+restart:;
     struct dirent *dent = readdir(dir->d);
     
     if(!dent) {
