@@ -40,9 +40,17 @@ build_file() {
     fi
 }
 
+get_cores() {
+    if getconf _NPROCESSORS_ONLN > /dev/null; then
+        cores=$(getconf _NPROCESSORS_ONLN)
+    else
+        cores=$(getconf NPROCESSORS_ONLN)
+    fi
+}
+
 build_files() {
     j=0
-    cores=$(getconf _NPROCESSORS_ONLN)
+    get_cores
     for file in $@; do
         if [ $j -lt "$cores" ]; then
             obj_name="${file%%.c*}"
