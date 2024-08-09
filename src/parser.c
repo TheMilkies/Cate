@@ -609,6 +609,19 @@ static inline void definitions(Parser* p) {
     expect(TOK_RCURLY);
 }
 
+static void append_array_item(CateClass* c,
+                    SavedStringIndexes* arr, string_view* str) {
+    if(arr == &c->includes) {
+        char buf[str->length+2];
+        string_view res = {.length = str->length+2, .text = buf};
+        memcpy(buf, "-I", 2);
+        memcpy(&buf[2], str->text, str->length);
+        save_string(&res, arr);
+    } else {
+        save_string(str, arr);
+    }
+}
+
 static void set_class_array(Parser* p, SavedStringIndexes* arr) {
     expect(TOK_ASSIGN);
 
@@ -628,7 +641,7 @@ static void set_class_array(Parser* p, SavedStringIndexes* arr) {
         case TOK_IDENTIFIER:
         case TOK_STRING_LITERAL: {
             string_view item = string_or_out_file(p);
-            save_string(&item, arr);
+            append_array_item(p->cur_class, arr, &item);
         }   break;
         
         default:

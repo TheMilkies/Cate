@@ -265,7 +265,6 @@ static void prepare(CateClass* c, Prepared* p) {
             sizeof(struct FileBuilder));
     }
 
-    //TODO: make all of these pass-by-pointer
     p->out_name = prepare_out_name(c);
     p->standard = prepare_std(c);
     create_directories(c);
@@ -336,7 +335,7 @@ void class_build(CateClass* c) {
     da_append(c->command_template, c->compiler);
     append_ssi_items(&c->command_template, &p.flags);
     //TODO: fix the includes
-    //append_ssi_items(&c->command_template, &c->includes);
+    append_ssi_items(&c->command_template, &c->includes);
 
     //we remove the -c later by just popping
     da_append(c->command_template, dash_c);

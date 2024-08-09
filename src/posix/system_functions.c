@@ -200,6 +200,7 @@ int cate_sys_remove(const char* path) {
     }
 
     //TODO: implement remove()
+    return 1;
 }
 
 //processes stuff
@@ -229,6 +230,7 @@ struct CateSysProcess cate_sys_process_create(char* const* args) {
 }
 
 int cate_sys_has_process_exited(struct CateSysProcess* p) {
+    if(p->id == 0) return 1;
     pid_t ret = waitpid(p->id, &p->status, WNOHANG);
     assert(ret != -1 && "you forgot to clear the process struct");
 
