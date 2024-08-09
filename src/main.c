@@ -43,10 +43,10 @@ void cate_help(int exit_code) {
 }
 
 int main(int argc, char *argv[]) {
+    cmd_args.thread_count = cate_sys_get_core_count();
     shift_args(); //skip the program name
     //128KB is overkill for most catefiles but it speeds up everything
     st_init(&ctx.st, 128*1024);
-    cmd_args.thread_count = cate_sys_get_core_count();
     //avoid calling sbrk() a lot
     free(malloc(sizeof(STIndex)*10*10));
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
             return 1;\
         }\
 
-        case 'j': // for make support
+        case 'j': // for the make users that never learn
         case 't': {
             char* val = 0;
             get_val("numeric")

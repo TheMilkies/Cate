@@ -5,6 +5,8 @@
 #include "error.h"
 #include <ctype.h>
 
+//TODO: clean this whole file up!
+
 static void classes_free() {
     for (size_t i = 0; i < ctx.classes.size; i++) {
         CateClass* c = &ctx.classes.data[i];
@@ -23,13 +25,15 @@ struct FileBuilder {
 };
 
 static void builders_reset() {
+    if(!ctx.builders) return;
     for (size_t i = 0; i < cmd_args.thread_count; ++i) {
         ctx.builders[i].command.size = 0;
-        memset(&ctx.builders[i].proc, 0, sizeof(struct CateSysProcess));
+        memset(&ctx.builders[i].proc, 0, sizeof(ctx.builders[i].proc));
     }
 }
 
 static void builders_free() {
+    if(!ctx.builders) return;
     for (size_t i = 0; i < cmd_args.thread_count; ++i)
         free(ctx.builders[i].command.data);
     free(ctx.builders);
@@ -61,6 +65,7 @@ static void prepare_objects(CateClass* c) {
 
 typedef struct {
     SavedStringIndexes object_files;
+    SavedStringIndexes to_build_indexes;
     SavedStringIndexes flags, final_flags;
     STIndex standard;
     STIndex out_name;
@@ -219,15 +224,16 @@ static void save_separated(string_view* s, SavedStringIndexes* a) {
     da_append((*a), idx);
 }
 
-static void prepare_obj_files(CateClass* c, SavedStringIndexes* a) {
-    a->size = 0;
+static void prepare_obj_files(CateClass* c,
+                                SavedStringIndexes* result) {
+    result->size = 0;
     for (size_t i = 0; i < c->files.size; ++i) {
         string_view f = sv_from_cstr(
             st_get_str(&ctx.st, c->files.data[i])
         );
 
         STIndex obj = objectify_file(&c->build_dir, &f);
-        da_append((*a), obj);
+        da_append((*result), obj);
     }
 }
 
@@ -239,17 +245,32 @@ static void append_ssi_items(CStringArray* dest,
     }
 }
 
+static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
+    p->to_build_indexes.size = 0;
+    for (size_t i = 0; i < c->files.size; ++i) {
+        const char* file = st_get_str(&ctx.st, c->files.data[i]);
+        const char* obj = st_get_str(&ctx.st, p->object_files.data[i]);
+        if(cate_is_file_newer(file, obj)) {
+            da_append(p->to_build_indexes, i);
+        }
+    }
+
+    if(p->to_build_indexes.size)
+        c->bools |= CLASS_BOOL_RELINK;
+}
+
 static void prepare(CateClass* c, Prepared* p) {
     if(!ctx.builders) {
         ctx.builders = calloc(cmd_args.thread_count,
             sizeof(struct FileBuilder));
     }
-    
+
     //TODO: make all of these pass-by-pointer
     p->out_name = prepare_out_name(c);
     p->standard = prepare_std(c);
     create_directories(c);
     prepare_obj_files(c, &p->object_files);
+    check_if_needs_rebuild(c, p);
 
     if(c->kind == CLASS_LIBRARY) {
         char flags[17] = "-g -shared -fPIC";
@@ -287,7 +308,7 @@ static void create_build_process(struct FileBuilder* b,
 
     da_pop(b->command);
     da_append(b->command, f);
-    static const char* dash_o = "-o";
+    static char* dash_o = "-o";
     da_append(b->command, dash_o);
     da_append(b->command, o);
     da_append(b->command, null);
@@ -325,26 +346,56 @@ void class_build(CateClass* c) {
                         : cmd_args.thread_count;
 
     const STIndex* const files = c->files.data;
-    size_t temp = 0;
-    for (size_t i = 0; i < c->files.size; ++i) {
-        const char* file =
-            st_get_str(&ctx.st, files[i]);
-        const char* obj =
-            st_get_str(&ctx.st, p.object_files.data[i]);
+    // size_t temp = 0;
 
-        if(!cate_is_file_newer(file, obj)) continue;
-        //if we rebuild a single file, we need to link again
-        c->bools |= CLASS_BOOL_RELINK;
+    size_t built_count = 0;
+    while (built_count < p.to_build_indexes.size) {
+        for (size_t thr = 0; thr < chunk_size; thr++) {
+            struct FileBuilder* builder = &ctx.builders[thr];
+            if(cate_sys_has_process_exited(&builder->proc)) {
+                if(builder->proc.exit_code)
+                    cate_error("error in build command!");
+                builder->proc.id = 0;
 
-        if(cmd_args.flags & CMD_DRY_RUN) {
-            create_build_process(&ctx.builders[0],
-                file, obj, &c->command_template);
+                size_t file_index = p.to_build_indexes.data[built_count++];
+                if(built_count > p.to_build_indexes.size)
+                    continue;
 
-            dry_run_print(&ctx.builders[0].command);
-            continue;
+                const char* file = st_get_str(&ctx.st,
+                        c->files.data[file_index]);
+                const char* obj = st_get_str(&ctx.st,
+                        p.object_files.data[file_index]);
+                
+                if(cmd_args.flags & CMD_DRY_RUN) {
+                    create_build_process(&ctx.builders[0],
+                        file, obj, &c->command_template);
+
+                    dry_run_print(&ctx.builders[0].command);
+                    continue;
+                }
+                create_build_process(builder, file, obj, &c->command_template);
+            }
         }
     }
     
+    //wait for the ones that didn't end
+    while (1) {
+        uint8_t running = 0;
+        for (size_t thr = 0; thr < chunk_size; thr++) {
+            struct FileBuilder* builder = &ctx.builders[thr];
+            if(builder->proc.id) {
+                if(cate_sys_has_process_exited(&builder->proc)) {
+                    if(builder->proc.exit_code)
+                        cate_error("error in build command!");
+                    builder->proc.id = 0;
+                }
+                running = 1;
+            }
+        }
+
+        if(!running) break;
+    }
+
     //build the final command
     //pop the -c
     da_pop(c->command_template);
@@ -380,6 +431,7 @@ void class_build(CateClass* c) {
     free(p.object_files.data);
     free(p.flags.data);
     free(p.final_flags.data);
+    free(p.to_build_indexes.data);
     builders_reset();
 
     // todo("building a class");
