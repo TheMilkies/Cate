@@ -310,6 +310,8 @@ static void create_build_process(struct FileBuilder* b,
         b->command.size -= 3;
     }
 
+    //TODO: we can turn this from "$f -o $o" to "-o $o $f"
+    //which would save an append
     da_pop(b->command);
     da_append(b->command, f);
     static char* dash_o = "-o";
@@ -351,10 +353,10 @@ static void build(CateClass* c, Prepared* p) {
                         p->object_files.data[file_index]);
                 
                 if(cmd_args.flags & CMD_DRY_RUN) {
-                    create_build_process(&ctx.builders[0],
+                    create_build_process(&ctx.builders[thr],
                         file, obj, &c->command_template);
 
-                    dry_run_print(&ctx.builders[0].command);
+                    dry_run_print(&ctx.builders[thr].command);
                     continue;
                 }
                 create_build_process(builder, file, obj, &c->command_template);
@@ -428,7 +430,7 @@ void class_build(CateClass* c) {
     if(c->bools & CLASS_BOOL_BUILT
     && !(cmd_args.flags & CMD_FORCE_REBUILD))
         return;
-        
+
     Prepared p = {0};
     prepare(c, &p);
     if(c->bools & CLASS_BOOL_RELINK) {
@@ -439,7 +441,6 @@ void class_build(CateClass* c) {
     
     //finished building, let's mark it as built
     c->bools |= CLASS_BOOL_BUILT;
-
     //free
     free(p.object_files.data);
     free(p.flags.data);

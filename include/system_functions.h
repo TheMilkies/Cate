@@ -1,6 +1,9 @@
 #ifndef CATE_SYSTEM_FUNCTIONS_H
 #define CATE_SYSTEM_FUNCTIONS_H
 #include <stdlib.h>
+#ifndef PATH_MAX
+#define PATH_MAX 2048
+#endif
 
 /*
     This is an abstraction layer because POSIX and Windows can't agree
@@ -42,6 +45,14 @@ struct CateSysDirEntry {
 };
 
 struct CateSysDirectory;
+struct CateSysGlob {
+    size_t count;
+    const char** matches;
+    void* internal;
+};
+
+int cate_sys_glob_init(struct CateSysGlob* g, const char* pattern);
+void cate_sys_glob_free(struct CateSysGlob* globber);
 
 /// @brief Open a directory from path
 /// @param path The path
@@ -78,5 +89,9 @@ int cate_sys_has_process_exited(struct CateSysProcess* p);
 /// @param p The process
 /// @return exit code of the process
 int cate_sys_process_wait(struct CateSysProcess* p);
+
+struct CateFullPath {
+    char x[PATH_MAX];
+};
 
 #endif // CATE_SYSTEM_FUNCTIONS_H

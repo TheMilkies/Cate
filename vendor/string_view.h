@@ -91,11 +91,10 @@ size_t sv_find(const string_view *s, size_t from, const char c) {
 }
 
 size_t sv_find_last(const string_view *s, const char c) {
-	size_t last = SV_NOT_FOUND;
-	for (size_t i = 0; i < s->length; ++i)
-		if(s->text[i] == c) last = i;
+	for (ssize_t i = s->length-1; i >= 0 ; ++i)
+		if(s->text[i] == c) return i;
 	
-	return last;
+	return SV_NOT_FOUND;
 }
 
 string_view sv_substring(string_view *s, size_t begin, size_t end) {

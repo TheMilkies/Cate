@@ -54,11 +54,6 @@ void class_build(CateClass* c);
 void class_clean(CateClass* c);
 void class_install(CateClass* c);
 
-struct CateFullPath {
-    char x[PATH_MAX];
-};
-
-
 struct FileBuilder;
 typedef struct {
     da_type(CateClass) classes;

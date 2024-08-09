@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <assert.h>
 #include <dirent.h>
+#include <glob.h>
 
 static inline int get_exit_code(int status);
 
@@ -249,4 +250,27 @@ int cate_sys_process_wait(struct CateSysProcess* p) {
 void cate_sys_convert_path(char* posix, char* new) {
     //POSIX paths stay the same.
     return;
+}
+
+int cate_sys_glob_init(struct CateSysGlob* g, const char* pattern) {
+    if(!g->internal)
+        g->internal = calloc(1, sizeof(glob_t));
+
+    int ret = glob(pattern, 0, NULL, g->internal);
+    if(ret == 0) {
+        glob_t* gl = (glob_t*)g->internal;
+        g->count = gl->gl_pathc;
+        g->matches = gl->gl_pathv;
+    } else if (ret == GLOB_NOMATCH) {
+        globfree(g->internal);
+    } else {
+        return 0;
+    }
+
+    return 1;
+}
+
+void cate_sys_glob_free(struct CateSysGlob* globber) {
+    globfree(globber->internal);
+    globber->internal = 0;
 }
