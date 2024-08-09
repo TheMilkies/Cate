@@ -250,7 +250,8 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
     for (size_t i = 0; i < c->files.size; ++i) {
         const char* file = st_get_str(&ctx.st, c->files.data[i]);
         const char* obj = st_get_str(&ctx.st, p->object_files.data[i]);
-        if(cate_is_file_newer(file, obj)) {
+        if(cmd_args.flags & CMD_FORCE_REBUILD
+        || cate_is_file_newer(file, obj)) {
             da_append(p->to_build_indexes, i);
         }
     }
