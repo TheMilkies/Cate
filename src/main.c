@@ -45,10 +45,10 @@ void cate_help(int exit_code) {
 int main(int argc, char *argv[]) {
     cmd_args.thread_count = cate_sys_get_core_count();
     shift_args(); //skip the program name
-    //128KB is overkill for most catefiles but it speeds up everything
-    st_init(&ctx.st, 128*1024);
+    //32KB is overkill for most catefiles but it speeds up everything
+    st_init(&ctx.st, 32*1024);
     //avoid calling sbrk() a lot
-    free(malloc(sizeof(STIndex)*10*10));
+    free(malloc(sizeof(STIndex)*20*10));
 
     //handle catel (god damn it milkies!)
     static CatelValues defaults = {0};
@@ -167,7 +167,8 @@ int main(int argc, char *argv[]) {
 
     for (size_t i = 0; i < files.size; ++i) {
         cate_open(files.data[i]);
-        context_reset();
+        if(i != files.size-1)
+            context_reset();
     }
 
     da_free(files);

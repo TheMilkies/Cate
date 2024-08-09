@@ -509,6 +509,9 @@ static string_view expect_string(Parser* p) {
     return v;
 }
 
+//TODO: Flatten all of these into a single function with a hashmap.
+//(These things are the slowest parts of cate3)
+
 static ClassBools get_bool_property(Parser* p, string_view* v) {
     static_assert(CLASS_BOOL_END == 65, "added a flag? add it here.");
 
@@ -516,7 +519,7 @@ static ClassBools get_bool_property(Parser* p, string_view* v) {
         return CLASS_BOOL_SMOL;
     } else if (sv_ccmp(v, "link")) {
         return CLASS_BOOL_LINK;
-    } else if (sv_ccmp(v, "thread")) {
+    } else if (sv_ccmp(v, "thread"), sv_ccmp(v, "threading")) {
         return CLASS_BOOL_THREAD;
     } else if (sv_ccmp(v, "auto")) {
         return CLASS_BOOL_AUTO;
@@ -528,14 +531,14 @@ static ClassBools get_bool_property(Parser* p, string_view* v) {
 
 static string_view* get_string_property(Parser* p,
                                         CateClass* c, string_view* v) {
-    if(sv_ccmp(v, "out")) {
+    if(sv_ccmp(v, "flags")) {
+        return &c->flags;
+    } else if(sv_ccmp(v, "out")) {
         return &c->out_name;
     } else if(sv_ccmp(v, "cc") || sv_ccmp(v, "compiler")) {
         return &c->compiler;
     } else if(sv_ccmp(v, "std") || sv_ccmp(v, "standard")) {
         return &c->standard;
-    } else if(sv_ccmp(v, "flags")) {
-        return &c->flags;
     } else if(sv_ccmp(v, "final_flags")) {
         return &c->final_flags;
     }
@@ -676,12 +679,14 @@ static uint8_t is_global(Parser* p) {
     str_prop(cc, compiler)
     else str_prop(std, standard)
 
-    if(sv_ccmp(v, "obj_dir")
-        ||  sv_ccmp(v, "object_dir")
-        ||  sv_ccmp(v, "build_dir")
-        ||  sv_ccmp(v, "build_directory")
-    ) {
-        set_class_string(p, &g->build_dir);
+    if(v->text[0] == 'o' || v->text[0] == 'c')  {
+        if(sv_ccmp(v, "obj_dir")
+        || sv_ccmp(v, "object_dir")
+        || sv_ccmp(v, "build_dir")
+        || sv_ccmp(v, "build_directory")
+        ) {
+            set_class_string(p, &g->build_dir);
+        }
     }
 
     #undef str_prop

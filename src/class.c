@@ -256,7 +256,8 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
         }
     }
 
-    if(p->to_build_indexes.size)
+    if(p->to_build_indexes.size
+    || !cate_sys_file_exists(c->out_name.text))
         c->bools |= CLASS_BOOL_RELINK;
 }
 
@@ -267,10 +268,13 @@ static void prepare(CateClass* c, Prepared* p) {
     }
 
     p->out_name = prepare_out_name(c);
-    p->standard = prepare_std(c);
-    create_directories(c);
     prepare_obj_files(c, &p->object_files);
     check_if_needs_rebuild(c, p);
+    if(!(c->bools & CLASS_BOOL_RELINK))
+        return;
+
+    p->standard = prepare_std(c);
+    create_directories(c);
 
     if(c->kind == CLASS_LIBRARY) {
         char flags[17] = "-g -shared -fPIC";
@@ -323,33 +327,13 @@ static void dry_run_print(CStringArray* cmd) {
     printf("\n");
 }
 
-void class_build(CateClass* c) {
-    if(c->bools & CLASS_BOOL_BUILT
-        && !(cmd_args.flags & CMD_FORCE_REBUILD))
-        return;
-    static char* dash_o = "-o", *dash_c = "-c", *null = 0;
-    Prepared p = {0};
-    prepare(c, &p);
-    
-    //prepare command
-    c->command_template.size = 0;
-    da_append(c->command_template, c->compiler);
-    append_ssi_items(&c->command_template, &p.flags);
-    //TODO: fix the includes
-    append_ssi_items(&c->command_template, &c->includes);
-
-    //we remove the -c later by just popping
-    da_append(c->command_template, dash_c);
-
+static void build(CateClass* c, Prepared* p) {
     size_t chunk_size = (c->files.size < cmd_args.thread_count)
                         ? c->files.size
                         : cmd_args.thread_count;
 
-    const STIndex* const files = c->files.data;
-    // size_t temp = 0;
-
     size_t built_count = 0;
-    while (built_count < p.to_build_indexes.size) {
+    while (built_count < p->to_build_indexes.size) {
         for (size_t thr = 0; thr < chunk_size; thr++) {
             struct FileBuilder* builder = &ctx.builders[thr];
             if(cate_sys_has_process_exited(&builder->proc)) {
@@ -357,14 +341,14 @@ void class_build(CateClass* c) {
                     cate_error("error in build command!");
                 builder->proc.id = 0;
 
-                size_t file_index = p.to_build_indexes.data[built_count++];
-                if(built_count > p.to_build_indexes.size)
+                size_t file_index = p->to_build_indexes.data[built_count++];
+                if(built_count > p->to_build_indexes.size)
                     continue;
 
                 const char* file = st_get_str(&ctx.st,
                         c->files.data[file_index]);
                 const char* obj = st_get_str(&ctx.st,
-                        p.object_files.data[file_index]);
+                        p->object_files.data[file_index]);
                 
                 if(cmd_args.flags & CMD_DRY_RUN) {
                     create_build_process(&ctx.builders[0],
@@ -395,20 +379,34 @@ void class_build(CateClass* c) {
 
         if(!running) break;
     }
+}
 
-    //build the final command
+static void prepare_command_template(CateClass* c, Prepared* p) {
+    static const char *dash_c = "-c";
+    c->command_template.size = 0;
+    da_append(c->command_template, c->compiler);
+    append_ssi_items(&c->command_template, &p->flags);
+    //TODO: fix the includes
+    append_ssi_items(&c->command_template, &c->includes);
+
+    //we remove the -c later by just popping
+    da_append(c->command_template, dash_c);
+}
+
+static void link(CateClass* c, Prepared* p) {
+    static char* dash_o = "-o", *null = 0;
     //pop the -c
     da_pop(c->command_template);
     struct FileBuilder final = {0};
     copy_cstring_array(&final.command, &c->command_template);
     if(c->final_flags.length) {
-        save_separated(&c->final_flags, &p.final_flags);
-        append_ssi_items(&final.command, &p.final_flags);
+        save_separated(&c->final_flags, &p->final_flags);
+        append_ssi_items(&final.command, &p->final_flags);
     }
-    append_ssi_items(&final.command, &p.object_files);
+    append_ssi_items(&final.command, &p->object_files);
 
     da_append(final.command, dash_o);
-    char* out_name = st_get_str(&ctx.st, p.out_name);
+    char* out_name = st_get_str(&ctx.st, p->out_name);
     da_append(final.command, out_name);
     da_append(final.command, null);
 
@@ -423,11 +421,26 @@ void class_build(CateClass* c) {
                 cate_error("build command exited with code %i", err);
         }
     }
+    free(final.command.data);
+}
+
+void class_build(CateClass* c) {
+    if(c->bools & CLASS_BOOL_BUILT
+    && !(cmd_args.flags & CMD_FORCE_REBUILD))
+        return;
+        
+    Prepared p = {0};
+    prepare(c, &p);
+    if(c->bools & CLASS_BOOL_RELINK) {
+        prepare_command_template(c, &p);
+        build(c, &p);
+        link(c, &p);
+    }
+    
     //finished building, let's mark it as built
     c->bools |= CLASS_BOOL_BUILT;
 
     //free
-    free(final.command.data);
     free(p.object_files.data);
     free(p.flags.data);
     free(p.final_flags.data);
