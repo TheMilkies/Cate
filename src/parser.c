@@ -295,6 +295,8 @@ void parse(Parser* p) {
 
         case TOK_LCURLY: {
             ++opened_blocks;
+            if(opened_blocks > 32)
+                error("too many opened blocks, what are even you doing?",0);
             next();
             break;
         }
@@ -458,6 +460,18 @@ done:
     optional_rparen(p);
 }
 
+static void print_fn(Parser* p, string_view* fn, FILE* out) {
+    while (!match(TOK_RPAREN)) {
+    if(!match(TOK_STRING_LITERAL) && !match(TOK_RPAREN)) {
+            error("only strings are allowed in "hl_func(sv_fmt), svptr_p(fn));
+            next();
+            break;
+        }
+        fprintf(out, sv_fmt" ", sv_p(cur->text));
+        next();
+    }
+}
+
 static void run_function(Parser* p) {
     string_view fn = expect(TOK_IDENTIFIER)->text;
     expect(TOK_LPAREN);
@@ -492,17 +506,22 @@ static void run_function(Parser* p) {
             fprintf(out, BOLD_RED "Script error: " COLOR_RESET);
         }
 
-        while (!match(TOK_RPAREN)) {
-            if(!match(TOK_STRING_LITERAL) && !match(TOK_RPAREN)) {
-                error("only strings are allowed in "hl_func(sv_fmt), sv_p(fn));
-                next();
-                break;
-            }
-            fprintf(out, sv_fmt" ", sv_p(cur->text));
-            next();
-        }
+        print_fn(p, &fn, out);
         fprintf(out, "\n");
         if(is_err) exit(4);
+    }
+
+    else if (is_fn("write") || is_fn("append")) {
+        char* mode = fn.text[0] == 'w' ? "w" : "a";
+        string_view path = string_or_out_file(p);
+        cate_sys_convert_path(path.text);
+
+        FILE* out = fopen(path.text, mode);
+        if(!out)
+            error("can not open file \""sv_fmt"\"", sv_p(path));
+
+        print_fn(p, &fn, out);
+        fclose(out);
     }
 
     #define two_str_fn(name) \
@@ -523,7 +542,7 @@ static void run_function(Parser* p) {
     }
     
     else {
-        error("invalid function \""hl_func(sv_fmt)"()\"", sv_p(fn));
+        error("invalid function \""hl_func(sv_fmt)"\"", sv_p(fn));
         while(!match(TOK_RPAREN)) next();
         expect(TOK_RPAREN);
     }
