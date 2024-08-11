@@ -1,9 +1,11 @@
 #include "string_table.h"
+#include <limits.h>
 
 static size_t round_to_pow2(size_t n) {
     --n;
     //for portability
-    for (size_t i = 1; i < sizeof(n)*8; i *= 2)
+    static const size_t bit_count = sizeof(void*) * CHAR_BIT;
+    for (size_t i = 1; i < bit_count; i *= 2)
         n |= n >> i;
 
     ++n;
