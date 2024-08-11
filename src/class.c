@@ -68,12 +68,14 @@ typedef struct {
 } Prepared;
 
 static STIndex prepare_out_name(CateClass* c) {
-    if(c->out_name.length)
+    if(c->out_name.length) {
+        cate_sys_convert_path(c->out_name.text);
         return st_save_sv(&ctx.st, &c->out_name);
+    }
     
     STIndex saved = 0;
     if(c->name.length + 1 >= PATH_MAX) {
-        cate_error("object \""sv_fmt"\"'s name is too long!",
+        cate_error("object \""sv_fmt"\"'s name is too long for this platform!",
             sv_p(c->out_name));
     }
 
@@ -101,7 +103,7 @@ static STIndex prepare_out_name(CateClass* c) {
             sv_p(c->out_name));
         }
 
-        strncpy(f.x, "out/lib", 8);
+        strncpy(f.x, "out" path_sep_str "lib", 8);
         strncat(f.x, c->name.text, c->name.length);
         strncat(f.x, ext->text, ext->length);
         //maybe null terminate?
@@ -173,9 +175,8 @@ static STIndex objectify_file(string_view* dir, string_view* file) {
             i += 2;
 
             length += 5;
-            if(length >= PATH_MAX) {
+            if(length >= PATH_MAX)
                 cate_error("path too long to add \"back_\"");
-            }
             strncat(path.x, "back_", 6);
             break;
         
@@ -188,11 +189,11 @@ static STIndex objectify_file(string_view* dir, string_view* file) {
 
     //replace extension
     length = last_dot + cate_target->object_ending.length+1;
-    if(length >= PATH_MAX) {
+    if(length >= PATH_MAX)
         cate_error("path too long to add object extension");
-    }
 
     path.x[last_dot] = 0;
+    //add the object ending
     strncat(path.x,
         cate_target->object_ending.text, cate_target->object_ending.length+1);
     
@@ -227,6 +228,7 @@ static void prepare_obj_files(CateClass* c,
         string_view f = sv_from_cstr(
             st_get_str(&ctx.st, c->files.data[i])
         );
+        cate_sys_convert_path(f.text);
 
         STIndex obj = objectify_file(&c->build_dir, &f);
         da_append((*result), obj);
@@ -263,6 +265,7 @@ static void prepare(CateClass* c, Prepared* p) {
             sizeof(struct FileBuilder));
     }
 
+    cate_sys_convert_path(c->build_dir.text);
     p->out_name = prepare_out_name(c);
     prepare_obj_files(c, &p->object_files);
     check_if_needs_rebuild(c, p);
@@ -300,7 +303,7 @@ static void create_build_process(struct FileBuilder* b,
     if(!b->command.data || !b->command.size) {
         copy_cstring_array(&b->command, t);
     } else {
-        b->command.size -= 3;
+        b->command.size -= 4;
     }
 
     static char* dash_o = "-o";
@@ -309,7 +312,7 @@ static void create_build_process(struct FileBuilder* b,
     da_append(b->command, o);
     da_append(b->command, f);
     da_append(b->command, null);
-    
+
     if(cmd_args.flags & CMD_DRY_RUN) return;
     b->proc = cate_sys_process_create(b->command.data);
 }
@@ -327,7 +330,7 @@ static void build(CateClass* c, Prepared* p) {
 
     size_t built_count = 0;
     while (built_count < p->to_build_indexes.size) {
-        for (size_t thr = 0; thr < chunk_size; thr++) {
+        for (size_t thr = 0; thr < chunk_size; ++thr) {
             struct FileBuilder* builder = &ctx.builders[thr];
             if(cate_sys_has_process_exited(&builder->proc)) {
                 if(builder->proc.exit_code)
@@ -354,7 +357,7 @@ static void build(CateClass* c, Prepared* p) {
     //wait for the ones that didn't end
     while (1) {
         uint8_t running = 0;
-        for (size_t thr = 0; thr < chunk_size; thr++) {
+        for (size_t thr = 0; thr < chunk_size; ++thr) {
             struct FileBuilder* builder = &ctx.builders[thr];
             if(builder->proc.id) {
                 if(cate_sys_has_process_exited(&builder->proc)) {
@@ -366,13 +369,14 @@ static void build(CateClass* c, Prepared* p) {
             }
         }
 
-        if(!running) break;
+        if(!running) return;
     }
 }
 
 static void prepare_command_template(CateClass* c, Prepared* p) {
     static const char *dash_c = "-c";
     c->command_template.size = 0;
+    cate_sys_convert_path(c->compiler.text);
     da_append(c->command_template, c->compiler);
     append_ssi_items(&c->command_template, &p->flags);
     //TODO: fix the includes

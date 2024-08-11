@@ -246,7 +246,6 @@ int cate_sys_process_wait(struct CateSysProcess* p) {
     return get_exit_code(p->status);
 }
 
-void cate_sys_convert_path(char* posix, char* new) {
-    //POSIX paths stay the same.
+void cate_sys_convert_path(char* path) {
     return;
 }

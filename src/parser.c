@@ -265,9 +265,8 @@ void parse(Parser* p) {
 
         case TOK_RCURLY: {
             --opened_blocks;
-            if(opened_blocks < 0) {
+            if(opened_blocks < 0)
                 error("too many '}'",0);
-            }
             next();
         }	break;
         
