@@ -50,50 +50,64 @@ int cate_recursive(RecursiveData* data, string_view* path) {
         static string_view this_dir = sv_from_const("." path_sep_str);
         path = &this_dir;
     }
+    da_type(string_view) paths_stack = {0};
+    da_append(paths_stack, *path);
 
-    struct CateSysDirectory* dir = 0;
-    if(path->text[path->length] != '\0') {
-        const char backup = path->text[path->length];
-        path->text[path->length] = 0;
-        dir = cate_sys_open_dir(path->text);
-        path->text[path->length] = backup;
-    } else {
-        dir = cate_sys_open_dir(path->text);
-    }
-    if(!dir) return 0;
-    
-    struct CateSysDirEntry ent = {0};
-    while (cate_sys_dir_get(dir, &ent)) {
-        switch (ent.type) {
-        case CATE_SYS_DIRENT_FILE: {
-            if(data->to_get & RECURSIVE_GET_FILES) {
-                save_entry_cstr(data->arr, path, ent.name);
-            } else if(data->to_get & RECURSIVE_GET_FILES_WITH_EXT) {
-                string_view name = sv_from_cstr(ent.name);
-                if(sv_ends_with_sv(&name, &data->extension)) {
-                    save_entry(data->arr, path, &name);
-                }
-            }
-        }   break;
-
-        case CATE_SYS_DIRENT_DIR: {
-            if(data->to_get & RECURSIVE_GET_DIRS) {
-                save_entry_cstr(data->arr, path, ent.name);
-            } 
-
-            if(data->subrecursion) {
-                struct CateFullPath p = {0};
-                string_view name = sv_from_cstr(ent.name);
-                string_view new_path = form_path(&p, path, &name, 1);
-                if(!cate_recursive(data, &new_path)) return 0;
-            }
-        }   break;
+    while (paths_stack.size) {
+        string_view cur = da_top(paths_stack);
+        da_pop(paths_stack);
         
-        default:
-            break;
-        }   
+        struct CateSysDirectory* dir = 0;
+        if(cur.text[cur.length] != '\0') {
+            const char backup = cur.text[cur.length];
+            cur.text[cur.length] = 0;
+            dir = cate_sys_open_dir(cur.text);
+            cur.text[cur.length] = backup;
+        } else {
+            dir = cate_sys_open_dir(cur.text);
+        }
+        if(!dir) return 0;
+        
+        struct CateSysDirEntry ent = {0};
+        while (cate_sys_dir_get(dir, &ent)) {
+            switch (ent.type) {
+            case CATE_SYS_DIRENT_FILE: {
+                if(data->to_get & RECURSIVE_GET_FILES) {
+                    save_entry_cstr(data->arr, &cur, ent.name);
+                } else if(data->to_get & RECURSIVE_GET_FILES_WITH_EXT) {
+                    string_view name = sv_from_cstr(ent.name);
+                    if(sv_ends_with_sv(&name, &data->extension)) {
+                        save_entry(data->arr, &cur, &name);
+                    }
+                }
+            }   break;
+
+            case CATE_SYS_DIRENT_DIR: {
+                if(data->to_get & RECURSIVE_GET_DIRS) {
+                    save_entry_cstr(data->arr, &cur, ent.name);
+                }
+
+                if(data->subrecursion) {
+                    struct CateFullPath p = {0};
+                    string_view name = sv_from_cstr(ent.name);
+                    string_view new_path = form_path(&p, &cur, &name, 1);
+                    STIndex idx = st_save_sv(&ctx.st, &new_path);
+                    string_view result = {
+                        .length = new_path.length,
+                        .text = st_get_str(&ctx.st, idx)
+                    };
+                    da_append(paths_stack, result);
+                }
+            }   break;
+            
+            default:
+                break;
+            }   
+        }
+        
+        cate_sys_dir_close(dir);
     }
-    
-    cate_sys_dir_close(dir);
+
+    free(paths_stack.data);
     return 1;
 }
