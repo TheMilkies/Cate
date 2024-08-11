@@ -508,7 +508,8 @@ static void run_function(Parser* p) {
     else if two_str_fn(move)
 
     else if (is_fn("subcate")) {
-        todo("subcate()");
+        string_view file = expect_string(p);
+        cate_open(file.text);
     }
     
     else {
