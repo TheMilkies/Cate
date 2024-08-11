@@ -320,11 +320,18 @@ static uint8_t parse_if_part(Parser* p) {
 }
 
 static void skip_block(Parser* p, int32_t* opened_blocks) {
-    while(p->i <= p->tokens.size && cur->kind != TOK_RCURLY) {
+    int32_t origin = *opened_blocks-1;
+    while(p->i <= p->tokens.size && *opened_blocks > origin) {
+        if(match(TOK_LCURLY))
+            ++*opened_blocks;
+        else if(match(TOK_RCURLY)) {
+            --*opened_blocks;
+            if(*opened_blocks == origin)
+                break;
+        }
         next();
     }
     expect(TOK_RCURLY);
-    --*opened_blocks;
 }
 
 static CateClass* find_class_or_exit(Parser* p, string_view* name) {

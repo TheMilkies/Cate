@@ -380,7 +380,6 @@ static void prepare_command_template(CateClass* c, Prepared* p) {
     cate_sys_convert_path(c->compiler.text);
     da_append(c->command_template, c->compiler);
     append_ssi_items(&c->command_template, &p->flags);
-    //TODO: fix the includes
     append_ssi_items(&c->command_template, &c->includes);
 
     //we remove the -c later by just popping
