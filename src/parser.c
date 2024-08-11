@@ -253,8 +253,6 @@ void parse(Parser* p) {
         }   break;
 
         case TOK_IF: {
-            if(opened_blocks)
-                error("nested ifs are not supported",0);
             uint8_t found_true = 0;
             uint8_t cond = 0;
             /* this is very dumb!
@@ -295,6 +293,11 @@ void parse(Parser* p) {
             skip_block(p, &opened_blocks);
         }	break;
 
+        case TOK_LCURLY: {
+            ++opened_blocks;
+            next();
+            break;
+        }
         case TOK_RCURLY: {
             --opened_blocks;
             if(opened_blocks < 0)
