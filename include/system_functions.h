@@ -31,6 +31,10 @@
     --yogurt
 */
 
+struct CateFullPath {
+    char x[PATH_MAX];
+};
+
 int cate_sys_mkdir(char* path);
 int cate_sys_copy(char* path1, char* path2);
 int cate_sys_move(char* path1, char* path2);
@@ -68,12 +72,15 @@ void cate_sys_dir_close(struct CateSysDirectory* dir);
 char cate_sys_dir_get(struct CateSysDirectory* dir,
                         struct CateSysDirEntry* ent);
 
-void cate_sys_convert_path(char* posix, char* new);
+void cate_sys_convert_path(char* posix, struct CateFullPath* new);
 
 typedef size_t CateSysProcessID;
 struct CateSysProcess {
     CateSysProcessID id;
-    int status;
+    union {
+        int status;
+        void* handle;
+    };
     int exit_code;
 };
 
@@ -89,9 +96,5 @@ int cate_sys_has_process_exited(struct CateSysProcess* p);
 /// @param p The process
 /// @return exit code of the process
 int cate_sys_process_wait(struct CateSysProcess* p);
-
-struct CateFullPath {
-    char x[PATH_MAX];
-};
 
 #endif // CATE_SYSTEM_FUNCTIONS_H
