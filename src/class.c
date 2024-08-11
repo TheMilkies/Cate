@@ -256,8 +256,9 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
         }
     }
 
+
     if(p->to_build_indexes.size
-    || !cate_sys_file_exists(c->out_name.text))
+    || !cate_sys_file_exists(st_get_str(&ctx.st, p->out_name)))
         c->bools |= CLASS_BOOL_RELINK;
 }
 
