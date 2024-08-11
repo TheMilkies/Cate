@@ -19,8 +19,12 @@ extern CateOSTarget cate_target_posix;
 uint8_t cate_platform_check(const string_view* id);
 
 #ifdef _WIN32
+#define path_sep '\\'
+#define path_sep_str "\\"
 #define NL "\r\n"
 #else
+#define path_sep '/'
+#define path_sep_str "/"
 #define NL "\n"
 #endif // OS newline check
 

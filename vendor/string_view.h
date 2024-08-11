@@ -28,6 +28,7 @@ int sv_equalc(const string_view *s1, const char *s2, size_t length);
 size_t sv_find(const string_view *s, size_t from, const char c);
 size_t sv_find_last(const string_view *s, const char c);
 int sv_ends_with(string_view* restrict s, char* restrict e, size_t l);
+int sv_ends_with_sv(string_view* restrict s, string_view* restrict e);
 
 #endif // SIMPLE_STRING_VIEW_H
 
@@ -91,10 +92,11 @@ size_t sv_find(const string_view *s, size_t from, const char c) {
 }
 
 size_t sv_find_last(const string_view *s, const char c) {
-	for (ssize_t i = s->length-1; i >= 0 ; ++i)
-		if(s->text[i] == c) return i;
+	size_t index = SV_NOT_FOUND;
+	for (size_t i = 0; i < s->length; ++i)
+		if(s->text[i] == c) index = i;
 	
-	return SV_NOT_FOUND;
+	return index;
 }
 
 string_view sv_substring(string_view *s, size_t begin, size_t end) {
@@ -112,5 +114,10 @@ string_view sv_substring(string_view *s, size_t begin, size_t end) {
 int sv_ends_with(string_view* restrict s, char* restrict e, size_t l) {
     if(l > s->length) return 0;
     return strncmp(s->text+s->length-l, e, l) == 0;
+}
+
+int sv_ends_with_sv(string_view* restrict s, string_view* restrict e) {
+    if(e->length > s->length) return 0;
+    return strncmp(s->text+s->length-e->length, e->text, e->length) == 0;
 }
 #endif // SIMPLE_SV_IMPL

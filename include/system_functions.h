@@ -45,14 +45,6 @@ struct CateSysDirEntry {
 };
 
 struct CateSysDirectory;
-struct CateSysGlob {
-    size_t count;
-    const char** matches;
-    void* internal;
-};
-
-int cate_sys_glob_init(struct CateSysGlob* g, const char* pattern);
-void cate_sys_glob_free(struct CateSysGlob* globber);
 
 /// @brief Open a directory from path
 /// @param path The path

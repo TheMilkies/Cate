@@ -3,6 +3,7 @@
 #include "common.h"
 #include "cmd_args.h"
 #include "system_functions.h"
+#include "recursive.h"
 #include <stdarg.h>
 
 static void error(Parser* p, const char* fmt, ...) {
@@ -625,6 +626,64 @@ static void append_array_item(CateClass* c,
     }
 }
 
+static void do_recursive(Parser* p, SavedStringIndexes* arr,
+                             string_view* globber) {
+    RecursiveData data = {.arr = arr};
+
+    size_t asterisk_loc = sv_find(globber, 0, '*');
+    if(asterisk_loc == SV_NOT_FOUND)
+        error("wildcard '*' not found in "hl_func("recursive"), 0);
+
+    if(asterisk_loc > 0 && globber->text[asterisk_loc-1] != '/')
+        error("\"src/idk*.c\" is not allowed in "hl_func("recursive"), 0);
+
+    if(globber->text[asterisk_loc+1] == '*') {
+        data.subrecursion = 1;
+    } else if(globber->text[asterisk_loc+1] == '/') {
+        error("'path/*/*' is not allowed in "hl_func("recursive")
+        "\nmaybe use 'path/**'?", 0);
+    }
+
+    string_view the_path = sv_substring(globber, 0, asterisk_loc);
+
+    uint8_t extension_allowed = 1;
+    if(arr == &p->cur_class->includes) {
+        extension_allowed = 0;
+        data.to_get = RECURSIVE_GET_DIRS;
+    } else {
+        data.to_get |= RECURSIVE_GET_FILES_WITH_EXT;
+    }
+
+    size_t dot_loc = sv_find_last(globber, '.');
+    if(dot_loc == SV_NOT_FOUND && extension_allowed) {
+        error("extension '.something' not found in "
+            hl_func("recursive"), 0);
+    } else if(!extension_allowed) {
+        error("extension are not allowed in this kind of "
+            hl_func("recursive"), 0);
+    }
+
+    data.extension = sv_substring(globber, dot_loc,
+                                globber->length);
+    if(!cate_recursive(&data, &the_path))
+        cate_error(hl_func("recursive") " failed!");
+}
+
+static void handle_recursive(Parser* p, SavedStringIndexes* arr) {
+    string_view globber = {0};
+    if(!match(TOK_RECURSIVE)) {
+        globber = expect_string(p);
+        do_recursive(p, arr, &globber);
+        return;
+    }
+
+    next();
+    expect(TOK_LPAREN);
+    globber = expect_string(p);
+    do_recursive(p, arr, &globber);
+    expect(TOK_RPAREN);
+}
+
 static void set_class_array(Parser* p, SavedStringIndexes* arr) {
     expect(TOK_ASSIGN);
 
@@ -632,18 +691,25 @@ static void set_class_array(Parser* p, SavedStringIndexes* arr) {
         return definitions(p);
     
     if(match(TOK_RECURSIVE))
-        todo("direct item = recursive()");
+        return handle_recursive(p, arr);
 
     expect(TOK_LCURLY);
     while (!match(TOK_RCURLY)) {
         switch (cur->kind) {
         case TOK_RECURSIVE:
-            todo("recursive() in {}");
+            handle_recursive(p, arr);
             break;
         
         case TOK_IDENTIFIER:
         case TOK_STRING_LITERAL: {
+            TokenKind k = cur->kind;
             string_view item = string_or_out_file(p);
+            if(k == TOK_STRING_LITERAL) {
+                if(sv_find(&item, 0, '*') != SV_NOT_FOUND) {
+                    do_recursive(p, arr, &item);
+                    continue;
+                }
+            }
             append_array_item(p->cur_class, arr, &item);
         }   break;
         
