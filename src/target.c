@@ -1,7 +1,7 @@
 #include "target.h"
 
 CateOSTarget* cate_target = 
-#ifdef __WIN32
+#ifdef _WIN32
 &cate_target_windows
 #else
 &cate_target_posix
