@@ -24,22 +24,25 @@
 [ ] Catel
  - [ ] 
 
+- [ ] Adding libraries
+
 [ ] Parser
  - [x] Project
  - [x] Library
  - [x] Globals
  - [x] Bool properties
  - [x] String properties
- - [ ] Array properties
+ - [x] Array properties
  - [x] If statements
- - [ ] Recursive
+ - [x] Recursive
  - [ ] Subcate
  - [?] Functions
    - [x] mkdir
    - [x] copy
    - [ ] remove
    - [x] move
-   - [ ] smolize
+   - [x] smolize
    - [x] print
    - [x] error
    - [x] system
+ - [ ] Changing library type
