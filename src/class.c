@@ -339,7 +339,7 @@ static void build(CateClass* c, Prepared* p) {
 
                 size_t file_index = p->to_build_indexes.data[built_count++];
                 if(built_count > p->to_build_indexes.size)
-                    //we're done, break
+                    //we're done, break and wait for the others.
                     break;
 
                 const char* file = st_get_str(&ctx.st,

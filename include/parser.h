@@ -17,7 +17,7 @@ typedef struct {
     size_t i;
 } Parser;
 
-void cate_open(const char* path);
+void cate_open(char* path);
 void parse(Parser* p);
 
 #endif // CATE_PARSER_H

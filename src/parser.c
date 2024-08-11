@@ -20,25 +20,57 @@ static void error(Parser* p, const char* fmt, ...) {
 //sv_ccmp(v, "str"): GOOD
 #define sv_ccmp(sv, text) (sv_equalc(sv, text, sizeof(text)/sizeof(text[0])-1))
 
-void cate_open(const char* path) {
+static uint8_t was_loaded(const struct CateFullPath* path) {
+    for (size_t i = 0; i < ctx.loaded_files.size; ++i) {
+        if(strncmp(path->x, ctx.loaded_files.data[i].x, PATH_MAX) == 0)
+            return 1;
+    }
+    return 0;
+}
+
+void cate_open(char* path) {
     //struct CateFullPath open_path = {0};
     /*
     TODO
     [ ] Add the directory provided by Catel
-    [ ] Add the .cate extension if it doesn't have it
+    [x] Add the .cate extension if it doesn't have it
     [ ] Get the real full path
     [ ] Check if it was loaded already (ctx.loaded_paths)
-         - skip if it did
+         - skip if it was
          - add it to ctx.loaded_paths
     [x] Tokenize
     [x] Start the parser
     */
+    size_t length = 0;
+
+    string_view path_as_sv = sv_from_cstr(path);
+    struct CateFullPath to_open = {0};
+    memcpy(&to_open.x[length], path_as_sv.text, path_as_sv.length);
+    length += path_as_sv.length;
+
+    //append cate extension
+    if(!sv_ends_with(&path_as_sv, ".cate", 5)) {
+        if(path_as_sv.length > PATH_MAX)
+            cate_error("can't open \"%s\": too long!", path);
+        memcpy(&to_open.x[length], ".cate", 5);
+    }
+
+    //check realpath
+    {
+        struct CateFullPath fullpath = {0};
+        char* res = realpath(to_open.x, fullpath.x);
+        if(!res)
+            cate_error("can not open file \"%s\"", to_open.x);
+        if(was_loaded(&fullpath)) return;
+
+        da_append(ctx.loaded_files, fullpath);
+    }
 
     Parser p = {0};
     string_view file = {0};
-    int err = sv_load_file(&file, path);
+    int err = sv_load_file(&file, to_open.x);
     if(err)
-        cate_error("can not open file %s", path);
+        cate_error("can not open file %s", to_open.x);
     err = cate_tokenize(&file, &p.tokens);
     if(err) exit(1);
 
