@@ -353,20 +353,21 @@ static void build(CateClass* c, Prepared* p) {
             }
         }
     }
-    
+
     //wait for the ones that didn't end
+    if(cmd_args.flags & CMD_DRY_RUN) return;
     while (1) {
         uint8_t running = 0;
         for (size_t thr = 0; thr < chunk_size; ++thr) {
             struct FileBuilder* builder = &ctx.builders[thr];
-            if(builder->proc.id) {
-                if(cate_sys_has_process_exited(&builder->proc)) {
-                    if(builder->proc.exit_code)
-                        cate_error("error in build command!");
-                    builder->proc.id = 0;
-                }
-                running = 1;
+            if(!builder->proc.id) continue;
+            
+            if(cate_sys_has_process_exited(&builder->proc)) {
+                if(builder->proc.exit_code)
+                    cate_error("error in build command!");
+                builder->proc.id = 0;
             }
+            running = 1;
         }
 
         if(!running) return;
