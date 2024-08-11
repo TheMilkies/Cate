@@ -1,6 +1,14 @@
 #ifndef CATE_SYSTEM_FUNCTIONS_H
 #define CATE_SYSTEM_FUNCTIONS_H
 #include <stdlib.h>
+
+#ifndef _WIN32
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
+#endif
+#include <limits.h>
+#endif
+
 #ifndef PATH_MAX
 #define PATH_MAX 2048
 #endif
