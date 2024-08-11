@@ -59,10 +59,6 @@ void save_string(string_view* s, SavedStringIndexes* arr) {
     da_append((*arr), index);
 }
 
-static void prepare_objects(CateClass* c) {
-    todo("preparing objects");
-}
-
 typedef struct {
     SavedStringIndexes object_files;
     SavedStringIndexes to_build_indexes;
@@ -256,7 +252,6 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
         }
     }
 
-
     if(p->to_build_indexes.size
     || !cate_sys_file_exists(st_get_str(&ctx.st, p->out_name)))
         c->bools |= CLASS_BOOL_RELINK;
@@ -283,8 +278,6 @@ static void prepare(CateClass* c, Prepared* p) {
         save_separated(&lib_flags, &p->flags);
     }
     save_separated(&c->flags, &p->flags);
-
-    // todo("prepare");
 }
 
 static void copy_cstring_array(CStringArray* dest, const CStringArray* src) {
@@ -306,18 +299,15 @@ static void create_build_process(struct FileBuilder* b,
 
     if(!b->command.data || !b->command.size) {
         copy_cstring_array(&b->command, t);
-        da_append(b->command, null);
     } else {
         b->command.size -= 3;
     }
 
-    //TODO: we can turn this from "$f -o $o" to "-o $o $f"
-    //which would save an append
-    da_pop(b->command);
-    da_append(b->command, f);
     static char* dash_o = "-o";
+    //this appends "-o $o $f"
     da_append(b->command, dash_o);
     da_append(b->command, o);
+    da_append(b->command, f);
     da_append(b->command, null);
     
     if(cmd_args.flags & CMD_DRY_RUN) return;
@@ -346,21 +336,17 @@ static void build(CateClass* c, Prepared* p) {
 
                 size_t file_index = p->to_build_indexes.data[built_count++];
                 if(built_count > p->to_build_indexes.size)
-                    continue;
+                    //we're done, break
+                    break;
 
                 const char* file = st_get_str(&ctx.st,
                         c->files.data[file_index]);
                 const char* obj = st_get_str(&ctx.st,
                         p->object_files.data[file_index]);
-                
-                if(cmd_args.flags & CMD_DRY_RUN) {
-                    create_build_process(&ctx.builders[thr],
-                        file, obj, &c->command_template);
 
-                    dry_run_print(&ctx.builders[thr].command);
-                    continue;
-                }
                 create_build_process(builder, file, obj, &c->command_template);
+                if(cmd_args.flags & CMD_DRY_RUN)
+                    dry_run_print(&builder->command);
             }
         }
     }
@@ -398,8 +384,10 @@ static void prepare_command_template(CateClass* c, Prepared* p) {
 
 static void link(CateClass* c, Prepared* p) {
     static char* dash_o = "-o", *null = 0;
-    //pop the -c
-    da_pop(c->command_template);
+
+    //pop the -c -o
+    c->command_template.size -= 2;
+
     struct FileBuilder final = {0};
     copy_cstring_array(&final.command, &c->command_template);
     if(c->final_flags.length) {
@@ -448,12 +436,10 @@ void class_build(CateClass* c) {
     free(p.final_flags.data);
     free(p.to_build_indexes.data);
     builders_reset();
-
-    // todo("building a class");
 }
 
 void class_clean(CateClass* c) {
-    if(!c->objects.size) prepare_objects(c);
+    if(!c->objects.size) prepare_obj_files(c, &c->objects);
 
     for (size_t i = 0; i < c->objects.size; ++i) {
         char* path = st_get_str(&ctx.st, c->objects.data[i]);
