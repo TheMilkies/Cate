@@ -34,8 +34,8 @@ void cate_open(char* path) {
     TODO
     [ ] Add the directory provided by Catel
     [x] Add the .cate extension if it doesn't have it
-    [ ] Get the real full path
-    [ ] Check if it was loaded already (ctx.loaded_paths)
+    [x] Get the real full path
+    [x] Check if it was loaded already (ctx.loaded_paths)
          - skip if it was
          - add it to ctx.loaded_paths
     [x] Tokenize

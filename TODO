@@ -6,7 +6,7 @@
 [x] Tokenize file
  - [x] Token type
  - [x] Line info
- - [ ] Loading file into string, cross-platform
+ - [?] Loading file into string, cross-platform
  - [x] Whitespace skipping
  - [x] Strings
  - [x] Identifiers
@@ -35,7 +35,7 @@
  - [x] Array properties
  - [x] If statements
  - [x] Recursive
- - [ ] Subcate
+ - [x] Subcate
  - [?] Functions
    - [x] mkdir
    - [x] copy
