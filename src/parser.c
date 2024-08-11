@@ -577,9 +577,9 @@ static uint8_t expect_bool(Parser* p) {
 }
 
 static string_view expect_string(Parser* p) {
-    if(cur->kind != TOK_STRING_LITERAL) {
+    if(cur->kind != TOK_STRING_LITERAL)
         error("expected a string literal (\"text\")",0);
-    }
+    
     string_view v = cur->text;
     next();
     return v;
@@ -591,56 +591,52 @@ static string_view expect_string(Parser* p) {
 static ClassBools get_bool_property(Parser* p, string_view* v) {
     static_assert(CLASS_BOOL_END == 65, "added a flag? add it here.");
 
-    if (sv_ccmp(v, "smol")) {
+    if (sv_ccmp(v, "smol"))
         return CLASS_BOOL_SMOL;
-    } else if (sv_ccmp(v, "link")) {
+    else if (sv_ccmp(v, "link"))
         return CLASS_BOOL_LINK;
-    } else if (sv_ccmp(v, "thread"), sv_ccmp(v, "threading")) {
+    else if (sv_ccmp(v, "thread"), sv_ccmp(v, "threading"))
         return CLASS_BOOL_THREAD;
-    } else if (sv_ccmp(v, "auto")) {
+    else if (sv_ccmp(v, "auto"))
         return CLASS_BOOL_AUTO;
-    } else if (sv_ccmp(v, "built")) {
+    else if (sv_ccmp(v, "built"))
         return CLASS_BOOL_BUILT;
-    }
     return CLASS_BOOL_NONE;
 }
 
 static string_view* get_string_property(Parser* p,
                                         CateClass* c, string_view* v) {
-    if(sv_ccmp(v, "flags")) {
+    if(sv_ccmp(v, "flags"))
         return &c->flags;
-    } else if(sv_ccmp(v, "out")) {
+    else if(sv_ccmp(v, "out"))
         return &c->out_name;
-    } else if(sv_ccmp(v, "cc") || sv_ccmp(v, "compiler")) {
+    else if(sv_ccmp(v, "cc") || sv_ccmp(v, "compiler"))
         return &c->compiler;
-    } else if(sv_ccmp(v, "std") || sv_ccmp(v, "standard")) {
+    else if(sv_ccmp(v, "std") || sv_ccmp(v, "standard"))
         return &c->standard;
-    } else if(sv_ccmp(v, "final_flags")) {
+    else if(sv_ccmp(v, "final_flags"))
         return &c->final_flags;
-    }
     else if(sv_ccmp(v, "obj_dir")
         ||  sv_ccmp(v, "object_dir")
         ||  sv_ccmp(v, "build_dir")
         ||  sv_ccmp(v, "build_directory")
-    ) {
+    )
         return &c->build_dir;
-    }
 
     return 0;
 }
 
 static SavedStringIndexes* get_array_property(Parser* p,
                                         CateClass* c, string_view* v) {
-    if(sv_ccmp(v, "files")) {
+    if(sv_ccmp(v, "files"))
         return &c->files;
-    } else if(sv_ccmp(v, "incs") || sv_ccmp(v, "includes")
-    || sv_ccmp(v, "include_paths")) {
+    else if(sv_ccmp(v, "incs") || sv_ccmp(v, "includes")
+    || sv_ccmp(v, "include_paths"))
         return &c->includes;
-    } else if(sv_ccmp(v, "libs") || sv_ccmp(v, "libraries")) {
+    else if(sv_ccmp(v, "libs") || sv_ccmp(v, "libraries"))
         return &c->libraries;
-    } else if(sv_ccmp(v, "defs") || sv_ccmp(v, "definitions")) {
+    else if(sv_ccmp(v, "defs") || sv_ccmp(v, "definitions"))
         return &c->defines;
-    }
 
     return 0;
 }

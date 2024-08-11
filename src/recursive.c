@@ -76,9 +76,8 @@ int cate_recursive(RecursiveData* data, string_view* path) {
                     save_entry_cstr(data->arr, &cur, ent.name);
                 } else if(data->to_get & RECURSIVE_GET_FILES_WITH_EXT) {
                     string_view name = sv_from_cstr(ent.name);
-                    if(sv_ends_with_sv(&name, &data->extension)) {
+                    if(sv_ends_with_sv(&name, &data->extension))
                         save_entry(data->arr, &cur, &name);
-                    }
                 }
             }   break;
 
@@ -99,9 +98,6 @@ int cate_recursive(RecursiveData* data, string_view* path) {
                     da_append(paths_stack, result);
                 }
             }   break;
-            
-            default:
-                break;
             }   
         }
         
