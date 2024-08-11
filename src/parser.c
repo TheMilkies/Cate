@@ -508,7 +508,7 @@ static void run_function(Parser* p) {
 
         print_fn(p, &fn, out);
         fprintf(out, "\n");
-        if(is_err) exit(4);
+        if(is_err) exit(1);
     }
 
     else if (is_fn("write") || is_fn("append")) {

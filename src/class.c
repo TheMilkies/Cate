@@ -267,6 +267,7 @@ static void prepare(CateClass* c, Prepared* p) {
 
     cate_sys_convert_path(c->build_dir.text);
     p->out_name = prepare_out_name(c);
+    c->out_name = sv_from_cstr(st_get_str(&ctx.st, p->out_name));
     prepare_obj_files(c, &p->object_files);
     check_if_needs_rebuild(c, p);
     if(!(c->bools & CLASS_BOOL_RELINK))
@@ -415,6 +416,9 @@ static void link(CateClass* c, Prepared* p) {
             if(err)
                 cate_error("build command exited with code %i", err);
         }
+    }
+    if(c->bools & CLASS_BOOL_SMOL || cmd_args.flags & CMD_FORCE_SMOLIZE) {
+        cate_sys_smolize(c->out_name.text);
     }
     free(final.command.data);
 }

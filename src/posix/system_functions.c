@@ -146,6 +146,23 @@ size_t cate_get_modified_time(const char* path) {
     return attr.st_mtime;
 }
 
+int cate_sys_smolize(char* path) {
+    char* prg[] = {"strip","-S","--strip-unneeded",
+    "--remove-section=.note.gnu.gold-version", "--remove-section=.comment",
+    "--remove-section=.note", "--remove-section=.note.gnu.build-id",
+    "--remove-section=.note.ABI-tag", path, 0};
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        static size_t s = __PP_STRLEN(prg) - 1;
+        for (size_t i = 0; i < s; ++i)
+            printf("%s ", prg[i]);
+        printf("\n");
+        return 1;
+    }
+    struct CateSysProcess p = cate_sys_process_create(prg);
+    cate_sys_process_wait(&p);
+    return 1;
+}
+
 int cate_is_file_newer(const char* path1, const char* path2) {
     return cate_get_modified_time(path1) > cate_get_modified_time(path2);
 }
