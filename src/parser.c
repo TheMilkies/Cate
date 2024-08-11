@@ -325,6 +325,20 @@ restart:
             goto done;
         }
 
+        if(sv_ccmp(&name->text, "exists")) {
+            expect(TOK_LPAREN);
+            uint8_t bad = 0;
+            while (!match(TOK_RPAREN)) {
+                string_view f = string_or_out_file(p);
+                if(!cate_sys_file_exists(f.text))
+                    bad = 1;
+            }
+            
+            result = (bad != 1);
+            expect(TOK_RPAREN);
+            goto done;
+        }
+
         ClassBools fg = get_bool_property(p, &name->text);
         if(fg)
             result = (p->globals.bools & fg) != 0;
