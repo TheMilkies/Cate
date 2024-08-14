@@ -7,6 +7,11 @@
 #include <vendor/dynamic_array.h>
 #include <ctype.h>
 
+CatelValues catel = {
+    .file = "build.cate",
+    .dir = ".",
+};
+
 #define CATE_VERSION "3.0.0"
 CmdArgs cmd_args = {0};
 CateContext ctx = {0};
@@ -51,8 +56,7 @@ int main(int argc, char *argv[]) {
     free(malloc(sizeof(STIndex)*20*10));
 
     //handle catel (god damn it milkies!)
-    static CatelValues defaults = {0};
-    catel_init(&defaults);
+    catel_init(&catel);
 
     da_type(char*) files = {0};
     while (argc > 0) {
@@ -123,7 +127,7 @@ int main(int argc, char *argv[]) {
         } break;
 
         case 'l': {
-            struct CateSysDirectory* d = cate_sys_open_dir(defaults.dir);
+            struct CateSysDirectory* d = cate_sys_open_dir(catel.dir);
             if(!d) {
                 cate_error("can't open default directory!");
                 return 1;
@@ -161,8 +165,13 @@ int main(int argc, char *argv[]) {
     }
 
     if(files.size == 0) {
-        cate_error("no file given and catel is not implemented yet");
-        return 1;
+        if(!catel.has_file) {
+            cate_error("no file given and catel is not implemented yet");
+            return 1;
+        }
+        //it crashes with a page error if we do it normally
+        char* path = catel.file;
+        da_append(files, path);
     }
 
     for (size_t i = 0; i < files.size; ++i) {

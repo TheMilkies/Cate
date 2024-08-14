@@ -5,63 +5,55 @@
 #include <errno.h>
 #include <ctype.h>
 
-static void catel_parse(CatelValues* c, string_view* text);
+static int catel_parse(CatelValues* c, string_view* text);
 static void error(const char* fmt, ...);
 void cate_help(int exit_code);
 
-//BROKEN, DO NOT USE
 //TODO: Fix catel
-void catel_init(CatelValues* c) {
-    strncpy(c->file, "build.cate", 11);
-
-    if(cate_sys_file_exists("cate")) {
-        if(cate_sys_file_exists("cate/build.cate")) {
-            strncpy(c->file_path, "cate/build.cate", 16);
-        }
-        strncpy(c->dir, "cate/", 6);
-    } else {
-        if(cate_sys_file_exists("build.cate")) {
-            strncpy(c->file_path, "build.cate", 11);
-        }
-        strncpy(c->dir, "./", 3);
-    }
-
-    if(!cate_sys_file_exists(".catel")) {
-        return;
-    }
-
-    // string_view file = {0};
-    // int err = sv_load_file(&file, ".catel");
-    // if(err)
-    //     error("can't open catel file because: %s", strerror(errno));
-
-    // catel_parse(c, &file);
-
-    // if(c->file_path[0])
-    //     memset(c->file_path, 0, PATH_MAX);
-    // //build the string, the cate extension is added by the parser
-    // {
-    //     const size_t dir_length = strlen(c->dir);
-    //     const size_t name_length = strlen(c->file);
-
-    //     const size_t length = dir_length + 1 + name_length;
-    //     if(length >= PATH_MAX)
-    //         error("catel-created path is too long");
-
-    //     strncpy(c->file_path, c->dir, dir_length);
-    //     strncpy(c->file_path, "/", 2);
-    //     strncpy(c->file_path, c->file, name_length);
-    // }
-
-    // free(file.text);
+size_t catel_build_path(struct CateFullPath* p, CatelValues* v,
+                                string_view* file) {
+    const size_t dir_size = strlen(v->dir);
+    size_t length = dir_size + file->length + path_sep_str_len;
+    if(length >= PATH_MAX)
+        cate_error("path is too long!");
+    memcpy(p->x, v->dir, sizeof(v->dir));
+    strncat(p->x, path_sep_str, path_sep_str_len);
+    strncat(p->x, file->text, file->length);
+    return length;
 }
 
-static void catel_parse(CatelValues* c, string_view* text) {
+void catel_init(CatelValues* c) {
+    //here we do have to null-terminate since it's paths.
+    if(cate_sys_file_exists("cate")) {
+        if(cate_sys_file_exists("cate/build.cate")) {
+            strncpy(c->file_path.x, "cate/build.cate", 16);
+            c->has_file = 1;
+        }
+        strncpy(c->dir, "cate", 6);
+    } else {
+        if(cate_sys_file_exists("build.cate")) {
+            strncpy(c->file_path.x, "build.cate", 11);
+            c->has_file = 1;
+        }
+    }
+
+    if(!cate_sys_file_exists(".catel"))
+        return;
+
+    string_view file = {0};
+    int err = sv_load_file(&file, ".catel");
+    if(err)
+        error("can't open catel file because: %s", strerror(errno));
+
+    free(file.text);
+}
+
+static int catel_parse(CatelValues* c, string_view* text) {
     size_t i = 0;
     #define cur (text->text[i])
     #define match(k) (text->text[i].kind == k)
     #define while_line(cond) while (i < text->length && (cond))
-
+    int changed = 0;
     char* prop = 0;
     while(i < text->length) {
         //skip whitespace
@@ -71,6 +63,8 @@ static void catel_parse(CatelValues* c, string_view* text) {
         size_t begin = i;
         while_line(!isspace(cur)) ++i;
         string_view v = sv_substring(text, begin, i);
+        if(v.text[v.length] == '\0')
+            v.length -= 1;
 
         if(!prop) {
             if(sv_equalc(&v, "def", 3) || sv_equalc(&v, "default", 7)) {
@@ -85,6 +79,7 @@ static void catel_parse(CatelValues* c, string_view* text) {
             if(v.length >= CATEL_PATH_MAX)
                 error("path \""sv_fmt"\" is too long", sv_p(v));
 
+            memset(prop, 0, CATEL_PATH_SIZE);
             strncpy(prop, v.text, v.length);
 
             if(prop == c->file &&
@@ -92,8 +87,10 @@ static void catel_parse(CatelValues* c, string_view* text) {
                 strncat(prop, ".cate", 6);
             }
             prop = 0;
+            changed = 1;
         }
     }
+    return changed;
 }
 
 static void error(const char* fmt, ...) {
