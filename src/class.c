@@ -89,7 +89,8 @@ static STIndex prepare_out_name(CateClass* c) {
     if(c->out_name.length) {
         cate_sys_convert_path(c->out_name.text);
         pb_from_sv(&f, &c->out_name);
-        if(c->bools & CLASS_IBOOL_TYPE_CHANGED)
+        if(c->bools & CLASS_IBOOL_TYPE_CHANGED
+        && c->bools & CLASS_BOOL_AUTO)
             change_extension(&f, c->as.lib.kind);
 
         return pb_save(&f);
@@ -98,6 +99,11 @@ static STIndex prepare_out_name(CateClass* c) {
     if(c->name.length + 1 >= PATH_MAX) {
         cate_error("object \""sv_fmt"\"'s name is too long for this platform!",
             sv_p(c->out_name));
+    }
+
+    if(!(c->bools & CLASS_BOOL_AUTO)) {
+        pb_from_sv(&f, &c->name);
+        return pb_save(&f);
     }
 
     string_view* ext = 0;
@@ -149,6 +155,7 @@ static STIndex prepare_std(CateClass* c) {
 }
 
 static void create_directories(CateClass* c) {
+    if(!(c->bools & CLASS_BOOL_AUTO)) return;
     if(!cate_sys_mkdir(c->build_dir.text)) {
         cate_error("can't create build folder \"%s\"",
             c->out_name.text);
@@ -307,6 +314,11 @@ static void prepare(CateClass* c, Prepared* p) {
     }
     if(c->flags.length)
         save_separated(&c->flags, &p->flags);
+    
+    if(c->includes.size == 0 && c->bools & CLASS_BOOL_AUTO) {
+        if(cate_sys_file_exists("include/"))
+            ssi_append(&c->includes, "-Iinclude", 8);
+    }
 }
 
 static void copy_cstring_array(CStringArray* dest, const CStringArray* src) {
@@ -509,5 +521,11 @@ void class_change_type(CateClass* c, LibraryKind type) {
 }
 
 void class_install(CateClass* c) {
+    #ifdef __WIN32
+    cate_warn("script wants to install "sv_fmt
+    " but `install()` is not supported on windows",
+        sv_fmt(c->name));
+    return;
+    #endif
     todo("installing a class");
 }
