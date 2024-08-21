@@ -136,7 +136,6 @@ int main(int argc, char *argv[]) {
             //get default file
             const string_view default_file = sv_from_cstr(catel.file);
 
-            //TODO: highlight default file
             struct CateSysDirEntry ent = {0};
             printf(list_color);
             while (cate_sys_dir_get(d, &ent)) {

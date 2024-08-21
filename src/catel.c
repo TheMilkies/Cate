@@ -12,28 +12,35 @@ void cate_help(int exit_code);
 //TODO: Fix catel
 void catel_build_path(struct CatePathBuilder* p, CatelValues* v,
                                 string_view* file) {
+    size_t dir_length = 0;
     if(v->dir[0]) {
         pb_from_cstr(p, v->dir);
         pb_append_dir_sep(p);
+        dir_length = p->length;
     }
     pb_append_sv(p, file);
     if(!sv_ends_with(file, ".cate", 5))
         pb_append_cate_extension(p);
+
+    if(cate_sys_file_exists(p->path.x)) return;
+
+    //maybe it's in this dir?
+    if(dir_length && cate_sys_file_exists(&p->path.x[dir_length])) {
+        struct CateFullPath new = {0};
+        memcpy(new.x, &p->path.x[dir_length], p->length-dir_length);
+        memcpy(p->path.x, new.x, PATH_MAX);
+    }
 }
 
 void catel_init(CatelValues* c) {
     //here we do have to null-terminate since it's paths.
     if(cate_sys_file_exists("cate")) {
-        if(cate_sys_file_exists("cate/build.cate")) {
-            strncpy(c->file_path.x, "cate/build.cate", 16);
+        if(cate_sys_file_exists("cate/build.cate"))
             c->has_file = 1;
-        }
         strncpy(c->dir, "cate", 6);
     } else {
-        if(cate_sys_file_exists("build.cate")) {
-            strncpy(c->file_path.x, "build.cate", 11);
+        if(cate_sys_file_exists("build.cate"))
             c->has_file = 1;
-        }
     }
 
     if(!cate_sys_file_exists(".catel"))

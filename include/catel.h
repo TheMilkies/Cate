@@ -9,7 +9,6 @@
 #define CATEL_PATH_SIZE CATEL_PATH_MAX+6 //5 for the .cate
 typedef struct {
     char dir[CATEL_PATH_SIZE], file[CATEL_PATH_SIZE];
-    struct CateFullPath file_path;
     uint8_t has_file;
 } CatelValues;
 
