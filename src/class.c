@@ -273,6 +273,16 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p,
         c->bools |= CLASS_IBOOL_RELINK;
 }
 
+//this is a dumb hack
+static inline void carr_append(CStringArray* a, char* s) {
+    da_append((*a), s);
+}
+
+static inline void ssi_append(SavedStringIndexes* a, char* s, size_t l) {
+    STIndex i = st_save_slen(&ctx.st, s, l);
+    da_append((*a), i);
+}
+
 static void prepare(CateClass* c, Prepared* p) {
     if(!ctx.builders) {
         ctx.builders = calloc(cmd_args.thread_count,
@@ -291,9 +301,9 @@ static void prepare(CateClass* c, Prepared* p) {
     create_directories(c);
 
     if(c->kind == CLASS_LIBRARY) {
-        char flags[17] = "-g -shared -fPIC";
-        string_view lib_flags = {.length = 17, .text = flags};
-        save_separated(&lib_flags, &p->flags);
+        ssi_append(&p->flags, "-g", 3);
+        ssi_append(&p->flags, "-shared", 8);
+        ssi_append(&p->flags, "-fPIC", 6);
     }
     if(c->flags.length)
         save_separated(&c->flags, &p->flags);
@@ -411,11 +421,6 @@ static void run_builder_and_wait(struct FileBuilder* b) {
         if(err)
             cate_error("build command exited with code %i", err);
     }
-}
-
-//this is a dumb hack
-static inline void carr_append(CStringArray* a, char* s) {
-    da_append((*a), s);
 }
 
 static void link_static_library(CateClass* c, Prepared* p) {
