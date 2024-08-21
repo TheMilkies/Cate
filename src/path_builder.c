@@ -5,6 +5,7 @@
 
 static void pb_from_slen(struct CatePathBuilder* pb,
                             char* text, size_t length) {
+    if(!length) return;
     memcpy(pb->path.x, text, length);
     pb->length = length;
 }
