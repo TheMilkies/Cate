@@ -28,35 +28,37 @@ CateOSTarget* cate_target =
     #define UNIX_PLATFORM_NAME "mac"
 #endif
 
+#define text(x) sv_from_const(x)
+
 CateOSTarget cate_target_posix = {
-    .dynamic_ending = sv_from_const(".so"),
-    .static_ending = sv_from_const(".a"),
-    .object_ending = sv_from_const(".o"),
-    .os_name_count = 3
+    .dynamic_ending = text(".so"),
+    .static_ending  = text(".a"),
+    .object_ending  = text(".o"),
+    .os_name_count  = 3
     #ifdef UNIX_PLATFORM_NAME
     +1
     #endif
     ,
     .os_names = {
     #ifdef UNIX_PLATFORM_NAME
-        sv_from_const(UNIX_PLATFORM_NAME),
+        text(UNIX_PLATFORM_NAME),
     #endif
-        sv_from_const("posix"),
-        sv_from_const("unix"),
-        sv_from_const("bsd"),
+        text("posix"),
+        text("unix"),
+        text("bsd"),
     },
 };
 
 CateOSTarget cate_target_windows = {
-    .dynamic_ending = sv_from_const(".dll"),
-    .static_ending = sv_from_const(".lib"),
-    .object_ending = sv_from_const(".o"),
-    .executable_ending = sv_from_const(".exe"),
+    .dynamic_ending = text(".dll"),
+    .static_ending  = text(".lib"),
+    .object_ending  = text(".o"),
+    .executable_ending = text(".exe"),
     .os_name_count = 3,
     .os_names = {
-        sv_from_const("windows"),
-        sv_from_const("win32"),
-        sv_from_const("win64"),
+        text("windows"),
+        text("win32"),
+        text("win64"),
     },
 };
 
