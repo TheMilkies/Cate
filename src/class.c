@@ -78,7 +78,7 @@ static void change_extension(struct CatePathBuilder* f, ClassKind k) {
     };
     size_t last_dot = sv_find_last(&sv, '.');
     if(last_dot == SV_NOT_FOUND)
-        last_dot = f->length;
+        last_dot = f->length-1;
 
     pb_revert_to(f, last_dot);
     pb_append_sv(f, ext);
@@ -129,7 +129,6 @@ static STIndex prepare_out_name(CateClass* c) {
         pb_from_sv(&f, &out_slash);
         pb_append_sv(&f, &c->name);
         pb_append_sv(&f, ext);
-        //maybe null terminate?
     }   break;
     
     default:
@@ -257,7 +256,8 @@ static void append_ssi_items(CStringArray* dest,
     }
 }
 
-static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
+static void check_if_needs_rebuild(CateClass* c, Prepared* p,
+                                string_view* out_name) {
     p->to_build_indexes.size = 0;
     for (size_t i = 0; i < c->files.size; ++i) {
         const char* file = st_get_str(&ctx.st, c->files.data[i]);
@@ -269,7 +269,7 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
     }
 
     if(p->to_build_indexes.size
-    || !cate_sys_file_exists(st_get_str(&ctx.st, p->out_name)))
+    || !cate_sys_file_exists(out_name->text))
         c->bools |= CLASS_IBOOL_RELINK;
 }
 
@@ -281,9 +281,9 @@ static void prepare(CateClass* c, Prepared* p) {
 
     cate_sys_convert_path(c->build_dir.text);
     p->out_name = prepare_out_name(c);
-    c->out_name = sv_from_cstr(st_get_str(&ctx.st, p->out_name));
+    string_view out_name = sv_from_cstr(st_get_str(&ctx.st, p->out_name));
     prepare_obj_files(c, &p->object_files);
-    check_if_needs_rebuild(c, p);
+    check_if_needs_rebuild(c, p, &out_name);
     if(!(c->bools & CLASS_IBOOL_RELINK))
         return;
 
@@ -402,11 +402,41 @@ static void prepare_command_template(CateClass* c, Prepared* p) {
     da_append(c->command_template, dash_c);
 }
 
+static void run_builder_and_wait(struct FileBuilder* b) {
+    if(cmd_args.flags & CMD_DRY_RUN) {
+        dry_run_print(&b->command);
+    } else {
+        b->proc = cate_sys_process_create(b->command.data);
+        int err = cate_sys_process_wait(&b->proc);
+        if(err)
+            cate_error("build command exited with code %i", err);
+    }
+}
+
+//this is a dumb hack
+static inline void carr_append(CStringArray* a, char* s) {
+    da_append((*a), s);
+}
+
+static void link_static_library(CateClass* c, Prepared* p) {
+    struct FileBuilder final = {0};
+    static char* null = 0;
+    carr_append(&final.command, "ar");
+    carr_append(&final.command, "rcs");
+
+    char* out_name = st_get_str(&ctx.st, p->out_name);
+    da_append(final.command, out_name);
+
+    append_ssi_items(&final.command, &p->object_files);
+    da_append(final.command, null);
+
+    run_builder_and_wait(&final);
+}
+
 static void link(CateClass* c, Prepared* p) {
     static char* dash_o = "-o", *null = 0;
-
-    //pop the -c -o
-    c->command_template.size -= 2;
+    if(c->kind == CLASS_LIBRARY && c->as.lib.kind == LIBRARY_STATIC)
+        return link_static_library(c, p);
 
     struct FileBuilder final = {0};
     copy_cstring_array(&final.command, &c->command_template);
@@ -422,16 +452,9 @@ static void link(CateClass* c, Prepared* p) {
     da_append(final.command, null);
 
     //final step
-    if(c->bools & CLASS_IBOOL_RELINK)  {
-        if(cmd_args.flags & CMD_DRY_RUN) {
-            dry_run_print(&final.command);
-        } else {
-            final.proc = cate_sys_process_create(final.command.data);
-            int err = cate_sys_process_wait(&final.proc);
-            if(err)
-                cate_error("build command exited with code %i", err);
-        }
-    }
+    if(c->bools & CLASS_IBOOL_RELINK)
+        run_builder_and_wait(&final);
+    
     if(c->bools & CLASS_BOOL_SMOL || cmd_args.flags & CMD_FORCE_SMOLIZE) {
         cate_sys_smolize(c->out_name.text);
     }
@@ -448,6 +471,8 @@ void class_build(CateClass* c) {
     if(c->bools & CLASS_IBOOL_RELINK) {
         prepare_command_template(c, &p);
         build(c, &p);
+        //pop the -c
+        da_pop(c->command_template);
         link(c, &p);
     }
     
@@ -475,7 +500,7 @@ void class_change_type(CateClass* c, LibraryKind type) {
     if(c->kind != CLASS_LIBRARY) return;
     c->as.lib.kind = type;
     c->bools |= CLASS_IBOOL_TYPE_CHANGED;
-    //TODO: change the out name.
+    c->bools &= ~(CLASS_BOOL_BUILT);
 }
 
 void class_install(CateClass* c) {

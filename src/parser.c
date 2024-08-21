@@ -228,6 +228,7 @@ void parse(Parser* p) {
                     "because it's a Project", sv_p(p->cur_class->name));
                 }
                 class_change_type(p->cur_class, expect_library_kind(p));
+                continue;
             }
 
             error(

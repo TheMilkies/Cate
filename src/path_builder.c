@@ -49,7 +49,7 @@ void pb_append_dir_sep(struct CatePathBuilder* pb) {
 }
 
 void pb_revert_to(struct CatePathBuilder* pb, size_t old_loc) {
-    assert(old_loc > pb->length && "reverting forwards is impossible");
+    assert(old_loc < pb->length && "reverting forwards is impossible");
     memset(&pb->path.x[old_loc], 0, PATH_MAX-old_loc);
     pb->length = old_loc;
 }
