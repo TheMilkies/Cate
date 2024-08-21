@@ -17,11 +17,6 @@ static void error(Parser* p, const char* fmt, ...) {
 }
 #define error(fmt, ...) error(p, fmt, __VA_ARGS__)
 
-//only use this with constant preprocessor strings
-//sv_ccmp(v, str): BAD
-//sv_ccmp(v, "str"): GOOD
-#define sv_ccmp(sv, text) (sv_equalc(sv, text, sizeof(text)/sizeof(text[0])-1))
-
 static uint8_t was_loaded(const struct CateFullPath* path) {
     for (size_t i = 0; i < ctx.loaded_files.size; ++i) {
         if(strncmp(path->x, ctx.loaded_files.data[i].x, PATH_MAX) == 0)

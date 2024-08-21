@@ -8,24 +8,24 @@ static void maybe_keyword(Token* t) {
     static_assert(TOK_COUNT_SIZE == 19,
         "added token types? if they are keywords; add them here");
     string_view *v = &t->text;
-    if(sv_equalc(v, "Project", 7)) {
+    if(sv_ccmp(v, "Project")) {
         t->kind = TOK_PROJECT;
-    } else if(sv_equalc(v, "Library", 7)) {
+    } else if(sv_ccmp(v, "Library")) {
         t->kind = TOK_LIBRARY;
-    } else if(sv_equalc(v, "recursive", 9)
-           || sv_equalc(v, "iterate",   7)) {
+    } else if(sv_ccmp(v, "recursive")
+           || sv_ccmp(v, "iterate")) {
         t->kind = TOK_RECURSIVE;
-    } else if(sv_equalc(v, "static", 6)) {
+    } else if(sv_ccmp(v, "static")) {
         t->kind = TOK_STATIC;
-    } else if(sv_equalc(v, "dynamic", 7)) {
+    } else if(sv_ccmp(v, "dynamic")) {
         t->kind = TOK_DYNAMIC;
-    } else if(sv_equalc(v, "true", 4)) {
+    } else if(sv_ccmp(v, "true")) {
         t->kind = TOK_TRUE;
-    } else if(sv_equalc(v, "false", 5)) {
+    } else if(sv_ccmp(v, "false")) {
         t->kind = TOK_FALSE;
-    } else if(sv_equalc(v, "if", 2)) {
+    } else if(sv_ccmp(v, "if")) {
         t->kind = TOK_IF;
-    } else if(sv_equalc(v, "else", 4)) {
+    } else if(sv_ccmp(v, "else")) {
         t->kind = TOK_ELSE;
     }
 }

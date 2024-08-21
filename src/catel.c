@@ -1,4 +1,5 @@
 #include "catel.h"
+#include "common.h"
 #include "system_functions.h"
 #include "target.h"
 #include "error.h"
@@ -75,10 +76,9 @@ static int catel_parse(CatelValues* c, string_view* text) {
             v.length -= 1;
 
         if(!prop) {
-            if(sv_equalc(&v, "def", 3) || sv_equalc(&v, "default", 7)) {
+            if(sv_ccmp(&v, "def") || sv_ccmp(&v, "default")) {
                 prop = c->file;
-            } else if(sv_equalc(&v, "dir", 3)
-            || sv_equalc(&v, "directory", 9)) {
+            } else if(sv_ccmp(&v, "dir") || sv_ccmp(&v, "directory")) {
                 prop = c->dir;
             } else {
                 error("catel doesn't support property \""sv_fmt"\"", sv_p(v));

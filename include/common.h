@@ -16,4 +16,9 @@
     exit(1);\
 }
 
+//only use this with constant preprocessor strings
+//sv_ccmp(v, str): BAD
+//sv_ccmp(v, "str"): GOOD
+#define sv_ccmp(sv, text) (sv_equalc(sv, text, sizeof(text)/sizeof(text[0])-1))
+
 #endif // CATE_COMMON_H
