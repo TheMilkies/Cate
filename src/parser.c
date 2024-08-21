@@ -44,22 +44,10 @@ void cate_open(char* path) {
     [x] Start the parser
     */
     struct CatePathBuilder to_open = {0};
-    pb_from_cstr(&to_open, path);
+    string_view path_sv = sv_from_cstr(path);
+    catel_build_path(&to_open, &catel, &path_sv);
     string_view to_open_sv = {.text = to_open.path.x,
                               .length = to_open.length};
-    // if(sv_find(&path_as_sv, 0, '/') != SV_NOT_FOUND) {
-    //     if(!cate_sys_file_exists(path)) {
-    //         length = catel_build_path(&to_open, &catel, &path_as_sv);
-    //         path_as_sv.text = to_open.x;
-    //     }
-    // }
-    // else {
-    // }
-
-    //append cate extension
-    if(!sv_ends_with(&to_open_sv, ".cate", 5)) {
-        pb_append_cate_extension(&to_open);
-    }
 
     puts(to_open.path.x);
     //check realpath

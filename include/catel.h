@@ -2,6 +2,7 @@
 #define CATEL_H
 #include <vendor/string_view.h>
 #include "system_functions.h"
+#include "path_builder.h"
 #include "target.h"
 
 #define CATEL_PATH_MAX 256
@@ -12,7 +13,7 @@ typedef struct {
     uint8_t has_file;
 } CatelValues;
 
-size_t catel_build_path(struct CateFullPath* p, CatelValues* v,
+void catel_build_path(struct CatePathBuilder* p, CatelValues* v,
                         string_view* file);
 void catel_init(CatelValues* c);
 extern CatelValues catel;

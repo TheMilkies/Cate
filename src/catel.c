@@ -10,16 +10,15 @@ static void error(const char* fmt, ...);
 void cate_help(int exit_code);
 
 //TODO: Fix catel
-size_t catel_build_path(struct CateFullPath* p, CatelValues* v,
+void catel_build_path(struct CatePathBuilder* p, CatelValues* v,
                                 string_view* file) {
-    const size_t dir_size = strlen(v->dir);
-    size_t length = dir_size + file->length + path_sep_str_len;
-    if(length >= PATH_MAX)
-        cate_error("path is too long!");
-    memcpy(p->x, v->dir, sizeof(v->dir));
-    strncat(p->x, path_sep_str, path_sep_str_len);
-    strncat(p->x, file->text, file->length);
-    return length;
+    if(v->dir[0]) {
+        pb_from_cstr(p, v->dir);
+        pb_append_dir_sep(p);
+    }
+    pb_append_sv(p, file);
+    if(!sv_ends_with(file, ".cate", 5))
+        pb_append_cate_extension(p);
 }
 
 void catel_init(CatelValues* c) {
@@ -44,6 +43,8 @@ void catel_init(CatelValues* c) {
     int err = sv_load_file(&file, ".catel");
     if(err)
         error("can't open catel file because: %s", strerror(errno));
+
+    if(!catel_parse(&catel, &file)) exit(-1);
 
     free(file.text);
 }
