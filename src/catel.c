@@ -6,42 +6,43 @@
 #include <errno.h>
 #include <ctype.h>
 
-static int catel_parse(CatelValues* c, string_view* text);
+static int catel_parse(string_view* text);
 static void error(const char* fmt, ...);
 void cate_help(int exit_code);
 
-//TODO: Fix catel
-void catel_build_path(struct CatePathBuilder* p, CatelValues* v,
-                                string_view* file) {
+//this returns a char* for efficiency
+//we could memcpy but that's really wasteful
+char* catel_build_path(struct CatePathBuilder* p,
+                                char* file) {
     size_t dir_length = 0;
-    if(v->dir[0]) {
-        pb_from_cstr(p, v->dir);
+    if(catel.dir[0]) {
+        pb_from_cstr(p, catel.dir);
         pb_append_dir_sep(p);
         dir_length = p->length;
     }
-    pb_append_sv(p, file);
-    if(!sv_ends_with(file, ".cate", 5))
+    string_view file_as_sv = sv_from_cstr(file);
+    pb_append_sv(p, &file_as_sv);
+    if(!sv_ends_with(&file_as_sv, ".cate", 5))
         pb_append_cate_extension(p);
 
-    if(cate_sys_file_exists(p->path.x)) return;
+    if(cate_sys_file_exists(p->path.x))
+        return p->path.x;
 
     //maybe it's in this dir?
-    if(dir_length && cate_sys_file_exists(&p->path.x[dir_length])) {
-        struct CateFullPath new = {0};
-        memcpy(new.x, &p->path.x[dir_length], p->length-dir_length);
-        memcpy(p->path.x, new.x, PATH_MAX);
-    }
+    if(dir_length && cate_sys_file_exists(&p->path.x[dir_length]))
+        return &p->path.x[dir_length];
+    return p->path.x;
 }
 
-void catel_init(CatelValues* c) {
+void catel_init() {
     //here we do have to null-terminate since it's paths.
     if(cate_sys_file_exists("cate")) {
         if(cate_sys_file_exists("cate/build.cate"))
-            c->has_file = 1;
-        strncpy(c->dir, "cate", 6);
+            catel.has_file = 1;
+        strncpy(catel.dir, "cate", 6);
     } else {
         if(cate_sys_file_exists("build.cate"))
-            c->has_file = 1;
+            catel.has_file = 1;
     }
 
     if(!cate_sys_file_exists(".catel"))
@@ -52,12 +53,12 @@ void catel_init(CatelValues* c) {
     if(err)
         error("can't open catel file because: %s", strerror(errno));
 
-    if(!catel_parse(&catel, &file)) exit(-1);
+    if(!catel_parse(&file)) exit(-1);
 
     free(file.text);
 }
 
-static int catel_parse(CatelValues* c, string_view* text) {
+static int catel_parse(string_view* text) {
     size_t i = 0;
     #define cur (text->text[i])
     #define match(k) (text->text[i].kind == k)
@@ -77,9 +78,9 @@ static int catel_parse(CatelValues* c, string_view* text) {
 
         if(!prop) {
             if(sv_ccmp(&v, "def") || sv_ccmp(&v, "default")) {
-                prop = c->file;
+                prop = catel.file;
             } else if(sv_ccmp(&v, "dir") || sv_ccmp(&v, "directory")) {
-                prop = c->dir;
+                prop = catel.dir;
             } else {
                 error("catel doesn't support property \""sv_fmt"\"", sv_p(v));
             }
@@ -90,7 +91,7 @@ static int catel_parse(CatelValues* c, string_view* text) {
             memset(prop, 0, CATEL_PATH_SIZE);
             strncpy(prop, v.text, v.length);
 
-            if(prop == c->file &&
+            if(prop == catel.file &&
                 !sv_ends_with(&v, ".cate", 5)) {
                 strncat(prop, ".cate", 6);
             }

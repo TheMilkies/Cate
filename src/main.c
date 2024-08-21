@@ -7,7 +7,7 @@
 #include <vendor/dynamic_array.h>
 #include <ctype.h>
 
-CatelValues catel = {
+struct CatelValues catel = {
     .file = "build.cate",
     .dir = ".",
 };
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     free(malloc(sizeof(STIndex)*20*10));
 
     //handle catel (god damn it milkies!)
-    catel_init(&catel);
+    catel_init();
 
     da_type(char*) files = {0};
     while (argc > 0) {
