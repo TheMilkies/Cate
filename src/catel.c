@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <ctype.h>
 
-static int catel_parse(string_view* text);
+static void catel_parse(string_view* text);
 static void error(const char* fmt, ...);
 void cate_help(int exit_code);
 
@@ -53,17 +53,16 @@ void catel_init() {
     if(err)
         error("can't open catel file because: %s", strerror(errno));
 
-    if(!catel_parse(&file)) exit(-1);
+    catel_parse(&file);
 
     free(file.text);
 }
 
-static int catel_parse(string_view* text) {
+static void catel_parse(string_view* text) {
     size_t i = 0;
     #define cur (text->text[i])
     #define match(k) (text->text[i].kind == k)
     #define while_line(cond) while (i < text->length && (cond))
-    int changed = 0;
     char* prop = 0;
     while(i < text->length) {
         //skip whitespace
@@ -73,7 +72,8 @@ static int catel_parse(string_view* text) {
         size_t begin = i;
         while_line(!isspace(cur)) ++i;
         string_view v = sv_substring(text, begin, i);
-        if(v.text[v.length] == '\0')
+
+        if(i >= text->length)
             v.length -= 1;
 
         if(!prop) {
@@ -96,10 +96,8 @@ static int catel_parse(string_view* text) {
                 strncat(prop, ".cate", 6);
             }
             prop = 0;
-            changed = 1;
         }
     }
-    return changed;
 }
 
 static void error(const char* fmt, ...) {

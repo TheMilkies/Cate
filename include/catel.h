@@ -13,7 +13,7 @@ struct CatelValues {
 };
 
 char* catel_build_path(struct CatePathBuilder* p,
-                        char* file);
+                    char* file);
 void catel_init();
 extern struct CatelValues catel;
 
