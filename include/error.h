@@ -24,7 +24,8 @@ void cate_warn_line(size_t line, const char* text);
 #define BOLD_PURPLE "\033[1;35m"
 #define BOLD_CYAN "\033[1;36m"
 
-#define list_color CYAN
+#define list_color "\033[0;36m"
+#define list_highlight "\033[1;35m"
 #define hl_func(x) YELLOW x "()" COLOR_RESET
 #define hl_func_params(x,...) YELLOW x "(" PURPLE __VA_ARGS__ YELLOW ")" COLOR_RESET
 #define hl_var(x) PURPLE x COLOR_RESET

@@ -133,12 +133,24 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
 
+            //get default file
+            const string_view default_file = sv_from_cstr(catel.file);
+
             //TODO: highlight default file
             struct CateSysDirEntry ent = {0};
             printf(list_color);
             while (cate_sys_dir_get(d, &ent)) {
+                if(ent.type != CATE_SYS_DIRENT_FILE)
+                    continue;
+
                 string_view name = sv_from_cstr(ent.name);
-                if(sv_ends_with(&name, ".cate", 5)) {
+                if(!sv_ends_with(&name, ".cate", 5))
+                    continue;
+
+                if(sv_equal(&name, &default_file)) {
+                    printf(list_highlight
+                        sv_fmt list_color " ", name.length-5, name.text);
+                } else {
                     printf(sv_fmt" ", name.length-5, name.text);
                 }
             }
