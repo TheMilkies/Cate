@@ -1,11 +1,15 @@
 smol = true
 Project cate
-.files = {"src/*.c" "src/posix/*.c"}
+if(windows) {
+    .files = {"src/*.c" "src/windows/*.c"}
+    .out = "out/cate.exe"
+} else {
+    .files = {"src/*.c" "src/posix/*.c"}
+    .out = "out/cate"
+}
 .flags = "-O3 -march=native"
-.out = "out/cate"
 .std = "c99"
 .incs = {"." "include"}
-.threading = true
 .defs = {"_DEFAULT_SOURCE"}
 .build()
 //.install()
