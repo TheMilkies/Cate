@@ -456,6 +456,11 @@ void class_clean(CateClass* c) {
     }
 }
 
+void class_change_type(CateClass* c, LibraryKind type) {
+    c->as.lib.kind = type;
+    //TODO: change the out name.
+}
+
 void class_install(CateClass* c) {
     todo("installing a class");
 }

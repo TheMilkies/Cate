@@ -25,6 +25,7 @@ uint8_t cate_platform_check(const string_view* id);
 #else
 #define path_sep '/'
 #define path_sep_str "/"
+#define path_sep_str_len __PP_STRLEN(path_sep_str)
 #define NL "\n"
 #endif // OS newline check
 

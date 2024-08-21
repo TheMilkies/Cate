@@ -4,6 +4,7 @@
 #include "cmd_args.h"
 #include "system_functions.h"
 #include "recursive.h"
+#include "catel.h"
 #include <stdarg.h>
 
 static void error(Parser* p, const char* fmt, ...) {
@@ -41,20 +42,28 @@ void cate_open(char* path) {
     [x] Tokenize
     [x] Start the parser
     */
-    size_t length = 0;
-
     string_view path_as_sv = sv_from_cstr(path);
+    size_t length = path_as_sv.length;
     struct CateFullPath to_open = {0};
-    memcpy(&to_open.x[length], path_as_sv.text, path_as_sv.length);
-    length += path_as_sv.length;
+    memcpy(to_open.x, path, length);
+    // if(sv_find(&path_as_sv, 0, '/') != SV_NOT_FOUND) {
+    //     if(!cate_sys_file_exists(path)) {
+    //         length = catel_build_path(&to_open, &catel, &path_as_sv);
+    //         path_as_sv.text = to_open.x;
+    //     }
+    // }
+    // else {
+    // }
 
     //append cate extension
     if(!sv_ends_with(&path_as_sv, ".cate", 5)) {
-        if(path_as_sv.length > PATH_MAX)
+        if(path_as_sv.length+6 >= PATH_MAX)
             cate_error("can't open \"%s\": too long!", path);
-        memcpy(&to_open.x[length], ".cate", 5);
+        memcpy(&to_open.x[length], ".cate", 6);
+        length += 5;
     }
 
+    puts(to_open.x);
     //check realpath
     {
         struct CateFullPath fullpath = {0};
@@ -76,8 +85,8 @@ void cate_open(char* path) {
 
     parse(&p);
 
-    free(file.text);
     free(p.tokens.data);
+    free(file.text);
 }
 
 static void globals_init(struct Globals* g) {
@@ -154,9 +163,8 @@ static void class_method(Parser* p);
 
 static CateClass* new_class(Parser* p, ClassKind kind) {
     string_view name = expect(TOK_IDENTIFIER)->text;
-    if(find_class(&name)) {
+    if(find_class(&name))
         error("\""sv_fmt"\" was already defined", sv_p(name));
-    }
 
     CateClass c = {
         .kind = kind,
@@ -219,15 +227,6 @@ void parse(Parser* p) {
             }
             Token* child = expect(TOK_IDENTIFIER);
 
-            //bool property
-            {
-            ClassBools bp = get_bool_property(p, &child->text);
-            if(bp) {
-                set_class_bool(p, &p->cur_class->bools, bp);
-                continue;
-            }
-            }
-
             //string properties
             {
             string_view* sp =
@@ -246,6 +245,24 @@ void parse(Parser* p) {
                 set_class_array(p, arr);
                 continue;
             }
+            }
+
+            //bool property
+            {
+            ClassBools bp = get_bool_property(p, &child->text);
+            if(bp) {
+                set_class_bool(p, &p->cur_class->bools, bp);
+                continue;
+            }
+            }
+
+            if(sv_ccmp(child, "type")) {
+                expect(TOK_ASSIGN);
+                if(p->cur_class->kind != CLASS_LIBRARY) {
+                    error("can't change library kind of "sv_fmt
+                    "because it's a Project", sv_p(p->cur_class->name));
+                }
+                class_change_type(p->cur_class, expect_library_kind(p));
             }
 
             error(
