@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
                     printf(sv_fmt" ", name.length-5, name.text);
                 }
             }
-            printf(COLOR_RESET);
+            printf("\n"COLOR_RESET);
             cate_sys_dir_close(d);
             return 0;
         } break;
