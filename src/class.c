@@ -1,5 +1,6 @@
 #include "class.h"
 #include "system_functions.h"
+#include "path_builder.h"
 #include "common.h"
 #include "cmd_args.h"
 #include "error.h"
@@ -79,8 +80,8 @@ static STIndex prepare_out_name(CateClass* c) {
             sv_p(c->out_name));
     }
 
-    const string_view* ext = 0;
-    struct CateFullPath f = {0};
+    string_view* ext = 0;
+    struct CatePathBuilder f = {0};
     switch (c->kind) {
     case CLASS_PROJECT: {
         ext = &cate_target->executable_ending;
@@ -88,8 +89,8 @@ static STIndex prepare_out_name(CateClass* c) {
             cate_error("object \""sv_fmt"\"'s out name is too long!",
                 sv_p(c->out_name));
         }
-        strncpy(f.x, c->name.text, c->name.length);
-        strncat(f.x, ext->text, ext->length);
+        pb_from_sv(&f, &c->name);
+        pb_from_sv(&f, ext);
     }   break;
 
     case CLASS_LIBRARY: {
@@ -103,9 +104,12 @@ static STIndex prepare_out_name(CateClass* c) {
             sv_p(c->out_name));
         }
 
-        strncpy(f.x, "out" path_sep_str "lib", 8);
-        strncat(f.x, c->name.text, c->name.length);
-        strncat(f.x, ext->text, ext->length);
+        static string_view out_slash = sv_from_const(
+            "out" path_sep_str "lib"
+        ); 
+        pb_from_sv(&f, &out_slash);
+        pb_append_sv(&f, &c->name);
+        pb_append_sv(&f, ext);
         //maybe null terminate?
     }   break;
     
@@ -113,7 +117,7 @@ static STIndex prepare_out_name(CateClass* c) {
         cate_error("not project or library, wtf");
         break;
     }
-    return st_save_s(&ctx.st, f.x);
+    return pb_save(&f);
 }
 
 static STIndex prepare_std(CateClass* c) {
@@ -147,24 +151,25 @@ static void create_directories(CateClass* c) {
 }
 
 static STIndex objectify_file(string_view* dir, string_view* file) {
-    struct CateFullPath path = {0};
+    struct CatePathBuilder path = {0};
     if(dir->length + file->length >= PATH_MAX) {
         cate_error("object file length will be too long for \""sv_fmt"\"",
             svptr_p(file));
     }
 
     //add directory
-    size_t length = dir->length;
-    strncpy(path.x, dir->text, dir->length);
-    if(dir->text[dir->length-1] != '/')
-        path.x[length++] = '/';
+    pb_from_sv(&path, dir);
+    if(dir->text[dir->length-1] != path_sep)
+        pb_append_dir_sep(&path);
 
-    size_t last_dot = 0;
+    size_t begin = path.length;
+    pb_append_sv(&path, file);
+    size_t last_dot = 0, length = begin;
     for (size_t i = 0; i < file->length; ++i) {
         switch (file->text[i]) {
         case '/':
         case '\\':
-            path.x[length++] = '_';
+            path.path.x[length++] = '_';
             break;
         
         case '.':
@@ -174,30 +179,20 @@ static STIndex objectify_file(string_view* dir, string_view* file) {
             }
             i += 2;
 
-            length += 5;
-            if(length >= PATH_MAX)
-                cate_error("path too long to add \"back_\"");
-            strncat(path.x, "back_", 6);
+            pb_append_slen(&path, "back_", 5);
             break;
         
         default:
         oh_normal:
-            path.x[length++] = file->text[i];
+            path.path.x[length++] = file->text[i];
             break;
         }
     }
 
-    //replace extension
-    length = last_dot + cate_target->object_ending.length+1;
-    if(length >= PATH_MAX)
-        cate_error("path too long to add object extension");
-
-    path.x[last_dot] = 0;
-    //add the object ending
-    strncat(path.x,
-        cate_target->object_ending.text, cate_target->object_ending.length+1);
-    
-    return st_save_s(&ctx.st, path.x);
+    if(last_dot)
+        path.length = last_dot;
+    pb_append_sv(&path, &cate_target->object_ending);
+    return pb_save(&path);
 }
 
 static void save_separated(string_view* s, SavedStringIndexes* a) {

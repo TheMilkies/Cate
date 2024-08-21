@@ -22,7 +22,7 @@ void pb_reset(struct CatePathBuilder* pb) {
     pb->length = 0;
 }
 
-static void append(struct CatePathBuilder* pb, char* s, size_t l) {
+void pb_append_slen(struct CatePathBuilder* pb, char* s, size_t l) {
     if(pb->length+l >= PATH_MAX)
         cate_error("path \"%s"sv_fmt"\" is too long?",
             pb->path.x, s, l);
@@ -32,19 +32,19 @@ static void append(struct CatePathBuilder* pb, char* s, size_t l) {
 }
 
 void pb_append(struct CatePathBuilder* pb, char* text) {
-    append(pb, text, strlen(text));
+    pb_append_slen(pb, text, strlen(text));
 }
 
 void pb_append_sv(struct CatePathBuilder* pb, string_view* text) {
-    append(pb, text->text, text->length);
+    pb_append_slen(pb, text->text, text->length);
 }
 
 void pb_append_cate_extension(struct CatePathBuilder* pb) {
-    append(pb, ".cate", 6);
+    pb_append_slen(pb, ".cate", 6);
 }
 
 void pb_append_dir_sep(struct CatePathBuilder* pb) {
-    append(pb, path_sep_str, path_sep_str_len-1);
+    pb_append_slen(pb, path_sep_str, path_sep_str_len-1);
 }
 
 void pb_revert_to(struct CatePathBuilder* pb, size_t old_loc) {
