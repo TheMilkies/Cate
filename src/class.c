@@ -68,20 +68,39 @@ typedef struct {
     STIndex out_name;
 } Prepared;
 
+static void change_extension(struct CatePathBuilder* f, ClassKind k) {
+    string_view* ext = (k == LIBRARY_STATIC)
+            ? &cate_target->static_ending
+            : &cate_target->dynamic_ending;
+    string_view sv = {
+        .length = f->length,
+        .text = f->path.x
+    };
+    size_t last_dot = sv_find_last(&sv, '.');
+    if(last_dot == SV_NOT_FOUND)
+        last_dot = f->length;
+
+    pb_revert_to(f, last_dot);
+    pb_append_sv(f, ext);
+}
+
 static STIndex prepare_out_name(CateClass* c) {
+    struct CatePathBuilder f = {0};
     if(c->out_name.length) {
         cate_sys_convert_path(c->out_name.text);
-        return st_save_sv(&ctx.st, &c->out_name);
+        pb_from_sv(&f, &c->out_name);
+        if(c->bools & CLASS_IBOOL_TYPE_CHANGED)
+            change_extension(&f, c->as.lib.kind);
+
+        return pb_save(&f);
     }
     
-    STIndex saved = 0;
     if(c->name.length + 1 >= PATH_MAX) {
         cate_error("object \""sv_fmt"\"'s name is too long for this platform!",
             sv_p(c->out_name));
     }
 
     string_view* ext = 0;
-    struct CatePathBuilder f = {0};
     switch (c->kind) {
     case CLASS_PROJECT: {
         ext = &cate_target->executable_ending;
@@ -251,7 +270,7 @@ static void check_if_needs_rebuild(CateClass* c, Prepared* p) {
 
     if(p->to_build_indexes.size
     || !cate_sys_file_exists(st_get_str(&ctx.st, p->out_name)))
-        c->bools |= CLASS_BOOL_RELINK;
+        c->bools |= CLASS_IBOOL_RELINK;
 }
 
 static void prepare(CateClass* c, Prepared* p) {
@@ -265,7 +284,7 @@ static void prepare(CateClass* c, Prepared* p) {
     c->out_name = sv_from_cstr(st_get_str(&ctx.st, p->out_name));
     prepare_obj_files(c, &p->object_files);
     check_if_needs_rebuild(c, p);
-    if(!(c->bools & CLASS_BOOL_RELINK))
+    if(!(c->bools & CLASS_IBOOL_RELINK))
         return;
 
     p->standard = prepare_std(c);
@@ -276,7 +295,8 @@ static void prepare(CateClass* c, Prepared* p) {
         string_view lib_flags = {.length = 17, .text = flags};
         save_separated(&lib_flags, &p->flags);
     }
-    save_separated(&c->flags, &p->flags);
+    if(c->flags.length)
+        save_separated(&c->flags, &p->flags);
 }
 
 static void copy_cstring_array(CStringArray* dest, const CStringArray* src) {
@@ -402,7 +422,7 @@ static void link(CateClass* c, Prepared* p) {
     da_append(final.command, null);
 
     //final step
-    if(c->bools & CLASS_BOOL_RELINK)  {
+    if(c->bools & CLASS_IBOOL_RELINK)  {
         if(cmd_args.flags & CMD_DRY_RUN) {
             dry_run_print(&final.command);
         } else {
@@ -425,7 +445,7 @@ void class_build(CateClass* c) {
 
     Prepared p = {0};
     prepare(c, &p);
-    if(c->bools & CLASS_BOOL_RELINK) {
+    if(c->bools & CLASS_IBOOL_RELINK) {
         prepare_command_template(c, &p);
         build(c, &p);
         link(c, &p);
@@ -452,7 +472,9 @@ void class_clean(CateClass* c) {
 }
 
 void class_change_type(CateClass* c, LibraryKind type) {
+    if(c->kind != CLASS_LIBRARY) return;
     c->as.lib.kind = type;
+    c->bools |= CLASS_IBOOL_TYPE_CHANGED;
     //TODO: change the out name.
 }
 

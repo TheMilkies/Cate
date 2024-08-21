@@ -571,7 +571,7 @@ static string_view expect_string(Parser* p) {
 //(These things are the slowest parts of cate3)
 
 static ClassBools get_bool_property(Parser* p, string_view* v) {
-    static_assert(CLASS_BOOL_END == 65, "added a flag? add it here.");
+    static_assert(CLASS_BOOL_END == 129, "added a flag? add it here.");
 
     if (sv_ccmp(v, "smol"))
         return CLASS_BOOL_SMOL;

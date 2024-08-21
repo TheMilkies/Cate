@@ -24,13 +24,14 @@ enum {
     CLASS_BOOL_LINK = 1 << 3,
     CLASS_BOOL_BUILT = 1 << 4,
     CLASS_BOOL_AUTO = 1 << 5,
-    CLASS_BOOL_RELINK = 1 << 6,
+    CLASS_IBOOL_RELINK = 1 << 6,
+    CLASS_IBOOL_TYPE_CHANGED = 1 << 7,
     CLASS_BOOL_END,
 
     CLASS_BOOLS_DEFAULT =
         CLASS_BOOL_LINK | CLASS_BOOL_AUTO,
 };
-typedef uint8_t ClassBools;
+typedef uint16_t ClassBools;
 
 typedef struct {
     CStringArray command_template;
