@@ -8,21 +8,41 @@ CateOSTarget* cate_target =
 #endif // OS check
 ;
 
+#ifdef __unix__
+    #ifdef __linux__
+        #define UNIX_PLATFORM_NAME "linux"
+    #elif __FreeBSD__
+        #define UNIX_PLATFORM_NAME "freebsd"
+    #elif __NetBSD__
+        #define UNIX_PLATFORM_NAME "netbsd"
+    #elif __OpenBSD__
+        #define UNIX_PLATFORM_NAME "openbsd"
+    #elif __ANDROID__
+        #define UNIX_PLATFORM_NAME "android"
+    #else
+        #error "what platform is this?"
+    #endif
+#endif
+//for some reason macOS doesn't define __unix__?
+#ifdef __APPLE__
+    #define UNIX_PLATFORM_NAME "mac"
+#endif
+
 CateOSTarget cate_target_posix = {
     .dynamic_ending = sv_from_const(".so"),
     .static_ending = sv_from_const(".a"),
     .object_ending = sv_from_const(".o"),
     .os_name_count = 3
-    #ifdef __linux__
+    #ifdef UNIX_PLATFORM_NAME
     +1
     #endif
     ,
     .os_names = {
-    #ifdef __linux__
-        sv_from_const("linux"),
+    #ifdef UNIX_PLATFORM_NAME
+        sv_from_const(UNIX_PLATFORM_NAME),
     #endif
-        sv_from_const("unix"),
         sv_from_const("posix"),
+        sv_from_const("unix"),
         sv_from_const("bsd"),
     },
 };
