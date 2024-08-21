@@ -3,6 +3,7 @@
 #include "common.h"
 #include "cmd_args.h"
 #include "system_functions.h"
+#include "path_builder.h"
 #include "recursive.h"
 #include "catel.h"
 #include <stdarg.h>
@@ -42,10 +43,10 @@ void cate_open(char* path) {
     [x] Tokenize
     [x] Start the parser
     */
-    string_view path_as_sv = sv_from_cstr(path);
-    size_t length = path_as_sv.length;
-    struct CateFullPath to_open = {0};
-    memcpy(to_open.x, path, length);
+    struct CatePathBuilder to_open = {0};
+    pb_from_cstr(&to_open, path);
+    string_view to_open_sv = {.text = to_open.path.x,
+                              .length = to_open.length};
     // if(sv_find(&path_as_sv, 0, '/') != SV_NOT_FOUND) {
     //     if(!cate_sys_file_exists(path)) {
     //         length = catel_build_path(&to_open, &catel, &path_as_sv);
@@ -56,20 +57,17 @@ void cate_open(char* path) {
     // }
 
     //append cate extension
-    if(!sv_ends_with(&path_as_sv, ".cate", 5)) {
-        if(path_as_sv.length+6 >= PATH_MAX)
-            cate_error("can't open \"%s\": too long!", path);
-        memcpy(&to_open.x[length], ".cate", 6);
-        length += 5;
+    if(!sv_ends_with(&to_open_sv, ".cate", 5)) {
+        pb_append_cate_extension(&to_open);
     }
 
-    puts(to_open.x);
+    puts(to_open.path.x);
     //check realpath
     {
         struct CateFullPath fullpath = {0};
-        char* res = realpath(to_open.x, fullpath.x);
+        char* res = realpath(to_open.path.x, fullpath.x);
         if(!res)
-            cate_error("can not open file \"%s\"", to_open.x);
+            cate_error("can not open file \"%s\"", to_open.path.x);
         if(was_loaded(&fullpath)) return;
 
         da_append(ctx.loaded_files, fullpath);
@@ -77,9 +75,9 @@ void cate_open(char* path) {
 
     Parser p = {0};
     string_view file = {0};
-    int err = sv_load_file(&file, to_open.x);
+    int err = sv_load_file(&file, to_open.path.x);
     if(err)
-        cate_error("can not open file %s", to_open.x);
+        cate_error("can not open file %s", to_open.path.x);
     err = cate_tokenize(&file, &p.tokens);
     if(err) exit(1);
 
@@ -256,7 +254,7 @@ void parse(Parser* p) {
             }
             }
 
-            if(sv_ccmp(child, "type")) {
+            if(sv_ccmp(&child->text, "type")) {
                 expect(TOK_ASSIGN);
                 if(p->cur_class->kind != CLASS_LIBRARY) {
                     error("can't change library kind of "sv_fmt

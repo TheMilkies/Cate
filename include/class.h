@@ -53,6 +53,7 @@ typedef struct {
 void class_build(CateClass* c);
 void class_clean(CateClass* c);
 void class_install(CateClass* c);
+void class_change_type(CateClass* c, LibraryKind type);
 
 struct FileBuilder;
 typedef struct {

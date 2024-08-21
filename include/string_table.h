@@ -23,6 +23,7 @@ typedef struct StringTable {
 } StringTable;
 
 STIndex st_save_s(StringTable* st, char* s);
+STIndex st_save_slen(StringTable* st, char* s, size_t l);
 STIndex st_save_sv(StringTable* st, string_view* sv);
 void st_init(StringTable* st, size_t initial_size);
 void st_free(StringTable* st);
