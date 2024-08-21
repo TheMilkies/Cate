@@ -64,7 +64,6 @@ typedef struct {
     SavedStringIndexes object_files;
     SavedStringIndexes to_build_indexes;
     SavedStringIndexes flags, final_flags;
-    STIndex standard;
     STIndex out_name;
 } Prepared;
 
@@ -146,12 +145,13 @@ static STIndex prepare_out_name(CateClass* c) {
 
 static STIndex prepare_std(CateClass* c) {
     if(!c->standard.length) return 0;
-    if(c->standard.length >= 64)
+    if(c->standard.length+6 >= PATH_MAX)
         cate_error("standard is too long?");
 
-    struct CateFullPath flag = {.x = "-std="};
-    strncat(flag.x, c->standard.text, c->standard.length+1);
-    return st_save_s(&ctx.st, flag.x);
+    struct CatePathBuilder s = {0};
+    pb_from_cstr(&s, "-std=");
+    pb_append_sv(&s, &c->standard);
+    return pb_save(&s);
 }
 
 static void create_directories(CateClass* c) {
@@ -304,7 +304,8 @@ static void prepare(CateClass* c, Prepared* p) {
     if(!(c->bools & CLASS_IBOOL_RELINK))
         return;
 
-    p->standard = prepare_std(c);
+    STIndex std = prepare_std(c);
+    da_append(p->flags, std);
     create_directories(c);
 
     if(c->kind == CLASS_LIBRARY) {
@@ -317,7 +318,7 @@ static void prepare(CateClass* c, Prepared* p) {
     
     if(c->includes.size == 0 && c->bools & CLASS_BOOL_AUTO) {
         if(cate_sys_file_exists("include/"))
-            ssi_append(&c->includes, "-Iinclude", 8);
+            ssi_append(&c->includes, "-Iinclude", 10);
     }
 }
 
@@ -418,6 +419,7 @@ static void prepare_command_template(CateClass* c, Prepared* p) {
     cate_sys_convert_path(c->compiler.text);
     da_append(c->command_template, c->compiler);
     append_ssi_items(&c->command_template, &p->flags);
+    append_ssi_items(&c->command_template, &c->defines);
     append_ssi_items(&c->command_template, &c->includes);
 
     //we remove the -c later by just popping
