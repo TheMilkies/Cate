@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <assert.h>
 #include <dirent.h>
@@ -221,8 +222,8 @@ int cate_sys_remove(const char* path) {
 }
 
 //processes stuff
-static __pid_t _fork(const char* for_what) {
-    __pid_t pid = fork();
+static pid_t _fork(const char* for_what) {
+    pid_t pid = fork();
     if(pid == -1) {
         cate_error("failed to create new process for %s", for_what);
     }
