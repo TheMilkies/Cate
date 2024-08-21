@@ -6,15 +6,15 @@
 #include "target.h"
 
 #define CATEL_PATH_MAX 256
-#define CATEL_PATH_SIZE CATEL_PATH_MAX+6 //5 for the .cate
-typedef struct {
+#define CATEL_PATH_SIZE CATEL_PATH_MAX+6 //6 for the .cate
+struct CatelValues {
     char dir[CATEL_PATH_SIZE], file[CATEL_PATH_SIZE];
     uint8_t has_file;
-} CatelValues;
+};
 
-void catel_build_path(struct CatePathBuilder* p, CatelValues* v,
-                        string_view* file);
-void catel_init(CatelValues* c);
-extern CatelValues catel;
+char* catel_build_path(struct CatePathBuilder* p,
+                        char* file);
+void catel_init();
+extern struct CatelValues catel;
 
 #endif // CATEL_H
