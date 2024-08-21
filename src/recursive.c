@@ -1,34 +1,26 @@
 #include "recursive.h"
 #include "class.h"
 #include "system_functions.h"
+#include "path_builder.h"
 #include "error.h"
 #include "target.h"
 #include <assert.h>
 
-static string_view form_path(struct CateFullPath* res,
+static string_view form_path(struct CatePathBuilder* res,
                     string_view* path, string_view* name, uint8_t is_dir) {
-    string_view result = {.length = path->length + name->length,
-                          .text = res->x};
-    static const int separator_length = __PP_STRLEN(path_sep_str)-1;
-    
-    if(result.length + separator_length*is_dir >= PATH_MAX) {
-        cate_error("\""sv_fmt"/"sv_fmt"\"is too long for recursive?",
-                svptr_p(path), svptr_p(name));
-    }
+    pb_from_sv(res, path);
+    pb_append_sv(res, name);
+    if(is_dir)
+        pb_append_dir_sep(res);
 
-    memcpy(res->x, path->text, path->length);
-    memcpy(&res->x[path->length], name->text, name->length);
-    if(is_dir) {
-        memcpy(&res->x[result.length], path_sep_str, separator_length);
-        result.length += separator_length;
-    }
-
+    string_view result = {.length = res->length,
+                          .text = res->path.x};
     return result;
 }
 
 static void save_entry(SavedStringIndexes* arr,
                         string_view* path, string_view* name) {
-    struct CateFullPath new_path = {0};
+    struct CatePathBuilder new_path = {0};
     string_view result = form_path(&new_path, path, name, 0);
 
     STIndex to_save = st_save_sv(&ctx.st, &result);
@@ -87,7 +79,7 @@ int cate_recursive(RecursiveData* data, string_view* path) {
                 }
 
                 if(data->subrecursion) {
-                    struct CateFullPath p = {0};
+                    struct CatePathBuilder p = {0};
                     string_view name = sv_from_cstr(ent.name);
                     string_view new_path = form_path(&p, &cur, &name, 1);
                     STIndex idx = st_save_sv(&ctx.st, &new_path);
@@ -98,7 +90,7 @@ int cate_recursive(RecursiveData* data, string_view* path) {
                     da_append(paths_stack, result);
                 }
             }   break;
-            }   
+            }
         }
         
         cate_sys_dir_close(dir);

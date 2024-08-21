@@ -3,7 +3,7 @@
 #include "class.h"
 #include <assert.h>
 
-static inline void pb_from_slen(struct CatePathBuilder* pb,
+static void pb_from_slen(struct CatePathBuilder* pb,
                             char* text, size_t length) {
     memcpy(pb->path.x, text, length);
     pb->length = length;
@@ -44,7 +44,7 @@ void pb_append_cate_extension(struct CatePathBuilder* pb) {
 }
 
 void pb_append_dir_sep(struct CatePathBuilder* pb) {
-    append(pb, path_sep_str, path_sep_str_len);
+    append(pb, path_sep_str, path_sep_str_len-1);
 }
 
 void pb_revert_to(struct CatePathBuilder* pb, size_t old_loc) {

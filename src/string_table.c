@@ -37,6 +37,12 @@ STIndex st_save_s(StringTable* st, char* s) {
     return st_save_sv(st, &v);
 }
 
+//TODO: make this more like path_builder.c
+STIndex st_save_slen(StringTable* st, char* s, size_t l) {
+    string_view v = {.text = s, .length = l};
+    return st_save_sv(st, &v);
+}
+
 STIndex st_save_sv(StringTable* st, string_view* sv) {
     const size_t added_size = st->length + sv->length+1;
     const size_t needed_size = round_to_pow2(added_size);
