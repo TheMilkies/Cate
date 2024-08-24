@@ -51,14 +51,14 @@ int main(int argc, char *argv[]) {
     cmd_args.thread_count = cate_sys_get_core_count();
     shift_args(); //skip the program name
     //32KB is overkill for most catefiles but it speeds up everything
-    st_init(&ctx.st, 32*1024);
+    st_init(&ctx.st, 64*1024);
     //avoid calling sbrk() a lot
     free(malloc(sizeof(STIndex)*20*10));
 
     //handle catel (god damn it milkies!)
     catel_init();
 
-    da_type(char*) files = {0};
+    CStringArray files = {0};
     while (argc > 0) {
         char* arg  = shift_args();
         if(arg[0] != '-') {
