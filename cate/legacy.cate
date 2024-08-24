@@ -1,11 +1,11 @@
 /* for those running cate 1.x. what were we thinking?? */
-Project cate
-cate.compiler = "gcc"
-cate.includes = {"include", "."}
-cate.files = {recursive("src/*.c"), recursive("src/posix/*.c")}
-cate.flags = "-D_DEFAULT_SOURCE -march=native -O3 -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c99 -Wall -Ofast -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none"
-cate.out = "out/cate"
-cate.obj_dir = "cate/build"
-cate.build()
-system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate")
-system("cp out/cate /usr/local/bin/cate")
+Project cate;
+cate.compiler = "gcc";
+cate.includes = {"include", "."};
+cate.files = {recursive("src/*.c"), recursive("src/posix/*.c")};
+cate.flags = "-D_DEFAULT_SOURCE -march=native -funsafe-math-optimizations -ffast-math -fno-signed-zeros -ffinite-math-only -std=c99 -Wall -Ofast -pthread -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-exceptions -fno-ident -fomit-frame-pointer -fmerge-all-constants -Wl,--build-id=none";
+cate.out = "out/cate";
+cate.obj_dir = "cate/build";
+cate.build();
+system("strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag out/cate");
+system("cp out/cate /usr/local/bin/cate");
