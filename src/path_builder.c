@@ -23,13 +23,14 @@ void pb_reset(struct CatePathBuilder* pb) {
     pb->length = 0;
 }
 
-void pb_append_slen(struct CatePathBuilder* pb, char* s, size_t l) {
-    if(pb->length+l >= PATH_MAX)
+void pb_append_slen(struct CatePathBuilder* pb,
+                    char* text, size_t length) {
+    if(pb->length+length >= PATH_MAX)
         cate_error("path \"%s"sv_fmt"\" is too long?",
-            pb->path.x, s, l);
+            pb->path.x, text, length);
 
-    memcpy(&pb->path.x[pb->length], s, l);
-    pb->length += l;
+    memcpy(&pb->path.x[pb->length], text, length);
+    pb->length += length;
 }
 
 void pb_append(struct CatePathBuilder* pb, char* text) {

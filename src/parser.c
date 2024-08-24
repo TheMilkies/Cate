@@ -738,8 +738,20 @@ static void handle_recursive(Parser* p, SavedStringIndexes* arr) {
     expect(TOK_RPAREN);
 }
 
+static void clean_array(CateClass* c, SavedStringIndexes* arr) {
+    arr->size = 0;
+    if(c->bools & CLASS_BOOL_BUILT) {
+        c->bools |= CLASS_IBOOL_RELINK;
+        c->bools &= ~(CLASS_IBOOL_RELINK);
+    }
+    
+    if(arr == &c->libraries)
+        c->loaded_lib_paths.size = 0;
+}
+
 static void set_class_array(Parser* p, SavedStringIndexes* arr) {
     expect(TOK_ASSIGN);
+    clean_array(p->cur_class, arr);
 
     if(arr == &p->cur_class->defines)
         return definitions(p);
@@ -773,6 +785,9 @@ static void set_class_array(Parser* p, SavedStringIndexes* arr) {
             break;
         }
     }
+    
+    if(arr == &p->cur_class->libraries)
+        class_change_libraries(p->cur_class);
     
     expect(TOK_RCURLY);
 }

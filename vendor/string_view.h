@@ -28,6 +28,7 @@ int sv_equalc(const string_view *s1, const char *s2, size_t length);
 size_t sv_find(const string_view *s, size_t from, const char c);
 size_t sv_find_last(const string_view *s, const char c);
 int sv_ends_with(string_view* restrict s, char* restrict e, size_t l);
+int sv_starts_with(string_view* restrict s, char* restrict e, size_t l);
 int sv_ends_with_sv(string_view* restrict s, string_view* restrict e);
 
 #endif // SIMPLE_STRING_VIEW_H
@@ -114,6 +115,11 @@ string_view sv_substring(string_view *s, size_t begin, size_t end) {
 int sv_ends_with(string_view* restrict s, char* restrict e, size_t l) {
     if(l > s->length) return 0;
     return strncmp(s->text+s->length-l, e, l) == 0;
+}
+
+int sv_starts_with(string_view* restrict s, char* restrict e, size_t l) {
+    if(l > s->length) return 0;
+    return strncmp(s->text, e, l) == 0;
 }
 
 int sv_ends_with_sv(string_view* restrict s, string_view* restrict e) {

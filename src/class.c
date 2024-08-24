@@ -16,6 +16,7 @@ static void classes_free() {
         free(c->files.data);
         free(c->objects.data);
         free(c->command_template.data);
+        free(c->loaded_lib_paths.data);
     }
     da_free(ctx.classes);
 }
@@ -61,7 +62,6 @@ void save_string(string_view* s, SavedStringIndexes* arr) {
 }
 
 typedef struct {
-    SavedStringIndexes object_files;
     SavedStringIndexes to_build_indexes;
     SavedStringIndexes flags, final_flags;
     STIndex out_name;
@@ -263,12 +263,19 @@ static void append_ssi_items(CStringArray* dest,
     }
 }
 
+static void append_cstr_items(CStringArray* dest,
+                            const CStringArray* src) {
+    for (size_t i = 0; i < src->size; ++i) {
+        da_append((*dest), src->data[i]);
+    }
+}
+
 static void check_if_needs_rebuild(CateClass* c, Prepared* p,
                                 string_view* out_name) {
     p->to_build_indexes.size = 0;
     for (size_t i = 0; i < c->files.size; ++i) {
         const char* file = st_get_str(&ctx.st, c->files.data[i]);
-        const char* obj = st_get_str(&ctx.st, p->object_files.data[i]);
+        const char* obj = st_get_str(&ctx.st, c->objects.data[i]);
         if(cmd_args.flags & CMD_FORCE_REBUILD
         || cate_is_file_newer(file, obj)) {
             da_append(p->to_build_indexes, i);
@@ -299,7 +306,7 @@ static void prepare(CateClass* c, Prepared* p) {
     cate_sys_convert_path(c->build_dir.text);
     p->out_name = prepare_out_name(c);
     string_view out_name = sv_from_cstr(st_get_str(&ctx.st, p->out_name));
-    prepare_obj_files(c, &p->object_files);
+    prepare_obj_files(c, &c->objects);
     check_if_needs_rebuild(c, p, &out_name);
     if(!(c->bools & CLASS_IBOOL_RELINK))
         return;
@@ -384,7 +391,7 @@ static void build(CateClass* c, Prepared* p) {
                 const char* file = st_get_str(&ctx.st,
                         c->files.data[file_index]);
                 const char* obj = st_get_str(&ctx.st,
-                        p->object_files.data[file_index]);
+                        c->objects.data[file_index]);
 
                 create_build_process(builder, file, obj, &c->command_template);
                 if(cmd_args.flags & CMD_DRY_RUN)
@@ -421,6 +428,7 @@ static void prepare_command_template(CateClass* c, Prepared* p) {
     append_ssi_items(&c->command_template, &p->flags);
     append_ssi_items(&c->command_template, &c->defines);
     append_ssi_items(&c->command_template, &c->includes);
+    append_cstr_items(&c->command_template, &c->all_libraries);
 
     //we remove the -c later by just popping
     da_append(c->command_template, dash_c);
@@ -446,7 +454,7 @@ static void link_static_library(CateClass* c, Prepared* p) {
     char* out_name = st_get_str(&ctx.st, p->out_name);
     da_append(final.command, out_name);
 
-    append_ssi_items(&final.command, &p->object_files);
+    append_ssi_items(&final.command, &c->objects);
     da_append(final.command, null);
 
     run_builder_and_wait(&final);
@@ -463,7 +471,7 @@ static void link(CateClass* c, Prepared* p) {
         save_separated(&c->final_flags, &p->final_flags);
         append_ssi_items(&final.command, &p->final_flags);
     }
-    append_ssi_items(&final.command, &p->object_files);
+    append_ssi_items(&final.command, &c->objects);
 
     da_append(final.command, dash_o);
     char* out_name = st_get_str(&ctx.st, p->out_name);
@@ -498,11 +506,72 @@ void class_build(CateClass* c) {
     //finished building, let's mark it as built
     c->bools |= CLASS_BOOL_BUILT;
     //free
-    free(p.object_files.data);
     free(p.flags.data);
     free(p.final_flags.data);
     free(p.to_build_indexes.data);
     builders_reset();
+}
+
+static uint8_t is_library_path_loaded(CateClass* c, string_view* lib) {
+    for (size_t i = 0; i < c->loaded_lib_paths.size; ++i) {
+        if(sv_equalc(lib, c->loaded_lib_paths.data[i], lib->length))
+            return 1;
+    }
+    return 0;
+}
+
+void add_library(CateClass* c, string_view* lib) {
+    static char* dash_l = "-l", *dash_L = "-L";
+
+    size_t last_slash = sv_find_last(lib, path_sep); 
+    uint8_t is_local = last_slash != SV_NOT_FOUND;
+    if(!is_local) {
+        da_append(c->all_libraries, dash_l);
+        da_append(c->all_libraries, lib->text);
+        return;
+    }
+
+    //lib/libidk.so -> lib/
+    string_view path = sv_substring(lib, 0, last_slash);
+    if(path.length) {
+        path.text[path.length] = 0; //remove the sep
+        if(!is_library_path_loaded(c, lib)) {
+            da_append(c->loaded_lib_paths, lib->text);
+            da_append(c->all_libraries, dash_L);
+            da_append(c->all_libraries, path);
+        }
+    }
+
+    //lib/libidk.so -> libidk.so
+    string_view name = sv_substring(lib, last_slash+1, lib->length);
+    if(!name.length)
+        cate_error("invalid library: \""sv_fmt"\"", svptr_p(lib));
+
+    if(sv_ends_with_sv(&name, &cate_target->dynamic_ending)) {
+        //remove ending
+        //libidk.so -> libidk
+
+        name.length -= cate_target->dynamic_ending.length;
+        //libidk -> idk
+        if(sv_starts_with(&name, "lib", 3)) {
+            name = sv_substring(&name, 3, name.length);
+        }
+    }
+    name.text[name.length] = 0;
+
+    da_append(c->all_libraries, dash_l);
+    da_append(c->all_libraries, name);
+}
+
+//i know this isn't very efficient, but we don't have enough time. 
+void class_change_libraries(CateClass* c) {
+    c->all_libraries.size = 0;
+    for (size_t i = 0; i < c->libraries.size; ++i) {
+        string_view lib = sv_from_cstr(
+            st_get_str(&ctx.st, c->libraries.data[i])
+        );
+        add_library(c, &lib);
+    }
 }
 
 void class_clean(CateClass* c) {

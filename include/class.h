@@ -40,6 +40,9 @@ typedef struct {
 
     string_view name, out_name, compiler, build_dir, standard,
                 flags, final_flags;
+    
+    //maybe this should be an SSI?
+    CStringArray loaded_lib_paths, all_libraries;
 
     struct {
         union {
@@ -55,6 +58,7 @@ void class_build(CateClass* c);
 void class_clean(CateClass* c);
 void class_install(CateClass* c);
 void class_change_type(CateClass* c, LibraryKind type);
+void class_change_libraries(CateClass* c);
 
 struct FileBuilder;
 typedef struct {
