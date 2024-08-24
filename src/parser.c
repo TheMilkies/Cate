@@ -173,9 +173,9 @@ void parse(Parser* p) {
             }
 
             p->cur_class = find_class(&cur->text);
-            if(!p->cur_class) {
+            if(!p->cur_class)
                 error(sv_fmt" was not defined", sv_p(cur->text));
-            }
+            
             next();
             goto parse_dot;
         }   break;
@@ -263,7 +263,6 @@ void parse(Parser* p) {
                 if(found_true)
                     skip_block(p, &opened_blocks);
             }
-
         } break;
 
         case TOK_ELSE: {
@@ -283,11 +282,20 @@ void parse(Parser* p) {
             next();
             break;
         }
+
         case TOK_RCURLY: {
             --opened_blocks;
             if(opened_blocks < 0)
                 error("too many '}'",0);
             next();
+        }	break;
+
+        case TOK_RECURSIVE: {
+            expect(TOK_LPAREN);
+            expect_string(p);
+            optional_rparen(p);
+            cate_warn_line(cur->line,
+                hl_func("recursive") " outside of assignment, skipped");
         }	break;
         
         default:
