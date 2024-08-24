@@ -291,6 +291,7 @@ void parse(Parser* p) {
         }	break;
 
         case TOK_RECURSIVE: {
+            next();
             expect(TOK_LPAREN);
             expect_string(p);
             optional_rparen(p);
