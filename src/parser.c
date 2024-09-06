@@ -7,6 +7,7 @@
 
 #define next() ++p->i;
 #define in_range() (p->i < p->kinds.size)
+#define match(k) (cur_tok.kind == k)
 
 static void error(Parser* p, const char* fmt, ...) {
     va_list args;
@@ -34,13 +35,17 @@ typedef void(*ParserRule)(Parser*);
 static void in_parens(Parser* p, ParserRule rule);
 
 //instead of having a nesting tree, we have a flat array
-static TokenID add_node(Parser* p, uint8_t kind) {
+static TokenID add_node(Parser* p, NodeKind kind) {
     ASTNode n = {
         .token_index = p->i,
         .node_kind = kind
     };
     da_append(p->ast, n);
     return p->ast.size-1;
+}
+
+static void change_node_kind(Parser* p, NodeID id, NodeKind k) {
+    p->ast.data[id].node_kind = k;
 }
 
 static void end_node(Parser* p, NodeID id) {
@@ -61,6 +66,7 @@ static void pre_alloc(AST* ast) {
 AST cate_parse(Parser* p) {
     pre_alloc(&p->ast);
     p->i = 0;
+    p->object_selected = 0;
     while (in_range()) {
         switch (cur_tok.kind) {
         case TOK_PROJECT: {
@@ -69,6 +75,7 @@ AST cate_parse(Parser* p) {
             //name
             expect_ident(p);
             end_node(p, n);
+            p->object_selected = 1;
         }   break;
 
         case TOK_LIBRARY: {
@@ -79,6 +86,22 @@ AST cate_parse(Parser* p) {
             //(type)
             in_parens(p, expect_library_kind);
             end_node(p, n);
+            p->object_selected = 1;
+        }   break;
+
+        case TOK_IDENTIFIER: {
+            NodeID n = add_node(p, NODE_FOCUS_ON_OBJECT);
+            next();
+            end_node(p, n);
+            p->object_selected = 1;
+            
+            if(!match(TOK_DOT))
+                error("expected a dot after the identifier", 0);
+            goto dot;
+        }   break;
+
+        case TOK_DOT: dot: {
+            parse_expr(p);
         }   break;
 
         default:
@@ -88,6 +111,42 @@ AST cate_parse(Parser* p) {
     }
     
     return p->ast;
+}
+
+static void parse_expr(Parser* p) {
+    NodeID n = 0;
+    switch (cur_tok.kind) {
+    case TOK_IDENTIFIER: {
+        n = add_node(p, NODE_GET_PROPERTY);
+        next();
+        goto dot;
+    }   break;
+
+    case TOK_DOT: {
+        if(!n)
+            n = add_node(p, NODE_ASSIGN);
+
+    dot:
+        expect(TOK_DOT);
+        if(!p->object_selected)
+            error("no object selected. define a Project?", 0);
+        expect_ident(p);
+
+        if(match(TOK_ASSIGN)) {
+            change_node_kind(p, n, NODE_ASSIGN);
+            next();
+            parse_expr(p);
+        }
+        end_node(p, n);
+    }   break;
+
+    case TOK_STRING_LITERAL:
+        expect_string(p);
+        break;
+
+    default:
+        break;
+    }
 }
 
 static void expect_ident(Parser* p) {
@@ -120,8 +179,4 @@ static void in_parens(Parser* p, ParserRule rule) {
     expect(TOK_LPAREN);
     rule(p);
     expect(TOK_RPAREN);
-}
-
-static void parse_expr(Parser* p) {
-    
 }

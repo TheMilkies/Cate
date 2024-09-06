@@ -7,7 +7,7 @@
     cate_tokenize(&line, &p.kinds, &p.values);\
     AST ast = cate_parse(&p);
 
-#define assert_k(a, b) _assert((a.node_kind == b), #a " != " #b " (is %s)",\
+#define assert_k(a, b) _assert((a.node_kind == b), #a " != " #b " (is %i)",\
     a.node_kind)
 
 #define assert_v(a, b, blen) _assert(sv_equalc(&p.values.data[a.token_index],\
@@ -32,7 +32,31 @@ test_def(library_init) {
     assert_k(ast.data[2], NODE_STATIC);
 }
 
+test_def(property_get) {
+    parse("Project x\n"
+          ".out = \"hello\"");
+    assert_k(ast.data[2], NODE_ASSIGN);
+    assert_k(ast.data[3], NODE_IDENT);
+    assert_v(ast.data[3], "out", 3);
+    assert_k(ast.data[4], NODE_STRING);
+    assert_v(ast.data[4], "hello", 5);
+}
+
+test_def(property_get_another) {
+    parse("Project x1\n"
+          ".out = x2.out");
+    assert_k(ast.data[2], NODE_ASSIGN);
+    assert_k(ast.data[3], NODE_IDENT);
+    assert_v(ast.data[3], "out", 3);
+    assert_k(ast.data[4], NODE_GET_PROPERTY);
+    assert_v(ast.data[4], "x2", 2);
+    assert_k(ast.data[5], NODE_IDENT);
+    assert_v(ast.data[5], "out", 3);
+}
+
 test_main({
     test_register(project_init);
     test_register(library_init);
+    test_register(property_get);
+    test_register(property_get_another);
 })

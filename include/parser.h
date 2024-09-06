@@ -11,6 +11,9 @@ enum {
     NODE_DEF_LIBRARY,
     NODE_STATIC,
     NODE_DYNAMIC,
+    NODE_FOCUS_ON_OBJECT,
+    NODE_GET_PROPERTY,
+    NODE_ASSIGN,
 
     NODE_TRUE,
     NODE_FALSE,
@@ -31,6 +34,7 @@ typedef struct {
     TokenValuesArray values;
     AST ast;
     size_t i;
+    uint8_t object_selected;
 } Parser;
 
 AST cate_parse(Parser* p);
