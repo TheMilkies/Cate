@@ -81,6 +81,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
         tok.kind = type;\
         val.length = 1;\
         val.text = line->text+i;\
+        next();\
         save();\
         } break;
 
@@ -100,4 +101,33 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
             break;
     }
     }
+}
+
+const char* tok_as_text(TokenKind k) {
+    static_assert(TOK_COUNT_SIZE == 19,
+        "added token types? add their names here");
+    static const char* const names[TOK_COUNT_SIZE] = {
+        [TOK_NONE] = "end of file",
+        [TOK_DOT] = "a '.'",
+        [TOK_ASSIGN] = "an '='",
+        [TOK_LCURLY] = "a '{'",
+        [TOK_RCURLY] = "a '}'",
+        [TOK_LPAREN] = "a '('",
+        [TOK_RPAREN] = "a ')'",
+        [TOK_PROJECT] = "'Project'",
+        [TOK_LIBRARY] = "'Library'",
+        [TOK_STATIC] = "'static'",
+        [TOK_DYNAMIC] = "'dynamic'",
+        [TOK_RECURSIVE] = "'recursive'",
+        [TOK_STRING_LITERAL] = "a string",
+        [TOK_IDENTIFIER] = "an identifier",
+        [TOK_TRUE] = "'true'",
+        [TOK_FALSE] = "'false'",
+        [TOK_IF] = "'if'",
+        [TOK_ELSE] = "'else'",
+        [TOK_EXCLAMATION_MARK] = "an '!'",
+    };
+
+    if(k >= TOK_COUNT_SIZE) return "this is a bug";
+    return names[k];
 }

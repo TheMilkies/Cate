@@ -42,5 +42,6 @@ typedef da_type(string_view) TokenValuesArray;
 
 void cate_tokenize(string_view *line, TokensArray *tokens,
     TokenValuesArray* values);
+const char* tok_as_text(TokenKind k);
 
 #endif // CATE_TOKENIZER_H

@@ -1,0 +1,11 @@
+Project tokenizer_test
+.files = {
+    "test/tokenizer.c"
+    "src/tokenizer.c"
+    "src/error.c"
+}
+.out = "out/test/tokenizer"
+.incs = {".", "include"}
+.build()
+
+system("out/test/tokenizer")
