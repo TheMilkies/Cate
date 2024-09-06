@@ -32,11 +32,12 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
                 skip_until('\n');
             } else if(peek(1) == '*') {
                 i += 2;
-                while (i < line->length) {
+                while (in_range()) {
                     if(cur == '*' && peek(1) == '/') {
                         i += 2;
                         break;
                     }
+                    next();
                 }
 
                 if(i >= line->length)
