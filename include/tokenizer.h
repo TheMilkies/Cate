@@ -39,6 +39,7 @@ typedef struct {
 } Token;
 typedef da_type(Token) TokensArray;
 typedef da_type(string_view) TokenValuesArray;
+typedef uint32_t TokenID;
 
 void cate_tokenize(string_view *line, TokensArray *tokens,
     TokenValuesArray* values);

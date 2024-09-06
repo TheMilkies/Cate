@@ -1,6 +1,32 @@
 #include "tokenizer.h"
 #include <ctype.h>
 
+static TokenKind maybe_keyword(string_view* v) {
+    static_assert(TOK_COUNT_SIZE == 19,
+        "added token types? if they are keywords; add them here");
+    if(sv_ccmp(v, "Project")) {
+        return TOK_PROJECT;
+    } else if(sv_ccmp(v, "Library")) {
+        return TOK_LIBRARY;
+    } else if(sv_ccmp(v, "recursive")
+           || sv_ccmp(v, "iterate")) {
+        return TOK_RECURSIVE;
+    } else if(sv_ccmp(v, "static")) {
+        return TOK_STATIC;
+    } else if(sv_ccmp(v, "dynamic")) {
+        return TOK_DYNAMIC;
+    } else if(sv_ccmp(v, "true")) {
+        return TOK_TRUE;
+    } else if(sv_ccmp(v, "false")) {
+        return TOK_FALSE;
+    } else if(sv_ccmp(v, "if")) {
+        return TOK_IF;
+    } else if(sv_ccmp(v, "else")) {
+        return TOK_ELSE;
+    }
+    return TOK_IDENTIFIER;
+}
+
 void cate_tokenize(string_view *line, TokensArray *tokens,
                         TokenValuesArray* values) {
     static_assert(TOK_COUNT_SIZE == 19,
@@ -68,6 +94,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
                 next();
             val = sv_substring(line, begin, i);
 
+            tok.kind = maybe_keyword(&val);
             save();
         }   break;
 

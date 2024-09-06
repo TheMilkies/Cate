@@ -25,6 +25,18 @@ test_def(idents) {
     cleanup();
 }
 
+test_def(keywords) {
+    tokenize("Project ifs");
+    assert_eq(toks.size, 2);
+
+    assert_k(toks.data[0], TOK_PROJECT);
+    assert_k(toks.data[1], TOK_IDENTIFIER);
+
+    assert_sv_eqc(vals.data[1], "ifs", 3);
+
+    cleanup();
+}
+
 test_def(whitespace) {
     tokenize("  hello\n\ttest\t ");
     assert_eq(toks.size, 2);
@@ -77,6 +89,7 @@ test_def(strings) {
 
 test_main({
     test_register(idents);
+    test_register(keywords);
     test_register(whitespace);
     test_register(comments);
     test_register(operators);
