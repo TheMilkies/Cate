@@ -9,12 +9,18 @@ enum {
 
     NODE_DEF_PROJECT,
     NODE_DEF_LIBRARY,
+    NODE_STATIC,
+    NODE_DYNAMIC,
+
+    NODE_TRUE,
+    NODE_FALSE,
 };
+typedef uint8_t NodeKind;
 
 typedef struct {
     uint64_t token_index : 48,
              nodes_right : 16;
-    uint8_t node_kind;
+    NodeKind node_kind;
 } ASTNode;
 
 typedef size_t NodeID;

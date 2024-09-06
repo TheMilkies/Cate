@@ -29,6 +29,9 @@ static TokenID expect(Parser* p, TokenKind k) {
 static void parse_expr(Parser* p);
 static void expect_string(Parser* p);
 static void expect_ident(Parser* p);
+static void expect_library_kind(Parser* p);
+typedef void(*ParserRule)(Parser*);
+static void in_parens(Parser* p, ParserRule rule);
 
 //instead of having a nesting tree, we have a flat array
 static TokenID add_node(Parser* p, uint8_t kind) {
@@ -63,7 +66,18 @@ AST cate_parse(Parser* p) {
         case TOK_PROJECT: {
             NodeID n = add_node(p, NODE_DEF_PROJECT);
             next();
+            //name
             expect_ident(p);
+            end_node(p, n);
+        }   break;
+
+        case TOK_LIBRARY: {
+            NodeID n = add_node(p, NODE_DEF_LIBRARY);
+            next();
+            //name
+            expect_ident(p);
+            //(type)
+            in_parens(p, expect_library_kind);
             end_node(p, n);
         }   break;
 
@@ -86,6 +100,26 @@ static void expect_string(Parser* p) {
     NodeID n = add_node(p, NODE_STRING);
     expect(TOK_STRING_LITERAL);
     end_node(p, n);
+}
+
+static void expect_library_kind(Parser* p) {
+    if(cur_tok.kind != TOK_STATIC && cur_tok.kind != TOK_DYNAMIC) {
+        error("expected a "hl_var("LibraryType")" value ("
+        choose_light("static", " | ", "dynamic")")",0);
+    }
+    NodeKind k =
+        cur_tok.kind == TOK_DYNAMIC
+        ? NODE_DYNAMIC
+        : NODE_STATIC;
+    NodeID n = add_node(p, k);
+    next();
+    end_node(p, n);
+}
+
+static void in_parens(Parser* p, ParserRule rule) {
+    expect(TOK_LPAREN);
+    rule(p);
+    expect(TOK_RPAREN);
 }
 
 static void parse_expr(Parser* p) {

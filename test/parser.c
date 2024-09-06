@@ -24,6 +24,15 @@ test_def(project_init) {
     assert_v(ast.data[1], "hello", 5);
 }
 
+test_def(library_init) {
+    parse("Library hello(static)\n");
+    assert_k(ast.data[0], NODE_DEF_LIBRARY);
+    assert_k(ast.data[1], NODE_IDENT);
+    assert_v(ast.data[1], "hello", 5);
+    assert_k(ast.data[2], NODE_STATIC);
+}
+
 test_main({
     test_register(project_init);
+    test_register(library_init);
 })
