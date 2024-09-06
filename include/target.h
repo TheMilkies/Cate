@@ -12,9 +12,7 @@ typedef struct CateOSTarget {
     string_view os_names[];
 } CateOSTarget;
 
-extern CateOSTarget* cate_target;
-extern CateOSTarget cate_target_windows;
-extern CateOSTarget cate_target_posix;
+extern CateOSTarget cate_target;
 
 uint8_t cate_platform_check(const string_view* id);
 
@@ -25,8 +23,8 @@ uint8_t cate_platform_check(const string_view* id);
 #else
 #define path_sep '/'
 #define path_sep_str "/"
-#define path_sep_str_len __PP_STRLEN(path_sep_str)
 #define NL "\n"
 #endif // OS newline check
+#define path_sep_str_len __PP_STRLEN(path_sep_str)
 
 #endif // CATE_TARGET_H

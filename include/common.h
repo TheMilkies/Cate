@@ -1,6 +1,7 @@
 #ifndef CATE_COMMON_H
 #define CATE_COMMON_H
 #include <stdio.h>
+#include <stdint.h>
 
 #if __STDC_VERSION__ < 202311L
     #define static_assert(cond, msg) _Static_assert(cond, msg)

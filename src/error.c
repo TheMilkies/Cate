@@ -1,4 +1,4 @@
-#include "error.h"
+#include "cate_error.h"
 #include "target.h"
 #include <stdio.h>
 

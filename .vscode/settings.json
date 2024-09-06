@@ -1,32 +1,15 @@
 {
-	"files.exclude": {
-		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"**/Thumbs.db": true
-	},
-	"hide-files.files": [],
-	"files.associations": {
-		"sysinfo.h": "c",
-		"system_functions.h": "c",
-		"cmd_args.h": "c",
-		"target.h": "c",
-		"dynamic_array.h": "c",
-		"error.h": "c",
-		"errno.h": "c",
-		"string_view.h": "c",
-		"parser.h": "c",
-		"class.h": "c",
-		"string_table.h": "c",
-		"tokenizer.h": "c",
-		"stdarg.h": "c",
-		"stat.h": "c",
-		"common.h": "c"
-	},
-	"cSpell.words": [
-		"subrecursion"
-	],
-	"editor.fontSize": 15
+    "files.associations": {
+        "error.h": "c",
+        "stdio.h": "c",
+        "target.h": "c",
+        "typeinfo": "cpp",
+        "tokenizer.h": "c",
+        "testlib.h": "c",
+        "string_view.h": "c",
+        "ctype.h": "c",
+        "cate_error.h": "c",
+        "common.h": "c",
+        "random": "c"
+    }
 }

@@ -8,11 +8,11 @@ void __da_append(void* array, void* to_append, size_t size);
 void __da_pop_back(void* array);
 void __da_free(void* array);
 #define da_append(array, to_append)\
-	__da_append(&array, &to_append, sizeof(to_append))
-#define da_pop(array) __da_pop_back(&array)
-#define da_free(array) __da_free(&array)
-#define da_top(array) (array.data[array.size-1])
-#define da_at(array, index) (array.data[index])
+	__da_append(&(array), &to_append, sizeof(to_append))
+#define da_pop(array) __da_pop_back(&(array))
+#define da_free(array) __da_free(&(array))
+#define da_top(array) ((array).data[(array).size-1])
+#define da_at(array, index) ((array).data[index])
 
 #define da_type(type) struct {type* data; size_t size, capacity;}
 

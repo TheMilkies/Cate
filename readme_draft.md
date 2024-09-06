@@ -9,6 +9,38 @@
 ## Introduction
 Cate is a really easy and fast build system for C/C++ with readable syntax.
 
+Unlike CMake and other build systems, Cate does not use Make and is not Turing complete. Cate is more like a wrapper state-machine for GCC/clang than an object oriented build system (unlike CMake), or a build system programming language (also unlike CMake).
+
+We believe Cate is the perfect build system for small to medium size projects.
+
+Do note:
+- Cate has been completed as of 3.0!
+- This readme is full of little jokes. No offense intended to any other build system... *except Autotools*.
+- Cate uses Catel, a messy file that allows us to set a default file.
+- Cate does not support string splitting.
+
+## Advantages over other build systems
+1. It's extremely easy to learn and even guess.
+2. It (unlike CMake) doesn't require documentation... but has decent docs.
+3. It's smol, it has everything you need and a little more to keep the 1% happy.
+4. It's very smart. It can guess and do most things automatically for you.
+5. It's colorful and fun to use! Not everything has to be monochrome.
+6. Cate, unlike Make, just cates sense!
+
+## Installing Cate
+### Building from source
+Make sure you have these:
+- A modern POSIX-compliant system
+- A C99 compiler
+
+#### Using build.sh (Unix-like)
+Run `./build.sh`, It'll ask you if you'd like to install at the end.
+
+#### Using Cate (any platform)
+**If you're using cate <= 1.3, run `sudo cate legacy`.**
+
+Run `cate`, it'll ask you if to install after building. **Unlike Make and other build systems; it'll automatically detect the thread count.**
+
 ## Future
 We believe Cate is complete as of 3.0. Updates would only fix bugs or speed it up.
 

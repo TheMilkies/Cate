@@ -1,7 +1,10 @@
 #ifndef CATE_TOKENIZER_H
 #define CATE_TOKENIZER_H
-#include "vendor/string_view.h"
-#include "vendor/dynamic_array.h"
+#include <vendor/string_view.h>
+#include <vendor/dynamic_array.h>
+#include "cate_error.h"
+#include "common.h"
+
 #include <stdint.h>
 
 enum {
@@ -30,13 +33,14 @@ enum {
 typedef uint8_t TokenKind;
 
 typedef struct {
-    string_view text;
-	size_t line;
-    TokenKind kind;
+    //16 million lines should be more than enough.
+    uint32_t line : 24,
+             kind : 8;
 } Token;
 typedef da_type(Token) TokensArray;
+typedef da_type(string_view) TokenValuesArray;
 
-const char* tok_as_text(TokenKind k);
-uint8_t cate_tokenize(string_view *line, TokensArray *tokens);
+void cate_tokenize(string_view *line, TokensArray *tokens,
+    TokenValuesArray* values);
 
 #endif // CATE_TOKENIZER_H
