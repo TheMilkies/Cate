@@ -8,4 +8,16 @@ Project tokenizer_test
 .incs = {".", "include"}
 .build()
 
+Project parser_test
+.files = {
+    "test/parser.c"
+    "src/tokenizer.c"
+    "src/parser.c"
+    "src/error.c"
+}
+.out = "out/test/parser"
+.incs = {".", "include"}
+.build()
+
 system("out/test/tokenizer")
+system("out/test/parser")

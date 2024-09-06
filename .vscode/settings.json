@@ -1,15 +1,11 @@
 {
     "files.associations": {
-        "error.h": "c",
-        "stdio.h": "c",
-        "target.h": "c",
-        "typeinfo": "cpp",
+        "parser.h": "c",
+        "stdint.h": "c",
         "tokenizer.h": "c",
-        "testlib.h": "c",
-        "string_view.h": "c",
-        "ctype.h": "c",
-        "cate_error.h": "c",
-        "common.h": "c",
-        "random": "c"
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "dynamic_array.h": "c"
     }
 }

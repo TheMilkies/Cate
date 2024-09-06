@@ -2,5 +2,5 @@ smol = true
 Project cate3
 .flags = "-O3"
 .files = {recursive("src/*.c")}
-.includes = {"include"}
+.includes = {"include" "."}
 .build()
