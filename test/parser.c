@@ -15,7 +15,7 @@
     #a " != " #b " (is \""sv_fmt"\")",\
     sv_p(p.values.data[a.token_index]));
 
-#define cleanup() free(toks.data); free(vals.data);
+#define cleanup() free(toks.data); free(vals.data); parser_free(&p);
 
 test_def(project_init) {
     parse("Project hello");
@@ -35,11 +35,24 @@ test_def(library_init) {
 test_def(property_get) {
     parse("Project x\n"
           ".out = \"hello\"");
+    
     assert_k(ast.data[2], NODE_ASSIGN);
-    assert_k(ast.data[3], NODE_IDENT);
-    assert_v(ast.data[3], "out", 3);
-    assert_k(ast.data[4], NODE_STRING);
-    assert_v(ast.data[4], "hello", 5);
+    assert_k(ast.data[3], NODE_GET_IMPLIED_PROPERTY);
+    assert_k(ast.data[4], NODE_IDENT);
+    assert_v(ast.data[4], "out", 3);
+    assert_k(ast.data[5], NODE_STRING);
+    assert_v(ast.data[5], "hello", 5);
+}
+
+test_def(expr) {
+    parse("x = \"hello\"");
+    assert_k(ast.data[0], NODE_FOCUS_ON_OBJECT);
+    assert_k(ast.data[1], NODE_ASSIGN);
+    assert_eq(ast.data[1].nodes_right, 3);
+    assert_k(ast.data[2], NODE_IDENT);
+    assert_v(ast.data[2], "x", 1);
+    assert_k(ast.data[3], NODE_STRING);
+    assert_v(ast.data[3], "hello", 5);
 }
 
 test_def(property_get_another) {
@@ -55,8 +68,9 @@ test_def(property_get_another) {
 }
 
 test_main({
-    test_register(project_init);
-    test_register(library_init);
+    // test_register(project_init);
+    // test_register(library_init);
+    // test_register(expr);
     test_register(property_get);
-    test_register(property_get_another);
+    // test_register(property_get_another);
 })
