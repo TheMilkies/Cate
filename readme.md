@@ -9,7 +9,7 @@
 ## Introduction
 Cate is a simple and fast build system for C/C++, its syntax is much simpler than the other build systems. While Cate is slower than Make, it's much easier to set up and create projects and libraries with.
 
-**Cate does not have a Windows release as of yet because of our laziness**
+**IMPORTANT: Cate3 is being worked on, it will bring Windows support and support many more features. It will be the last version of Cate so we're making sure it will have everything we need.**
 
 Unlike CMake and other build systems, Cate does not require Make and **is not** Turing complete. Cate is more like a wrapper state-machine for GCC/clang than an object oriented build system (unlike CMake), or a build system programming language (also unlike CMake).
 
