@@ -47,7 +47,8 @@ void c_globals_free(CateGlobals* g);
 | classes |
 `-------*/
 typedef struct {
-    StringsArray flags, link_flags, libraries, library_paths;
+    StringsArray files, object_files, flags,
+    link_flags, libraries, library_paths, includes;
 
     char *name, *out_name, *compiler, *build_dir, *std,
          *linker;
@@ -58,6 +59,8 @@ typedef struct {
 } CateClass;
 
 CateClass c_class(char* name, CateClassKind kind);
+void c_class_build(CateClass* c);
+void c_add_file(CateClass* c, char* file);
 void c_class_free(CateClass* c);
 
 /*-------.

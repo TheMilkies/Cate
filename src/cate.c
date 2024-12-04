@@ -46,7 +46,8 @@ char* sv_clone_as_cstr(string_view* v) {
 /*---------------------.
 | platform definitions |
 `--------------------*/
-
+#define fatal(text) do{fprintf(stderr, "[cate] " text);\
+    exit(-1);} while(0);
 //path translation is needed for non-unixes
 void _translate_path(char** path);
 #if !defined(__unix__) && !defined(__APPLE__)
@@ -132,12 +133,76 @@ void c_class_free(CateClass* c) {
     free(c->std);
     free(c->linker);
     free(c->build_dir);
+    strings_free(&c->files);
+    strings_free(&c->object_files);
     strings_free(&c->libraries);
     strings_free(&c->library_paths);
     strings_free(&c->flags);
     strings_free(&c->link_flags);
+    strings_free(&c->includes);
 }
 
+static void class_automation(CateClass* c);
+void c_class_build(CateClass* c) {
+    if(c->options & C_FLAG_AUTO) {
+        class_automation(c);
+    }
+
+
+}
+
+static size_t find_or_not(char* file, char c) {
+    size_t size = strlen(file);
+    for (intmax_t i = size; i > 0; --i) {
+        if(file[i] == c) return i;
+    }
+    
+    return size;
+}
+
+static char* make_out_name(CateClass* c);
+static void class_automation(CateClass* c) {
+    if(!c->out_name) {
+        c->out_name = make_out_name(c);
+    }
+
+    if(!c->includes.size) {
+        static char* inc = "include";
+        if(cs_file_exists(inc)) {
+            char* x = c_string_clone(inc);
+            da_append(c->includes, x);
+        }
+    }
+
+    c_clone_from_global(c);
+}
+
+static char* make_out_name(CateClass* c) {
+    switch (c->kind) {
+    case C_CLASS_PROJECT:
+    #ifdef WINDOWS
+        return c_string_build(2, c->name, ".exe");
+    #else
+        return c_string_clone(c->name);
+    #endif
+        break;
+    case C_CLASS_LIB_DYNAMIC:
+        return c_string_build(3, "lib", c->name, DYNAMIC_LIB_EXT);
+        break;
+
+    case C_CLASS_LIB_STATIC:
+        return c_string_build(3, "lib", c->name, STATIC_LIB_EXT);
+        break;
+    }
+
+    fatal("invalid class type?");
+    return NULL;
+}
+
+void c_add_file(CateClass* c, char* file) {
+    char* t = c_string_clone(file);
+    da_append(c->files, t);
+}
 
 /*---------------------.
 | system (os specific) |
