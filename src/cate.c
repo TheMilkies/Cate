@@ -62,11 +62,17 @@ void _translate_path(char** path);
 #define OBJECT_FILE_EXT ".obj"
 #define DIR_SEPARATOR "\\"
 
+#define DEFAULT_COMPILER "cc"
+#define DEFAULT_LINKER "ld"
+
 #else
 #define DYNAMIC_LIB_EXT ".so"
 #define STATIC_LIB_EXT ".a"
 #define OBJECT_FILE_EXT ".o"
 #define DIR_SEPARATOR "/"
+
+#define DEFAULT_COMPILER "cc"
+#define DEFAULT_LINKER "ld"
 
 #endif
 
@@ -76,7 +82,8 @@ void _translate_path(char** path);
 CateGlobals* c_current_globals = 0;
 void c_globals_init(CateGlobals* g) {
     g->options = C_FLAGS_DEFAULT;
-    g->compiler = c_string_clone("cc");
+    g->compiler = c_string_clone(DEFAULT_COMPILER);
+    g->linker = c_string_clone(DEFAULT_LINKER);
     {
         static char* cate_dir = "cate/build";
         static char* build_dir = "build";
@@ -90,8 +97,8 @@ void c_globals_init(CateGlobals* g) {
 
 void c_globals_free(CateGlobals* g) {
     free(g->compiler);
-    free(g->std);
     free(g->build_dir);
+    free(g->std);
     free(g->linker);
     c_current_globals = 0;
 }
