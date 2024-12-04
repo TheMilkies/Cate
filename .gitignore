@@ -3,3 +3,4 @@ cate/build/*.o
 out/*
 release/
 a.out
+cate3

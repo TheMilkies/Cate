@@ -6,6 +6,8 @@
         "array": "c",
         "string": "c",
         "string_view": "c",
-        "dynamic_array.h": "c"
+        "dynamic_array.h": "c",
+        "common.h": "c",
+        "cate_error.h": "c"
     }
 }
