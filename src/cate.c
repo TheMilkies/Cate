@@ -3,6 +3,7 @@
 
 #define fatal(text) do{fprintf(stderr, "[cate] " text);\
     exit(-1);} while(0);
+
 /*-------.
 | memory |
 `------*/
@@ -13,6 +14,17 @@ static void* xalloc(size_t n) {
     }
     return ptr;
 }
+
+/*----------.
+| processes |
+`---------*/
+struct SysProc;
+typedef struct SysProc SysProc;
+static SysProc* cs_proc_create(StringsArray* cmd);
+static int cs_proc_exited(SysProc* proc);
+static int cs_proc_get_exit_code(SysProc* proc);
+static void cs_proc_kill(SysProc* proc);
+static int cs_proc_wait(SysProc* proc);
 
 /*--------.
 | strings |
@@ -46,7 +58,7 @@ char* c_string_build(int count, ...) {
 }
 
 static void strings_free(StringsArray* a) {
-    for (size_t i = 0; i < a->size; i++)
+    for (size_t i = 0; i < a->size; ++i)
         free(a->data[i]);
     
     free(a->data);
@@ -102,8 +114,8 @@ void c_globals_init(CateGlobals* g) {
         static char* cate_dir = "cate/build";
         static char* build_dir = "build";
         char* x = (cs_file_exists(cate_dir))
-                        ? cate_dir
-                        : build_dir;
+                    ? cate_dir
+                    : build_dir;
         g->build_dir = c_string_clone(x);
     }
     c_current_globals = g;
@@ -254,12 +266,12 @@ static void objectify_files(CateClass* c) {
 /*---------------------.
 | system (os specific) |
 `--------------------*/
-#ifdef WINDOWS
+#ifdef _WIN32
 // void _translate_path(char** path) {
 
 // }
 
-#else
+#elif __unix__
 #include <unistd.h>
 #include <sys/stat.h>
 int cs_create_directory(char* dir) {
@@ -282,4 +294,61 @@ int cs_newer_than(char* file1, char* file2) {
     size_t f2_time = result.st_mtime;
     return f1_time > f2_time;
 }
+
+#include <sys/wait.h>
+#include <signal.h>
+/*----------.
+| processes |
+`---------*/
+struct SysProc {
+    pid_t pid;
+    int status;
+};
+
+static SysProc* cs_proc_create(StringsArray* cmd) {
+    SysProc* p = xalloc(sizeof(*p));
+    p->pid = fork();
+    if(p->pid == 0) {
+        execvp(cmd->data[0], cmd->data);
+        fprintf(stderr, "[cate] %s: program not found!\n",
+                    cmd->data[0]);
+        exit(2);
+    } else if (p->pid < 0) {
+        fatal("failed to create subprocess!");
+    }
+
+    return p;
+}
+
+static int cs_proc_exited(SysProc* proc) {
+    if(waitpid(proc->pid, &proc->status, WNOHANG) == -1) {
+        fatal("failed to get process status?");
+    }
+    return WIFEXITED(proc->status);
+}
+
+static int cs_proc_wait(SysProc* proc) {
+    if(waitpid(proc->pid, &proc->status, 0) == -1) {
+        fatal("failed to get process status?");
+    }
+    return WEXITSTATUS(proc->status);
+}
+
+static int cs_proc_get_exit_code(SysProc* proc) {
+    if(!WIFEXITED(proc->status))
+        fatal("this is a bug #0");
+    return WEXITSTATUS(proc->status);
+}
+
+static void cs_proc_kill(SysProc* proc) {
+    kill(proc->pid, SIGKILL);
+}
+
+int cs_smolize(char* file) {
+    return 1;
+}
+
+#else
+#error "Cate3 doesn't support this OS."
+
 #endif

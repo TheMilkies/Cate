@@ -71,6 +71,7 @@ int cs_file_exists(char* file);
 int cs_newer_than(char* file1, char* file2);
 int cs_copy(char* file1, char* file2);
 int cs_move(char* file1, char* file2);
-int cs_remove(char* file1);
+int cs_remove(char* file);
+int cs_smolize(char* file);
 
 #endif // LIB_CATE_H
