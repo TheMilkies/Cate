@@ -8,8 +8,8 @@
 | strings |
 `-------*/
 typedef da_type(char*) StringsArray;
-char* cate_string_clone(char* s);
-char* cate_string_build(int count, ...);
+char* c_string_clone(char* s);
+char* c_string_build(int count, ...);
 char* sv_clone_as_cstr(string_view* v);
 
 enum {
@@ -20,27 +20,45 @@ enum {
 typedef uint8_t CateClassKind;
 
 enum {
-    CATE_FLAG_AUTO = 1 << 0,
-    CATE_FLAG_SMOL = 1 << 1,
-    CATE_FLAG_LINK = 1 << 2,
-    CATE_FLAGS_DEFAULT =
-        CATE_FLAG_AUTO | CATE_FLAG_LINK,
+    C_FLAG_AUTO = 1 << 0,
+    C_FLAG_SMOL = 1 << 1,
+    C_FLAG_LINK = 1 << 2,
+    C_FLAGS_DEFAULT =
+        C_FLAG_AUTO | C_FLAG_LINK,
 };
 typedef uint8_t CateFlags;
 
+/*--------.
+| globals |
+`-------*/
 typedef struct {
-    char *compiler, *build_dir, *std;
+    char *compiler, *build_dir, *std,
+         *linker;
 
     uint32_t thread_count;
     CateFlags options;
 } CateGlobals;
 extern CateGlobals* c_current_globals;
 
+void c_globals_init(CateGlobals* g);
+void c_globals_free(CateGlobals* g);
+
 /*--------.
-| globals |
+| classes |
 `-------*/
-void cate_globals_init(CateGlobals* g);
-void cate_globals_free(CateGlobals* g);
+typedef struct {
+    StringsArray flags, link_flags, libraries, library_paths;
+
+    char *name, *out_name, *compiler, *build_dir, *std,
+         *linker;
+
+    uint32_t thread_count;
+    CateFlags options;
+    CateClassKind kind;
+} CateClass;
+
+CateClass c_class(char* name, CateClassKind kind);
+void c_class_free(CateClass* c);
 
 /*-------.
 | system |

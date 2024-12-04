@@ -1,13 +1,14 @@
 #include "cate.h"
+#include <stdarg.h>
 
 /*--------.
 | strings |
 `-------*/
-char* cate_string_clone(char* s) {
+char* c_string_clone(char* s) {
     return strdup(s);
 }
 
-char* cate_string_build(int count, ...) {
+char* c_string_build(int count, ...) {
     size_t max = 0;
     va_list args;
     va_start(args, count);
@@ -73,26 +74,63 @@ void _translate_path(char** path);
 | globals |
 `-------*/
 CateGlobals* c_current_globals = 0;
-void cate_globals_init(CateGlobals* g) {
-    g->options = CATE_FLAGS_DEFAULT;
-    g->compiler = string_clone("cc");
+void c_globals_init(CateGlobals* g) {
+    g->options = C_FLAGS_DEFAULT;
+    g->compiler = c_string_clone("cc");
     {
         static char* cate_dir = "cate/build";
         static char* build_dir = "build";
         char* x = (cs_file_exists(cate_dir))
                         ? cate_dir
                         : build_dir;
-        g->build_dir = string_clone(x);
+        g->build_dir = c_string_clone(x);
     }
     c_current_globals = g;
 }
 
-void cate_globals_free(CateGlobals* g) {
+void c_globals_free(CateGlobals* g) {
+    free(g->compiler);
     free(g->std);
     free(g->build_dir);
-    free(g->compiler);
+    free(g->linker);
     c_current_globals = 0;
 }
+
+/*--------.
+| classes |
+`-------*/
+static void c_clone_from_global(CateClass* c) {
+#define default(prop) if(!c->prop && c_current_globals->prop)\
+    c->prop = c_string_clone(c_current_globals->prop);
+
+    default(compiler);
+    default(linker);
+    default(std);
+    default(build_dir);
+
+#undef default
+}
+
+CateClass c_class(char* name, CateClassKind kind) {
+    CateClass c = {.kind = kind};
+    c.name = c_string_clone(name);
+    c_clone_from_global(&c);
+    return c;
+}
+
+void c_class_free(CateClass* c) {
+    free(c->name);
+    free(c->out_name);
+    free(c->compiler);
+    free(c->std);
+    free(c->linker);
+    free(c->build_dir);
+    strings_free(&c->libraries);
+    strings_free(&c->library_paths);
+    strings_free(&c->flags);
+    strings_free(&c->link_flags);
+}
+
 
 /*---------------------.
 | system (os specific) |
