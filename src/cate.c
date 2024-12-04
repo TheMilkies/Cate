@@ -1,11 +1,27 @@
 #include "cate.h"
 #include <stdarg.h>
 
+#define fatal(text) do{fprintf(stderr, "[cate] " text);\
+    exit(-1);} while(0);
+/*-------.
+| memory |
+`------*/
+static void* xalloc(size_t n) {
+    void* ptr = calloc(1, n);
+    if(!ptr) {
+        fatal("out of memory!");
+    }
+    return ptr;
+}
+
 /*--------.
 | strings |
 `-------*/
 char* c_string_clone(char* s) {
-    return strdup(s);
+    size_t len = strlen(s);
+    char* r = xalloc(len+1);
+    memcpy(r, s, len);
+    return r;
 }
 
 char* c_string_build(int count, ...) {
@@ -19,7 +35,7 @@ char* c_string_build(int count, ...) {
     }
     
     va_start(args, count);
-    char* res = calloc(max+1, sizeof(char));
+    char* res = xalloc((max+1)*sizeof(char));
     for (size_t i = 0; i < count; ++i) {
         char* s = va_arg(args, char*);
         strcat(res, s);
@@ -37,17 +53,14 @@ static void strings_free(StringsArray* a) {
 }
 
 char* sv_clone_as_cstr(string_view* v) {
-    char* s = malloc(v->length+1);
+    char* s = xalloc(v->length+1);
     memcpy(s, v->text, v->length);
-    s[v->length+1] = '\0';
     return s;
 }
 
 /*---------------------.
 | platform definitions |
 `--------------------*/
-#define fatal(text) do{fprintf(stderr, "[cate] " text);\
-    exit(-1);} while(0);
 //path translation is needed for non-unixes
 void _translate_path(char** path);
 #if !defined(__unix__) && !defined(__APPLE__)
@@ -142,13 +155,14 @@ void c_class_free(CateClass* c) {
     strings_free(&c->includes);
 }
 
+static void objectify_files(CateClass* c);
 static void class_automation(CateClass* c);
 void c_class_build(CateClass* c) {
     if(c->options & C_FLAG_AUTO) {
         class_automation(c);
     }
 
-
+    objectify_files(c);
 }
 
 static size_t find_or_not(char* file, char c) {
@@ -202,6 +216,39 @@ static char* make_out_name(CateClass* c) {
 void c_add_file(CateClass* c, char* file) {
     char* t = c_string_clone(file);
     da_append(c->files, t);
+}
+
+static char* objectify_file(char* file, char* build_dir) {
+    size_t dot_location = find_or_not(file, '.');
+    size_t len = strlen(build_dir) + pstrlen(DIR_SEPARATOR) - 1;
+    size_t max = len + dot_location + pstrlen(OBJECT_FILE_EXT);
+    char* res = xalloc(max+sizeof(char));
+
+    //"$build_dir/"
+    strcat(res, build_dir);
+    strcat(res, DIR_SEPARATOR);
+
+    //convert all `/` to `_`
+    for (size_t i = 0; i < dot_location; ++i) {
+        if(file[i] == DIR_SEPARATOR[0]) {
+            res[len+i] = '_';
+        } else {
+            res[len+i] = file[i];
+        }
+    }
+
+    //"$build_dir/$file.o"
+    strncat(res, OBJECT_FILE_EXT, pstrlen(OBJECT_FILE_EXT));
+
+    return res;
+}
+
+static void objectify_files(CateClass* c) {
+    c->object_files.size = 0;
+    for (size_t i = 0; i < c->files.size; ++i) {
+        char* s = objectify_file(c->files.data[i], c->build_dir);
+        da_append(c->object_files, s);
+    }
 }
 
 /*---------------------.
