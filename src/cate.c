@@ -93,7 +93,6 @@ void _translate_path(char** path);
 #define DIR_SEPARATOR "\\"
 
 #define DEFAULT_COMPILER "cc"
-#define DEFAULT_LINKER "ld"
 
 #else
 #define DYNAMIC_LIB_EXT ".so"
@@ -102,7 +101,6 @@ void _translate_path(char** path);
 #define DIR_SEPARATOR "/"
 
 #define DEFAULT_COMPILER "cc"
-#define DEFAULT_LINKER "ld"
 
 #endif
 
@@ -129,7 +127,7 @@ CateGlobals* c_current_globals = 0;
 void c_globals_init(CateGlobals* g) {
     g->options = C_FLAGS_DEFAULT;
     g->compiler = c_string_clone(DEFAULT_COMPILER);
-    g->linker = c_string_clone(DEFAULT_LINKER);
+    g->linker = NULL;
     {
         static char* cate_dir = "cate/build";
         static char* build_dir = "build";
@@ -198,7 +196,7 @@ static BuildPairs find_rebuildable(CateClass* c);
 
 static void objectify_files(CateClass* c);
 static void class_automation(CateClass* c);
-static Command make_link_command(CateClass* c);
+static int c_link(CateClass* c, Command* cmd);
 static Command make_command_template(CateClass* c);
 static Command make_build_command(Command* t, char* src, char* obj);
 void c_class_build(CateClass* c) {
@@ -220,17 +218,17 @@ void c_class_build(CateClass* c) {
             files.data[0].src,
             files.data[0].obj);
         cs_dry_run(&build);
+        SysProc *proc = cs_proc_create(&build);
+        int exit = cs_proc_wait(proc);
+        printf("exited with %i\n", exit);
         cmd_free(&build);
     }
-    
-    cmd_free(&tmp);
     free(files.data);
 
     if(c->options & C_FLAG_LINK && needs_relink) {
-        Command link_cmd = make_link_command(c);
-        cs_dry_run(&link_cmd);
-        cmd_free(&link_cmd);
+        c_link(c, &tmp);
     }
+    cmd_free(&tmp);
 }
 
 static size_t find_or_not(char* file, char c) {
@@ -327,21 +325,6 @@ static void sa_append_no_copy(Command* dst, StringsArray* src) {
     }
 }
 
-static Command make_link_command(CateClass* c) {
-    Command cmd = {0};
-    da_append(cmd, c->linker);
-    if(c->linker_script) {
-        da_append(cmd, program_options.specify_link_script);
-        da_append(cmd, c->linker_script);
-    }
-    sa_append_no_copy(&cmd, &c->link_flags);
-    sa_append_no_copy(&cmd, &c->object_files);
-    da_append(cmd, program_options.out);
-    da_append(cmd, c->out_name);
-    da_append(cmd, program_options.nul);
-    return cmd;
-}
-
 static void cmd_append_prefixed(Command* dst, StringsArray* src,
                                 char* flag) {
     if(!src) return;
@@ -392,9 +375,35 @@ static BuildPairs find_rebuildable(CateClass* c) {
         }
     }
 
-    //TODO: set needs_relink to true
-
     return pairs;
+}
+
+static int c_link(CateClass* c, Command* cmd) {
+    if(c->linker) {
+        cmd->size = 0;
+        da_append((*cmd), c->linker);
+        cmd_append_prefixed(cmd,
+                &c->library_paths, program_options.add_library_path);
+        cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
+    } else {
+        //pop the -c -o
+        cmd->size -= 2;
+    }
+
+    if(c->linker_script) {
+        da_append((*cmd), program_options.specify_link_script);
+        da_append((*cmd), c->linker_script);
+    }
+
+    sa_append_no_copy(cmd, &c->link_flags);
+    sa_append_no_copy(cmd, &c->object_files);
+    da_append((*cmd), program_options.out);
+    da_append((*cmd), c->out_name);
+    da_append((*cmd), program_options.nul);
+    SysProc *proc = cs_proc_create(cmd);
+    int exit = cs_proc_wait(proc);
+    printf("exited with %i\n", exit);
+    return exit;
 }
 
 static void cs_dry_run(Command* cmd) {
