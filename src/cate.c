@@ -108,9 +108,16 @@ void _translate_path(char** path);
 
 //inlined ones crash so i'm doing it like this
 static struct {
-    char* out, *specify_link_script, *nul;
+    char* out, *specify_link_script,
+    *compile_objects, *load_library, *add_library_path,
+    *add_include,
+    *nul;
 } program_options = {
     .out = "-o",
+    .compile_objects = "-c",
+    .load_library = "-l",
+    .add_library_path = "-L",
+    .add_include = "-I",
     .specify_link_script = "-T",
     .nul = 0
 };
@@ -186,16 +193,27 @@ void c_class_free(CateClass* c) {
 static void objectify_files(CateClass* c);
 static void class_automation(CateClass* c);
 static Command make_link_command(CateClass* c);
+static Command make_command_template(CateClass* c);
+static Command make_build_command(Command* t, char* src, char* obj);
 void c_class_build(CateClass* c) {
     if(c->options & C_FLAG_AUTO) {
         class_automation(c);
     }
 
     objectify_files(c);
+    Command tmp = make_command_template(c);
+    Command build = make_build_command(&tmp,
+        c->files.data[0],
+        c->object_files.data[0]);
+    cs_dry_run(&build);
+    cmd_free(&build);
+    cmd_free(&tmp);
 
-    Command link_cmd = make_link_command(c);
-    cs_dry_run(&link_cmd);
-    cmd_free(&link_cmd);
+    if(c->options & C_FLAG_LINK) {
+        Command link_cmd = make_link_command(c);
+        cs_dry_run(&link_cmd);
+        cmd_free(&link_cmd);
+    }
 }
 
 static size_t find_or_not(char* file, char c) {
@@ -305,6 +323,44 @@ static Command make_link_command(CateClass* c) {
     da_append(cmd, c->out_name);
     da_append(cmd, program_options.nul);
     return cmd;
+}
+
+static void cmd_append_prefixed(Command* dst, StringsArray* src,
+                                char* flag) {
+    if(!src) return;
+    for (size_t i = 0; i < src->size; ++i) {
+        da_append((*dst), flag);
+        char* p = src->data[i];
+        da_append((*dst), p);
+    }
+}
+
+static Command make_command_template(CateClass* c) {
+    Command cmd = {0};
+    //FIXME: std needs to be formed and freed
+    da_append(cmd, c->compiler);
+    sa_append_no_copy(&cmd, &c->flags);
+    cmd_append_prefixed(&cmd, &c->includes, program_options.add_include);
+    cmd_append_prefixed(&cmd,
+            &c->library_paths, program_options.add_library_path);
+    cmd_append_prefixed(&cmd, &c->libraries, program_options.load_library);
+
+    da_append(cmd, program_options.compile_objects);
+    da_append(cmd, program_options.out);
+    return cmd;
+}
+
+static Command make_build_command(Command* t, char* src, char* obj) {
+    Command c = {0};
+    c.capacity = (t->size + 3) * sizeof(t->data[0]);
+    c.data = xalloc(c.capacity);
+    c.size = t->size;
+    memcpy(c.data, t->data, t->size*sizeof(t->data[0]));
+    da_append(c, obj);
+    da_append(c, src);
+    da_append(c, program_options.nul);
+
+    return c;
 }
 
 static void cs_dry_run(Command* cmd) {
