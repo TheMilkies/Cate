@@ -23,6 +23,7 @@ enum {
     C_FLAG_AUTO = 1 << 0,
     C_FLAG_SMOL = 1 << 1,
     C_FLAG_LINK = 1 << 2,
+    C_FLAG_BUILT = 1 << 3,
     C_FLAGS_DEFAULT =
         C_FLAG_AUTO | C_FLAG_LINK,
 };
@@ -33,7 +34,7 @@ typedef uint8_t CateFlags;
 `-------*/
 typedef struct {
     char *compiler, *build_dir, *std,
-         *linker;
+         *linker, *linker_script;
 
     uint32_t thread_count;
     CateFlags options;
@@ -51,7 +52,7 @@ typedef struct {
     link_flags, libraries, library_paths, includes;
 
     char *name, *out_name, *compiler, *build_dir, *std,
-         *linker;
+         *linker, *linker_script;
 
     uint32_t thread_count;
     CateFlags options;

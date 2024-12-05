@@ -20,7 +20,11 @@ static void* xalloc(size_t n) {
 `---------*/
 struct SysProc;
 typedef struct SysProc SysProc;
-static SysProc* cs_proc_create(StringsArray* cmd);
+//commands don't hold their own strings, only free their data ptr.
+typedef StringsArray Command;
+static void cmd_free(Command* c);
+static SysProc* cs_proc_create(Command* cmd);
+static void cs_dry_run(Command* cmd);
 static int cs_proc_exited(SysProc* proc);
 static int cs_proc_get_exit_code(SysProc* proc);
 static void cs_proc_kill(SysProc* proc);
@@ -102,6 +106,15 @@ void _translate_path(char** path);
 
 #endif
 
+//inlined ones crash so i'm doing it like this
+static struct {
+    char* out, *specify_link_script, *nul;
+} program_options = {
+    .out = "-o",
+    .specify_link_script = "-T",
+    .nul = 0
+};
+
 /*--------.
 | globals |
 `-------*/
@@ -135,11 +148,13 @@ void c_globals_free(CateGlobals* g) {
 static void c_clone_from_global(CateClass* c) {
 #define default(prop) if(!c->prop && c_current_globals->prop)\
     c->prop = c_string_clone(c_current_globals->prop);
+    c->options = c_current_globals->options;
 
     default(compiler);
-    default(linker);
     default(std);
     default(build_dir);
+    default(linker);
+    default(linker_script);
 
 #undef default
 }
@@ -156,8 +171,9 @@ void c_class_free(CateClass* c) {
     free(c->out_name);
     free(c->compiler);
     free(c->std);
-    free(c->linker);
     free(c->build_dir);
+    free(c->linker);
+    free(c->linker_script);
     strings_free(&c->files);
     strings_free(&c->object_files);
     strings_free(&c->libraries);
@@ -169,12 +185,17 @@ void c_class_free(CateClass* c) {
 
 static void objectify_files(CateClass* c);
 static void class_automation(CateClass* c);
+static Command make_link_command(CateClass* c);
 void c_class_build(CateClass* c) {
     if(c->options & C_FLAG_AUTO) {
         class_automation(c);
     }
 
     objectify_files(c);
+
+    Command link_cmd = make_link_command(c);
+    cs_dry_run(&link_cmd);
+    cmd_free(&link_cmd);
 }
 
 static size_t find_or_not(char* file, char c) {
@@ -263,6 +284,40 @@ static void objectify_files(CateClass* c) {
     }
 }
 
+static void sa_append_no_copy(Command* dst, StringsArray* src) {
+    if(!src) return;
+    for (size_t i = 0; i < src->size; ++i) {
+        char* p = src->data[i];
+        da_append((*dst), p);
+    }
+}
+
+static Command make_link_command(CateClass* c) {
+    Command cmd = {0};
+    da_append(cmd, c->linker);
+    if(c->linker_script) {
+        da_append(cmd, program_options.specify_link_script);
+        da_append(cmd, c->linker_script);
+    }
+    sa_append_no_copy(&cmd, &c->link_flags);
+    sa_append_no_copy(&cmd, &c->object_files);
+    da_append(cmd, program_options.out);
+    da_append(cmd, c->out_name);
+    da_append(cmd, program_options.nul);
+    return cmd;
+}
+
+static void cs_dry_run(Command* cmd) {
+    for (size_t i = 0; i < cmd->size-1; ++i) {
+        printf("%s ", cmd->data[i]);
+    }
+    printf("\n");
+}
+
+static void cmd_free(Command* c) {
+    free(c->data);
+}
+
 /*---------------------.
 | system (os specific) |
 `--------------------*/
@@ -300,12 +355,13 @@ int cs_newer_than(char* file1, char* file2) {
 /*----------.
 | processes |
 `---------*/
+
 struct SysProc {
     pid_t pid;
     int status;
 };
 
-static SysProc* cs_proc_create(StringsArray* cmd) {
+static SysProc* cs_proc_create(Command* cmd) {
     SysProc* p = xalloc(sizeof(*p));
     p->pid = fork();
     if(p->pid == 0) {
@@ -349,6 +405,6 @@ int cs_smolize(char* file) {
 }
 
 #else
-#error "Cate3 doesn't support this OS."
+#error "Cate doesn't support this OS."
 
 #endif
