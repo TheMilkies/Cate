@@ -190,6 +190,12 @@ void c_class_free(CateClass* c) {
     strings_free(&c->includes);
 }
 
+typedef struct {
+    char* src, *obj;
+} BuildPair;
+typedef da_type(BuildPair) BuildPairs;
+static BuildPairs find_rebuildable(CateClass* c);
+
 static void objectify_files(CateClass* c);
 static void class_automation(CateClass* c);
 static Command make_link_command(CateClass* c);
@@ -201,15 +207,26 @@ void c_class_build(CateClass* c) {
     }
 
     objectify_files(c);
-    Command tmp = make_command_template(c);
-    Command build = make_build_command(&tmp,
-        c->files.data[0],
-        c->object_files.data[0]);
-    cs_dry_run(&build);
-    cmd_free(&build);
-    cmd_free(&tmp);
+    uint8_t needs_relink = 0;
+    BuildPairs files = find_rebuildable(c);
+    if(files.size || !cs_file_exists(c->out_name)) {
+        needs_relink = 1;
+    }
 
-    if(c->options & C_FLAG_LINK) {
+    Command tmp = make_command_template(c);
+
+    for (size_t i = 0; i < files.size; ++i) {
+        Command build = make_build_command(&tmp,
+            files.data[0].src,
+            files.data[0].obj);
+        cs_dry_run(&build);
+        cmd_free(&build);
+    }
+    
+    cmd_free(&tmp);
+    free(files.data);
+
+    if(c->options & C_FLAG_LINK && needs_relink) {
         Command link_cmd = make_link_command(c);
         cs_dry_run(&link_cmd);
         cmd_free(&link_cmd);
@@ -363,6 +380,23 @@ static Command make_build_command(Command* t, char* src, char* obj) {
     return c;
 }
 
+static BuildPairs find_rebuildable(CateClass* c) {
+    BuildPairs pairs = {0};
+    for (size_t i = 0; i < c->files.size; ++i) {
+        char* src = c->files.data[i],
+            * obj = c->object_files.data[i];
+        
+        if(cs_newer_than(src, obj)) {
+            BuildPair p = {.src = src, .obj = obj};
+            da_append(pairs, p);
+        }
+    }
+
+    //TODO: set needs_relink to true
+
+    return pairs;
+}
+
 static void cs_dry_run(Command* cmd) {
     for (size_t i = 0; i < cmd->size-1; ++i) {
         printf("%s ", cmd->data[i]);
@@ -397,11 +431,11 @@ int cs_file_exists(char* file) {
 int cs_newer_than(char* file1, char* file2) {
     struct stat result;
     if(stat(file1, &result) != 0)
-        return 0;
+        return 1;
     size_t f1_time = result.st_mtime;
 
     if(stat(file2, &result) != 0)
-        return 0;
+        return 1;
     size_t f2_time = result.st_mtime;
     return f1_time > f2_time;
 }
