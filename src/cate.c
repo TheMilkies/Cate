@@ -109,6 +109,7 @@ static struct {
     char* out, *specify_link_script,
     *compile_objects, *load_library, *add_library_path,
     *add_include,
+    *fpic, *shared,
     *nul;
 } program_options = {
     .out = "-o",
@@ -117,6 +118,8 @@ static struct {
     .add_library_path = "-L",
     .add_include = "-I",
     .specify_link_script = "-T",
+    .shared = "-shared",
+    .fpic = "-fPIC",
     .nul = 0
 };
 
@@ -195,15 +198,9 @@ typedef da_type(BuildPair) BuildPairs;
 static BuildPairs find_rebuildable(CateClass* c);
 
 static void objectify_files(CateClass* c);
-static void class_automation(CateClass* c);
-static int c_link(CateClass* c, Command* cmd);
-static Command make_command_template(CateClass* c);
+static void make_command_template(CateClass* c, Command* cmd);
 static Command make_build_command(Command* t, char* src, char* obj);
-void c_class_build(CateClass* c) {
-    if(c->options & C_FLAG_AUTO) {
-        class_automation(c);
-    }
-
+static int build_objects(CateClass* c, Command* tmp) {
     objectify_files(c);
     uint8_t needs_relink = 0;
     BuildPairs files = find_rebuildable(c);
@@ -211,10 +208,9 @@ void c_class_build(CateClass* c) {
         needs_relink = 1;
     }
 
-    Command tmp = make_command_template(c);
-
+    make_command_template(c, tmp);
     for (size_t i = 0; i < files.size; ++i) {
-        Command build = make_build_command(&tmp,
+        Command build = make_build_command(tmp,
             files.data[0].src,
             files.data[0].obj);
         cs_dry_run(&build);
@@ -224,11 +220,27 @@ void c_class_build(CateClass* c) {
         cmd_free(&build);
     }
     free(files.data);
+    return needs_relink;
+}
+
+static void class_automation(CateClass* c);
+static int c_link(CateClass* c, Command* cmd);
+static void c_class_link(CateClass* c);
+void c_class_build(CateClass* c) {
+    if(c->options & C_FLAG_AUTO) {
+        class_automation(c);
+    }
+    Command tmp = {0};
+    int needs_relink = build_objects(c, &tmp);
 
     if(c->options & C_FLAG_LINK && needs_relink) {
         c_link(c, &tmp);
     }
     cmd_free(&tmp);
+}
+
+static void c_class_link(CateClass* c) {
+
 }
 
 static size_t find_or_not(char* file, char c) {
@@ -335,19 +347,24 @@ static void cmd_append_prefixed(Command* dst, StringsArray* src,
     }
 }
 
-static Command make_command_template(CateClass* c) {
-    Command cmd = {0};
+static void make_command_template(CateClass* c, Command* cmd) {
+    cmd->size = 0;
     //FIXME: std needs to be formed and freed
-    da_append(cmd, c->compiler);
-    sa_append_no_copy(&cmd, &c->flags);
-    cmd_append_prefixed(&cmd, &c->includes, program_options.add_include);
-    cmd_append_prefixed(&cmd,
-            &c->library_paths, program_options.add_library_path);
-    cmd_append_prefixed(&cmd, &c->libraries, program_options.load_library);
+    da_append((*cmd), c->compiler);
+    sa_append_no_copy(cmd, &c->flags);
 
-    da_append(cmd, program_options.compile_objects);
-    da_append(cmd, program_options.out);
-    return cmd;
+    if(c->kind == C_CLASS_LIB_STATIC || c->kind == C_CLASS_LIB_DYNAMIC) {
+        da_append((*cmd), program_options.shared);
+        da_append((*cmd), program_options.fpic);
+    }
+
+    cmd_append_prefixed(cmd, &c->includes, program_options.add_include);
+    cmd_append_prefixed(cmd,
+            &c->library_paths, program_options.add_library_path);
+    cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
+
+    da_append((*cmd), program_options.compile_objects);
+    da_append((*cmd), program_options.out);
 }
 
 static Command make_build_command(Command* t, char* src, char* obj) {
@@ -376,6 +393,10 @@ static BuildPairs find_rebuildable(CateClass* c) {
     }
 
     return pairs;
+}
+
+static int c_link_project(CateClass* c, Command* cmd) {
+
 }
 
 static int c_link(CateClass* c, Command* cmd) {
