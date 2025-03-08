@@ -8,7 +8,7 @@
 | memory |
 `------*/
 static void* xalloc(size_t n) {
-    void* ptr = calloc(1, n);
+    void* ptr = calloc(sizeof(uint8_t), n);
     if(!ptr) {
         fatal("out of memory!");
     }
@@ -297,21 +297,23 @@ void c_add_file(CateClass* c, char* file) {
 }
 
 static char* objectify_file(char* file, char* build_dir) {
-    size_t dot_location = find_or_not(file, '.');
-    size_t len = strlen(build_dir) + pstrlen(DIR_SEPARATOR) - 1;
-    size_t max = len + dot_location + pstrlen(OBJECT_FILE_EXT);
-    char* res = xalloc(max+sizeof(char));
+    /* unlike cate2, we do file.c.o instead of file.o
+       for cases where there's disk.s and disk.c (oops) */
+    const size_t build_dir_end = strlen(build_dir) + pstrlen(DIR_SEPARATOR) - 1;
+    const size_t file_len = strlen(file);
+    size_t len = build_dir_end + file_len + pstrlen(OBJECT_FILE_EXT) + 1;
+    char* res = xalloc(len);
 
     //"$build_dir/"
     strcat(res, build_dir);
     strcat(res, DIR_SEPARATOR);
 
-    //convert all `/` to `_`
-    for (size_t i = 0; i < dot_location; ++i) {
+    //copy the filename there and convert all `/` to `_`
+    for (size_t i = 0; i < file_len; ++i) {
         if(file[i] == DIR_SEPARATOR[0]) {
-            res[len+i] = '_';
+            res[build_dir_end+i] = '_';
         } else {
-            res[len+i] = file[i];
+            res[build_dir_end+i] = file[i];
         }
     }
 
