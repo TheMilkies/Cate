@@ -19,5 +19,5 @@ Project tokenizer_test
 //.incs = {".", "include"}
 //.build()
 
-system("out/test/tokenizer")
+//system("out/test/tokenizer")
 //system("out/test/parser")

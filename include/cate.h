@@ -54,7 +54,6 @@ typedef struct {
     char *name, *out_name, *compiler, *build_dir, *std,
          *linker, *linker_script;
 
-    uint32_t thread_count;
     CateFlags options;
     CateClassKind kind;
 } CateClass;
@@ -62,6 +61,7 @@ typedef struct {
 CateClass c_class(char* name, CateClassKind kind);
 void c_class_build(CateClass* c);
 void c_add_file(CateClass* c, char* file);
+void c_add_library(CateClass* c, char* name, int is_static);
 void c_class_free(CateClass* c);
 
 /*-------.

@@ -29,6 +29,7 @@ static int cs_proc_exited(SysProc* proc);
 static int cs_proc_get_exit_code(SysProc* proc);
 static void cs_proc_kill(SysProc* proc);
 static int cs_proc_wait(SysProc* proc);
+static void cs_proc_free(SysProc* proc);
 
 /*--------.
 | strings |
@@ -109,7 +110,8 @@ static struct {
     char* out, *specify_link_script,
     *compile_objects, *load_library, *add_library_path,
     *add_include,
-    *fpic, *shared,
+    *fpic, *shared, *debuggable,
+    *archiver, *archiver_rcs,
     *nul;
 } program_options = {
     .out = "-o",
@@ -120,6 +122,8 @@ static struct {
     .specify_link_script = "-T",
     .shared = "-shared",
     .fpic = "-fPIC",
+    .debuggable = "-g",
+    .archiver = "ar", .archiver_rcs = "rcs",
     .nul = 0
 };
 
@@ -217,6 +221,7 @@ static int build_objects(CateClass* c, Command* tmp) {
         SysProc *proc = cs_proc_create(&build);
         int exit = cs_proc_wait(proc);
         printf("exited with %i\n", exit);
+        //no need to free the proc because of the wait
         cmd_free(&build);
     }
     free(files.data);
@@ -294,6 +299,10 @@ static char* make_out_name(CateClass* c) {
 void c_add_file(CateClass* c, char* file) {
     char* t = c_string_clone(file);
     da_append(c->files, t);
+}
+
+void c_add_library(CateClass* c, char* name, int is_static) {
+    
 }
 
 static char* objectify_file(char* file, char* build_dir) {
@@ -397,36 +406,69 @@ static BuildPairs find_rebuildable(CateClass* c) {
     return pairs;
 }
 
-static int c_link_project(CateClass* c, Command* cmd) {
+static int c_link_generic(CateClass* c, Command* cmd) {
+    //we add the -o first because ar wants it like that, others don't care
+    //-o $name
+    da_append((*cmd), program_options.out);
+    da_append((*cmd), c->out_name);
+    //-o $name $linkflags
+    sa_append_no_copy(cmd, &c->link_flags);
+    //-o $name $linkflags $objects
+    sa_append_no_copy(cmd, &c->object_files);
+    da_append((*cmd), program_options.nul);
 
+    SysProc *proc = cs_proc_create(cmd);
+    int exit = cs_proc_wait(proc);
+    cs_proc_free(proc);
+    return exit;
 }
 
-static int c_link(CateClass* c, Command* cmd) {
-    if(c->linker) {
-        cmd->size = 0;
-        da_append((*cmd), c->linker);
-        cmd_append_prefixed(cmd,
-                &c->library_paths, program_options.add_library_path);
-        cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
-    } else {
-        //pop the -c -o
-        cmd->size -= 2;
-    }
+static int c_link_using_linker(CateClass* c, Command* cmd) {
+    cmd->size = 0;
+    da_append((*cmd), c->linker);
+    cmd_append_prefixed(cmd,
+            &c->library_paths, program_options.add_library_path);
+    cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
 
     if(c->linker_script) {
         da_append((*cmd), program_options.specify_link_script);
         da_append((*cmd), c->linker_script);
     }
+    return c_link_generic(c, cmd);
+}
 
-    sa_append_no_copy(cmd, &c->link_flags);
-    sa_append_no_copy(cmd, &c->object_files);
-    da_append((*cmd), program_options.out);
-    da_append((*cmd), c->out_name);
-    da_append((*cmd), program_options.nul);
-    SysProc *proc = cs_proc_create(cmd);
-    int exit = cs_proc_wait(proc);
-    printf("exited with %i\n", exit);
-    return exit;
+static int c_link(CateClass* c, Command* cmd) {
+    if(c->linker) {
+        return c_link_using_linker(c, cmd);
+    }
+
+    //pop the -c -o
+    cmd->size -= 2;
+
+    switch (c->kind) {
+    case C_CLASS_PROJECT:
+        return c_link_generic(c, cmd);
+        break;
+
+    case C_CLASS_LIB_DYNAMIC:
+        da_append(*cmd, program_options.shared);
+        da_append(*cmd, program_options.debuggable);
+        return c_link_generic(c, cmd);
+        break;
+
+    case C_CLASS_LIB_STATIC:
+        cmd->size = 0;
+        da_append(*cmd, program_options.archiver);
+        da_append(*cmd, program_options.archiver_rcs);
+        return c_link_generic(c, cmd);
+        break;
+    
+    default:
+        fatal("unlinkable class type");
+        break;
+    }
+
+    return 1;
 }
 
 static void cs_dry_run(Command* cmd) {
@@ -510,6 +552,10 @@ static int cs_proc_wait(SysProc* proc) {
         fatal("failed to get process status?");
     }
     return WEXITSTATUS(proc->status);
+}
+
+static void cs_proc_free(SysProc* proc) {
+    free(proc);
 }
 
 static int cs_proc_get_exit_code(SysProc* proc) {
