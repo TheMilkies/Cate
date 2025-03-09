@@ -2,15 +2,12 @@
 #include <ctype.h>
 
 static TokenKind maybe_keyword(string_view* v) {
-    static_assert(TOK_COUNT_SIZE == 19,
+    static_assert(TOK_COUNT_SIZE == 18,
         "added token types? if they are keywords; add them here");
     if(sv_ccmp(v, "Project")) {
         return TOK_PROJECT;
     } else if(sv_ccmp(v, "Library")) {
         return TOK_LIBRARY;
-    } else if(sv_ccmp(v, "recursive")
-           || sv_ccmp(v, "iterate")) {
-        return TOK_RECURSIVE;
     } else if(sv_ccmp(v, "static")) {
         return TOK_STATIC;
     } else if(sv_ccmp(v, "dynamic")) {
@@ -29,7 +26,7 @@ static TokenKind maybe_keyword(string_view* v) {
 
 void cate_tokenize(string_view *line, TokensArray *tokens,
                         TokenValuesArray* values) {
-    static_assert(TOK_COUNT_SIZE == 19,
+    static_assert(TOK_COUNT_SIZE == 18,
         "added token types? if they are not keywords; add them here");
     size_t i = 0, line_num = 1;
 
@@ -40,13 +37,14 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
     #define while_in(cond) while(in_range() && (cond))
     #define skip_until(ch) while_in(cur != ch) next();
     #define save() {\
+        val.id = tokens->size;\
         da_append(*tokens, tok);\
         da_append(*values, val);\
     }
 
     while (i < line->length) {
         Token tok = {.line = line_num};
-        string_view val = {0};
+        TokenValue val = {0};
 
         switch (cur) {
         //semicolons are ignored
@@ -63,6 +61,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
                         i += 2;
                         break;
                     }
+                    if(cur == '\n') line_num += 1;
                     next();
                 }
 
@@ -76,13 +75,17 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
             tok.kind = TOK_STRING_LITERAL;
             size_t begin = next();
 
-            skip_until('"');
+            while_in(cur != '"') {
+                if(cur == '\n') line_num += 1;
+                next();
+            }
             if(i >= line->length)
                 cate_error("unterminated string");
 
-            val = sv_substring(line, begin, i);
+            val.text = sv_substring(line, begin, i);
             next();
             save();
+
         }   break;
 
         case 'a' ... 'z':
@@ -92,10 +95,14 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
             const size_t begin = i;
             while_in (isalnum(cur) || cur == '_')
                 next();
-            val = sv_substring(line, begin, i);
+            val.text = sv_substring(line, begin, i);
 
             tok.kind = maybe_keyword(&val);
-            save();
+            if(tok.kind == TOK_IDENTIFIER) {
+                da_append(*tokens, tok);
+            } else {
+                save();
+            }
         }   break;
 
         case ' ': case '\t': case '\r': case '\n': case '\f': case '\v':
@@ -107,10 +114,8 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
 
         #define quick(ch, type) case ch: {\
         tok.kind = type;\
-        val.length = 1;\
-        val.text = line->text+i;\
         next();\
-        save();\
+        da_append(*tokens, tok);\
         } break;
 
         quick('.', TOK_DOT)
@@ -132,7 +137,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
 }
 
 const char* tok_as_text(TokenKind k) {
-    static_assert(TOK_COUNT_SIZE == 19,
+    static_assert(TOK_COUNT_SIZE == 18,
         "added token types? add their names here");
     static const char* const names[TOK_COUNT_SIZE] = {
         [TOK_NONE] = "end of file",
@@ -146,7 +151,6 @@ const char* tok_as_text(TokenKind k) {
         [TOK_LIBRARY] = "'Library'",
         [TOK_STATIC] = "'static'",
         [TOK_DYNAMIC] = "'dynamic'",
-        [TOK_RECURSIVE] = "'recursive'",
         [TOK_STRING_LITERAL] = "a string",
         [TOK_IDENTIFIER] = "an identifier",
         [TOK_TRUE] = "'true'",
