@@ -30,6 +30,7 @@ static int cs_proc_get_exit_code(SysProc* proc);
 static void cs_proc_kill(SysProc* proc);
 static int cs_proc_wait(SysProc* proc);
 static void cs_proc_free(SysProc* proc);
+static void cg_get_thread_count();
 
 /*--------.
 | strings |
@@ -144,6 +145,7 @@ void c_globals_init(CateGlobals* g) {
         g->build_dir = c_string_clone(x);
     }
     c_current_globals = g;
+    if(!cg_thread_count) {cg_get_thread_count();}
 }
 
 void c_globals_free(CateGlobals* g) {
@@ -219,9 +221,10 @@ static int build_objects(CateClass* c, Command* tmp) {
             files.data[0].obj);
         cs_dry_run(&build);
         SysProc *proc = cs_proc_create(&build);
-        int exit = cs_proc_wait(proc);
-        printf("exited with %i\n", exit);
-        //no need to free the proc because of the wait
+        int code = cs_proc_wait(proc);
+        if(code) {
+            fatal("[cate] error in build command!\n");
+        }
         cmd_free(&build);
     }
     free(files.data);
@@ -242,6 +245,10 @@ void c_class_build(CateClass* c) {
         c_link(c, &tmp);
     }
     cmd_free(&tmp);
+
+    if(c->options & C_FLAG_SMOL) {
+        cs_smolize(c->out_name);
+    }
 }
 
 static void c_class_link(CateClass* c) {
@@ -358,6 +365,7 @@ static void cmd_append_prefixed(Command* dst, StringsArray* src,
     }
 }
 
+//we make a template that's shared between all classes.
 static void make_command_template(CateClass* c, Command* cmd) {
     cmd->size = 0;
     //FIXME: std needs to be formed and freed
@@ -367,6 +375,7 @@ static void make_command_template(CateClass* c, Command* cmd) {
     if(c->kind == C_CLASS_LIB_STATIC || c->kind == C_CLASS_LIB_DYNAMIC) {
         da_append((*cmd), program_options.shared);
         da_append((*cmd), program_options.fpic);
+        da_append((*cmd), program_options.debuggable);
     }
 
     cmd_append_prefixed(cmd, &c->includes, program_options.add_include);
@@ -493,6 +502,18 @@ static void cmd_free(Command* c) {
 #elif __unix__
 #include <unistd.h>
 #include <sys/stat.h>
+
+#ifdef _SC_NPROCESSORS_ONLN
+long cg_thread_count = 0;
+static void cg_get_thread_count() {
+    cg_thread_count = sysconf(_SC_NPROCESSORS_ONLN);
+}
+#else
+long cg_thread_count = 1;
+//should NEVER be called. just here to remove the error.
+static void cg_get_thread_count() {return;}
+#endif
+
 int cs_create_directory(char* dir) {
     if(cs_file_exists(dir)) return 1;
     return mkdir(dir, 0777) == 0;
