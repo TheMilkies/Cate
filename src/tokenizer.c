@@ -85,7 +85,6 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
             val.text = sv_substring(line, begin, i);
             next();
             save();
-
         }   break;
 
         case 'a' ... 'z':
@@ -97,8 +96,8 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
                 next();
             val.text = sv_substring(line, begin, i);
 
-            tok.kind = maybe_keyword(&val);
-            if(tok.kind == TOK_IDENTIFIER) {
+            tok.kind = maybe_keyword(&val.text);
+            if(tok.kind != TOK_IDENTIFIER) {
                 da_append(*tokens, tok);
             } else {
                 save();
@@ -162,4 +161,15 @@ const char* tok_as_text(TokenKind k) {
 
     if(k >= TOK_COUNT_SIZE) return "this is a bug";
     return names[k];
+}
+
+string_view get_value_from_id(TokenValuesArray* values, TokenID id,
+                              TokenID last) {
+    if(last > values->size) last = 0;
+    for (size_t i = last; i < values->size; ++i) {
+        if(values->data[i].id == id)
+            return values->data[i].text;
+    }
+    
+    cate_error("fatal error, unreachable state");
 }

@@ -50,7 +50,9 @@ typedef struct {
 	TokenID id;
 } TokenValue;
 typedef da_type(TokenValue) TokenValuesArray;
-TokenValue get_value_from_id(TokenValuesArray* values, TokenID id);
+
+string_view get_value_from_id(TokenValuesArray* values, TokenID id,
+							  TokenID last);
 
 void cate_tokenize(string_view *line, TokensArray *tokens,
     TokenValuesArray* values);
