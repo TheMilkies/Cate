@@ -12,7 +12,7 @@ Most of the development time has gone to testing features and seeing which ones 
 - Windows support.
 - `if` statements for platform checks.
 - Built-in `rm, cp, mv, mkdir` for easier compliance.
-- More built-in commands like `print(), error(), exists()`.
+- More built-in commands such as `print(), error(), exists()`.
 - Library type support, you can select whether you want a static or dynamic library with syntax!
 - Zero dependencies other than libc.
 - Automation can be disabled using `auto = false`
