@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "cate.h"
 
 int main(int argc, char* argv[]) {
 	puts("Work in progress!");

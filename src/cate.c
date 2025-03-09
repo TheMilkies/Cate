@@ -145,7 +145,9 @@ void c_globals_init(CateGlobals* g) {
         g->build_dir = c_string_clone(x);
     }
     c_current_globals = g;
-    if(!cg_thread_count) {cg_get_thread_count();}
+
+    extern long cg_thread_count; //platform-defined!
+    if(!cg_thread_count) cg_get_thread_count();
 }
 
 void c_globals_free(CateGlobals* g) {

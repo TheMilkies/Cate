@@ -39,7 +39,6 @@ typedef struct {
     CateFlags options;
 } CateGlobals;
 extern CateGlobals* c_current_globals;
-extern long cg_thread_count; //platform-defined!
 
 void c_globals_init(CateGlobals* g);
 void c_globals_free(CateGlobals* g);
