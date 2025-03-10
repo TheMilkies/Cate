@@ -37,14 +37,13 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
     #define while_in(cond) while(in_range() && (cond))
     #define skip_until(ch) while_in(cur != ch) next();
     #define save() {\
-        val.id = tokens->size;\
         da_append(*tokens, tok);\
         da_append(*values, val);\
     }
 
     while (i < line->length) {
         Token tok = {.line = line_num};
-        TokenValue val = {0};
+        string_view val = {0};
 
         switch (cur) {
         //semicolons are ignored
@@ -82,7 +81,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
             if(i >= line->length)
                 cate_error("unterminated string");
 
-            val.text = sv_substring(line, begin, i);
+            val = sv_substring(line, begin, i);
             next();
             save();
         }   break;
@@ -94,9 +93,9 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
             const size_t begin = i;
             while_in (isalnum(cur) || cur == '_')
                 next();
-            val.text = sv_substring(line, begin, i);
+            val = sv_substring(line, begin, i);
 
-            tok.kind = maybe_keyword(&val.text);
+            tok.kind = maybe_keyword(&val);
             if(tok.kind != TOK_IDENTIFIER) {
                 da_append(*tokens, tok);
             } else {
@@ -161,15 +160,4 @@ const char* tok_as_text(TokenKind k) {
 
     if(k >= TOK_COUNT_SIZE) return "this is a bug";
     return names[k];
-}
-
-string_view get_value_from_id(TokenValuesArray* values, TokenID id,
-                              TokenID last) {
-    if(last > values->size) last = 0;
-    for (size_t i = last; i < values->size; ++i) {
-        if(values->data[i].id == id)
-            return values->data[i].text;
-    }
-    
-    cate_error("fatal error, unreachable state");
 }

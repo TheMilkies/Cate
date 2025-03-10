@@ -39,20 +39,18 @@ typedef struct {
 typedef da_type(Token) TokensArray;
 
 /*
-	this might seem weird, but it's actually the least wasteful way to store
-	token values. it might be even faster than using a normal array!
-	roughly half of a catefile's tokens don't have a value, this also avoids
-	the cache misses of array lookup.
+	Only two kinds (identifiers and strings) have a value, so the rest will
+	have a null field, this is not ideal because we'd be wasting cache lines.
+	We have a separate array of only the values:
+		 0      1
+		.link = true;
+	We need to keep track of the current token and the current value, which is
+	just incrementing two integers (see parser).
+	Getting the value is a bit more annoying but we can fit 16 tokens in a
+	cache line and we don't waste (1.5 * token_count * 16) bytes.
 */
 typedef uint32_t TokenID;
-typedef struct {
-	string_view text;
-	TokenID id;
-} TokenValue;
-typedef da_type(TokenValue) TokenValuesArray;
-
-string_view get_value_from_id(TokenValuesArray* values, TokenID id,
-							  TokenID last);
+typedef da_type(string_view) TokenValuesArray;
 
 void cate_tokenize(string_view *line, TokensArray *tokens,
     TokenValuesArray* values);
