@@ -161,7 +161,6 @@ void c_globals_init(CateGlobals* g) {
                     ? "cate/build"
                     : "build";
         g->build_dir = c_string_clone(x);
-        puts(g->build_dir);
     }
     c_current_globals = g;
 
@@ -636,8 +635,7 @@ bad:
 }
 
 static int _mkdir(const char* path) {
-    return mkdir(path, S_IRWXU) == 0 || errno != EEXIST;
-    // return !(mkdir(path, S_IRWXU) && errno != EEXIST);
+    return !(mkdir(path, S_IRWXU) && errno != EEXIST);
 }
 
 static inline int _recursive_mkdir(const char *dir) {

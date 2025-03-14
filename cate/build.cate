@@ -1,6 +1,6 @@
 smol = true
 Project cate3
-.flags = "-O3"
+.flags = "-O3 -Wall"
 .files = {recursive("src/*.c")}
 .includes = {"include" "."}
 .build()

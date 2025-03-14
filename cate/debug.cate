@@ -1,5 +1,5 @@
 Project cate3
-.flags = "-ggdb3"
+.flags = "-ggdb3 -Wall"
 .files = {recursive("src/*.c")}
 .includes = {"include", "."}
 .build()
