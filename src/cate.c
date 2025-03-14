@@ -117,6 +117,11 @@ void _translate_path(char** path);
 
 #endif
 
+#define SMOL_FLAGS_COUNT 7
+#define SMOL_FLAGS \
+    "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",\
+    "-fno-ident", "-fomit-frame-pointer", "-fmerge-all-constants",\
+    "-Wl,--build-id=none"
 //inlined ones crash so i'm doing it like this
 static struct {
     char* out, *specify_link_script,
@@ -124,6 +129,7 @@ static struct {
     *add_include,
     *fpic, *shared, *debuggable,
     *archiver, *archiver_rcs,
+    *smol_flags[SMOL_FLAGS_COUNT],
     *nul;
 } program_options = {
     .out = "-o",
@@ -136,6 +142,7 @@ static struct {
     .fpic = "-fPIC",
     .debuggable = "-g",
     .archiver = "ar", .archiver_rcs = "rcs",
+    .smol_flags = { SMOL_FLAGS }, 
     .nul = 0
 };
 
@@ -236,7 +243,7 @@ static int build_objects(CateClass* c, Command* tmp) {
         SysProc *proc = cs_proc_create(&build);
         int code = cs_proc_wait(proc);
         if(code) {
-            fatal("[cate] error in build command!\n");
+            fatal("error in build command!\n");
         }
         cmd_free(&build);
     }
@@ -328,6 +335,7 @@ void c_add_library(CateClass* c, char* name, int is_static) {
 static char* objectify_file(char* file, char* build_dir) {
     /* unlike cate2, we do file.c.o instead of file.o
        for cases where there's disk.s and disk.c (oops) */
+    //we don't use a fullpath for efficiency reasons
     const size_t build_dir_end = strlen(build_dir) + pstrlen(DIR_SEPARATOR) - 1;
     const size_t file_len = strlen(file);
     size_t len = build_dir_end + file_len + pstrlen(OBJECT_FILE_EXT) + 1;
@@ -382,13 +390,18 @@ static void cmd_append_prefixed(Command* dst, StringsArray* src,
 static void make_command_template(CateClass* c, Command* cmd) {
     cmd->size = 0;
     //FIXME: std needs to be formed and freed
-    da_append((*cmd), c->compiler);
+    da_append(*cmd, c->compiler);
     sa_append_no_copy(cmd, &c->flags);
 
     if(c->kind == C_CLASS_LIB_STATIC || c->kind == C_CLASS_LIB_DYNAMIC) {
-        da_append((*cmd), program_options.shared);
-        da_append((*cmd), program_options.fpic);
-        da_append((*cmd), program_options.debuggable);
+        da_append(*cmd, program_options.shared);
+        da_append(*cmd, program_options.fpic);
+        da_append(*cmd, program_options.debuggable);
+    }
+
+    if(c->options & C_FLAG_SMOL) {
+        for (size_t i = 0; i < SMOL_FLAGS_COUNT; ++i)
+            da_append((*cmd), program_options.smol_flags[i]);
     }
 
     cmd_append_prefixed(cmd, &c->includes, program_options.add_include);
@@ -607,7 +620,7 @@ int cs_smolize(char* file) {
 }
 
 #else
-#error "Cate doesn't support this OS."
+#error "Cate doesn't support this platform."
 
 #endif
 
