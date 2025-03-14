@@ -11,9 +11,17 @@ typedef da_type(char*) StringsArray;
 char* c_string_clone(char* s);
 char* c_string_build(int count, ...);
 char* sv_clone_as_cstr(string_view* v);
-struct _CateFullPath {
+
+/*------.
+| paths |
+`-----*/
+typedef struct {
     char x[FILENAME_MAX];
-};
+    size_t length;
+} CateSysPath;
+// void cs_path_translate(CateSysPath* p, char* text);
+void cs_path_append(CateSysPath* p, char* text);
+void cs_path_directory_separator(CateSysPath* p);
 
 enum {
     C_CLASS_PROJECT = 0,

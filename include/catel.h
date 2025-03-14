@@ -4,7 +4,7 @@
 #include "tokenizer.h"
 
 typedef struct {
-    struct _CateFullPath dir, def;
+    CateSysPath dir, def;
 } CatelFile;
 
 void catel_run();

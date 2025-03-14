@@ -76,6 +76,17 @@ char* sv_clone_as_cstr(string_view* v) {
     return s;
 }
 
+void cs_path_append(CateSysPath* p, char* text) {
+    size_t len = strlen(text);
+    if(p->length+len > FILENAME_MAX) {
+        fatal("path too long for system");
+    }
+
+    memcpy(&p->x[p->length], text, len);
+    p->length += len;
+    p->x[p->length] = 0;
+}
+
 /*---------------------.
 | platform definitions |
 `--------------------*/
@@ -599,3 +610,7 @@ int cs_smolize(char* file) {
 #error "Cate doesn't support this OS."
 
 #endif
+
+void cs_path_directory_separator(CateSysPath* p) {
+    cs_path_append(p, DIR_SEPARATOR);
+}

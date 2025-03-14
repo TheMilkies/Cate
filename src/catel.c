@@ -30,7 +30,7 @@ void catel_run() {
     #define while_in(cond) while(in_range() && (cond))
     #define skip_until(ch) while_in(cur != ch) next();
     size_t i = 0;
-    struct _CateFullPath* to_edit = 0;
+    CateSysPath* to_edit = 0;
     string_view property = {0}, value = {0};
     while (in_range()) {
         while_in(isspace(cur)) next();
