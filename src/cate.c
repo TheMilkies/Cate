@@ -679,7 +679,7 @@ int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
                  struct FTW *ftwbuf) {
     int err = remove(fpath);
     if(err) {
-        fprintf(stderr, "[cate] failed to remove \"%s\" because: \n",
+        fprintf(stderr, "[cate] failed to remove \"%s\" because: \n", fpath,
             strerror(errno));
         return 1;
     }
