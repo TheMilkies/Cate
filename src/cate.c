@@ -417,7 +417,7 @@ static void make_command_template(CateClass* c, Command* cmd) {
 
     if(c->options & C_FLAG_SMOL) {
         for (size_t i = 0; i < SMOL_FLAGS_COUNT; ++i)
-            da_append((*cmd), program_options.smol_flags[i]);
+            da_append(*cmd, program_options.smol_flags[i]);
     }
 
     cmd_append_prefixed(cmd, &c->includes, program_options.add_include);
@@ -425,8 +425,8 @@ static void make_command_template(CateClass* c, Command* cmd) {
             &c->library_paths, program_options.add_library_path);
     cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
 
-    da_append((*cmd), program_options.compile_objects);
-    da_append((*cmd), program_options.out);
+    da_append(*cmd, program_options.compile_objects);
+    da_append(*cmd, program_options.out);
 }
 
 static Command make_build_command(Command* t, char* src, char* obj) {
@@ -460,13 +460,13 @@ static BuildPairs find_rebuildable(CateClass* c) {
 static int c_link_generic(CateClass* c, Command* cmd) {
     //we add the -o first because ar wants it like that, others don't care
     //-o $name
-    da_append((*cmd), program_options.out);
-    da_append((*cmd), c->out_name);
+    da_append(*cmd, program_options.out);
+    da_append(*cmd, c->out_name);
     //-o $name $linkflags
     sa_append_no_copy(cmd, &c->link_flags);
     //-o $name $linkflags $objects
     sa_append_no_copy(cmd, &c->object_files);
-    da_append((*cmd), program_options.nul);
+    da_append(*cmd, program_options.nul);
 
     SysProc *proc = cs_proc_create(cmd);
     int exit = cs_proc_wait(proc);
@@ -476,14 +476,14 @@ static int c_link_generic(CateClass* c, Command* cmd) {
 
 static int c_link_using_linker(CateClass* c, Command* cmd) {
     cmd->size = 0;
-    da_append((*cmd), c->linker);
+    da_append(*cmd, c->linker);
     cmd_append_prefixed(cmd,
             &c->library_paths, program_options.add_library_path);
     cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
 
     if(c->linker_script) {
-        da_append((*cmd), program_options.specify_link_script);
-        da_append((*cmd), c->linker_script);
+        da_append(*cmd, program_options.specify_link_script);
+        da_append(*cmd, c->linker_script);
     }
     return c_link_generic(c, cmd);
 }
@@ -614,13 +614,12 @@ int cs_copy(char* path1, char* path2) {
     int result = 1;
 
     int in =  _open(path1, O_RDONLY, 0);
-    int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-
     struct stat st;
     if(fstat(in, &st) == -1) {
         result = 0;
         goto bad;
     }
+    int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, st.st_mode);
 
     //i ported sendfile because it's the easiest API... here
     off_t offset = 0;
@@ -672,6 +671,15 @@ int cs_move(char* file1, char* file2) {
         return 1;
     }
     return rename(file1, file2) == 0;
+}
+
+int cs_remove(char* file) {
+    if(c_cmd_flags & C_CMD_DRY_RUN) {
+        printf("rm -rf %s\n", file);
+        return 1;
+    }
+    //TODO: implement recursive remove
+    return 0;
 }
 
 int cs_file_exists(char* file) {
