@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 500
 #include "cate.h"
 #include <stdarg.h>
 
@@ -551,6 +552,7 @@ static void cmd_free(Command* c) {
 #include <sys/wait.h>
 #include <assert.h>
 #include <dirent.h>
+#include <ftw.h>
 
 #ifdef _SC_NPROCESSORS_ONLN
 long cg_thread_count = 0;
@@ -673,13 +675,24 @@ int cs_move(char* file1, char* file2) {
     return rename(file1, file2) == 0;
 }
 
+int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
+                 struct FTW *ftwbuf) {
+    int err = remove(fpath);
+    if(err) {
+        fprintf(stderr, "[cate] failed to remove \"%s\" because: \n",
+            strerror(errno));
+        return 1;
+    }
+    return 0;
+}
+
 int cs_remove(char* file) {
     if(c_cmd_flags & C_CMD_DRY_RUN) {
         printf("rm -rf %s\n", file);
         return 1;
     }
     //TODO: implement recursive remove
-    return 0;
+    return nftw(file, _rm_callback, 64, FTW_DEPTH | FTW_PHYS) == 0;
 }
 
 int cs_file_exists(char* file) {
