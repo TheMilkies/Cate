@@ -82,7 +82,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
                 cate_error("unterminated string");
 
             val = sv_substring(line, begin, i);
-            cur = 0; //null terminate 
+            // cur = 0; //null terminate 
             next();
             save();
         }   break;
