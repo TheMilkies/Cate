@@ -37,6 +37,15 @@ static void cg_get_thread_count();
 /*--------.
 | strings |
 `-------*/
+static size_t find_or_not(char* file, char c) {
+    size_t size = strlen(file);
+    for (intmax_t i = size; i > 0; --i) {
+        if(file[i] == c) return i;
+    }
+    
+    return size;
+}
+
 char* c_string_clone(char* s) {
     size_t len = strlen(s);
     char* r = xalloc(len+1);
@@ -108,6 +117,8 @@ void _translate_path(char** path);
 #define DIR_SEPARATOR "\\"
 
 #define DEFAULT_COMPILER "cc"
+#define EXECUTABLE_INSTALL_LOCATION "C:\\cate\\programs\\"
+#define LIBRARY_INSTALL_LOCATION "C:\\cate\\libraries\\"
 
 #else
 #define DYNAMIC_LIB_EXT ".so"
@@ -116,6 +127,9 @@ void _translate_path(char** path);
 #define DIR_SEPARATOR "/"
 
 #define DEFAULT_COMPILER "cc"
+
+#define EXECUTABLE_INSTALL_LOCATION "/usr/local/bin/"
+#define LIBRARY_INSTALL_LOCATION "/usr/local/lib/"
 
 #endif
 
@@ -223,6 +237,7 @@ typedef struct {
 typedef da_type(BuildPair) BuildPairs;
 static BuildPairs find_rebuildable(CateClass* c);
 
+static char* make_out_name(CateClass* c);
 static void objectify_files(CateClass* c);
 static void make_command_template(CateClass* c, Command* cmd);
 static Command make_build_command(Command* t, char* src, char* obj);
@@ -279,16 +294,34 @@ void c_class_clean(CateClass* c) {
     }
 }
 
-static size_t find_or_not(char* file, char c) {
-    size_t size = strlen(file);
-    for (intmax_t i = size; i > 0; --i) {
-        if(file[i] == c) return i;
-    }
+static char* make_install_path(CateClass* c) {
+    if(!c->out_name) c->out_name = make_out_name(c);
+    size_t sep_position = find_or_not(c->out_name, DIR_SEPARATOR[0]);
+    char* f = (c->out_name[sep_position] == DIR_SEPARATOR[0])
+        ? &c->out_name[sep_position] : c->out_name;
+
+    switch (c->kind) {
+    case C_CLASS_PROJECT:
+        return c_string_build(2, EXECUTABLE_INSTALL_LOCATION, f);
+        break;
+
+    case C_CLASS_LIB_STATIC:
+    case C_CLASS_LIB_DYNAMIC:
+        return c_string_build(2, LIBRARY_INSTALL_LOCATION, f);
+        break;
     
-    return size;
+    default:
+        fatal("uninstallable class?");
+        break;
+    }
 }
 
-static char* make_out_name(CateClass* c);
+void c_class_install(CateClass* c) {
+    char* path = make_install_path(c);
+    //TODO: implement install
+    free(path);
+}
+
 static void class_automation(CateClass* c) {
     if(!c->out_name) {
         c->out_name = make_out_name(c);
