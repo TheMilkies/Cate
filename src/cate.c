@@ -3,6 +3,7 @@
 
 #define fatal(text) do{fprintf(stderr, "[cate] " text);\
     exit(-1);} while(0);
+CateFlags c_cmd_flags = 0;
 
 /*-------.
 | memory |
@@ -239,7 +240,6 @@ static int build_objects(CateClass* c, Command* tmp) {
         Command build = make_build_command(tmp,
             files.data[0].src,
             files.data[0].obj);
-        cs_dry_run(&build);
         SysProc *proc = cs_proc_create(&build);
         int code = cs_proc_wait(proc);
         if(code) {
@@ -542,6 +542,10 @@ static void cg_get_thread_count() {return;}
 
 int cs_create_directory(char* dir) {
     if(cs_file_exists(dir)) return 1;
+    if(c_cmd_flags & C_CMD_DRY_RUN) {
+        printf("mkdir -p %s\n", dir);
+        return 1;
+    }
     return mkdir(dir, 0777) == 0;
 }
 
@@ -573,6 +577,11 @@ struct SysProc {
 };
 
 static SysProc* cs_proc_create(Command* cmd) {
+    if(c_cmd_flags & C_CMD_DRY_RUN) {
+        cs_dry_run(cmd);
+        return 0;
+    }
+
     SysProc* p = xalloc(sizeof(*p));
     p->pid = fork();
     if(p->pid == 0) {
@@ -588,6 +597,7 @@ static SysProc* cs_proc_create(Command* cmd) {
 }
 
 static int cs_proc_exited(SysProc* proc) {
+    if(!proc) return 1; // for dry runs
     if(waitpid(proc->pid, &proc->status, WNOHANG) == -1) {
         fatal("failed to get process status?");
     }
@@ -595,6 +605,7 @@ static int cs_proc_exited(SysProc* proc) {
 }
 
 static int cs_proc_wait(SysProc* proc) {
+    if(!proc) return 0; // for dry runs
     if(waitpid(proc->pid, &proc->status, 0) == -1) {
         fatal("failed to get process status?");
     }
@@ -602,7 +613,7 @@ static int cs_proc_wait(SysProc* proc) {
 }
 
 static void cs_proc_free(SysProc* proc) {
-    free(proc);
+    free(proc); //null is ignored (dry run)
 }
 
 static int cs_proc_get_exit_code(SysProc* proc) {

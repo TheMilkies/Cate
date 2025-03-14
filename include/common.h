@@ -3,13 +3,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#if __STDC_VERSION__ < 202311L
+#if __STDC_VERSION__ == 201112L
     #define static_assert(cond, msg) _Static_assert(cond, msg)
-    typedef uint8_t bool;
-    enum {
-        false = 0,
-        true = 1,
-    };
+#elif __STDC_VERSION__ >= 202311L
+#else
+    #define static_assert(cond, msg)
 #endif
 
 #define todo(text) {\

@@ -54,6 +54,10 @@ extern CateGlobals* c_current_globals;
 void c_globals_init(CateGlobals* g);
 void c_globals_free(CateGlobals* g);
 
+extern CateFlags c_cmd_flags;
+enum {
+    C_CMD_DRY_RUN = 1 << 0,
+};
 /*--------.
 | classes |
 `-------*/
