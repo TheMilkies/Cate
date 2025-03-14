@@ -156,12 +156,11 @@ void c_globals_init(CateGlobals* g) {
     g->compiler = c_string_clone(DEFAULT_COMPILER);
     g->linker = NULL;
     {
-        static char* cate_dir = "cate/build";
-        static char* build_dir = "build";
-        char* x = (cs_file_exists(cate_dir))
-                    ? cate_dir
-                    : build_dir;
+        char* x = (cs_file_exists("cate"))
+                    ? "cate/build"
+                    : "build";
         g->build_dir = c_string_clone(x);
+        puts(g->build_dir);
     }
     c_current_globals = g;
 
@@ -298,6 +297,23 @@ static void class_automation(CateClass* c) {
         }
     }
 
+    if(!cs_create_directory(c->build_dir)) {
+        fatal("failed to create build directory");
+    }
+
+    //create out directory
+    {
+        size_t sep_location = find_or_not(c->out_name, DIR_SEPARATOR[0]);
+        if(c->out_name[sep_location] == DIR_SEPARATOR[0]) {
+            char saved = c->out_name[sep_location];
+            c->out_name[sep_location] = 0;
+            if(!cs_create_directory(c->out_name)) {
+                fatal("failed to create out directory");
+            }
+            c->out_name[sep_location] = saved;
+        }
+    }
+
     c_clone_from_global(c);
 }
 
@@ -311,11 +327,11 @@ static char* make_out_name(CateClass* c) {
     #endif
         break;
     case C_CLASS_LIB_DYNAMIC:
-        return c_string_build(3, "lib", c->name, DYNAMIC_LIB_EXT);
+        return c_string_build(3, "out/lib", c->name, DYNAMIC_LIB_EXT);
         break;
 
     case C_CLASS_LIB_STATIC:
-        return c_string_build(3, "lib", c->name, STATIC_LIB_EXT);
+        return c_string_build(3, "out/lib", c->name, STATIC_LIB_EXT);
         break;
     }
 
@@ -527,7 +543,14 @@ static void cmd_free(Command* c) {
 
 #elif __unix__
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <assert.h>
+#include <dirent.h>
 
 #ifdef _SC_NPROCESSORS_ONLN
 long cg_thread_count = 0;
@@ -540,13 +563,115 @@ long cg_thread_count = 1;
 static void cg_get_thread_count() {return;}
 #endif
 
+#ifdef __linux__
+#include <sys/sendfile.h>
+#else
+//damn it BSD!
+static ssize_t sendfile(int out, int in, off_t* offset, size_t size) {
+    char buf[4096] = {0};
+    ssize_t nread, total = 0;
+    off_t offset_remaining = *offset;
+
+    while (total <= size) {
+        if (offset_remaining > 0) {
+            off_t curr_offset = lseek(in, offset_remaining, SEEK_SET);
+            if (curr_offset == -1)
+                return -1;
+
+            offset_remaining = 0;
+        }
+
+        nread = read(in, buf, sizeof(buf));
+        if (nread <= 0)
+            break;
+
+        ssize_t nwritten = write(out, buf, nread);
+        if (nwritten <= 0)
+            return -1;
+
+        total += nwritten;
+    }
+
+    *offset = offset_remaining + total;
+    return total;
+}
+#endif
+
+static int _open(const char *path, int flags, int opt) {
+    int f = open(path, flags, opt);
+    if(f < 0) {
+        fprintf(stderr, "[cate] failed to open file \"%s\"", path);
+        exit(-1);
+    }
+    return f;
+}
+
+int cs_copy(char* path1, char* path2) {
+    if(c_cmd_flags & C_CMD_DRY_RUN) {
+        printf("cp %s %s\n", path1, path2);
+        return 1;
+    }
+    int result = 1;
+
+    int in =  _open(path1, O_RDONLY, 0);
+    int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+
+    struct stat st;
+    if(fstat(in, &st) == -1) {
+        result = 0;
+        goto bad;
+    }
+
+    //i ported sendfile because it's the easiest API... here
+    off_t offset = 0;
+    int sent = sendfile(out, in, &offset, st.st_size);
+    if(sent == -1)
+        result = 0;
+
+bad:
+    close(in);
+    close(out);
+    return result;
+}
+
+static int _mkdir(const char* path) {
+    return mkdir(path, S_IRWXU) == 0 || errno != EEXIST;
+    // return !(mkdir(path, S_IRWXU) && errno != EEXIST);
+}
+
+static inline int _recursive_mkdir(const char *dir) {
+    char tmp[FILENAME_MAX] = {0};
+    char *p = 0;
+    size_t len = 0;
+
+    snprintf(tmp, sizeof(tmp),"%s",dir);
+    len = strlen(tmp);
+    if (tmp[len - 1] == '/')
+        tmp[len - 1] = 0;
+    for (p = tmp + 1; *p; p++)
+        if (*p == '/') {
+            *p = 0;
+            if(!_mkdir(tmp)) return 0;
+            *p = '/';
+        }
+    return _mkdir(tmp);
+}
+
 int cs_create_directory(char* dir) {
     if(cs_file_exists(dir)) return 1;
     if(c_cmd_flags & C_CMD_DRY_RUN) {
         printf("mkdir -p %s\n", dir);
         return 1;
     }
-    return mkdir(dir, 0777) == 0;
+    return _recursive_mkdir(dir);
+}
+
+int cs_move(char* file1, char* file2) {
+    if(c_cmd_flags & C_CMD_DRY_RUN) {
+        printf("mv %s %s\n", file1, file2);
+        return 1;
+    }
+    return rename(file1, file2) == 0;
 }
 
 int cs_file_exists(char* file) {
