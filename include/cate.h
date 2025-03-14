@@ -11,6 +11,9 @@ typedef da_type(char*) StringsArray;
 char* c_string_clone(char* s);
 char* c_string_build(int count, ...);
 char* sv_clone_as_cstr(string_view* v);
+struct _CateFullPath {
+    char x[FILENAME_MAX];
+};
 
 enum {
     C_CLASS_PROJECT = 0,
