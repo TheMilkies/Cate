@@ -7,7 +7,7 @@ typedef struct {
     struct _CateFullPath dir, def;
 } CatelFile;
 
-void catel_run(TokensArray* toks, TokenValuesArray* vals);
+void catel_run();
 extern CatelFile catel;
 
 #endif // CATE_CATEL_H
