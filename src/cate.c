@@ -252,7 +252,6 @@ static int build_objects(CateClass* c, Command* tmp) {
 
 static void class_automation(CateClass* c);
 static int c_link(CateClass* c, Command* cmd);
-static void c_class_link(CateClass* c);
 void c_class_build(CateClass* c) {
     if(c->options & C_FLAG_AUTO) {
         class_automation(c);
@@ -270,8 +269,14 @@ void c_class_build(CateClass* c) {
     }
 }
 
-static void c_class_link(CateClass* c) {
+void c_class_clean(CateClass* c) {
+    if(!c->object_files.size) {
+        objectify_files(c);
+    }
 
+    for (size_t i = 0; i < c->object_files.size; ++i) {
+        cs_remove_single(c->object_files.data[i]);
+    }
 }
 
 static size_t find_or_not(char* file, char c) {
@@ -673,15 +678,26 @@ int cs_move(char* file1, char* file2) {
     return rename(file1, file2) == 0;
 }
 
-int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
-                 struct FTW *ftwbuf) {
-    int err = remove(fpath);
+int cs_remove_single(const char* file) {
+    if(c_cmd_flags & C_CMD_DRY_RUN) {
+        printf("rm -f %s\n", file);
+        return 1;
+    }
+
+    int err = remove(file);
     if(err) {
-        fprintf(stderr, "[cate] failed to remove \"%s\" because: \n", fpath,
+        fprintf(stderr, "[cate] failed to remove \"%s\" because: \n", file,
             strerror(errno));
         return 1;
     }
-    return 0;
+
+    return err;
+}
+
+int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
+                 struct FTW *ftwbuf) {
+    
+    return cs_remove_single(fpath);
 }
 
 int cs_remove(char* file) {
@@ -689,7 +705,7 @@ int cs_remove(char* file) {
         printf("rm -rf %s\n", file);
         return 1;
     }
-    //TODO: implement recursive remove
+    
     return nftw(file, _rm_callback, 64, FTW_DEPTH | FTW_PHYS) == 0;
 }
 

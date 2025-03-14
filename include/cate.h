@@ -74,6 +74,7 @@ typedef struct {
 
 CateClass c_class(char* name, CateClassKind kind);
 void c_class_build(CateClass* c);
+void c_class_clean(CateClass* c);
 void c_add_file(CateClass* c, char* file);
 void c_add_library(CateClass* c, char* name, int is_static);
 void c_class_free(CateClass* c);
@@ -87,6 +88,7 @@ int cs_newer_than(char* file1, char* file2);
 int cs_copy(char* file1, char* file2);
 int cs_move(char* file1, char* file2);
 int cs_remove(char* file);
+int cs_remove_single(const char* file);
 int cs_smolize(char* file);
 
 #endif // LIB_CATE_H
