@@ -441,6 +441,22 @@ void c_add_library(CateClass* c, char* name, int is_static) {
     
 }
 
+void c_change_library_kind(CateClass* c, CateClassKind k) {
+    if(c->kind == k) return;
+    c->kind = k;
+
+    if(!c->out_name) return;
+    //replace the extension
+    const char* ext = (c->kind == C_CLASS_LIB_DYNAMIC) 
+                      ? DYNAMIC_LIB_EXT : STATIC_LIB_EXT; 
+    size_t loc = find_or_not(c->out_name, '.');
+    char* old = c->out_name;
+    old[loc] = 0;
+    c->out_name = c_string_build(2, old, ext);
+    puts(c->out_name);
+    free(old);
+}
+
 static char* objectify_file(char* file, char* build_dir) {
     /* unlike cate2, we do file.c.o instead of file.o
        for cases where there's disk.s and disk.c (oops) */
