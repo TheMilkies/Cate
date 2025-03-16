@@ -1,5 +1,5 @@
 #define _XOPEN_SOURCE 500
-#include "cate.h"
+#include "libcate.h"
 #include <stdarg.h>
 #include <ctype.h>
 

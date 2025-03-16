@@ -1,7 +1,7 @@
 #ifndef CATE_PARSER_H
 #define CATE_PARSER_H
 #include "tokenizer.h"
-#include "cate.h"
+#include "libcate.h"
 #include "catel.h"
 
 typedef struct {

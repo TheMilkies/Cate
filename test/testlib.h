@@ -58,6 +58,7 @@ void _test_append(const char* name, _TestFunction f) {
 
 #define assert_eq(a, b) _assert((a == b), #a " != " #b " (is %i)", a)
 #define assert_sv_eq(a, b) _assert(sv_equal(&(a), b), #a " != " #b " (is \""sv_fmt "\")", sv_p(a))
+#define assert_str_eq(a, b) _assert(strcmp(a, b) == 0, #a " != " #b " (is \"%s\")", a)
 #define assert_sv_eqc(a, b, blen) _assert(sv_equalc(&(a), b, blen), #a " != " #b " (is \""sv_fmt "\")", sv_p(a))
 
 #endif // CATE_TESTLIB_H

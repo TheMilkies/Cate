@@ -4,6 +4,7 @@
 typedef struct {
     TokensArray toks;
     TokenValuesArray vals;
+    CateGlobals globals;
     CateContext* ctx;
     size_t i_tok, i_val;
 } Parser;
@@ -56,8 +57,16 @@ void cate_run(CateContext* ctx, string_view file_name) {
         cate_error("can't open file \"%s\" because: ", to_open, strerror(err));
     }
 
+    //actually handle the file
     cate_tokenize(&file, &p.toks, &p.vals);
+    c_globals_init(&p.globals);
     cate_parse(&p);
+
+    //cleanup
+    free(file.text);
+    free(p.toks.data);
+    free(p.vals.data);
+    c_globals_free(&p.globals);
 }
 
 static void next(Parser* p) {

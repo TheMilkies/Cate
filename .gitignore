@@ -1,6 +1,9 @@
 cate/build/*.o
 *.o
 out/*
+out
 release/
 a.out
 cate3
+test.c
+_test

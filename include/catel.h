@@ -1,6 +1,6 @@
 #ifndef CATE_CATEL_H
 #define CATE_CATEL_H
-#include "cate.h"
+#include "libcate.h"
 #include "tokenizer.h"
 
 typedef struct {
