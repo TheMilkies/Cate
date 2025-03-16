@@ -52,6 +52,12 @@ static size_t find_or_not(char* file, char c) {
     return size;
 }
 
+char* c_string_clone_until(char* s, size_t len) {
+    char* r = xalloc(len+1);
+    memcpy(r, s, len);
+    return r;
+}
+
 char* c_string_clone(char* s) {
     size_t len = strlen(s);
     char* r = xalloc(len+1);
@@ -236,6 +242,7 @@ void c_class_free(CateClass* c) {
     strings_free(&c->object_files);
     strings_free(&c->libraries);
     strings_free(&c->library_paths);
+    strings_free(&c->located_libraries);
     strings_free(&c->flags);
     strings_free(&c->link_flags);
     strings_free(&c->includes);
@@ -437,8 +444,56 @@ void c_add_file(CateClass* c, char* file) {
     da_append(c->files, t);
 }
 
-void c_add_library(CateClass* c, char* name, int is_static) {
-    
+static size_t find_last(const char *s, const char c) {
+    size_t len = strlen(s);
+	size_t index = SV_NOT_FOUND;
+	for (ssize_t i = len; i >= 0; --i)
+		if(s[i] == c) return i;
+	
+	return -1;
+}
+
+static const char* get_library_extension(CateClassKind k) {
+    return (k == C_CLASS_LIB_DYNAMIC) 
+            ? DYNAMIC_LIB_EXT : STATIC_LIB_EXT;
+}
+
+static void c_add_library_path(CateClass* c, char* path, size_t len) {
+    //if already loaded, do not reload
+    for (size_t i = 0; i < c->library_paths.size; ++i) {
+        if(strncmp(c->library_paths.data[i], path, len) == 0) return;
+    }
+    char* x = c_string_clone_until(path, len);
+    da_append(c->library_paths, x);
+}
+
+void c_add_library(CateClass* c, char* name, CateClassKind k) {
+    //FIXME: make the '-l:' consistent.
+    //TODO: implement tests for these:
+    /*
+        static "SDL" -> "-l:libSDL.a"
+        dynamic "SDL" -> "-lSDL"
+        either "libSDL.a" -> "libSDL.a"
+        either "SDL.a" -> "SDL.a"
+        either "/SDL.a" -> "/SDL.a"
+    */
+
+    //save path
+    size_t sep_location = find_last(name, DIR_SEPARATOR[0]);
+    if(sep_location != -1) {
+        c_add_library_path(c, name, sep_location);
+        name += sep_location + 1;
+    }
+
+    size_t dot = find_last(name, '.');
+    if(dot != -1 || c->kind == C_CLASS_LIB_STATIC) {
+        const char* ext = get_library_extension(c->kind);
+        char* r = c_string_build(2, "-l:", name);
+        da_append(c->located_libraries, r);
+        return;
+    }
+
+    da_append(c->libraries, name);
 }
 
 void c_change_library_kind(CateClass* c, CateClassKind k) {
@@ -447,8 +502,7 @@ void c_change_library_kind(CateClass* c, CateClassKind k) {
 
     if(!c->out_name) return;
     //replace the extension
-    const char* ext = (c->kind == C_CLASS_LIB_DYNAMIC) 
-                      ? DYNAMIC_LIB_EXT : STATIC_LIB_EXT; 
+    const char* ext = get_library_extension(c->kind);
     size_t loc = find_or_not(c->out_name, '.');
     char* old = c->out_name;
     old[loc] = 0;
@@ -530,10 +584,6 @@ static void make_command_template(CateClass* c, Command* cmd) {
     }
 
     cmd_append_prefixed(cmd, &c->includes, program_options.add_include);
-    cmd_append_prefixed(cmd,
-            &c->library_paths, program_options.add_library_path);
-    cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
-
     da_append(*cmd, program_options.compile_objects);
     da_append(*cmd, program_options.out);
 }
@@ -566,6 +616,13 @@ static BuildPairs find_rebuildable(CateClass* c) {
     return pairs;
 }
 
+static int append_libraries(CateClass* c, Command* cmd) {
+    cmd_append_prefixed(cmd,
+            &c->library_paths, program_options.add_library_path);
+    cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
+    sa_append_no_copy(cmd, &c->located_libraries);
+}
+
 static int c_link_generic(CateClass* c, Command* cmd) {
     //we add the -o first because ar wants it like that, others don't care
     //-o $name
@@ -575,6 +632,8 @@ static int c_link_generic(CateClass* c, Command* cmd) {
     sa_append_no_copy(cmd, &c->link_flags);
     //-o $name $linkflags $objects
     sa_append_no_copy(cmd, &c->object_files);
+    //-o $name $linkflags $objects $libs
+    append_libraries(c, cmd);
     da_append(*cmd, program_options.nul);
 
     SysProc *proc = cs_proc_create(cmd);
@@ -586,9 +645,6 @@ static int c_link_generic(CateClass* c, Command* cmd) {
 static int c_link_using_linker(CateClass* c, Command* cmd) {
     cmd->size = 0;
     da_append(*cmd, c->linker);
-    cmd_append_prefixed(cmd,
-            &c->library_paths, program_options.add_library_path);
-    cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
 
     if(c->linker_script) {
         da_append(*cmd, program_options.specify_link_script);

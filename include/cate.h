@@ -66,7 +66,7 @@ enum {
 `-------*/
 typedef struct {
     StringsArray files, object_files, flags,
-    link_flags, libraries, library_paths, includes;
+    link_flags, libraries, located_libraries, library_paths, includes;
 
     char *name, *out_name, *compiler, *build_dir, *std,
          *linker, *linker_script;
@@ -80,7 +80,7 @@ void c_class_build(CateClass* c);
 void c_class_clean(CateClass* c);
 void c_class_install(CateClass* c);
 void c_add_file(CateClass* c, char* file);
-void c_add_library(CateClass* c, char* name, int is_static);
+void c_add_library(CateClass* c, char* name, CateClassKind k);
 void c_change_library_kind(CateClass* c, CateClassKind k);
 void c_class_free(CateClass* c);
 
