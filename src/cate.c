@@ -130,6 +130,7 @@ void _translate_path(char** path);
 #define STATIC_LIB_EXT ".lib"
 #define OBJECT_FILE_EXT ".obj"
 #define DIR_SEPARATOR "\\"
+#define CURRENT_DIR "."
 
 #define DEFAULT_COMPILER "cc"
 #define EXECUTABLE_INSTALL_LOCATION "C:\\cate\\programs\\"
@@ -142,6 +143,7 @@ void _translate_path(char** path);
 #define STATIC_LIB_EXT ".a"
 #define OBJECT_FILE_EXT ".o"
 #define DIR_SEPARATOR "/"
+#define CURRENT_DIR "."
 
 #define DEFAULT_COMPILER "cc"
 
@@ -158,7 +160,7 @@ void _translate_path(char** path);
 //inlined ones crash so i'm doing it like this
 static struct {
     char* out, *specify_link_script,
-    *compile_objects, *load_library, *add_library_path, *add_located_library,
+    *compile_objects, *add_library, *add_library_path, *add_located_library,
     *add_include, *std,
     *fpic, *shared, *debuggable,
     *archiver, *archiver_rcs,
@@ -167,7 +169,7 @@ static struct {
 } program_options = {
     .out = "-o",
     .compile_objects = "-c",
-    .load_library = "-l",
+    .add_library = "-l",
     .add_library_path = "-L",
     .add_located_library = "-l:",
     .add_include = "-I",
@@ -245,7 +247,6 @@ void c_class_free(CateClass* c) {
     strings_free(&c->object_files);
     strings_free(&c->libraries);
     strings_free(&c->library_paths);
-    strings_free(&c->located_libraries);
     strings_free(&c->flags);
     strings_free(&c->link_flags);
     strings_free(&c->includes);
@@ -473,10 +474,9 @@ void c_add_library(CateClass* c, char* name, CateClassKind k) {
     //TODO: implement tests for these:
     /*
         static "SDL" -> "-l:libSDL.a"
-        dynamic "SDL" -> "-lSDL"
-        either "libSDL.a" -> "libSDL.a"
-        either "SDL.a" -> "SDL.a"
-        either "/SDL.a" -> "/SDL.a"
+        dynamic "SDL" -> "-l:libSDL.so"
+        either "libSDL.a" -> "-l:libSDL.a"
+        either "SDL.a" -> "-L. SDL.a"
     */
 
     //save path
@@ -488,13 +488,17 @@ void c_add_library(CateClass* c, char* name, CateClassKind k) {
 
     size_t dot = find_last(name, '.');
     if(dot != -1 || c->kind == C_CLASS_LIB_STATIC) {
+        if(sep_location == -1) {
+            c_add_library_path(c, CURRENT_DIR, pstrlen(CURRENT_DIR));
+        }
         const char* ext = get_library_extension(c->kind);
         char* r = c_string_build(2, program_options.add_located_library, name);
-        da_append(c->located_libraries, r);
+        da_append(c->libraries, r);
         return;
     }
 
-    da_append(c->libraries, name);
+    char* x = c_string_build(2, program_options.add_library, name);
+    da_append(c->libraries, x);
 }
 
 void c_add_include(CateClass* c, char* path) {
@@ -619,7 +623,8 @@ static void make_command_template(CateClass* c, Command* cmd) {
     cmd->size = 0;
     da_append(*cmd, c->compiler);
     sa_append_no_copy(cmd, &c->flags);
-    da_append(*cmd, c->std);
+    if(c->std)
+        da_append(*cmd, c->std);
 
     if(c->kind == C_CLASS_LIB_STATIC || c->kind == C_CLASS_LIB_DYNAMIC) {
         da_append(*cmd, program_options.shared);
@@ -666,11 +671,11 @@ static BuildPairs find_rebuildable(CateClass* c) {
 }
 
 static int append_libraries(CateClass* c, Command* cmd) {
-    //TODO: make these more like add_include
+    //library_paths work like this because we don't want to add hashmaps yet
+    //we just construct it like this
     cmd_append_prefixed(cmd,
             &c->library_paths, program_options.add_library_path);
-    cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
-    sa_append_no_copy(cmd, &c->located_libraries);
+    sa_append_no_copy(cmd, &c->libraries);
 }
 
 static int c_link_generic(CateClass* c, Command* cmd) {

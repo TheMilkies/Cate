@@ -66,7 +66,7 @@ enum {
 `-------*/
 typedef struct {
     StringsArray files, object_files, flags,
-    link_flags, libraries, located_libraries, library_paths, includes;
+    link_flags, libraries, library_paths, includes;
 
     char *name, *out_name, *compiler, *build_dir, *std,
          *linker, *linker_script;
