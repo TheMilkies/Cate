@@ -80,8 +80,14 @@ void c_class_build(CateClass* c);
 void c_class_clean(CateClass* c);
 void c_class_install(CateClass* c);
 void c_add_file(CateClass* c, char* file);
+void c_add_include(CateClass* c, char* path);
 void c_add_library(CateClass* c, char* name, CateClassKind k);
 void c_change_library_kind(CateClass* c, CateClassKind k);
+void c_set_standard(CateClass* c, char* std);
+void c_set_flags(CateClass* c, char* flags);
+void c_add_flag(CateClass* c, char* flag);
+void c_set_link_flags(CateClass* c, char* flags);
+void c_add_link_flag(CateClass* c, char* flag);
 void c_class_free(CateClass* c);
 
 /*-------.

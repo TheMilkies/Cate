@@ -1,6 +1,7 @@
 #define _XOPEN_SOURCE 500
 #include "cate.h"
 #include <stdarg.h>
+#include <ctype.h>
 
 #define fatal(text) do{fprintf(stderr, "cate: " text "\n");\
     exit(-1);} while(0);
@@ -157,8 +158,8 @@ void _translate_path(char** path);
 //inlined ones crash so i'm doing it like this
 static struct {
     char* out, *specify_link_script,
-    *compile_objects, *load_library, *add_library_path,
-    *add_include,
+    *compile_objects, *load_library, *add_library_path, *add_located_library,
+    *add_include, *std,
     *fpic, *shared, *debuggable,
     *archiver, *archiver_rcs,
     *smol_flags[SMOL_FLAGS_COUNT],
@@ -168,7 +169,9 @@ static struct {
     .compile_objects = "-c",
     .load_library = "-l",
     .add_library_path = "-L",
+    .add_located_library = "-l:",
     .add_include = "-I",
+    .std = "-std=",
     .specify_link_script = "-T",
     .shared = "-shared",
     .fpic = "-fPIC",
@@ -390,10 +393,8 @@ static void class_automation(CateClass* c) {
     }
 
     if(!c->includes.size) {
-        static char* inc = "include";
-        if(cs_file_exists(inc)) {
-            char* x = c_string_clone(inc);
-            da_append(c->includes, x);
+        if(cs_file_exists("include")) {
+            c_add_include(c, "include");
         }
     }
 
@@ -488,12 +489,17 @@ void c_add_library(CateClass* c, char* name, CateClassKind k) {
     size_t dot = find_last(name, '.');
     if(dot != -1 || c->kind == C_CLASS_LIB_STATIC) {
         const char* ext = get_library_extension(c->kind);
-        char* r = c_string_build(2, "-l:", name);
+        char* r = c_string_build(2, program_options.add_located_library, name);
         da_append(c->located_libraries, r);
         return;
     }
 
     da_append(c->libraries, name);
+}
+
+void c_add_include(CateClass* c, char* path) {
+    char* x = c_string_build(2, program_options.add_include, path);
+    da_append(c->includes, x);
 }
 
 void c_change_library_kind(CateClass* c, CateClassKind k) {
@@ -509,6 +515,49 @@ void c_change_library_kind(CateClass* c, CateClassKind k) {
     c->out_name = c_string_build(2, old, ext);
     puts(c->out_name);
     free(old);
+}
+
+static inline void clone_append(StringsArray* a, char* s) {
+    char* x = c_string_clone(s);
+    da_append(*a, x);
+}
+
+static inline void replace(char** x, char* new_str) {
+    if(*x) free(*x);
+    *x = new_str;
+}
+
+static inline void split_by_space(StringsArray* a, char* s) {
+    size_t len = strlen(s);
+    char* tmp = s;
+    for (size_t i = 0; i < len; ++i) {
+        while(i < len && isspace(s[i])) { ++i; }
+        tmp = s + i;
+        size_t begin = i;
+        while(i < len && !isspace(s[i])) { ++i; }
+        char* x = c_string_clone_until(tmp, i-begin);
+        da_append(*a, x);
+    }
+}
+
+void c_set_standard(CateClass* c, char* std) {
+    replace(&c->std, c_string_build(2, program_options.std, std));
+}
+
+void c_set_flags(CateClass* c, char* flags) {
+    split_by_space(&c->flags, flags);
+}
+
+void c_add_flag(CateClass* c, char* flag) {
+    clone_append(&c->flags, flag);
+}
+
+void c_set_link_flags(CateClass* c, char* flags) {
+    split_by_space(&c->flags, flags);
+}
+
+void c_add_link_flag(CateClass* c, char* flag) {
+    clone_append(&c->link_flags, flag);
 }
 
 static char* objectify_file(char* file, char* build_dir) {
@@ -568,9 +617,9 @@ static void cmd_append_prefixed(Command* dst, StringsArray* src,
 //we make a template that's shared between all classes.
 static void make_command_template(CateClass* c, Command* cmd) {
     cmd->size = 0;
-    //FIXME: std needs to be formed and freed
     da_append(*cmd, c->compiler);
     sa_append_no_copy(cmd, &c->flags);
+    da_append(*cmd, c->std);
 
     if(c->kind == C_CLASS_LIB_STATIC || c->kind == C_CLASS_LIB_DYNAMIC) {
         da_append(*cmd, program_options.shared);
@@ -583,7 +632,7 @@ static void make_command_template(CateClass* c, Command* cmd) {
             da_append(*cmd, program_options.smol_flags[i]);
     }
 
-    cmd_append_prefixed(cmd, &c->includes, program_options.add_include);
+    sa_append_no_copy(cmd, &c->includes);
     da_append(*cmd, program_options.compile_objects);
     da_append(*cmd, program_options.out);
 }
@@ -617,6 +666,7 @@ static BuildPairs find_rebuildable(CateClass* c) {
 }
 
 static int append_libraries(CateClass* c, Command* cmd) {
+    //TODO: make these more like add_include
     cmd_append_prefixed(cmd,
             &c->library_paths, program_options.add_library_path);
     cmd_append_prefixed(cmd, &c->libraries, program_options.load_library);
