@@ -2,9 +2,15 @@
 #include "cate.h"
 #include <stdarg.h>
 
-#define fatal(text) do{fprintf(stderr, "[cate] " text);\
+#define fatal(text) do{fprintf(stderr, "cate: " text "\n");\
     exit(-1);} while(0);
-CateFlags c_cmd_flags = 0;
+#define log(text, ...) puts("cate: " text);
+#define fatal_f(text, ...) do{fprintf(stderr, "cate: " text "\n", __VA_ARGS__);\
+    exit(-1);} while(0);
+#define fatal_errno(text, ...) do{fprintf(stderr, "cate: " text ": %s\n",\
+    __VA_ARGS__, strerror(errno)); exit(-1);} while(0);
+
+uint8_t c_cmd_flags = 0;
 
 /*-------.
 | memory |
@@ -111,6 +117,8 @@ void _translate_path(char** path);
 
 #define pstrlen(s) (sizeof(s)/(sizeof(s[0])))
 #ifdef _WIN32
+#define ADMIN_WORD "an administrator"
+
 #define DYNAMIC_LIB_EXT ".dll"
 #define STATIC_LIB_EXT ".lib"
 #define OBJECT_FILE_EXT ".obj"
@@ -121,6 +129,8 @@ void _translate_path(char** path);
 #define LIBRARY_INSTALL_LOCATION "C:\\cate\\libraries\\"
 
 #else
+#define ADMIN_WORD "root"
+
 #define DYNAMIC_LIB_EXT ".so"
 #define STATIC_LIB_EXT ".a"
 #define OBJECT_FILE_EXT ".o"
@@ -316,9 +326,54 @@ static char* make_install_path(CateClass* c) {
     }
 }
 
+static const char* get_class_kind_name(CateClassKind k) {
+    static const char* names[C_CLASS__END] = {
+        [C_CLASS_PROJECT] = "(executable)",
+        [C_CLASS_LIB_STATIC] = "(static)",
+        [C_CLASS_LIB_DYNAMIC] = "(dynamic)"
+    };
+    if(k >= C_CLASS__END) return "(invalid?)";
+    return names[k];
+}
+
+static int ask_install(const char* name, const char* extra) {
+    fflush(stdout);
+    printf("Would you like to install %s", name);
+    if(extra) {
+        printf(" %s", extra);
+    }
+    printf("? [y/N]: ");
+    fflush(stdout);
+
+    char c = getchar();
+    fflush(stdin);
+    return (c == 'y' || c == 'Y');
+}
+
 void c_class_install(CateClass* c) {
+#ifdef _WIN32
+    log("installing things is currently not available for windows systems.");
+    return;
+#endif
+    if(c_cmd_flags & C_CMD_NEVER_INSTALL) return;
+
     char* path = make_install_path(c);
-    //TODO: implement install
+    if(!cs_newer_than(c->out_name, path)) goto cleanup;
+
+    const char* kind = get_class_kind_name(c->kind);
+    if(!(c_cmd_flags & C_CMD_ALWAYS_INSTALL)) {
+        if(!ask_install(c->name, kind))
+            goto cleanup;
+    }
+
+    if (!cs_is_admin()) {
+        fprintf(stderr, "cate: can not install %s %s because you are not "
+            ADMIN_WORD "\n", c->name, kind);
+        goto cleanup;
+    }
+    cs_copy(c->out_name, path);
+
+cleanup:
     free(path);
 }
 
@@ -579,6 +634,25 @@ static void cmd_free(Command* c) {
 
 // }
 
+int cs_is_admin() {
+    DWORD rc;
+    wchar_t user_name[256];
+    USER_INFO_1 info;
+
+    rc = GetUserNameW(user_name, 256);
+    if (!rc)
+        return 0;
+
+    rc = NetUserGetInfo(NULL, user_name, 1, (LPBYTE*)&info);
+    if (rc != NERR_Success)
+        return 0;
+
+    int result = info.usri1_priv == USER_PRIV_ADMIN;
+    NetApiBufferFree((PVOID)&info);
+
+    return result;
+}
+
 #elif __unix__
 #include <unistd.h>
 #include <fcntl.h>
@@ -639,8 +713,7 @@ static ssize_t sendfile(int out, int in, off_t* offset, size_t size) {
 static int _open(const char *path, int flags, int opt) {
     int f = open(path, flags, opt);
     if(f < 0) {
-        fprintf(stderr, "[cate] failed to open file \"%s\"", path);
-        exit(-1);
+        fatal_errno("failed to open file \"%s\"", path);
     }
     return f;
 }
@@ -719,9 +792,7 @@ int cs_remove_single(const char* file) {
 
     int err = remove(file);
     if(err) {
-        fprintf(stderr, "[cate] failed to remove \"%s\" because: \n", file,
-            strerror(errno));
-        return 1;
+        fatal_errno("failed to remove %s", file);
     }
 
     return err;
@@ -758,6 +829,8 @@ int cs_newer_than(char* file1, char* file2) {
     return f1_time > f2_time;
 }
 
+int cs_is_admin() { return geteuid() == 0; }
+
 #include <sys/wait.h>
 #include <signal.h>
 /*----------.
@@ -779,9 +852,7 @@ static SysProc* cs_proc_create(Command* cmd) {
     p->pid = fork();
     if(p->pid == 0) {
         execvp(cmd->data[0], cmd->data);
-        fprintf(stderr, "[cate] %s: program not found!\n",
-                    cmd->data[0]);
-        exit(2);
+        fatal_f("%s: program not found!\n", cmd->data[0]);
     } else if (p->pid < 0) {
         fatal("failed to create subprocess!");
     }
