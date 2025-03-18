@@ -1,6 +1,8 @@
 #include <limits.h>
 #include "parser.h"
 
+//TODO: move everything here to fit the cate_lang file.
+
 typedef struct {
     TokensArray toks;
     TokenValuesArray vals;

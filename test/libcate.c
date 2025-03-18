@@ -1,4 +1,4 @@
-#include "cate.h"
+#include "libcate.h"
 #include "testlib.h"
 
 void temp_file(char* path) {

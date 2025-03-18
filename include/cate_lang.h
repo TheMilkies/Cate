@@ -1,12 +1,16 @@
-#ifndef CATE_TOKENIZER_H
-#define CATE_TOKENIZER_H
+#ifndef CATE_LANG_H
+#define CATE_LANG_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include <vendor/string_view.h>
 #include <vendor/dynamic_array.h>
-#include "cate_error.h"
-#include "common.h"
 
-#include <stdint.h>
+// almost an entire cate in one module!
 
+/*----------.
+| tokenizer |
+`---------*/
 enum {
     CTOK_NONE = 0,
 	CTOK_DOT,
@@ -32,7 +36,6 @@ enum {
 
 typedef uint8_t TokenKind;
 typedef uint32_t TokenID;
-
 typedef struct {
     //16 million lines should be more than enough for cate.
     uint32_t line : 24,
@@ -54,6 +57,32 @@ typedef da_type(string_view) TokenValuesArray;
 
 void cate_tokenize(string_view *line, TokensArray *tokens,
     TokenValuesArray* values);
-const char* tok_as_text(TokenKind k);
+const char* ctok_as_text(TokenKind k);
 
-#endif // CATE_TOKENIZER_H
+/*------.
+| catel |
+`-----*/
+typedef struct {
+    char x[FILENAME_MAX];
+    size_t length;
+} _CateSysPath;
+
+typedef struct {
+    _CateSysPath dir, def;
+} Catel;
+
+/// @brief Parse catel from file
+void catel_init(Catel* catel);
+
+/*--------.
+| context |
+`-------*/
+typedef struct {
+    da_type(uint32_t) classes;
+    da_type(_CateSysPath) opened_files;
+	Catel* catel;
+} CateContext;
+
+void cate_context_destroy(CateContext* context);
+
+#endif // CATE_LANG_H
