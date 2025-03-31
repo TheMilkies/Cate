@@ -16,7 +16,6 @@ Unlike CMake and other build systems, Cate does not require Make and **is not** 
 Cate is not written in Rust and never will be; Cate has 0 memory leaks thanks to a practice known as "knowing how memory works".
 
 Do note:
-- We know the source code isn't great, it was our first project.
 - Cate uses Catel, a messy file that allows us to set a default file.
 - Cate **does not** support string splitting.
 - This readme is full of little jokes. No offense intended to any other build system... *except Autotools*.
@@ -265,9 +264,8 @@ def smol
 ```
 
 ## Credits
-- Yogurt (Creator and Main Maintainer)
-- Lemon (Creator)
-- Latte (Bug fixer)
+- Yourt
+- AyinSonu (cate3)
 
 ## Special thanks
 Special thanks to
