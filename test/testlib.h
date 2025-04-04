@@ -1,9 +1,7 @@
 #ifndef CATE_TESTLIB_H
 #define CATE_TESTLIB_H
-#define SIMPLE_SV_IMPL
-#define SIMPLE_DA_IMPL
-#include <vendor/string_view.h>
-#include <vendor/dynamic_array.h>
+#define LIBCATE_SYS_IMPL
+#include "libcate_sys.h"
 #define BOLD_RED "\033[1;31m"
 #define COLOR_RESET "\033[0m"
 

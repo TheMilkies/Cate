@@ -50,7 +50,7 @@ typedef enum {
     CERR_NO_PERMISSION,
     CERR_OUT_OF_MEMORY,
 } C_Err;
-#define $(f, ...)
+// #define $(f, ...)
 
 /*---------------.
 | dynamic arrays |
@@ -105,8 +105,8 @@ typedef struct {
 } CateSysPath;
 
 void cs_path_relative(CateSysPath* p); // nothing in POSIX and windows
-void cs_path_directory_separator(CateSysPath* p); // '/' in POSIX
-void cs_path_append(CateSysPath* p, char* text);
+C_Err cs_path_directory_separator(CateSysPath* p); // '/' in POSIX
+C_Err cs_path_append(CateSysPath* p, char* text);
 
 #ifndef __unix__
 #error unimplemented
@@ -157,7 +157,6 @@ void cs_proc_free(CateSysProc* proc);
 
 #endif // LIBCATE_SYS_H
 
-#define LIBCATE_SYS_IMPL
 #ifdef LIBCATE_SYS_IMPL
 #include <errno.h>
 //generic for any platform
@@ -174,7 +173,6 @@ void cs_proc_free(CateSysProc* proc);
 /*-------.
 | memory |
 `------*/
-
 //allocate and zero-init N bytes
 static void* xalloc(size_t n) {
     void* ptr = calloc(sizeof(uint8_t), n);
@@ -333,9 +331,11 @@ int sv_ends_with_sv(cate_sv* restrict s, cate_sv* restrict e) {
 /*------------.
 | impl: POSIX |
 `-----------*/
+#ifdef __unix__
 //test platforms: FreeBSD 5.0, FreeBSD 14, NetBSD 10.1, Debian 12.
 //planned support: AIX?, Solaris 9
-#ifdef __unix__
+#define RELATIVE_DIR "./"
+#define DIR_SEPARATOR "/"
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -434,5 +434,31 @@ void cs_proc_kill(CateSysProc* proc) {
 }
 
 #endif //impl: POSIX
+
+void cs_path_relative(CateSysPath* p) {
+    //for posix, the relative path can just be Nothing
+    p->length = 0;
+    p->x[0] = '\0';
+    // p->length = sv_pp_strlen(RELATIVE_DIR);
+    // memcpy(p->x, RELATIVE_DIR, p->length);
+}
+
+static inline _cs_path_append(CateSysPath* p, char* text, size_t length) {
+    if(p->length+length > sizeof(p->x))
+        return CERR_TOO_LONG;
+
+    memcpy(&p->x[p->length], text, length);
+    p->length += length;
+
+    return CERR_SUCCESS;
+}
+
+C_Err cs_path_directory_separator(CateSysPath* p) {
+    return _cs_path_append(p, DIR_SEPARATOR, sv_pp_strlen(DIR_SEPARATOR));
+}
+
+C_Err cs_path_append(CateSysPath* p, char* text) {
+    return _cs_path_append(p, text, strlen(text)+1);
+}
 
 #endif //impl

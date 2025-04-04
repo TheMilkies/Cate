@@ -1,6 +1,5 @@
 Project tokenizer_test
 .files = {
-    "test/tokenizer.c"
     "src/cate_lang.c"
 }
 .flags = "-ggdb3"

@@ -1,4 +1,4 @@
 #define SIMPLE_SV_IMPL
 #define SIMPLE_DA_IMPL
-#include <vendor/string_view.h>
-#include <vendor/dynamic_array.h>
+#define LIBCATE_SYS_IMPL
+#include "libcate_sys.h"

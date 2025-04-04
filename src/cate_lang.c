@@ -64,7 +64,7 @@ void cate_error_line(size_t line, const char* fmt, ...) {
 /*----------.
 | tokenizer |
 `---------*/
-static TokenKind maybe_keyword(string_view* v) {
+static TokenKind maybe_keyword(cate_sv* v) {
     static_assert(CTOK_COUNT_SIZE == 18,
         "added token types? if they are keywords; add them here");
     if(sv_ccmp(v, "Project")) {
@@ -87,11 +87,11 @@ static TokenKind maybe_keyword(string_view* v) {
     return CTOK_IDENTIFIER;
 }
 
-static void skip_whitespace(string_view *line, size_t* i) {
+static void skip_whitespace(cate_sv *line, size_t* i) {
     while(*i < line->length && isspace(line->text[*i])) *i += 1;
 }
 
-void cate_tokenize(string_view *line, TokensArray *tokens,
+void cate_tokenize(cate_sv *line, TokensArray *tokens,
                         TokenValuesArray* values) {
     static_assert(CTOK_COUNT_SIZE == 18,
         "added token types? if they are not keywords; add them here");
@@ -111,7 +111,7 @@ void cate_tokenize(string_view *line, TokensArray *tokens,
     while (i < line->length) {
         skip_whitespace(line, &i);
         Token tok = {.line = line_num};
-        string_view val = {0};
+        cate_sv val = {0};
 
         switch (cur) {
         //semicolons are ignored
@@ -236,10 +236,10 @@ const char* ctok_as_text(TokenKind k) {
 /*------.
 | catel |
 `-----*/
-void catel_parse(string_view* line, Catel* catel) {
+void catel_parse(cate_sv* line, Catel* catel) {
     size_t i = 0;
-    _CateSysPath* to_edit = 0;
-    string_view property = {0}, value = {0};
+    CateSysPath* to_edit = 0;
+    cate_sv property = {0}, value = {0};
     while (in_range()) {
         while_in(isspace(cur)) next();
         if(!cur) break;
@@ -315,7 +315,7 @@ void catel_init(Catel* catel) {
     }
     if(!file_exists(".catel")) return;
 
-    string_view file = {0};
+    cate_sv file = {0};
     if(sv_load_file(&file, ".catel")) {
         cate_error("failed to open catel file!");
     }
@@ -331,4 +331,16 @@ void catel_init(Catel* catel) {
 void cate_context_destroy(CateContext* context) {
     free(context->classes.data);
     free(context->opened_files.data);
+}
+
+static int ctx_was_opened(CateContext* ctx, char* path) {
+    for (size_t i = 0; i < ctx->opened_files.size; ++i) {
+        if(strncmp(ctx->opened_files.data[i].x, path, FILENAME_MAX))
+            return 1;
+    }
+    return 0;
+}
+
+int cate_parse(CateContext* ctx) {
+    return 1;
 }

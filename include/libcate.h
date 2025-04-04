@@ -1,7 +1,6 @@
 #ifndef LIB_CATE_H
 #define LIB_CATE_H
-#include <vendor/dynamic_array.h>
-#include <vendor/string_view.h>
+#include "libcate_sys.h"
 #include <stdint.h>
 
 /*--------.
@@ -10,19 +9,11 @@
 typedef da_type(char*) StringsArray;
 char* c_string_clone(char* s);
 char* c_string_build(int count, ...);
-char* sv_clone_as_cstr(string_view* v);
+char* sv_clone_as_cstr(cate_sv* v);
 
 /*------.
 | paths |
 `-----*/
-typedef struct {
-    char x[FILENAME_MAX];
-    size_t length;
-} CateSysPath;
-// void cs_path_translate(CateSysPath* p, char* text);
-void cs_path_append(CateSysPath* p, char* text);
-void cs_path_directory_separator(CateSysPath* p);
-
 enum {
     C_CLASS_PROJECT = 0,
     C_CLASS_LIB_STATIC,
@@ -89,18 +80,5 @@ void c_add_flag(CateClass* c, char* flag);
 void c_set_link_flags(CateClass* c, char* flags);
 void c_add_link_flag(CateClass* c, char* flag);
 void c_class_free(CateClass* c);
-
-/*-------.
-| system |
-`------*/
-int cs_is_admin();
-int cs_create_directory(char* dir);
-int cs_file_exists(char* file);
-int cs_newer_than(char* file1, char* file2);
-int cs_copy(char* file1, char* file2);
-int cs_move(char* file1, char* file2);
-int cs_remove(char* file);
-int cs_remove_single(const char* file);
-int cs_smolize(char* file);
 
 #endif // LIB_CATE_H

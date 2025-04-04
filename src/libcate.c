@@ -3,43 +3,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#define fatal(text) do{fprintf(stderr, "cate: " text "\n");\
-    exit(-1);} while(0);
-#define log(text, ...) puts("cate: " text);
-#define fatal_f(text, ...) do{fprintf(stderr, "cate: " text "\n", __VA_ARGS__);\
-    exit(-1);} while(0);
-#define fatal_errno(text, ...) do{fprintf(stderr, "cate: " text ": %s\n",\
-    __VA_ARGS__, strerror(errno)); exit(-1);} while(0);
-
 uint8_t c_cmd_flags = 0;
-
-/*-------.
-| memory |
-`------*/
-static void* xalloc(size_t n) {
-    void* ptr = calloc(sizeof(uint8_t), n);
-    if(!ptr) {
-        fatal("out of memory!");
-    }
-    return ptr;
-}
-
-/*----------.
-| processes |
-`---------*/
-struct SysProc;
-typedef struct SysProc SysProc;
-//commands don't hold their own strings, only free their data ptr.
-typedef StringsArray Command;
-static void cmd_free(Command* c);
-static SysProc* cs_proc_create(Command* cmd);
-static void cs_dry_run(Command* cmd);
-static int cs_proc_exited(SysProc* proc);
-static int cs_proc_get_exit_code(SysProc* proc);
-static void cs_proc_kill(SysProc* proc);
-static int cs_proc_wait(SysProc* proc);
-static void cs_proc_free(SysProc* proc);
-static void cg_get_thread_count();
 
 /*--------.
 | strings |
@@ -94,7 +58,7 @@ static void strings_free(StringsArray* a) {
     free(a->data);
 }
 
-char* sv_clone_as_cstr(string_view* v) {
+char* sv_clone_as_cstr(cate_sv* v) {
     char* s = xalloc(v->length+1);
     memcpy(s, v->text, v->length);
     return s;
@@ -275,7 +239,9 @@ static int build_objects(CateClass* c, Command* tmp) {
         Command build = make_build_command(tmp,
             files.data[0].src,
             files.data[0].obj);
-        SysProc *proc = cs_proc_create(&build);
+        C_Err e = 0;
+        CateSysProc *proc = cs_proc_create(&build, &e);
+        if(e) {fatal("oopsie");}
         int code = cs_proc_wait(proc);
         if(code) {
             fatal("error in build command!\n");
@@ -691,7 +657,9 @@ static int c_link_generic(CateClass* c, Command* cmd) {
     append_libraries(c, cmd);
     da_append(*cmd, program_options.nul);
 
-    SysProc *proc = cs_proc_create(cmd);
+    C_Err e = 0;
+    CateSysProc *proc = cs_proc_create(cmd, &e);
+    if(e) {fatal("oopsie");}
     int exit = cs_proc_wait(proc);
     cs_proc_free(proc);
     return exit;
@@ -837,195 +805,109 @@ static ssize_t sendfile(int out, int in, off_t* offset, size_t size) {
 }
 #endif
 
-static int _open(const char *path, int flags, int opt) {
-    int f = open(path, flags, opt);
-    if(f < 0) {
-        fatal_errno("failed to open file \"%s\"", path);
-    }
-    return f;
-}
+// static int _open(const char *path, int flags, int opt) {
+//     int f = open(path, flags, opt);
+//     if(f < 0) {
+//         fatal_errno("failed to open file \"%s\"", path);
+//     }
+//     return f;
+// }
 
-int cs_copy(char* path1, char* path2) {
-    if(c_cmd_flags & C_CMD_DRY_RUN) {
-        printf("cp %s %s\n", path1, path2);
-        return 1;
-    }
-    int result = 1;
+// int cs_copy(char* path1, char* path2) {
+//     if(c_cmd_flags & C_CMD_DRY_RUN) {
+//         printf("cp %s %s\n", path1, path2);
+//         return 1;
+//     }
+//     int result = 1;
 
-    int in =  _open(path1, O_RDONLY, 0);
-    struct stat st;
-    if(fstat(in, &st) == -1) {
-        result = 0;
-        goto bad;
-    }
-    int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, st.st_mode);
+//     int in =  _open(path1, O_RDONLY, 0);
+//     struct stat st;
+//     if(fstat(in, &st) == -1) {
+//         result = 0;
+//         goto bad;
+//     }
+//     int out = _open(path2, O_WRONLY | O_CREAT | O_TRUNC, st.st_mode);
 
-    //i ported sendfile because it's the easiest API... here
-    off_t offset = 0;
-    int sent = sendfile(out, in, &offset, st.st_size);
-    if(sent == -1)
-        result = 0;
+//     //i ported sendfile because it's the easiest API... here
+//     off_t offset = 0;
+//     int sent = sendfile(out, in, &offset, st.st_size);
+//     if(sent == -1)
+//         result = 0;
 
-bad:
-    close(in);
-    close(out);
-    return result;
-}
+// bad:
+//     close(in);
+//     close(out);
+//     return result;
+// }
 
-static int _mkdir(const char* path) {
-    return !(mkdir(path, S_IRWXU) && errno != EEXIST);
-}
+// static int _mkdir(const char* path) {
+//     return !(mkdir(path, S_IRWXU) && errno != EEXIST);
+// }
 
-static inline int _recursive_mkdir(const char *dir) {
-    char tmp[FILENAME_MAX] = {0};
-    char *p = 0;
-    size_t len = 0;
+// static inline int _recursive_mkdir(const char *dir) {
+//     char tmp[FILENAME_MAX] = {0};
+//     char *p = 0;
+//     size_t len = 0;
 
-    snprintf(tmp, sizeof(tmp),"%s",dir);
-    len = strlen(tmp);
-    if (tmp[len - 1] == '/')
-        tmp[len - 1] = 0;
-    for (p = tmp + 1; *p; p++)
-        if (*p == '/') {
-            *p = 0;
-            if(!_mkdir(tmp)) return 0;
-            *p = '/';
-        }
-    return _mkdir(tmp);
-}
+//     snprintf(tmp, sizeof(tmp),"%s",dir);
+//     len = strlen(tmp);
+//     if (tmp[len - 1] == '/')
+//         tmp[len - 1] = 0;
+//     for (p = tmp + 1; *p; p++)
+//         if (*p == '/') {
+//             *p = 0;
+//             if(!_mkdir(tmp)) return 0;
+//             *p = '/';
+//         }
+//     return _mkdir(tmp);
+// }
 
-int cs_create_directory(char* dir) {
-    if(cs_file_exists(dir)) return 1;
-    if(c_cmd_flags & C_CMD_DRY_RUN) {
-        printf("mkdir -p %s\n", dir);
-        return 1;
-    }
-    return _recursive_mkdir(dir);
-}
+// int cs_create_directory(char* dir) {
+//     if(cs_file_exists(dir)) return 1;
+//     if(c_cmd_flags & C_CMD_DRY_RUN) {
+//         printf("mkdir -p %s\n", dir);
+//         return 1;
+//     }
+//     return _recursive_mkdir(dir);
+// }
 
-int cs_move(char* file1, char* file2) {
-    if(c_cmd_flags & C_CMD_DRY_RUN) {
-        printf("mv %s %s\n", file1, file2);
-        return 1;
-    }
-    return rename(file1, file2) == 0;
-}
+// int cs_move(char* file1, char* file2) {
+//     if(c_cmd_flags & C_CMD_DRY_RUN) {
+//         printf("mv %s %s\n", file1, file2);
+//         return 1;
+//     }
+//     return rename(file1, file2) == 0;
+// }
 
-int cs_remove_single(const char* file) {
-    if(c_cmd_flags & C_CMD_DRY_RUN) {
-        printf("rm -f %s\n", file);
-        return 1;
-    }
+// int cs_remove_single(const char* file) {
+//     if(c_cmd_flags & C_CMD_DRY_RUN) {
+//         printf("rm -f %s\n", file);
+//         return 1;
+//     }
 
-    int err = remove(file);
-    if(err) {
-        fatal_errno("failed to remove %s", file);
-    }
+//     int err = remove(file);
+//     if(err) {
+//         fatal_errno("failed to remove %s", file);
+//     }
 
-    return err;
-}
+//     return err;
+// }
 
-int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
-                 struct FTW *ftwbuf) {
+// int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
+//                  struct FTW *ftwbuf) {
     
-    return cs_remove_single(fpath);
-}
+//     return cs_remove_single(fpath);
+// }
 
-int cs_remove(char* file) {
-    if(c_cmd_flags & C_CMD_DRY_RUN) {
-        printf("rm -rf %s\n", file);
-        return 1;
-    }
+// int cs_remove(char* file) {
+//     if(c_cmd_flags & C_CMD_DRY_RUN) {
+//         printf("rm -rf %s\n", file);
+//         return 1;
+//     }
     
-    return nftw(file, _rm_callback, 64, FTW_DEPTH | FTW_PHYS) == 0;
-}
-
-int cs_file_exists(char* file) {
-    return access(file, F_OK) == 0;
-}
-
-int cs_newer_than(char* file1, char* file2) {
-    struct stat result;
-    if(stat(file1, &result) != 0)
-        return 1;
-    size_t f1_time = result.st_mtime;
-
-    if(stat(file2, &result) != 0)
-        return 1;
-    size_t f2_time = result.st_mtime;
-    return f1_time > f2_time;
-}
-
-int cs_is_admin() { return geteuid() == 0; }
-
-#include <sys/wait.h>
-#include <signal.h>
-/*----------.
-| processes |
-`---------*/
-
-struct SysProc {
-    pid_t pid;
-    int status;
-};
-
-static SysProc* cs_proc_create(Command* cmd) {
-    if(c_cmd_flags & C_CMD_DRY_RUN) {
-        cs_dry_run(cmd);
-        return 0;
-    }
-
-    SysProc* p = xalloc(sizeof(*p));
-    p->pid = fork();
-    if(p->pid == 0) {
-        execvp(cmd->data[0], cmd->data);
-        fatal_f("%s: program not found!\n", cmd->data[0]);
-    } else if (p->pid < 0) {
-        fatal("failed to create subprocess!");
-    }
-
-    return p;
-}
-
-static int cs_proc_exited(SysProc* proc) {
-    if(!proc) return 1; // for dry runs
-    if(waitpid(proc->pid, &proc->status, WNOHANG) == -1) {
-        fatal("failed to get process status?");
-    }
-    return WIFEXITED(proc->status);
-}
-
-static int cs_proc_wait(SysProc* proc) {
-    if(!proc) return 0; // for dry runs
-    if(waitpid(proc->pid, &proc->status, 0) == -1) {
-        fatal("failed to get process status?");
-    }
-    return WEXITSTATUS(proc->status);
-}
-
-static void cs_proc_free(SysProc* proc) {
-    free(proc); //null is ignored (dry run)
-}
-
-static int cs_proc_get_exit_code(SysProc* proc) {
-    if(!WIFEXITED(proc->status))
-        fatal("this is a bug #0");
-    return WEXITSTATUS(proc->status);
-}
-
-static void cs_proc_kill(SysProc* proc) {
-    kill(proc->pid, SIGKILL);
-}
-
-int cs_smolize(char* file) {
-    return 1;
-}
-
+//     return nftw(file, _rm_callback, 64, FTW_DEPTH | FTW_PHYS) == 0;
+// }
 #else
 #error "Cate doesn't support this platform."
 
 #endif
-
-void cs_path_directory_separator(CateSysPath* p) {
-    cs_path_append(p, DIR_SEPARATOR);
-}
