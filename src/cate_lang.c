@@ -255,7 +255,7 @@ void catel_parse(cate_sv* line, Catel* catel) {
                 || sv_ccmp(&property, "default")) {
                 to_edit = &catel->def;
             } else {
-                cate_error("catel does not have \"" sv_fmt "\"\n"
+                cate_error("catel does not have " sv_qfmt "\n"
                             "available are: def, default, dir, directory",
                     sv_p(property));
             }
@@ -296,10 +296,8 @@ void catel_parse(cate_sv* line, Catel* catel) {
     }
     #undef cur
 
-    if(property.length) {
-        cate_error("catel expects a value for \"" sv_fmt "\"",
-                    sv_p(property));
-    }
+    if(property.length)
+        cate_error("catel expects a value for " sv_qfmt, sv_p(property));
 
     #undef cur
     #undef next

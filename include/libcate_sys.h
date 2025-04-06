@@ -78,6 +78,7 @@ typedef struct {
 #define sv_pp_strlen(s) (sizeof(s)/sizeof(s[0]))
 #define sv_from_const(s) (cate_sv){s, sv_pp_strlen(s)-1}
 #define sv_fmt "%.*s"
+#define sv_qfmt "\"%.*s\""
 #define sv_p(s) s.length, s.text
 #define svptr_p(s) s->length, s->text
 #define SV_NOT_FOUND ((size_t)-1)

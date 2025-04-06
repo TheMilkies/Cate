@@ -3,10 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <vendor/string_view.h>
-#include <vendor/dynamic_array.h>
+#include "libcate_sys.h"
 
-// almost an entire cate in one module!
+/*
+	Almost an entire Cate in a module!
+	This module contains: catel, tokenizer, parser, and virtual machine spec.
+
+	You might be wondering why Cate needs a virtual machine, and that's fair.
+	- It's more efficient than direct interpretation. 
+	- It allows for a lot more flexibility. We might make cate2sh and cate2ps.
+*/
 
 /*----------.
 | tokenizer |
@@ -53,9 +59,9 @@ typedef da_type(Token) TokensArray;
 	Getting the value is a bit more annoying but we can fit 16 tokens in a
 	cache line and we don't waste (1.5 * token_count * 16) bytes.
 */
-typedef da_type(string_view) TokenValuesArray;
+typedef da_type(cate_sv) TokenValuesArray;
 
-void cate_tokenize(string_view *line, TokensArray *tokens,
+void cate_tokenize(cate_sv *line, TokensArray *tokens,
     TokenValuesArray* values);
 const char* ctok_as_text(TokenKind k);
 
@@ -63,12 +69,7 @@ const char* ctok_as_text(TokenKind k);
 | catel |
 `-----*/
 typedef struct {
-    char x[FILENAME_MAX];
-    size_t length;
-} _CateSysPath;
-
-typedef struct {
-    _CateSysPath dir, def;
+    CateSysPath dir, def;
 } Catel;
 
 /// @brief Parse catel from file
@@ -79,10 +80,60 @@ void catel_init(Catel* catel);
 `-------*/
 typedef struct {
     da_type(uint32_t) classes;
-    da_type(_CateSysPath) opened_files;
+    da_type(CateSysPath) opened_files;
 	Catel* catel;
 } CateContext;
 
 void cate_context_destroy(CateContext* context);
+
+/*--------.
+| cate IR |
+`-------*/
+enum {
+    CCLASS_PROJECT = 0,
+    CCLASS_LIB_STATIC,
+    CCLASS_LIB_DYNAMIC,
+    CCLASS__END,
+};
+
+enum {
+	CPROP_COMPILER = 0,
+	CPROP_BUILD_DIR,
+	CPROP_STD,
+	CPROP_LINKER,
+	CPROP_LINKER_SCRIPT,
+	CPROP_OUT_NAME,
+	CPROP_FILES,
+	CPROP_FLAGS,
+	CPROP_LINKER_FLAGS,
+	CPROP_LIBRARIES,
+	CPROP_INCLUDES,
+};
+
+enum {
+	CBOOL_AUTO = 0,
+	CBOOL_LINK,
+	CBOOL_THREAD,
+	CBOOL_SMOL,
+};
+
+typedef struct {
+	uint32_t op;
+} CInst_S;
+
+enum {
+	CINST_NOP = 0,
+	CINST_INIT,
+
+	CINST_NEW_CLASS,
+	CINST_SET_PROPERTY,
+	CINST_SET_GLOBAL_PROPERTY,
+	CINST_SET_BOOL,
+	CINST_SET_KIND,
+
+	CINST_JUMP,
+	CINST_JUMP_T,
+	CINST_JUMP_F,
+};
 
 #endif // CATE_LANG_H
