@@ -33,6 +33,13 @@
 #ifndef LIBCATE_SYS_H
 #define LIBCATE_SYS_H
 
+#ifdef __unix__
+#define UNIXY_PLATFORM
+#endif
+
+#ifdef UNIXY_PLATFORM
+#define _XOPEN_SOURCE 500
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,6 +56,10 @@ typedef enum {
     CERR_ALREADY_EXISTS,
     CERR_NO_PERMISSION,
     CERR_OUT_OF_MEMORY,
+    CERR_IS_A_DIRECTORY,
+    CERR_NOT_A_DIRECTORY,
+
+    CERR_UNKNOWN,
 } C_Err;
 // #define $(f, ...)
 
@@ -109,7 +120,7 @@ void cs_path_relative(CateSysPath* p); // nothing in POSIX and windows
 C_Err cs_path_directory_separator(CateSysPath* p); // '/' in POSIX
 C_Err cs_path_append(CateSysPath* p, char* text);
 
-#ifndef __unix__
+#ifndef UNIXY_PLATFORM
 #error unimplemented
 #define cs_path_translate(path)
 #else
@@ -332,9 +343,8 @@ int sv_ends_with_sv(cate_sv* restrict s, cate_sv* restrict e) {
 /*------------.
 | impl: POSIX |
 `-----------*/
-#ifdef __unix__
-//test platforms: FreeBSD 5.0, FreeBSD 14, NetBSD 10.1, Debian 12.
-//planned support: AIX?, Solaris 9
+#ifdef UNIXY_PLATFORM
+
 #define RELATIVE_DIR "./"
 #define DIR_SEPARATOR "/"
 #include <unistd.h>
@@ -377,16 +387,75 @@ int cs_newer_than(char* file1, char* file2) {
 
 int cs_is_admin() { return geteuid() == 0; }
 
+static C_Err translate_errno() {
+    if(errno == 0) return CERR_SUCCESS;
+    // printf("errno: %i\n", errno);
+
+    switch (errno) {
+    case E2BIG:  return CERR_TOO_LONG; break;
+    case EACCES: return CERR_NO_PERMISSION; break;
+    case EEXIST: return CERR_ALREADY_EXISTS; break;
+    case ENOENT: return CERR_DOESNT_EXIST; break;
+    case ENOMEM: return CERR_OUT_OF_MEMORY; break;
+    case EISDIR: return CERR_IS_A_DIRECTORY; break;
+    case ENOTDIR: return CERR_NOT_A_DIRECTORY; break;
+    }
+    return CERR_UNKNOWN;
+}
+
+static int _mkdir(const char* path) {
+    return mkdir(path, S_IRWXU) && errno != EEXIST;
+}
+
+static inline C_Err _recursive_mkdir(const char *dir) {
+    char tmp[FILENAME_MAX] = {0};
+    char *p = 0;
+    size_t len = 0;
+
+    snprintf(tmp, sizeof(tmp),"%s",dir);
+    len = strlen(tmp);
+    if (tmp[len - 1] == '/')
+        tmp[len - 1] = 0;
+    for (p = tmp + 1; *p; p++)
+        if (*p == '/') {
+            *p = 0;
+            if(_mkdir(tmp)) return translate_errno();
+            *p = '/';
+        }
+    
+    return _mkdir(tmp) ? translate_errno() : CERR_SUCCESS;
+}
+
+C_Err cs_create_directory(char* dir) {
+    if(cs_file_exists(dir)) return CERR_SUCCESS;
+    return _recursive_mkdir(dir);
+}
+
+C_Err cs_remove_single(const char* file) {
+    if (remove(file))
+        return translate_errno();
+
+    return CERR_SUCCESS;
+}
+
+static int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
+                 struct FTW *ftwbuf) {
+    return cs_remove_single(fpath);
+}
+
+C_Err cs_remove(char* file) {
+    return nftw(file, _rm_callback, 64, FTW_DEPTH | FTW_PHYS);
+}
+
+C_Err cs_move(char* file1, char* file2) {
+    return rename(file1, file2) == 0;
+}
+
 /*----------.
 | processes |
 `---------*/
 #include <sys/wait.h>
 #include <signal.h>
-
-struct CateSysProc {
-    pid_t pid;
-    int status;
-};
 
 struct CateSysProc {
     pid_t pid;
@@ -444,7 +513,7 @@ void cs_path_relative(CateSysPath* p) {
     // memcpy(p->x, RELATIVE_DIR, p->length);
 }
 
-static inline _cs_path_append(CateSysPath* p, char* text, size_t length) {
+static inline C_Err _cs_path_append(CateSysPath* p, char* text, size_t length) {
     if(p->length+length > sizeof(p->x))
         return CERR_TOO_LONG;
 

@@ -152,7 +152,8 @@ void cate_tokenize(cate_sv *line, TokensArray *tokens,
             val = sv_substring(line, begin, i);
             // cur = 0; //null terminate 
             next();
-            save();
+            da_append(*tokens, tok);
+            da_append(*values, val);
         }   break;
 
         case 'a' ... 'z':
@@ -165,11 +166,9 @@ void cate_tokenize(cate_sv *line, TokensArray *tokens,
             val = sv_substring(line, begin, i);
 
             tok.kind = maybe_keyword(&val);
-            if(tok.kind != CTOK_IDENTIFIER) {
-                da_append(*tokens, tok);
-            } else {
-                save();
-            }
+            da_append(*tokens, tok);
+            if(tok.kind == CTOK_IDENTIFIER)
+                da_append(*values, val);
         }   break;
 
         case ' ': case '\t': case '\r': case '\n': case '\f': case '\v':

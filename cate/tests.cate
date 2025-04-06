@@ -1,9 +1,19 @@
 Project tokenizer_test
 .files = {
+    "test/tokenizer.c"
     "src/cate_lang.c"
 }
 .flags = "-ggdb3"
 .out = "out/test/tokenizer"
+.incs = {".", "include"}
+.build()
+
+Project libcate_sys_test
+.files = {
+    "test/libcate_sys.c"
+}
+.flags = "-g"
+.out = "out/test/libcate_sys_test"
 .incs = {".", "include"}
 .build()
 
@@ -27,5 +37,6 @@ Project libcate_test
 //.build()
 
 system("out/test/tokenizer")
+system("out/test/libcate_sys_test")
 //system("out/test/libcate_test")
 //system("out/test/parser")

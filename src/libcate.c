@@ -721,6 +721,7 @@ static void cmd_free(Command* c) {
     free(c->data);
 }
 
+//moving this to libcate_sys.c
 /*---------------------.
 | system (os specific) |
 `--------------------*/
@@ -749,27 +750,6 @@ int cs_is_admin() {
 }
 
 #elif __unix__
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <assert.h>
-#include <dirent.h>
-#include <ftw.h>
-
-#ifdef _SC_NPROCESSORS_ONLN
-long cg_thread_count = 0;
-static void cg_get_thread_count() {
-    cg_thread_count = sysconf(_SC_NPROCESSORS_ONLN);
-}
-#else
-long cg_thread_count = 1;
-//should NEVER be called. just here to remove the error.
-static void cg_get_thread_count() {return;}
-#endif
 
 #ifdef __linux__
 #include <sys/sendfile.h>
@@ -840,73 +820,6 @@ static ssize_t sendfile(int out, int in, off_t* offset, size_t size) {
 //     return result;
 // }
 
-// static int _mkdir(const char* path) {
-//     return !(mkdir(path, S_IRWXU) && errno != EEXIST);
-// }
-
-// static inline int _recursive_mkdir(const char *dir) {
-//     char tmp[FILENAME_MAX] = {0};
-//     char *p = 0;
-//     size_t len = 0;
-
-//     snprintf(tmp, sizeof(tmp),"%s",dir);
-//     len = strlen(tmp);
-//     if (tmp[len - 1] == '/')
-//         tmp[len - 1] = 0;
-//     for (p = tmp + 1; *p; p++)
-//         if (*p == '/') {
-//             *p = 0;
-//             if(!_mkdir(tmp)) return 0;
-//             *p = '/';
-//         }
-//     return _mkdir(tmp);
-// }
-
-// int cs_create_directory(char* dir) {
-//     if(cs_file_exists(dir)) return 1;
-//     if(c_cmd_flags & C_CMD_DRY_RUN) {
-//         printf("mkdir -p %s\n", dir);
-//         return 1;
-//     }
-//     return _recursive_mkdir(dir);
-// }
-
-// int cs_move(char* file1, char* file2) {
-//     if(c_cmd_flags & C_CMD_DRY_RUN) {
-//         printf("mv %s %s\n", file1, file2);
-//         return 1;
-//     }
-//     return rename(file1, file2) == 0;
-// }
-
-// int cs_remove_single(const char* file) {
-//     if(c_cmd_flags & C_CMD_DRY_RUN) {
-//         printf("rm -f %s\n", file);
-//         return 1;
-//     }
-
-//     int err = remove(file);
-//     if(err) {
-//         fatal_errno("failed to remove %s", file);
-//     }
-
-//     return err;
-// }
-
-// int _rm_callback(const char *fpath, const struct stat *sb, int typeflag,
-//                  struct FTW *ftwbuf) {
-    
-//     return cs_remove_single(fpath);
-// }
-
-// int cs_remove(char* file) {
-//     if(c_cmd_flags & C_CMD_DRY_RUN) {
-//         printf("rm -rf %s\n", file);
-//         return 1;
-//     }
-    
-//     return nftw(file, _rm_callback, 64, FTW_DEPTH | FTW_PHYS) == 0;
-// }
 #else
 #error "Cate doesn't support this platform."
 
