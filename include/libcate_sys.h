@@ -33,13 +33,22 @@
 #ifndef LIBCATE_SYS_H
 #define LIBCATE_SYS_H
 
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__) && defined(__MACH__)
 #define UNIXY_PLATFORM
 #endif
 
+/*----------------.
+| platform things |
+`---------------*/
 #ifdef UNIXY_PLATFORM
 #define _XOPEN_SOURCE 500
+#define NL "\n"
+#elif _WIN32
+#define NL "\r\n"
+#else
+#error "Cate does not support this platform yet"
 #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -176,10 +185,10 @@ void cs_proc_free(CateSysProc* proc);
 /*-------------------.
 | errors and logging |
 `------------------*/
-#define fatal(text) do{fprintf(stderr, "cate: " text "\n");\
+#define fatal(text) do{fprintf(stderr, "cate: " text NL);\
     exit(-1);} while(0);
 #define log(text, ...) printf("cate: " text, __VA_ARGS__);
-#define fatal_f(text, ...) do{fprintf(stderr, "cate: " text "\n", __VA_ARGS__);\
+#define fatal_f(text, ...) do{fprintf(stderr, "cate: " text NL, __VA_ARGS__);\
     exit(-1);} while(0);
 
 /*-------.
@@ -467,7 +476,7 @@ CateSysProc* cs_proc_create(Command* cmd, C_Err* err) {
     p->pid = fork();
     if(p->pid == 0) {
         execvp(cmd->data[0], cmd->data);
-        fatal_f("%s: program not found!\n", cmd->data[0]);
+        fatal_f("%s: program not found!" NL, cmd->data[0]);
     } else if (p->pid < 0) {
         *err = CERR_OUT_OF_MEMORY;
     }
